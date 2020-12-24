@@ -1,0 +1,81 @@
+package org.config.gestalt.decoder;
+
+import org.config.gestalt.entity.ValidationLevel;
+import org.config.gestalt.exceptions.GestaltException;
+import org.config.gestalt.node.LeafNode;
+import org.config.gestalt.reflect.TypeCapture;
+import org.config.gestalt.utils.ValidateOf;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+class ShortDecoderTest {
+
+    @Test
+    void name() {
+        ShortDecoder decoder = new ShortDecoder();
+        Assertions.assertEquals("Short", decoder.name());
+    }
+
+    @Test
+    void matches() {
+        ShortDecoder decoder = new ShortDecoder();
+
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(Short.class)));
+        Assertions.assertTrue(decoder.matches(new TypeCapture<Short>() {
+        }));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(short.class)));
+
+        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Integer>>() {
+        }));
+    }
+
+    @Test
+    void decode() throws GestaltException {
+        ShortDecoder decoder = new ShortDecoder();
+
+        ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Short.class),
+            new DecoderRegistry(Collections.singletonList(decoder)));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertEquals((short) 124, (short) validate.results());
+        Assertions.assertEquals(0, validate.getErrors().size());
+    }
+
+    @Test
+    void notAnInteger() throws GestaltException {
+        ShortDecoder decoder = new ShortDecoder();
+
+        ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Short.class),
+            new DecoderRegistry(Collections.singletonList(decoder)));
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertNull(validate.results());
+        Assertions.assertNotNull(validate.getErrors());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
+                "attempting to decode Short",
+            validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void notAShortTooLarge() throws GestaltException {
+        ShortDecoder decoder = new ShortDecoder();
+
+        ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12345678901234567890123456789012345678901234567890123456789"),
+            TypeCapture.of(Short.class), new DecoderRegistry(Collections.singletonList(decoder)));
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertNull(validate.results());
+        Assertions.assertNotNull(validate.getErrors());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to decode a number on path: db.port, from node: " +
+                "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode Short",
+            validate.getErrors().get(0).description());
+    }
+}
