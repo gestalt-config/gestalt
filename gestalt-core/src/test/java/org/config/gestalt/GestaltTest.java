@@ -435,7 +435,8 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer("\\.");
 
         Mockito.when(configLoaderRegistry.getLoader(Mockito.anyString())).thenReturn(configLoader);
-        Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(ValidateOf.inValid(new ValidationError.ArrayDuplicateIndex(1, "admin")));
+        Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(
+            ValidateOf.inValid(new ValidationError.ArrayDuplicateIndex(1, "admin")));
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),

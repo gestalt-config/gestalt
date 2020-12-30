@@ -137,7 +137,7 @@ public class MapConfigParser implements ConfigParser {
         // There should only be one node type for this group of config as we have already validated it
         if (configsValidateOf.isEmpty()) {
             logger.warn("unable to parse tokens and create config node");
-        } else if (configs.size() == 0) {
+        } else if (configs.isEmpty()) {
             logger.warn("No configs found");
         } else {
             Token token = configs.get(0).getFirst();
