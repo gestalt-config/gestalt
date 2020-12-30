@@ -10,4 +10,6 @@ public interface ConfigNodeService {
     ValidateOf<ConfigNode> addNode(ConfigNode newNode) throws GestaltException;
 
     ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens);
+
+    ValidateOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode);
 }

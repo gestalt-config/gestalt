@@ -1,19 +1,19 @@
 package org.config.gestalt.parser;
 
+import org.config.gestalt.entity.ConfigValue;
 import org.config.gestalt.entity.ValidationError;
+import org.config.gestalt.entity.ValidationLevel;
 import org.config.gestalt.node.ArrayNode;
+import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.node.LeafNode;
 import org.config.gestalt.node.MapNode;
 import org.config.gestalt.token.ArrayToken;
-import org.config.gestalt.utils.ValidateOf;
-import org.config.gestalt.entity.ConfigValue;
-import org.config.gestalt.entity.ValidationLevel;
-import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.token.ObjectToken;
 import org.config.gestalt.token.Token;
 import org.config.gestalt.utils.CollectionUtils;
 import org.config.gestalt.utils.Pair;
 import org.config.gestalt.utils.PathUtil;
+import org.config.gestalt.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +23,15 @@ import java.util.stream.IntStream;
 
 public class MapConfigParser implements ConfigParser {
     private static final Logger logger = LoggerFactory.getLogger(MapConfigParser.class.getName());
+
+    private boolean treatErrorsAsWarnings = false;
+
+    public MapConfigParser() {
+    }
+
+    public MapConfigParser(boolean treatErrorsAsWarnings) {
+        this.treatErrorsAsWarnings = treatErrorsAsWarnings;
+    }
 
     @Override
     public ValidateOf<ConfigNode> parse(List<Pair<List<Token>, ConfigValue>> configs) {
@@ -112,13 +121,15 @@ public class MapConfigParser implements ConfigParser {
         // if there are any error level return immediately.
         if (recursiveErrors.containsKey(ValidationLevel.ERROR)) {
             errorList.addAll(recursiveErrors.get(ValidationLevel.ERROR));
-            return ValidateOf.inValid(errorList);
+            if (!treatErrorsAsWarnings) {
+                return ValidateOf.inValid(errorList);
+            }
         }
 
         // pull out the valid config nodes.
         List<Pair<Token, ConfigNode>> configs = configsValidateOf
             .stream()
-            .filter(it -> it.getSecond().hasResults())
+            .filter(it -> (treatErrorsAsWarnings || !it.getSecond().hasErrors(ValidationLevel.ERROR)) && it.getSecond().hasResults())
             .map(it -> new Pair<>(it.getFirst(), it.getSecond().results()))
             .collect(Collectors.toList());
 
@@ -126,6 +137,8 @@ public class MapConfigParser implements ConfigParser {
         // There should only be one node type for this group of config as we have already validated it
         if (configsValidateOf.isEmpty()) {
             logger.warn("unable to parse tokens and create config node");
+        } else if (configs.size() == 0) {
+            logger.warn("No configs found");
         } else {
             Token token = configs.get(0).getFirst();
             ConfigNode result = null;

@@ -2,10 +2,10 @@ package org.config.gestalt.decoder;
 
 import org.config.gestalt.entity.ValidationError;
 import org.config.gestalt.node.ArrayNode;
+import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.node.LeafNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
-import org.config.gestalt.node.ConfigNode;
 
 import java.util.Arrays;
 import java.util.List;

@@ -220,40 +220,62 @@ public class ConfigNodeManager implements ConfigNodeService {
     @Override
     public ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens) {
         ConfigNode currentNode = root;
+        List<ValidationError> errors = new ArrayList<>();
 
         for (Token token : tokens) {
-            if (currentNode == null) {
-                return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
-            } else if (token == null) {
-                return ValidateOf.inValid(new ValidationError.NullTokenForPath(path));
-            } else if (token instanceof ArrayToken) {
-                if (currentNode instanceof ArrayNode) {
-                    Optional<ConfigNode> nextNode = currentNode.getIndex(((ArrayToken) token).getIndex());
-                    if (nextNode.isPresent()) {
-                        currentNode = nextNode.get();
-                    } else {
-                        return ValidateOf.inValid(new ValidationError.UnableToFindArrayNodeForPath(path, token));
-                    }
-                } else {
-                    return ValidateOf.inValid(
-                        new ValidationError.MismatchedObjectNodeForPath(path, ArrayNode.class, currentNode.getClass()));
-                }
-            } else if (token instanceof ObjectToken) {
-                if (currentNode instanceof MapNode) {
-                    Optional<ConfigNode> nextNode = currentNode.getKey(((ObjectToken) token).getName());
-                    if (nextNode.isPresent()) {
-                        currentNode = nextNode.get();
-                    } else {
-                        return ValidateOf.inValid(new ValidationError.UnableToFindObjectNodeForPath(path, token));
-                    }
-                } else {
-                    return ValidateOf.inValid(new ValidationError.MismatchedObjectNodeForPath(path, MapNode.class, currentNode.getClass()));
-                }
+            ValidateOf<ConfigNode> result = navigateToNextNode(path, token, currentNode);
+
+            // if there are errors, add them to the error list abd do not add the merge results
+            if (result.hasErrors()) {
+                return ValidateOf.inValid(result.getErrors());
+            }
+
+            if (result.hasResults()) {
+                currentNode = result.results();
             } else {
-                return ValidateOf.inValid(new ValidationError.UnsupportedTokenType(path, token));
+                errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class));
             }
         }
 
-        return ValidateOf.valid(currentNode);
+        return ValidateOf.validateOf(currentNode, errors);
+    }
+
+    @Override
+    public ValidateOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode) {
+
+        ConfigNode node = currentNode;
+
+        if (node == null) {
+            return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
+        } else if (token == null) {
+            return ValidateOf.inValid(new ValidationError.NullTokenForPath(path));
+        } else if (token instanceof ArrayToken) {
+            if (node instanceof ArrayNode) {
+                Optional<ConfigNode> nextNode = node.getIndex(((ArrayToken) token).getIndex());
+                if (nextNode.isPresent()) {
+                    node = nextNode.get();
+                } else {
+                    return ValidateOf.inValid(new ValidationError.UnableToFindArrayNodeForPath(path, token));
+                }
+            } else {
+                return ValidateOf.inValid(
+                    new ValidationError.MismatchedObjectNodeForPath(path, ArrayNode.class, node.getClass()));
+            }
+        } else if (token instanceof ObjectToken) {
+            if (node instanceof MapNode) {
+                Optional<ConfigNode> nextNode = node.getKey(((ObjectToken) token).getName());
+                if (nextNode.isPresent()) {
+                    node = nextNode.get();
+                } else {
+                    return ValidateOf.inValid(new ValidationError.UnableToFindObjectNodeForPath(path, token));
+                }
+            } else {
+                return ValidateOf.inValid(new ValidationError.MismatchedObjectNodeForPath(path, MapNode.class, node.getClass()));
+            }
+        } else {
+            return ValidateOf.inValid(new ValidationError.UnsupportedTokenType(path, token));
+        }
+
+        return ValidateOf.valid(node);
     }
 }

@@ -27,7 +27,7 @@ class GestaltCacheTest {
     @Test
     void getConfig() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfig("db.port",  TypeCapture.of(Integer.class))).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class))).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", Integer.class);
         Integer port2 = cache.getConfig("db.port", Integer.class);

@@ -2,10 +2,10 @@ package org.config.gestalt.lexer;
 
 import org.config.gestalt.entity.ValidationError;
 import org.config.gestalt.token.ArrayToken;
-import org.config.gestalt.utils.StringUtils;
-import org.config.gestalt.utils.ValidateOf;
 import org.config.gestalt.token.ObjectToken;
 import org.config.gestalt.token.Token;
+import org.config.gestalt.utils.StringUtils;
+import org.config.gestalt.utils.ValidateOf;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +50,7 @@ public class PathLexer extends SentenceLexer {
 
     @Override
     protected List<String> tokenizer(String sentence) {
-        return sentence != null && !"".equals(sentence) ? Arrays.asList(sentence.split(delimiter)) : Collections.emptyList();
+        return sentence != null && !sentence.isEmpty() ? Arrays.asList(sentence.split(delimiter)) : Collections.emptyList();
     }
 
     @Override

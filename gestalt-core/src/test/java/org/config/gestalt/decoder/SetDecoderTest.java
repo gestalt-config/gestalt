@@ -1,14 +1,14 @@
 package org.config.gestalt.decoder;
 
-import org.config.gestalt.exceptions.GestaltException;
-import org.config.gestalt.node.ArrayNode;
-import org.config.gestalt.node.ConfigNode;
-import org.config.gestalt.node.LeafNode;
-import org.config.gestalt.node.MapNode;
+import org.config.gestalt.exceptions.ConfigurationException;
+import org.config.gestalt.lexer.SentenceLexer;
+import org.config.gestalt.node.*;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,9 +21,16 @@ class SetDecoderTest {
     DoubleDecoder doubleDecoder = new DoubleDecoder();
     StringDecoder stringDecoder = new StringDecoder();
     ListDecoder listDecoder = new ListDecoder();
-    DecoderRegistry decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder));
 
-    SetDecoderTest() throws GestaltException {
+    ConfigNodeService configNodeService;
+    DecoderRegistry decoderService;
+    SentenceLexer lexer;
+
+    @BeforeEach
+    void setup() throws ConfigurationException {
+        configNodeService = Mockito.mock(ConfigNodeService.class);
+        lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer);
     }
 
     @Test

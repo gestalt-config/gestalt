@@ -20,7 +20,17 @@ public class TypeCapture<T> {
         this.hashCode = type.hashCode();
     }
 
+    private TypeCapture(Type klass) {
+        this.type = klass;
+        this.rawType = (Class<? super T>) buildRawType(type);
+        this.hashCode = type.hashCode();
+    }
+
     public static <T> TypeCapture<T> of(Class<T> klass) {       // NOPMD
+        return new TypeCapture(klass);
+    }
+
+    public static <T> TypeCapture<T> of(Type klass) {       // NOPMD
         return new TypeCapture(klass);
     }
 
@@ -100,8 +110,12 @@ public class TypeCapture<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TypeCapture)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TypeCapture)) {
+            return false;
+        }
         TypeCapture<?> that = (TypeCapture<?>) o;
         return hashCode == that.hashCode && rawType.equals(that.rawType) && type.equals(that.type);
     }

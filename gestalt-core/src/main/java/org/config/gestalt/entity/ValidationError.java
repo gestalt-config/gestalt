@@ -6,7 +6,7 @@ import org.config.gestalt.token.Token;
 import java.util.List;
 
 public abstract class ValidationError {
-    private final ValidationLevel level;
+    private ValidationLevel level;
 
     protected ValidationError(ValidationLevel level) {
         this.level = level;
@@ -16,6 +16,10 @@ public abstract class ValidationError {
 
     public ValidationLevel level() {
         return level;
+    }
+
+    public void setLevel(ValidationLevel level) {
+        this.level = level;
     }
 
     //parser errors
@@ -183,7 +187,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Mismatched path lengths received for path: " + paths;
+            return "Mismatched path lengths received for path: " + paths + ", this could be because a node is both a leaf and an object";
         }
     }
 
@@ -432,7 +436,7 @@ public abstract class ValidationError {
         private final ConfigNode node;
 
         public DecodingByteTooLong(String path, ConfigNode node) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.WARN);
             this.path = path;
             this.node = node;
         }
@@ -514,7 +518,7 @@ public abstract class ValidationError {
         private final Token token;
 
         public UnableToFindArrayNodeForPath(String path, Token token) {
-            super(ValidationLevel.WARN);
+            super(ValidationLevel.ERROR);
             this.path = path;
             this.token = token;
         }
@@ -530,7 +534,7 @@ public abstract class ValidationError {
         private final Token token;
 
         public UnableToFindObjectNodeForPath(String path, Token token) {
-            super(ValidationLevel.WARN);
+            super(ValidationLevel.ERROR);
             this.path = path;
             this.token = token;
         }
@@ -547,7 +551,7 @@ public abstract class ValidationError {
         private final Class<?> actualKlass;
 
         public MismatchedObjectNodeForPath(String path, Class<?> expectedKlass, Class<?> actualKlass) {
-            super(ValidationLevel.WARN);
+            super(ValidationLevel.ERROR);
             this.path = path;
             this.expectedKlass = expectedKlass;
             this.actualKlass = actualKlass;

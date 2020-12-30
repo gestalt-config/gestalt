@@ -28,17 +28,29 @@ public abstract class SentenceLexer {
      */
     protected abstract ValidateOf<List<Token>> evaluator(String word, String sentence);
 
+    /**
+     * Takes a sentence and normalize it so we can match tokens from all various systems.
+     *
+     * @param sentence input sentence to normalize
+     * @return a normalized sentence.
+     */
+    public String normalizeSentence(String sentence) {
+        return sentence.toLowerCase();
+    }
+
     public ValidateOf<List<Token>> scan(String sentence) {
 
         if (sentence == null || sentence.equals("")) {
             return ValidateOf.inValid(new ValidationError.EmptyPath());
         }
 
-        List<String> tokenList = tokenizer(sentence);
+        String normalizedSentence = normalizeSentence(sentence);
+
+        List<String> tokenList = tokenizer(normalizedSentence);
 
         List<ValidateOf<List<Token>>> tokenWithValidations = tokenList
             .stream()
-            .map(word -> evaluator(word, sentence))
+            .map(word -> evaluator(word, normalizedSentence))
             .collect(Collectors.toList());
 
         List<Token> tokens = tokenWithValidations.stream().filter(ValidateOf::hasResults)

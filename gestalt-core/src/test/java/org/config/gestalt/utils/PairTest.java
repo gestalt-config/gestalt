@@ -31,6 +31,7 @@ class PairTest {
         Pair<Integer, String> pair2 = new Pair<>(2, "one");
         Pair<Integer, String> pairEquals = new Pair<>(1, "one");
 
+        Assertions.assertEquals(pair, pair);
         Assertions.assertEquals(pair, pairEquals);
         Assertions.assertNotEquals(pair, pair2);
         Assertions.assertNotEquals(pair, "hello");

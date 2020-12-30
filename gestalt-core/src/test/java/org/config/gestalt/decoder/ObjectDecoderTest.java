@@ -1,25 +1,34 @@
 package org.config.gestalt.decoder;
 
+import org.config.gestalt.exceptions.ConfigurationException;
 import org.config.gestalt.exceptions.GestaltException;
-import org.config.gestalt.node.ConfigNode;
-import org.config.gestalt.node.LeafNode;
-import org.config.gestalt.node.MapNode;
+import org.config.gestalt.lexer.PathLexer;
+import org.config.gestalt.lexer.SentenceLexer;
+import org.config.gestalt.node.*;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.test.classes.*;
 import org.config.gestalt.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 class ObjectDecoderTest {
 
-    DecoderRegistry registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-        new ObjectDecoder()));
+    ConfigNodeService configNodeService;
+    SentenceLexer lexer = new PathLexer();
+    DecoderRegistry registry;
 
-    ObjectDecoderTest() throws GestaltException {
+    ObjectDecoderTest() {
     }
 
+    @BeforeEach
+    void setup() throws ConfigurationException {
+        configNodeService = new ConfigNodeManager();
+        registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+            new ObjectDecoder(), new FloatDecoder()), configNodeService, lexer);
+    }
 
     @Test
     void name() {
@@ -62,7 +71,7 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeInherited() throws GestaltException {
+    void decodeInherited() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -82,7 +91,7 @@ class ObjectDecoderTest {
         Assertions.assertEquals(10000, validate.results().getTimeout());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: db.host.timeout, for class: int",
+        Assertions.assertEquals("Unable to find object node for path: db.host.timeout, at token: ObjectToken",
             validate.getErrors().get(0).description());
 
     }
@@ -102,7 +111,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("No default Constructor for : org.credmond.gestalt.test.classes.DBInfoNoDefaultConstructor on " +
+        Assertions.assertEquals("No default Constructor for : org.config.gestalt.test.classes.DBInfoNoDefaultConstructor on " +
                 "Path: db.host",
             validate.getErrors().get(0).description());
     }
@@ -122,7 +131,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Constructor for: org.credmond.gestalt.test.classes.DBInfoPrivateConstructor is not public on " +
+        Assertions.assertEquals("Constructor for: org.config.gestalt.test.classes.DBInfoPrivateConstructor is not public on " +
                 "Path: db.host",
             validate.getErrors().get(0).description());
     }
@@ -141,7 +150,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: String",
+        Assertions.assertEquals("Unable to find object node for path: db.host.password, at token: ObjectToken",
             validate.getErrors().get(0).description());
 
         Assertions.assertEquals(100, validate.results().getPort());
@@ -215,7 +224,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int",
+        Assertions.assertEquals("Unable to find object node for path: db.host.port, at token: ObjectToken",
             validate.getErrors().get(0).description());
 
         Assertions.assertEquals(100, validate.results().getPort());
@@ -236,5 +245,33 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Expected a leaf on path: db.host, received node type, received: LeafNode{value='mysql.com'} " +
                 "attempting to decode Object",
             validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeHttpPool() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("maxtotal", new LeafNode("100"));
+        configs.put("maxperroute", new LeafNode("10"));
+        configs.put("validateafterinactivity", new LeafNode("60"));
+        configs.put("keepalivetimeoutms", new LeafNode("123"));
+        configs.put("idletimeoutsec", new LeafNode("1000"));
+
+        ValidateOf<DBPool> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(DBPool.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find object node for path: db.host.defaultWait, at token: ObjectToken",
+            validate.getErrors().get(0).description());
+
+        Assertions.assertEquals(100, validate.results().maxTotal);
+        Assertions.assertEquals(10, validate.results().maxPerRoute);
+        Assertions.assertEquals(60, validate.results().validateAfterInactivity);
+        Assertions.assertEquals(123, validate.results().keepAliveTimeoutMs);
+        Assertions.assertEquals(1000, validate.results().idleTimeoutSec);
+        Assertions.assertEquals(33.0F, validate.results().defaultWait);
     }
 }

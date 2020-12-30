@@ -1,6 +1,7 @@
 package org.config.gestalt.decoder;
 
 import org.config.gestalt.entity.ValidationError;
+import org.config.gestalt.entity.ValidationLevel;
 import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.node.MapNode;
 import org.config.gestalt.reflect.TypeCapture;
@@ -8,14 +9,10 @@ import org.config.gestalt.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class ObjectDecoder implements Decoder {
     private static final Logger logger = LoggerFactory.getLogger(ObjectDecoder.class.getName());
@@ -51,17 +48,22 @@ public class ObjectDecoder implements Decoder {
                 for (Field field : classFields) {
                     int modifiers = field.getModifiers();
                     String name = field.getName();
-                    Class<?> fieldClass = field.getType();
+                    Type fieldClass = field.getGenericType();
 
-                    String nextPath = path != null && !path.isEmpty() ? path + "." + name :  name;
+                    String nextPath = path != null && !path.isEmpty() ? path + "." + name : name;
 
                     if (!Modifier.isStatic(modifiers)) {
                         field.setAccessible(true);
-                        Optional<ConfigNode> configNode = node.getKey(name);
-                        if (!configNode.isPresent()) {
-                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, fieldClass));
+
+                        ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
+
+                        errors.addAll(configNode.getErrors(ValidationLevel.WARN));
+                        if (configNode.hasErrors(ValidationLevel.ERROR)) {
+                            errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
+                        } else if (!configNode.hasResults()) {
+                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
                         } else {
-                            ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.get(),
+                            ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                                 TypeCapture.of(fieldClass));
                             if (fieldValidateOf.hasErrors()) {
                                 errors.addAll(fieldValidateOf.getErrors());
@@ -70,7 +72,7 @@ public class ObjectDecoder implements Decoder {
                             if (fieldValidateOf.hasResults()) {
                                 field.set(obj, fieldValidateOf.results());
                             } else {
-                                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, fieldClass));
+                                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
                             }
                         }
                     } else {

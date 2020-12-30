@@ -21,7 +21,7 @@ public class PropertyLoader implements ConfigLoader {
     private final SentenceLexer lexer;
 
     public PropertyLoader() {
-        this(new PathLexer("."), new MapConfigParser());
+        this(new PathLexer("\\."), new MapConfigParser());
     }
 
     public PropertyLoader(SentenceLexer lexer, ConfigParser parser) {

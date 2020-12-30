@@ -66,7 +66,7 @@ class EnvironmentLoaderTest {
         Mockito.when(source.loadList()).thenReturn(data);
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
 
         // run the code under test.
         ValidateOf<ConfigNode> validateOfResults = environmentVarsLoader.loadSource(source);
@@ -125,7 +125,7 @@ class EnvironmentLoaderTest {
         Mockito.when(source.name()).thenReturn("mock");
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
 
         // run the code under test.
         try {
@@ -175,7 +175,7 @@ class EnvironmentLoaderTest {
         Mockito.when(source.loadList()).thenReturn(data);
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
 
         // run the code under test.
         ValidateOf<ConfigNode> validateOfResults = environmentVarsLoader.loadSource(source);
@@ -212,7 +212,7 @@ class EnvironmentLoaderTest {
         Mockito.when(source.name()).thenReturn("mock");
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
 
         // run the code under test.
         try {
@@ -242,7 +242,7 @@ class EnvironmentLoaderTest {
         Mockito.when(source.name()).thenReturn("mock");
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
 
         // run the code under test.
         try {

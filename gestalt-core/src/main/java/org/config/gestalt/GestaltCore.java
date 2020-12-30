@@ -14,13 +14,16 @@ import org.config.gestalt.node.ConfigNodeService;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.token.Token;
-import org.config.gestalt.utils.ValidateOf;
 import org.config.gestalt.utils.ErrorsUtil;
+import org.config.gestalt.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.config.gestalt.entity.ValidationLevel.ERROR;
+import static org.config.gestalt.entity.ValidationLevel.WARN;
 
 public class GestaltCore implements Gestalt {
     private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
@@ -74,7 +77,7 @@ public class GestaltCore implements Gestalt {
             throw new ConfigurationException("Failed to load configs", results.getErrors());
         }
 
-        if (results.hasErrors(ValidationLevel.WARN)) {
+        if (results.hasErrors(WARN)) {
             String errorMsg = ErrorsUtil.buildErrorMessage(results.getErrors());
             logger.warn(errorMsg);
         }
@@ -93,10 +96,17 @@ public class GestaltCore implements Gestalt {
         } else {
             ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
 
-            if (results.hasErrors()) {
+            if (checkErrorsShouldFail(results)) {
                 throw new GestaltException("Failed getting config path: " + path + ", for class: " + klass.getName(),
                     results.getErrors());
-            } else if (results.hasResults()) {
+
+            } else if (results.hasErrors()) {
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
+                    ", for class: " + klass.getName(), tokens.getErrors());
+                logger.warn(errorMsg);
+            }
+
+            if (results.hasResults()) {
                 return results.results();
             }
         }
@@ -120,13 +130,20 @@ public class GestaltCore implements Gestalt {
         } else {
             ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
 
-            if (results.hasErrors()) {
+            if (checkErrorsShouldFail(results)) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + path +
-                    ", for class: " + klass.getName(), tokens.getErrors());
+                    ", for class: " + klass.getName() + " returning default value", tokens.getErrors());
                 logger.warn(errorMsg);
 
                 return defaultVal;
-            } else if (results.hasResults()) {
+
+            } else if (results.hasErrors()) {
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
+                    ", for class: " + klass.getName(), tokens.getErrors());
+                logger.warn(errorMsg);
+            }
+
+            if (results.hasResults()) {
                 return results.results();
             }
         }
@@ -149,5 +166,29 @@ public class GestaltCore implements Gestalt {
         } else {
             return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, klass.getName()));
         }
+    }
+
+    private <T> boolean checkErrorsShouldFail(ValidateOf<T> results) {
+        if (results.hasErrors()) {
+            return results.getErrors().stream().noneMatch(this::ignoreError);
+        } else {
+            return false;
+        }
+    }
+
+    private boolean ignoreError(ValidationError error) {
+        if (gestaltConfig.isTreatWarningsAsErrors()) {
+            return false;
+        } else if (error instanceof ValidationError.ArrayMissingIndex && !gestaltConfig.isTreatMissingArrayIndexAsError()) {
+            return true;
+        } else if ((error instanceof ValidationError.DecodingLeafMissingValue ||
+            error instanceof ValidationError.NoResultsFoundForPath ||
+            error instanceof ValidationError.NoResultsFoundForNode ||
+            error instanceof ValidationError.UnableToFindObjectNodeForPath) &&
+            !gestaltConfig.isTreatMissingValuesAsErrors()) {
+            return true;
+        }
+
+        return error.level() != ERROR;
     }
 }

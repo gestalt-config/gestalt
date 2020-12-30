@@ -1,10 +1,10 @@
 package org.config.gestalt.parser;
 
+import org.config.gestalt.entity.ConfigValue;
 import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.token.Token;
 import org.config.gestalt.utils.Pair;
 import org.config.gestalt.utils.ValidateOf;
-import org.config.gestalt.entity.ConfigValue;
 
 import java.util.List;
 

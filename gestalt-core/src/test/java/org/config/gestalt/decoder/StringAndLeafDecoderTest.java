@@ -2,18 +2,31 @@ package org.config.gestalt.decoder;
 
 import org.config.gestalt.entity.ValidationLevel;
 import org.config.gestalt.exceptions.GestaltException;
+import org.config.gestalt.lexer.SentenceLexer;
+import org.config.gestalt.node.ConfigNodeService;
 import org.config.gestalt.node.LeafNode;
 import org.config.gestalt.node.MapNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
 class StringAndLeafDecoderTest {
+
+    ConfigNodeService configNodeService;
+    SentenceLexer lexer;
+
+    @BeforeEach
+    void setup() {
+        configNodeService = Mockito.mock(ConfigNodeService.class);
+        lexer = Mockito.mock(SentenceLexer.class);
+    }
 
     @Test
     void name() {
@@ -35,7 +48,7 @@ class StringAndLeafDecoderTest {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", new LeafNode("test"), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder)));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals("test", validate.results());
@@ -47,7 +60,7 @@ class StringAndLeafDecoderTest {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder)));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -62,7 +75,7 @@ class StringAndLeafDecoderTest {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder)));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

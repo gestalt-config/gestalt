@@ -1,17 +1,30 @@
 package org.config.gestalt.decoder;
 
 import org.config.gestalt.exceptions.GestaltException;
+import org.config.gestalt.lexer.SentenceLexer;
+import org.config.gestalt.node.ConfigNodeService;
 import org.config.gestalt.node.LeafNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.test.classes.Colours;
 import org.config.gestalt.test.classes.DBInfo;
 import org.config.gestalt.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 
 class EnumDecoderTest {
+
+    ConfigNodeService configNodeService;
+    SentenceLexer lexer;
+
+    @BeforeEach
+    void setup() {
+        configNodeService = Mockito.mock(ConfigNodeService.class);
+        lexer = Mockito.mock(SentenceLexer.class);
+    }
 
     @Test
     void name() {
@@ -38,7 +51,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("RED"), TypeCapture.of(Colours.class),
-            new DecoderRegistry(Collections.singletonList(decoder)));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(Colours.RED, validate.results());
@@ -51,11 +64,11 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("pink"), TypeCapture.of(Colours.class),
-            new DecoderRegistry(Collections.singletonList(decoder)));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("ENUM org.credmond.gestalt.test.classes.Colours could not be created with value pink for " +
+        Assertions.assertEquals("ENUM org.config.gestalt.test.classes.Colours could not be created with value pink for " +
                 "Path: db.port",
             validate.getErrors().get(0).description());
     }

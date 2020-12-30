@@ -5,6 +5,7 @@ import org.config.gestalt.entity.GestaltConfig;
 import org.config.gestalt.entity.ValidationError;
 import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.lexer.PathLexer;
+import org.config.gestalt.lexer.SentenceLexer;
 import org.config.gestalt.loader.ConfigLoader;
 import org.config.gestalt.loader.ConfigLoaderRegistry;
 import org.config.gestalt.loader.MapConfigLoader;
@@ -34,11 +35,15 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -84,11 +89,14 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -133,11 +141,14 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
+        SentenceLexer lexer = new PathLexer("\\.");
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2), new MapConfigSource(configs3)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -168,11 +179,15 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -218,11 +233,14 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -252,17 +270,25 @@ class GestaltTest {
 
         GestaltConfig config = new GestaltConfig();
         config.setTreatWarningsAsErrors(false);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(false);
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), config, new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+                new ListDecoder()), configNodeManager, lexer), lexer, config, new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
         Assertions.assertEquals(1, errors.size());
         Assertions.assertEquals("Missing array index: 2 for path: admin.user", errors.get(0).description());
+
+        config.setTreatWarningsAsErrors(true);
+        config.setTreatMissingArrayIndexAsError(true);
+        config.setTreatMissingValuesAsErrors(true);
 
         try {
             gestalt.getConfig("admin.user[2]", Integer.class);
@@ -270,7 +296,32 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
-                    " - level: WARN, message: Unable to find array node for path: admin.user[2], at token: ArrayToken");
+                    " - level: ERROR, message: Unable to find array node for path: admin.user[2], at token: ArrayToken");
+        }
+
+        try {
+            gestalt.getConfig("admin.user", new TypeCapture<List<String>>() {
+            });
+            Assertions.fail("Should not reach here");
+        } catch (GestaltException e) {
+            assertThat(e).isInstanceOf(GestaltException.class)
+                .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
+                    " - level: WARN, message: Missing array index: 2");
+        }
+
+        try {
+            config.setTreatWarningsAsErrors(false);
+            config.setTreatMissingArrayIndexAsError(false);
+            config.setTreatMissingValuesAsErrors(false);
+            List<String> test = gestalt.getConfig("admin.user", new TypeCapture<List<String>>() {
+            });
+
+            Assertions.assertEquals("John", test.get(0));
+            Assertions.assertEquals("Matt", test.get(1));
+            Assertions.assertNull(test.get(2));
+            Assertions.assertEquals("Paul", test.get(3));
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
         }
 
         Assertions.assertEquals("John", gestalt.getConfig("admin.user[0]", String.class));
@@ -283,11 +334,14 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.emptyList(),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         try {
             gestalt.loadConfigs();
@@ -310,11 +364,13 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Collections.singletonList(new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -345,11 +401,13 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new StringDecoder(), new ExceptionDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -357,6 +415,42 @@ class GestaltTest {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void testLoadConfigError() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = Mockito.mock(ConfigLoaderRegistry.class);
+
+        ConfigLoader configLoader = Mockito.mock(ConfigLoader.class);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        Mockito.when(configLoaderRegistry.getLoader(Mockito.anyString())).thenReturn(configLoader);
+        Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(ValidateOf.inValid(new ValidationError.ArrayDuplicateIndex(1, "admin")));
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager);
+
+        try {
+            gestalt.loadConfigs();
+            Assertions.fail("Should not reach here");
+        } catch (GestaltException e) {
+            assertThat(e).isInstanceOf(GestaltException.class)
+                .hasMessage("Failed to load configs\n" +
+                    " - level: ERROR, message: Duplicate array index: 1 for path: admin");
+        }
     }
 
     @Test
@@ -375,11 +469,19 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(mockConfigLoader);
 
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatWarningsAsErrors(true);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(false);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, config, new ConfigNodeManager());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -407,11 +509,19 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatWarningsAsErrors(false);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(true);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, config, new ConfigNodeManager());
 
         gestalt.loadConfigs();
 
@@ -421,7 +531,7 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
-                    " - level: WARN, message: Unable to find object node for path: db.password, at token: ObjectToken");
+                    " - level: ERROR, message: Unable to find object node for path: db.password, at token: ObjectToken");
         }
     }
 
@@ -437,11 +547,19 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatWarningsAsErrors(false);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(true);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, config, new ConfigNodeManager());
 
         gestalt.loadConfigs();
 
@@ -451,7 +569,7 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
-                    " - level: WARN, message: Unable to find array node for path: admin[3], at token: ArrayToken");
+                    " - level: ERROR, message: Unable to find array node for path: admin[3], at token: ArrayToken");
         }
     }
 
@@ -467,10 +585,13 @@ class GestaltTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder())),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
             new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
 
         gestalt.loadConfigs();

@@ -5,6 +5,7 @@ import org.config.gestalt.entity.ValidationLevel;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ValidateOf<T> {
     private final T results;
@@ -45,6 +46,10 @@ public final class ValidateOf<T> {
 
     public List<ValidationError> getErrors() {
         return errors;
+    }
+
+    public List<ValidationError> getErrors(ValidationLevel level) {
+        return errors.stream().filter(it -> it.level().equals(level)).collect(Collectors.toList());
     }
 
     public boolean hasResults() {

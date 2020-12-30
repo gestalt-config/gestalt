@@ -1,15 +1,15 @@
 package org.config.gestalt.loader;
 
+import org.config.gestalt.entity.ConfigValue;
 import org.config.gestalt.entity.ValidationError;
+import org.config.gestalt.entity.ValidationLevel;
 import org.config.gestalt.exceptions.ConfigurationException;
 import org.config.gestalt.lexer.SentenceLexer;
-import org.config.gestalt.utils.ValidateOf;
-import org.config.gestalt.entity.ConfigValue;
-import org.config.gestalt.entity.ValidationLevel;
 import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.parser.ConfigParser;
 import org.config.gestalt.token.Token;
 import org.config.gestalt.utils.Pair;
+import org.config.gestalt.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,15 @@ public final class ConfigCompiler {
     }
 
     public static ValidateOf<ConfigNode> analyze(SentenceLexer lexer,
+                                                 ConfigParser parser,
+                                                 String sourceName,
+                                                 List<Pair<String, String>> configs) throws ConfigurationException {
+
+        return analyze(false, lexer, parser, sourceName, configs);
+    }
+
+    public static ValidateOf<ConfigNode> analyze(boolean treatErrorsAsWarnings,
+                                                 SentenceLexer lexer,
                                                  ConfigParser parser,
                                                  String sourceName,
                                                  List<Pair<String, String>> configs) throws ConfigurationException {
@@ -46,7 +55,7 @@ public final class ConfigCompiler {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-            if (validationErrors.containsKey(ValidationLevel.ERROR)) {
+            if (!treatErrorsAsWarnings && validationErrors.containsKey(ValidationLevel.ERROR)) {
                 throw new ConfigurationException("Exception loading config source " + sourceName, errorMessage);
             } else {
                 String errors = errorMessage.stream()
@@ -58,7 +67,9 @@ public final class ConfigCompiler {
 
         List<Pair<List<Token>, ConfigValue>> validTokens = validatedTokens
             .stream()
-            .filter(validatedToken -> validatedToken.getFirst().hasResults())
+            .filter(validatedToken -> !validatedToken.getFirst().hasErrors() &&
+                validatedToken.getFirst().hasResults() &&
+                validatedToken.getFirst().results().size() > 0)
             .map(validatedToken ->
                 new Pair<>(validatedToken.getFirst().results(), new ConfigValue(validatedToken.getSecond())))
             .collect(Collectors.toList());

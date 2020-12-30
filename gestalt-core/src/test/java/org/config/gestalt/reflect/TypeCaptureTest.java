@@ -57,7 +57,7 @@ class TypeCaptureTest {
         TypeCapture type = new TypeCapture<Holder<Integer>>() {
         };
         Assertions.assertEquals(Integer.class, type.getParameterType());
-        Assertions.assertEquals("org.credmond.gestalt.reflect.TypeCaptureTest$Holder<java.lang.Integer>",
+        Assertions.assertEquals("org.config.gestalt.reflect.TypeCaptureTest$Holder<java.lang.Integer>",
             type.getName());
         Assertions.assertTrue(type.hasParameter());
         Assertions.assertTrue(type.isAssignableFrom(Holder.class));

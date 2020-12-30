@@ -1,16 +1,17 @@
 package org.config.gestalt.builder;
 
 import org.config.gestalt.Gestalt;
+import org.config.gestalt.GestaltCache;
+import org.config.gestalt.GestaltCore;
 import org.config.gestalt.decoder.*;
 import org.config.gestalt.entity.GestaltConfig;
 import org.config.gestalt.exceptions.ConfigurationException;
 import org.config.gestalt.lexer.PathLexer;
 import org.config.gestalt.lexer.SentenceLexer;
 import org.config.gestalt.loader.*;
+import org.config.gestalt.node.ConfigNodeManager;
 import org.config.gestalt.node.ConfigNodeService;
 import org.config.gestalt.source.ConfigSource;
-import org.config.gestalt.GestaltCore;
-import org.config.gestalt.node.ConfigNodeManager;
 import org.config.gestalt.utils.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,13 @@ public class GestaltBuilder {
     private List<Decoder> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
 
+    private boolean useCacheDecorator = true;
+
+    private Boolean treatWarningsAsErrors = null;
+    private Boolean treatMissingArrayIndexAsError = null;
+    private Boolean treatMissingValuesAsErrors = null;
+    private Boolean envVarsTreatErrorsAsWarnings = null;
+
     public GestaltBuilder addDefaultDecoders() {
         decoders.addAll(Arrays.asList(new ArrayDecoder(), new BooleanDecoder(),
             new ByteDecoder(), new CharDecoder(), new DoubleDecoder(), new EnumDecoder(), new FloatDecoder(), new IntegerDecoder(),
@@ -39,7 +47,8 @@ public class GestaltBuilder {
     }
 
     public GestaltBuilder addDefaultConfigLoaders() {
-        configLoaders.addAll(Arrays.asList(new MapConfigLoader(), new PropertyLoader(), new EnvironmentVarsLoader()));
+        configLoaders.addAll(Arrays.asList(new MapConfigLoader(), new PropertyLoader(),
+            new EnvironmentVarsLoader(gestaltConfig.isEnvVarsTreatErrorsAsWarnings())));
         return this;
     }
 
@@ -108,7 +117,7 @@ public class GestaltBuilder {
         return this;
     }
 
-    public GestaltBuilder setConfigNodeService(ConfigNodeManager configNodeService) {
+    public GestaltBuilder setConfigNodeService(ConfigNodeService configNodeService) {
         Objects.requireNonNull(configNodeService, "ConfigNodeManager should not be null");
         this.configNodeService = configNodeService;
         return this;
@@ -143,9 +152,28 @@ public class GestaltBuilder {
         return this;
     }
 
-
     public GestaltBuilder setTreatWarningsAsErrors(boolean warningsAsErrors) {
-        gestaltConfig.setTreatWarningsAsErrors(warningsAsErrors);
+        treatWarningsAsErrors = warningsAsErrors;
+        return this;
+    }
+
+    public GestaltBuilder setTreatMissingArrayIndexAsError(Boolean treatMissingArrayIndexAsError) {
+        this.treatMissingArrayIndexAsError = treatMissingArrayIndexAsError;
+        return this;
+    }
+
+    public GestaltBuilder setTreatMissingValuesAsErrors(Boolean treatMissingValuesAsErrors) {
+        this.treatMissingValuesAsErrors = treatMissingValuesAsErrors;
+        return this;
+    }
+
+    public GestaltBuilder setEnvVarsTreatErrorsAsWarnings(boolean envVarsTreatErrorsAsWarnings) {
+        this.envVarsTreatErrorsAsWarnings = envVarsTreatErrorsAsWarnings;
+        return this;
+    }
+
+    public GestaltBuilder useCacheDecorator(boolean useCacheDecorator) {
+        this.useCacheDecorator = useCacheDecorator;
         return this;
     }
 
@@ -188,6 +216,8 @@ public class GestaltBuilder {
             throw new ConfigurationException("No sources provided");
         }
 
+        gestaltConfig = rebuildConfig();
+
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
             logger.debug("No decoders provided, using defaults");
@@ -198,7 +228,7 @@ public class GestaltBuilder {
         // Otherwise get all the decoders from the decoderService, combine them with the ones in the builder,
         // and update the decoderService
         if (decoderService == null) {
-            decoderService = new DecoderRegistry(decoders);
+            decoderService = new DecoderRegistry(decoders, configNodeService, sentenceLexer);
         } else {
             decoders.addAll(decoderService.getDecoders());
             List<Decoder> dedupedDecoders = dedupeDecoders();
@@ -217,7 +247,40 @@ public class GestaltBuilder {
         List<ConfigLoader> dedupedConfigs = dedupeConfigLoaders();
         configLoaderService.setLoaders(dedupedConfigs);
 
+        Gestalt gestalt = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig, configNodeService);
+        if (useCacheDecorator) {
+            gestalt = new GestaltCache(gestalt);
+        }
+        return gestalt;
+    }
 
-        return new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig, configNodeService);
+    private GestaltConfig rebuildConfig() {
+        GestaltConfig newConfig = new GestaltConfig();
+
+        if (treatWarningsAsErrors != null) {
+            newConfig.setTreatWarningsAsErrors(treatWarningsAsErrors);
+        } else {
+            newConfig.setTreatWarningsAsErrors(gestaltConfig.isTreatWarningsAsErrors());
+        }
+
+        if (treatMissingArrayIndexAsError != null) {
+            newConfig.setTreatMissingArrayIndexAsError(treatMissingArrayIndexAsError);
+        } else {
+            newConfig.setTreatMissingArrayIndexAsError(gestaltConfig.isTreatMissingArrayIndexAsError());
+        }
+
+        if (treatMissingValuesAsErrors != null) {
+            newConfig.setTreatMissingValuesAsErrors(treatMissingValuesAsErrors);
+        } else {
+            newConfig.setTreatMissingValuesAsErrors(gestaltConfig.isTreatMissingValuesAsErrors());
+        }
+
+        if (envVarsTreatErrorsAsWarnings != null) {
+            newConfig.setEnvVarsTreatErrorsAsWarnings(envVarsTreatErrorsAsWarnings);
+        } else {
+            newConfig.setEnvVarsTreatErrorsAsWarnings(gestaltConfig.isEnvVarsTreatErrorsAsWarnings());
+        }
+
+        return newConfig;
     }
 }
