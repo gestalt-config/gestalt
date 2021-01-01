@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.ben-manes:gradle-versions-plugin:0.33.0")
+    implementation("com.github.ben-manes:gradle-versions-plugin:0.36.0")
     implementation("com.palantir.gradle.gitversion:gradle-git-version:0.12.3")
-    implementation("net.ltgt.gradle:gradle-errorprone-plugin:1.2.1")
+    implementation("net.ltgt.gradle:gradle-errorprone-plugin:1.3.0")
     implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
 }
