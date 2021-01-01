@@ -9,12 +9,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-    DB_HOSTS[0]_PASSWORD: 1234
-    DB_HOSTS[1]_PASSWORD: 5678
-    DB_HOSTS[2]_PASSWORD: 9012
-    DB_IDLETIMEOUT: 123
-
 jobs:
   build:
 
@@ -30,3 +24,8 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+      env:
+        DB_HOSTS[0]_PASSWORD: 1234
+        DB_HOSTS[1]_PASSWORD: 5678
+        DB_HOSTS[2]_PASSWORD: 9012
+        DB_IDLETIMEOUT: 123
