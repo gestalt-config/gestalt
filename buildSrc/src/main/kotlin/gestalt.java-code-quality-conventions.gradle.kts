@@ -16,6 +16,7 @@ plugins {
 
 dependencies {
     errorprone(Plugins.errorProne)
+    errorproneJavac(Plugins.errorProneJava8)
 }
 
 tasks.withType<JavaCompile>().configureEach {

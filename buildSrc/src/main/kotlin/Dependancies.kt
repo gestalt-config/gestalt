@@ -30,7 +30,9 @@ object Test {
 object Plugins {
     private object Versions {
         const val errorprone = "2.4.0"
+        const val errorproneJava8 = "9+181-r4173-1"
     }
 
     const val errorProne = "com.google.errorprone:error_prone_core:${Versions.errorprone}"
+    const val errorProneJava8 = "com.google.errorprone:javac:${Versions.errorproneJava8}"
 }
