@@ -1,5 +1,5 @@
 /*
- * Apply the plugin to setup testing dependancies and tasks.
+ * Apply the plugin to setup testing dependencies and tasks.
  */
 
 plugins {

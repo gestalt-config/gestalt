@@ -9,4 +9,5 @@ plugins {
 
 allprojects {
     group = "org.config.gestalt"
+    version = "0.1.0"
 }
