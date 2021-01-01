@@ -126,6 +126,11 @@ public class GestaltIntegrationTests {
     @Test
     public void integrationTestEnvVars() throws GestaltException {
 
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
         URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
 
@@ -137,6 +142,7 @@ public class GestaltIntegrationTests {
         Gestalt gestalt = builder
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource())
             .setEnvVarsTreatErrorsAsWarnings(true)
             .build();
