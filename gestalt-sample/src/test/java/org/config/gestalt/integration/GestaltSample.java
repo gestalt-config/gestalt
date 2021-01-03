@@ -228,7 +228,7 @@ public class GestaltSample {
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
         Assertions.assertTrue(booking.isEnabled);
         Assertions.assertEquals("https://dev.bookin.host.name", booking.service.host);
-        Assertions.assertEquals(80, booking.service.port);
+        Assertions.assertEquals(443, booking.service.port);
         Assertions.assertEquals("booking", booking.service.path);
     }
 
