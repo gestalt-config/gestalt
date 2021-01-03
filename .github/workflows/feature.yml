@@ -26,3 +26,6 @@ jobs:
       run: ./gradlew build
       env:
         DB_IDLETIMEOUT: 123
+        SUBSERVICE_BOOKING_ISENABLED: true
+        SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+        SUBSERVICE_BOOKING_SERVICE_PORT: 80
