@@ -9,3 +9,4 @@
 
 rootProject.name = "gestalt"
 include("gestalt-core")
+include("gestalt-sample")

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GestaltIntegrationTests {
+public class GestaltSample {
 
     @Test
     public void integrationTest() throws GestaltException {
@@ -27,10 +27,10 @@ public class GestaltIntegrationTests {
         configs.put("db.hosts[2].password", "9012");
         configs.put("db.idleTimeout", "123");
 
-        URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
 
-        URL devFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("dev.properties");
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
 
 
@@ -131,10 +131,10 @@ public class GestaltIntegrationTests {
         configs.put("db.hosts[1].password", "5678");
         configs.put("db.hosts[2].password", "9012");
 
-        URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
 
-        URL devFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("dev.properties");
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
 
 
