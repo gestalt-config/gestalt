@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ObjectDecoder implements Decoder {
+public class ObjectDecoder implements Decoder<Object> {
     private static final Logger logger = LoggerFactory.getLogger(ObjectDecoder.class.getName());
 
     @Override
@@ -28,9 +28,8 @@ public class ObjectDecoder implements Decoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<T> type, DecoderService decoderService) {
-        ValidateOf<T> results;
+    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+        ValidateOf<Object> results;
         if (node instanceof MapNode) {
             Class<?> klass = type.getRawType();
 
@@ -42,7 +41,7 @@ public class ObjectDecoder implements Decoder {
 
                 List<ValidationError> errors = new ArrayList<>();
 
-                T obj = (T) klass.getDeclaredConstructor().newInstance();
+                Object obj = klass.getDeclaredConstructor().newInstance();
 
                 List<Field> classFields = getClassFields(klass);
                 for (Field field : classFields) {

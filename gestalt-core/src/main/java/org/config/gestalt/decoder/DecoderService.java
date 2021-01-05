@@ -7,13 +7,13 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.List;
 
 public interface DecoderService {
-    List<Decoder> getDecoders();
+    List<Decoder<?>> getDecoders();
 
-    void setDecoders(List<Decoder> decoders);
+    void setDecoders(List<Decoder<?>> decoders);
 
     <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass);
 
-    void addDecoders(List<Decoder> decoder);
+    void addDecoders(List<Decoder<?>> decoder);
 
     ValidateOf<ConfigNode> getNextNode(String path, String nextString, ConfigNode configNode);
 

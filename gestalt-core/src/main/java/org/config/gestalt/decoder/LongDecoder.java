@@ -6,7 +6,7 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
-public class LongDecoder extends LeafDecoder {
+public class LongDecoder extends LeafDecoder<Long> {
 
     @Override
     public String name() {

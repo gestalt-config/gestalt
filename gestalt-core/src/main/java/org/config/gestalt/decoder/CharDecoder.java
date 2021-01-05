@@ -8,7 +8,7 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CharDecoder extends LeafDecoder {
+public class CharDecoder extends LeafDecoder<Character> {
 
     @Override
     public String name() {
@@ -21,7 +21,6 @@ public class CharDecoder extends LeafDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<Character> leafDecode(String path, ConfigNode node) {
         Character results = null;
         List<ValidationError> error = new ArrayList<>();

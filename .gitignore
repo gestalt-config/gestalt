@@ -8,5 +8,5 @@
 build
 
 ## ignore the out directory
-out
+**/out
 

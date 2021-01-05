@@ -8,5 +8,11 @@
  */
 
 rootProject.name = "gestalt"
-include("gestalt-core")
-include("gestalt-sample")
+include("gestalt-core", "gestalt-sample") //, "gestalt-kotlin")
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}

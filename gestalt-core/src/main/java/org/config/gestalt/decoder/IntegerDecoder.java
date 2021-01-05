@@ -6,7 +6,7 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
-public class IntegerDecoder extends LeafDecoder {
+public class IntegerDecoder extends LeafDecoder<Integer> {
 
     @Override
     public String name() {
@@ -19,7 +19,6 @@ public class IntegerDecoder extends LeafDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<Integer> leafDecode(String path, ConfigNode node) {
         ValidateOf<Integer> results;
 

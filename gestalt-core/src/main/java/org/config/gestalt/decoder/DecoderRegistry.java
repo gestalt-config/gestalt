@@ -24,9 +24,10 @@ public class DecoderRegistry implements DecoderService {
     private final ConfigNodeService configNodeService;
     private final SentenceLexer lexer;
 
-    private List<Decoder> decoders = new ArrayList<>();
+    private List<Decoder<?>> decoders = new ArrayList<>();
 
-    public DecoderRegistry(List<Decoder> decoders, ConfigNodeService configNodeService, SentenceLexer lexer) throws ConfigurationException {
+    public DecoderRegistry(List<Decoder<?>> decoders, ConfigNodeService configNodeService, SentenceLexer lexer)
+        throws ConfigurationException {
         if (configNodeService == null) {
             throw new ConfigurationException("ConfigNodeService can not be null");
         }
@@ -45,21 +46,22 @@ public class DecoderRegistry implements DecoderService {
     }
 
     @Override
-    public void addDecoders(List<Decoder> addDecoders) {
+    public void addDecoders(List<Decoder<?>> addDecoders) {
         decoders.addAll(addDecoders);
     }
 
     @Override
-    public List<Decoder> getDecoders() {
+    public List<Decoder<?>> getDecoders() {
         return decoders;
     }
 
     @Override
-    public void setDecoders(List<Decoder> decoders) {
+    public void setDecoders(List<Decoder<?>> decoders) {
         this.decoders = decoders;
     }
 
-    <T> List<Decoder> getDecoderForClass(TypeCapture<T> klass) {
+    @SuppressWarnings("rawtypes")
+    protected <T> List<Decoder> getDecoderForClass(TypeCapture<T> klass) {
         return decoders
             .stream()
             .filter(decoder -> decoder.matches(klass))
@@ -67,6 +69,7 @@ public class DecoderRegistry implements DecoderService {
     }
 
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass) {
         List<Decoder> classDecoder = getDecoderForClass(klass);
 

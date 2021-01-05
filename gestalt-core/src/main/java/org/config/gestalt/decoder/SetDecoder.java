@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SetDecoder extends CollectionDecoder {
+public class SetDecoder extends CollectionDecoder<Set<?>> {
 
     @Override
     public String name() {
@@ -23,8 +23,7 @@ public class SetDecoder extends CollectionDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected <T> ValidateOf<T> arrayDecode(String path, ConfigNode node, TypeCapture<T> klass, DecoderService decoderService) {
+    protected ValidateOf<Set<?>> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
         List<ValidationError> errors = new ArrayList<>();
         Set<Object> results = new HashSet<>(node.size());
 
@@ -45,6 +44,6 @@ public class SetDecoder extends CollectionDecoder {
         }
 
 
-        return ValidateOf.validateOf(!results.isEmpty() ? (T) results : null, errors);
+        return ValidateOf.validateOf(!results.isEmpty() ? results : null, errors);
     }
 }

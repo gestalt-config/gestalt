@@ -607,7 +607,7 @@ class GestaltTest {
         }
     }
 
-    public static class ExceptionDecoder extends LeafDecoder {
+    public static class ExceptionDecoder extends LeafDecoder<String> {
 
         @Override
         public String name() {

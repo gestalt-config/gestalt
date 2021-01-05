@@ -5,11 +5,6 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
  * .\gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json,xml
  * to get a list of dependencies that may need to be updated.
  */
-
-repositories {
-    jcenter()
-}
-
 plugins {
     id("com.github.ben-manes.versions")
 }

@@ -38,7 +38,7 @@ class DecoderRegistryTest {
         DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer);
 
-        List<Decoder> decoders = decoderRegistry.getDecoders();
+        List<Decoder<?>> decoders = decoderRegistry.getDecoders();
 
         Assertions.assertEquals(4, decoders.size());
     }
@@ -49,7 +49,7 @@ class DecoderRegistryTest {
         DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer);
 
-        List<Decoder> decoders = decoderRegistry.getDecoders();
+        List<Decoder<?>> decoders = decoderRegistry.getDecoders();
 
         Assertions.assertEquals(4, decoders.size());
 

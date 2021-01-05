@@ -7,7 +7,7 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.nio.charset.Charset;
 
-public class ByteDecoder extends LeafDecoder {
+public class ByteDecoder extends LeafDecoder<Byte> {
 
     @Override
     public String name() {
@@ -20,7 +20,6 @@ public class ByteDecoder extends LeafDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<Byte> leafDecode(String path, ConfigNode node) {
         ValidateOf<Byte> results;
 

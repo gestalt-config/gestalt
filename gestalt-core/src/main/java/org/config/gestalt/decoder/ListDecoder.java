@@ -8,7 +8,7 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListDecoder extends CollectionDecoder {
+public class ListDecoder extends CollectionDecoder<List<?>> {
 
     @Override
     public String name() {
@@ -21,8 +21,7 @@ public class ListDecoder extends CollectionDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected <T> ValidateOf<T> arrayDecode(String path, ConfigNode node, TypeCapture<T> klass, DecoderService decoderService) {
+    protected ValidateOf<List<?>> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
         List<ValidationError> errors = new ArrayList<>();
         List<Object> results = new ArrayList<>(node.size());
 
@@ -44,6 +43,6 @@ public class ListDecoder extends CollectionDecoder {
         }
 
 
-        return ValidateOf.validateOf(!results.isEmpty() ? (T) results : null, errors);
+        return ValidateOf.validateOf(!results.isEmpty() ? results : null, errors);
     }
 }

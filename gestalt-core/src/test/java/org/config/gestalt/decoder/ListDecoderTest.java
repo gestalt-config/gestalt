@@ -1,7 +1,6 @@
 package org.config.gestalt.decoder;
 
 import org.config.gestalt.exceptions.ConfigurationException;
-import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.lexer.SentenceLexer;
 import org.config.gestalt.node.*;
 import org.config.gestalt.reflect.TypeCapture;
@@ -24,9 +23,6 @@ class ListDecoderTest {
     ConfigNodeService configNodeService;
     DecoderService decoderService;
     SentenceLexer lexer;
-
-    ListDecoderTest() throws GestaltException {
-    }
 
     @BeforeEach
     void setup() throws ConfigurationException {
@@ -72,7 +68,7 @@ class ListDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<String>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<String>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<String>>() {
         }, decoderService);
 
         Assertions.assertFalse(values.hasErrors());
@@ -94,7 +90,7 @@ class ListDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertFalse(values.hasErrors());
@@ -117,7 +113,7 @@ class ListDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -136,7 +132,7 @@ class ListDecoderTest {
     void arrayDecodeLeaf() {
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", new LeafNode("0.1111, 0.22"), new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", new LeafNode("0.1111, 0.22"), new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertFalse(values.hasErrors());
@@ -151,7 +147,7 @@ class ListDecoderTest {
     void arrayDecodeNullLeaf() {
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", new LeafNode(null), new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", new LeafNode(null), new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -173,7 +169,7 @@ class ListDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -202,7 +198,7 @@ class ListDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -223,7 +219,7 @@ class ListDecoderTest {
     void arrayDecodeMapNode() {
         ListDecoder decoder = new ListDecoder();
 
-        ValidateOf<List<Double>> values = decoder.decode("db.hosts", new MapNode(new HashMap<>()), new TypeCapture<List<Double>>() {
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", new MapNode(new HashMap<>()), new TypeCapture<List<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());

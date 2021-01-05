@@ -24,9 +24,6 @@ class ArrayDecoderTest {
     DecoderRegistry decoderService;
     SentenceLexer lexer;
 
-    ArrayDecoderTest() {
-    }
-
     @BeforeEach
     void setup() throws ConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
@@ -35,12 +32,14 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes"})
     void name() {
         ArrayDecoder decoder = new ArrayDecoder();
         Assertions.assertEquals("Array", decoder.name());
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void matches() {
         ArrayDecoder decoder = new ArrayDecoder();
 
@@ -74,6 +73,7 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void arrayDecodeStrings() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -84,17 +84,20 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<String[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(String[].class), decoderService);
+        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(String[].class), decoderService);
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(3, values.results().length);
-        Assertions.assertEquals("John", values.results()[0]);
-        Assertions.assertEquals("Steve", values.results()[1]);
-        Assertions.assertEquals("Matt", values.results()[2]);
+
+        String[] results = (String[]) values.results();
+        Assertions.assertEquals(3, results.length);
+        Assertions.assertEquals("John", results[0]);
+        Assertions.assertEquals("Steve", results[1]);
+        Assertions.assertEquals("Matt", results[2]);
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void arrayDecodeDoubles() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -105,18 +108,21 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class), decoderService);
+        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class), decoderService);
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(3, values.results().length);
 
-        Assertions.assertEquals(0.1111, values.results()[0]);
-        Assertions.assertEquals(0.222, values.results()[1]);
-        Assertions.assertEquals(0.33, values.results()[2]);
+        Double[] results = (Double[]) values.results();
+        Assertions.assertEquals(3, results.length);
+
+        Assertions.assertEquals(0.1111, results[0]);
+        Assertions.assertEquals(0.222, results[1]);
+        Assertions.assertEquals(0.33, results[2]);
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void arrayDecodeDoublesMissingIndex() {
 
         ConfigNode[] arrayNode = new ConfigNode[4];
@@ -127,24 +133,26 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class),
+        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class),
             decoderService);
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(4, values.results().length);
+
+        Double[] results = (Double[]) values.results();
+        Assertions.assertEquals(4, results.length);
         Assertions.assertEquals(1, values.getErrors().size());
         Assertions.assertEquals("Missing array index: 2", values.getErrors().get(0).description());
 
-        Assertions.assertEquals(0.1111, values.results()[0]);
-        Assertions.assertEquals(0.222, values.results()[1]);
-        Assertions.assertNull(values.results()[2]);
-        Assertions.assertEquals(0.33, values.results()[3]);
+        Assertions.assertEquals(0.1111, results[0]);
+        Assertions.assertEquals(0.222, results[1]);
+        Assertions.assertNull(results[2]);
+        Assertions.assertEquals(0.33, results[3]);
     }
 
     @Test
     void arrayDecodeLeaf() {
-        ArrayDecoder decoder = new ArrayDecoder();
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", new LeafNode("0.1111, 0.22"), TypeCapture.of(Double[].class),
             decoderService);
@@ -152,14 +160,16 @@ class ArrayDecoderTest {
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
 
-        Assertions.assertEquals(2, values.results().length);
-        Assertions.assertEquals(0.1111, values.results()[0]);
-        Assertions.assertEquals(0.22, values.results()[1]);
+        Double[] results = values.results();
+
+        Assertions.assertEquals(2, results.length);
+        Assertions.assertEquals(0.1111, results[0]);
+        Assertions.assertEquals(0.22, results[1]);
     }
 
     @Test
     void arrayDecodeNullLeaf() {
-        ArrayDecoder decoder = new ArrayDecoder();
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", new LeafNode(null), TypeCapture.of(Double[].class),
             decoderService);
@@ -181,7 +191,7 @@ class ArrayDecoderTest {
         arrayNode[2] = new LeafNode("Tom");
 
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
-        ArrayDecoder decoder = new ArrayDecoder();
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class),
             decoderService);
@@ -210,7 +220,7 @@ class ArrayDecoderTest {
         arrayNode[2] = new LeafNode("Tom");
 
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
-        ArrayDecoder decoder = new ArrayDecoder();
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class),
             decoderService);
@@ -226,12 +236,13 @@ class ArrayDecoderTest {
                 "LeafNode{value='Tom'} attempting to decode Double",
             values.getErrors().get(1).description());
 
-        Assertions.assertEquals(0.22, values.results()[1]);
+        Double[] results = values.results();
+        Assertions.assertEquals(0.22, results[1]);
     }
 
     @Test
     void arrayDecodeMapNode() {
-        ArrayDecoder decoder = new ArrayDecoder();
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", new MapNode(new HashMap<>()), TypeCapture.of(Double[].class),
             decoderService);

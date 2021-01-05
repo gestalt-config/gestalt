@@ -60,6 +60,7 @@ class SetDecoderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void arrayDecodeStrings() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -70,19 +71,22 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<String>> values = decoder.decode("", nodes, new TypeCapture<Set<String>>() {
+        ValidateOf<Set<?>> values = decoder.decode("", nodes, new TypeCapture<Set<String>>() {
         }, decoderService);
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
         Assertions.assertEquals(3, values.results().size());
-        assertThat(values.results())
+        Set<String> results = (Set<String>) values.results();
+
+        assertThat(results)
             .contains("John")
             .contains("Steve")
             .contains("Matt");
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void arrayDecodeDoubles() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -93,20 +97,22 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("", nodes, new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("", nodes, new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
         Assertions.assertEquals(3, values.results().size());
 
-        assertThat(values.results())
+        Set<Double> results = (Set<Double>) values.results();
+        assertThat(results)
             .contains(0.1111)
             .contains(0.222)
             .contains(0.33);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void arrayDecodeDoublesMissingIndex() {
 
         ConfigNode[] arrayNode = new ConfigNode[4];
@@ -117,7 +123,7 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -126,24 +132,27 @@ class SetDecoderTest {
         Assertions.assertEquals(1, values.getErrors().size());
         Assertions.assertEquals("Missing array index: 2 for path: db.hosts", values.getErrors().get(0).description());
 
-        assertThat(values.results())
+        Set<Double> results = (Set<Double>) values.results();
+        assertThat(results)
             .contains(0.1111)
             .contains(0.222)
             .contains(0.33);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void arrayDecodeLeaf() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("db.hosts", new LeafNode("0.1111, 0.22"), new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new LeafNode("0.1111, 0.22"), new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
 
         Assertions.assertEquals(2, values.results().size());
-        assertThat(values.results())
+        Set<Double> results = (Set<Double>) values.results();
+        assertThat(results)
             .contains(0.1111)
             .contains(0.22);
     }
@@ -152,7 +161,7 @@ class SetDecoderTest {
     void arrayDecodeNullLeaf() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("", new LeafNode(null), new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("", new LeafNode(null), new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -174,7 +183,7 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -193,6 +202,7 @@ class SetDecoderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void arrayDecodeMixedWrongTypeDoubles() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -203,7 +213,7 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
@@ -217,7 +227,8 @@ class SetDecoderTest {
                 "attempting to decode Double",
             values.getErrors().get(1).description());
 
-        assertThat(values.results())
+        Set<Double> results = (Set<Double>) values.results();
+        assertThat(results)
             .contains(0.22);
     }
 
@@ -225,7 +236,7 @@ class SetDecoderTest {
     void arrayDecodeMapNode() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<Double>> values = decoder.decode("db.hosts", new MapNode(new HashMap<>()), new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new MapNode(new HashMap<>()), new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());

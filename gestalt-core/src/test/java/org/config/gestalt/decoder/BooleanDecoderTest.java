@@ -47,7 +47,7 @@ class BooleanDecoderTest {
     void decode() throws GestaltException {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("true"), TypeCapture.of(Integer.class),
+        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("true"), TypeCapture.of(Boolean.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
@@ -58,7 +58,7 @@ class BooleanDecoderTest {
     void decodeFalse() throws GestaltException {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("false"), TypeCapture.of(Integer.class),
+        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("false"), TypeCapture.of(Boolean.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
@@ -69,7 +69,7 @@ class BooleanDecoderTest {
     void decodeFalseNull() throws GestaltException {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode(null), TypeCapture.of(Integer.class),
+        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode(null), TypeCapture.of(Boolean.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
