@@ -8,7 +8,12 @@ import org.config.gestalt.utils.ValidateOf;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class EnumDecoder extends LeafDecoder {
+public class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
+
+    @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
 
     @Override
     public String name() {
@@ -22,7 +27,7 @@ public class EnumDecoder extends LeafDecoder {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T> ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<T> type) {
+    protected ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
         String value = node.getValue().orElse("");
         try {
             Class<?> klass = type.getRawType();
@@ -44,7 +49,7 @@ public class EnumDecoder extends LeafDecoder {
     }
 
     @Override
-    protected <T> ValidateOf<T> leafDecode(String path, ConfigNode node) {
+    protected ValidateOf<T> leafDecode(String path, ConfigNode node) {
         // not called.
         return null;
     }

@@ -1,13 +1,9 @@
 import net.ltgt.gradle.errorprone.errorprone
+import org.config.gestalt.Plugins
 
 /**
  * Apply to all modules to include multiple code quality plugins to your module.
  */
-
-repositories {
-    mavenCentral()
-}
-
 plugins {
     id("net.ltgt.errorprone")
     checkstyle

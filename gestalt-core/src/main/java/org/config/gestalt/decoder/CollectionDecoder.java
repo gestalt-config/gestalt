@@ -8,13 +8,19 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class CollectionDecoder implements Decoder {
+public abstract class CollectionDecoder<T extends Collection<?>> implements Decoder<T> {
 
     @Override
-    public <T> ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<T> type, DecoderService decoderService) {
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
+    public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         ValidateOf<T> results;
         if (node instanceof ArrayNode) {
             results = arrayDecode(path, node, type, decoderService);
@@ -34,5 +40,5 @@ public abstract class CollectionDecoder implements Decoder {
         return results;
     }
 
-    protected abstract <T> ValidateOf<T> arrayDecode(String path, ConfigNode node, TypeCapture<T> klass, DecoderService decoderService);
+    protected abstract ValidateOf<T> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService);
 }

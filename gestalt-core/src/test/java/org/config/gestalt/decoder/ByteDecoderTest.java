@@ -34,6 +34,12 @@ class ByteDecoderTest {
     }
 
     @Test
+    void priority() {
+        ByteDecoder decoder = new ByteDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         ByteDecoder decoder = new ByteDecoder();
 

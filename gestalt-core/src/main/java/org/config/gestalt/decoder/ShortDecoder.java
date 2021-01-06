@@ -6,7 +6,12 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
-public class ShortDecoder extends LeafDecoder {
+public class ShortDecoder extends LeafDecoder<Short> {
+
+    @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
 
     @Override
     public String name() {
@@ -19,7 +24,6 @@ public class ShortDecoder extends LeafDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<Short> leafDecode(String path, ConfigNode node) {
         ValidateOf<Short> results;
 

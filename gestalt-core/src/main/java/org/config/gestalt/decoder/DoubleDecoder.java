@@ -6,7 +6,12 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
-public class DoubleDecoder extends LeafDecoder {
+public class DoubleDecoder extends LeafDecoder<Double> {
+
+    @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
 
     @Override
     public String name() {
@@ -19,7 +24,6 @@ public class DoubleDecoder extends LeafDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<Double> leafDecode(String path, ConfigNode node) {
         ValidateOf<Double> results;
 

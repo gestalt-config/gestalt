@@ -29,7 +29,7 @@ public class GestaltBuilder {
     private ConfigNodeService configNodeService = new ConfigNodeManager();
 
     private List<ConfigSource> sources = new ArrayList<>();
-    private List<Decoder> decoders = new ArrayList<>();
+    private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
 
     private boolean useCacheDecorator = true;
@@ -40,9 +40,10 @@ public class GestaltBuilder {
     private Boolean envVarsTreatErrorsAsWarnings = null;
 
     public GestaltBuilder addDefaultDecoders() {
-        decoders.addAll(Arrays.asList(new ArrayDecoder(), new BooleanDecoder(),
+        List<Decoder<?>> decoders = Arrays.asList(new ArrayDecoder(), new BooleanDecoder(),
             new ByteDecoder(), new CharDecoder(), new DoubleDecoder(), new EnumDecoder(), new FloatDecoder(), new IntegerDecoder(),
-            new ListDecoder(), new LongDecoder(), new ObjectDecoder(), new SetDecoder(), new ShortDecoder(), new StringDecoder()));
+            new ListDecoder(), new LongDecoder(), new ObjectDecoder(), new SetDecoder(), new ShortDecoder(), new StringDecoder());
+        this.decoders.addAll(decoders);
         return this;
     }
 
@@ -130,7 +131,7 @@ public class GestaltBuilder {
         return this;
     }
 
-    public GestaltBuilder setDecoders(List<Decoder> decoders) throws ConfigurationException {
+    public GestaltBuilder setDecoders(List<Decoder<?>> decoders) throws ConfigurationException {
         if (decoders == null || decoders.isEmpty()) {
             throw new ConfigurationException("No decoders provided while setting decoders");
         }
@@ -138,7 +139,7 @@ public class GestaltBuilder {
         return this;
     }
 
-    public GestaltBuilder addDecoders(List<Decoder> decoders) throws ConfigurationException {
+    public GestaltBuilder addDecoders(List<Decoder<?>> decoders) throws ConfigurationException {
         if (decoders == null || decoders.isEmpty()) {
             throw new ConfigurationException("No decoders provided while adding decoders");
         }
@@ -177,8 +178,8 @@ public class GestaltBuilder {
         return this;
     }
 
-    protected List<Decoder> dedupeDecoders() {
-        Map<String, List<Decoder>> decoderMap = decoders
+    protected List<Decoder<?>> dedupeDecoders() {
+        Map<String, List<Decoder<?>>> decoderMap = decoders
             .stream()
             .collect(Collectors.groupingBy(Decoder::name))
             .entrySet()
@@ -231,7 +232,7 @@ public class GestaltBuilder {
             decoderService = new DecoderRegistry(decoders, configNodeService, sentenceLexer);
         } else {
             decoders.addAll(decoderService.getDecoders());
-            List<Decoder> dedupedDecoders = dedupeDecoders();
+            List<Decoder<?>> dedupedDecoders = dedupeDecoders();
             decoderService.setDecoders(dedupedDecoders);
         }
 

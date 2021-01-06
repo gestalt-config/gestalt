@@ -1,3 +1,5 @@
+import org.config.gestalt.Application
+
 /*
  * Apply the java Plugin to add support for Java.
  * Adds a set of common dependancies all modules need.

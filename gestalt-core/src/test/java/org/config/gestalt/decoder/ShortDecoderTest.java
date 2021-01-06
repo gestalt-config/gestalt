@@ -34,6 +34,12 @@ class ShortDecoderTest {
     }
 
     @Test
+    void priority() {
+        ShortDecoder decoder = new ShortDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         ShortDecoder decoder = new ShortDecoder();
 

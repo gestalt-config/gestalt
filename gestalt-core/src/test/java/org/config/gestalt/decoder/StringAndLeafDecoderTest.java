@@ -35,6 +35,12 @@ class StringAndLeafDecoderTest {
     }
 
     @Test
+    void priority() {
+        StringDecoder decoder = new StringDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         StringDecoder stringDecoder = new StringDecoder();
 

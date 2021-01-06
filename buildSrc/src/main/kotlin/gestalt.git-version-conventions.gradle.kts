@@ -4,11 +4,6 @@ import com.palantir.gradle.gitversion.VersionDetails
  * Apply to your main gradle build script to
  * Set all project versions to the last git tag if clean, tag and the git hash otherwise
  */
-
-repositories {
-    jcenter()
-}
-
 plugins {
     id("com.palantir.git-version")
 }

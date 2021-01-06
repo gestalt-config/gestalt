@@ -607,7 +607,12 @@ class GestaltTest {
         }
     }
 
-    public static class ExceptionDecoder extends LeafDecoder {
+    public static class ExceptionDecoder extends LeafDecoder<String> {
+
+        @Override
+        public Priority priority() {
+            return Priority.MEDIUM;
+        }
 
         @Override
         public String name() {

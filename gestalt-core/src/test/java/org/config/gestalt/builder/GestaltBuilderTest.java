@@ -45,7 +45,7 @@ class GestaltBuilderTest {
         List<ConfigSource> sources = new ArrayList<>();
         sources.add(new MapConfigSource(configs));
 
-        List<Decoder> decoders = new ArrayList<>(Arrays.asList(new StringDecoder(), new DoubleDecoder()));
+        List<Decoder<?>> decoders = new ArrayList<>(Arrays.asList(new StringDecoder(), new DoubleDecoder()));
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer();
@@ -261,7 +261,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
-        List<Decoder> decoders = new ArrayList<>(Arrays.asList(new StringDecoder(), new DoubleDecoder()));
+        List<Decoder<?>> decoders = new ArrayList<>(Arrays.asList(new StringDecoder(), new DoubleDecoder()));
 
         List<ConfigLoader> configLoaders = new ArrayList<>(Collections.singletonList(new MapConfigLoader()));
 

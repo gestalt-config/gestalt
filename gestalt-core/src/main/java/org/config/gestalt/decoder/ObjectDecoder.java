@@ -10,12 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class ObjectDecoder implements Decoder {
+public class ObjectDecoder implements Decoder<Object> {
     private static final Logger logger = LoggerFactory.getLogger(ObjectDecoder.class.getName());
+
+    private final Set<Class<?>> ignoreTypes;
+
+    public ObjectDecoder() {
+        ignoreTypes = getIgnoreTypes();
+    }
+
+    @Override
+    public Priority priority() {
+        return Priority.VERY_LOW;
+    }
 
     @Override
     public String name() {
@@ -24,13 +33,19 @@ public class ObjectDecoder implements Decoder {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.getRawType().isMemberClass();
+        return !klass.getRawType().isPrimitive() && !klass.getRawType().isArray() && !klass.getRawType().isEnum() &&
+            !klass.hasParameter() && !ignoreTypes.contains(klass.getRawType());
+    }
+
+    private Set<Class<?>> getIgnoreTypes() {
+        return new HashSet<>(Arrays.asList(
+            Boolean.class, Byte.class, Character.class, Double.class, Float.class, Integer.class, Long.class,
+            Short.class, String.class, Void.class));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<T> type, DecoderService decoderService) {
-        ValidateOf<T> results;
+    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+        ValidateOf<Object> results;
         if (node instanceof MapNode) {
             Class<?> klass = type.getRawType();
 
@@ -42,7 +57,7 @@ public class ObjectDecoder implements Decoder {
 
                 List<ValidationError> errors = new ArrayList<>();
 
-                T obj = (T) klass.getDeclaredConstructor().newInstance();
+                Object obj = klass.getDeclaredConstructor().newInstance();
 
                 List<Field> classFields = getClassFields(klass);
                 for (Field field : classFields) {

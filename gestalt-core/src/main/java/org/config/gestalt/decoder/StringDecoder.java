@@ -4,7 +4,12 @@ import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
-public class StringDecoder extends LeafDecoder {
+public class StringDecoder extends LeafDecoder<String> {
+
+    @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
 
     @Override
     public String name() {
@@ -17,7 +22,6 @@ public class StringDecoder extends LeafDecoder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<String> leafDecode(String path, ConfigNode node) {
         return ValidateOf.valid(node.getValue().orElse(""));
     }

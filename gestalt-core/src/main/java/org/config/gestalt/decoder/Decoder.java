@@ -4,11 +4,13 @@ import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
-public interface Decoder {
+public interface Decoder<T> {
+
+    Priority priority();
 
     String name();
 
     boolean matches(TypeCapture<?> klass);
 
-    <T> ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<T> type, DecoderService decoderService);
+    ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService);
 }

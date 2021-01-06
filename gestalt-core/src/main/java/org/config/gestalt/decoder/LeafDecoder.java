@@ -6,11 +6,10 @@ import org.config.gestalt.node.LeafNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
-public abstract class LeafDecoder implements Decoder {
+public abstract class LeafDecoder<T> implements Decoder<T> {
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> ValidateOf decode(String path, ConfigNode node, TypeCapture<T> type, DecoderService decoderService) {
+    public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         ValidateOf<T> results;
         if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {
@@ -24,9 +23,9 @@ public abstract class LeafDecoder implements Decoder {
         return results;
     }
 
-    protected <T> ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<T> type) {
+    protected ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
         return leafDecode(path, node);
     }
 
-    protected abstract <T> ValidateOf<T> leafDecode(String path, ConfigNode node);
+    protected abstract ValidateOf<T> leafDecode(String path, ConfigNode node);
 }

@@ -34,6 +34,12 @@ class LongDecoderTest {
     }
 
     @Test
+    void priority() {
+        LongDecoder decoder = new LongDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         LongDecoder longDecoder = new LongDecoder();
 

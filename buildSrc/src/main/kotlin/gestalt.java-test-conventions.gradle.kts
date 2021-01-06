@@ -1,3 +1,5 @@
+import org.config.gestalt.Test
+
 /*
  * Apply the plugin to setup testing dependencies and tasks.
  */

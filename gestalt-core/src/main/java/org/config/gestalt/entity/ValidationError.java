@@ -3,6 +3,8 @@ package org.config.gestalt.entity;
 import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.token.Token;
 
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class ValidationError {
@@ -379,6 +381,22 @@ public abstract class ValidationError {
         }
     }
 
+    public static class DecodingExpectedMap extends ValidationError {
+        private final String path;
+        private final Type[] types;
+
+        public DecodingExpectedMap(String path, Type[] types) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.types = types;
+        }
+
+        @Override
+        public String description() {
+            return "Expected a map on path: " + path + ", received inavalid types: " + Arrays.asList(types).toString();
+        }
+    }
+
     public static class DecodingNumberParsing extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -444,6 +462,34 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Expected a Byte on path: " + path + ", decoding node: " + node + " received the wrong size";
+        }
+    }
+
+    public static class DecodersMapKeyNull extends ValidationError {
+        private final String path;
+
+        public DecodersMapKeyNull(String path) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Map key was null on path: " + path;
+        }
+    }
+
+    public static class DecodersMapValueNull extends ValidationError {
+        private final String path;
+
+        public DecodersMapValueNull(String path) {
+            super(ValidationLevel.WARN);
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Map key was null on path: " + path;
         }
     }
 

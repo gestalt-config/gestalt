@@ -20,9 +20,6 @@ class ObjectDecoderTest {
     SentenceLexer lexer = new PathLexer();
     DecoderRegistry registry;
 
-    ObjectDecoderTest() {
-    }
-
     @BeforeEach
     void setup() throws ConfigurationException {
         configNodeService = new ConfigNodeManager();
@@ -37,18 +34,29 @@ class ObjectDecoderTest {
     }
 
     @Test
+    void priority() {
+        ObjectDecoder decoder = new ObjectDecoder();
+        Assertions.assertEquals(Priority.VERY_LOW, decoder.priority());
+    }
+
+    @Test
     void matches() {
         ObjectDecoder decoder = new ObjectDecoder();
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(DBInfo.class)));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfo.class)));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfoExtended.class)));
         Assertions.assertFalse(decoder.matches(TypeCapture.of(Long.class)));
         Assertions.assertFalse(decoder.matches(new TypeCapture<Long>() {
         }));
         Assertions.assertFalse(decoder.matches(TypeCapture.of(long.class)));
 
         Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(Date.class)));
         Assertions.assertFalse(decoder.matches(new TypeCapture<List<Long>>() {
+        }));
+        Assertions.assertFalse(decoder.matches(new TypeCapture<Map<String, Long>>() {
+        }));
+        Assertions.assertFalse(decoder.matches(new TypeCapture<DBInfoGeneric<String>>() {
         }));
     }
 
@@ -61,13 +69,14 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<DBInfo> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfo.class), registry);
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfo.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertEquals(100, validate.results().getPort());
-        Assertions.assertEquals("pass", validate.results().getPassword());
-        Assertions.assertEquals("mysql.com", validate.results().getUri());
-        Assertions.assertEquals(0, validate.getErrors().size());
+
+        DBInfo results = (DBInfo) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
@@ -80,15 +89,17 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
         configs.put("user", new LeafNode("Ted"));
 
-        ValidateOf<DBInfoExtended> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoExtended.class),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoExtended.class),
             registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertEquals(100, validate.results().getPort());
-        Assertions.assertEquals("pass", validate.results().getPassword());
-        Assertions.assertEquals("mysql.com", validate.results().getUri());
-        Assertions.assertEquals("Ted", validate.results().getUser());
-        Assertions.assertEquals(10000, validate.results().getTimeout());
+
+        DBInfoExtended results = (DBInfoExtended) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals("Ted", results.getUser());
+        Assertions.assertEquals(10000, results.getTimeout());
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Unable to find object node for path: db.host.timeout, at token: ObjectToken",
@@ -105,7 +116,7 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<DBInfoNoDefaultConstructor> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBInfoNoDefaultConstructor.class), registry);
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -125,7 +136,7 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<DBInfoPrivateConstructor> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBInfoPrivateConstructor.class), registry);
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -144,7 +155,7 @@ class ObjectDecoderTest {
         configs.put("port", new LeafNode("100"));
         configs.put("uri", new LeafNode("mysql.com"));
 
-        ValidateOf<DBInforNoConstructor> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBInforNoConstructor.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -153,9 +164,10 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to find object node for path: db.host.password, at token: ObjectToken",
             validate.getErrors().get(0).description());
 
-        Assertions.assertEquals(100, validate.results().getPort());
-        Assertions.assertEquals("password", validate.results().getPassword());
-        Assertions.assertEquals("mysql.com", validate.results().getUri());
+        DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("password", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
@@ -167,7 +179,7 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<DBInforNoConstructor> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBInforNoConstructor.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -179,9 +191,10 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int",
             validate.getErrors().get(1).description());
 
-        Assertions.assertEquals(100, validate.results().getPort());
-        Assertions.assertEquals("pass", validate.results().getPassword());
-        Assertions.assertEquals("mysql.com", validate.results().getUri());
+        DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
@@ -193,7 +206,7 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<DBInforNoConstructor> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBInforNoConstructor.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -204,9 +217,10 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int",
             validate.getErrors().get(1).description());
 
-        Assertions.assertEquals(100, validate.results().getPort());
-        Assertions.assertEquals("pass", validate.results().getPassword());
-        Assertions.assertEquals("mysql.com", validate.results().getUri());
+        DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
@@ -218,7 +232,7 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<DBInforNoConstructor> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBInforNoConstructor.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -227,16 +241,17 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to find object node for path: db.host.port, at token: ObjectToken",
             validate.getErrors().get(0).description());
 
-        Assertions.assertEquals(100, validate.results().getPort());
-        Assertions.assertEquals("pass", validate.results().getPassword());
-        Assertions.assertEquals("mysql.com", validate.results().getUri());
+        DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
     void decodeWrongNodeType() {
         ObjectDecoder decoder = new ObjectDecoder();
 
-        ValidateOf<DBInforNoConstructor> validate = decoder.decode("db.host", new LeafNode("mysql.com"),
+        ValidateOf<Object> validate = decoder.decode("db.host", new LeafNode("mysql.com"),
             TypeCapture.of(DBInforNoConstructor.class), registry);
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -258,7 +273,7 @@ class ObjectDecoderTest {
         configs.put("keepalivetimeoutms", new LeafNode("123"));
         configs.put("idletimeoutsec", new LeafNode("1000"));
 
-        ValidateOf<DBPool> validate = decoder.decode("db.host", new MapNode(configs),
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
             TypeCapture.of(DBPool.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -267,11 +282,12 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to find object node for path: db.host.defaultWait, at token: ObjectToken",
             validate.getErrors().get(0).description());
 
-        Assertions.assertEquals(100, validate.results().maxTotal);
-        Assertions.assertEquals(10, validate.results().maxPerRoute);
-        Assertions.assertEquals(60, validate.results().validateAfterInactivity);
-        Assertions.assertEquals(123, validate.results().keepAliveTimeoutMs);
-        Assertions.assertEquals(1000, validate.results().idleTimeoutSec);
-        Assertions.assertEquals(33.0F, validate.results().defaultWait);
+        DBPool results = (DBPool) validate.results();
+        Assertions.assertEquals(100, results.maxTotal);
+        Assertions.assertEquals(10, results.maxPerRoute);
+        Assertions.assertEquals(60, results.validateAfterInactivity);
+        Assertions.assertEquals(123, results.keepAliveTimeoutMs);
+        Assertions.assertEquals(1000, results.idleTimeoutSec);
+        Assertions.assertEquals(33.0F, results.defaultWait);
     }
 }
