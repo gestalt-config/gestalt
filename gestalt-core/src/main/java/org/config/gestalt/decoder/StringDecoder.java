@@ -7,6 +7,11 @@ import org.config.gestalt.utils.ValidateOf;
 public class StringDecoder extends LeafDecoder<String> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "String";
     }

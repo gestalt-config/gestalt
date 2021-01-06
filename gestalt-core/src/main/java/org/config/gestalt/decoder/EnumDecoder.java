@@ -11,6 +11,11 @@ import java.lang.reflect.Method;
 public class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Enum";
     }

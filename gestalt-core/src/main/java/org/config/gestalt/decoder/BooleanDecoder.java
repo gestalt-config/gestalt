@@ -7,6 +7,11 @@ import org.config.gestalt.utils.ValidateOf;
 public class BooleanDecoder extends LeafDecoder<Boolean> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Boolean";
     }

@@ -11,6 +11,11 @@ import java.util.List;
 public class CharDecoder extends LeafDecoder<Character> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Character";
     }

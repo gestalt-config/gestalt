@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,11 +73,13 @@ public class DecoderRegistry implements DecoderService {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass) {
         List<Decoder> classDecoder = getDecoderForClass(klass);
-
-        if (classDecoder.isEmpty()) {
+        classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
+        if (configNode == null) {
+            return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
+        } else if (classDecoder.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));
         } else if (classDecoder.size() > 1) {
-            logger.warn("Found multiple decoders for {}, found: {}", klass, classDecoder);
+            logger.warn("Found multiple decoders for {}, found: {}, using {}: ", klass, classDecoder, classDecoder.get(0));
         }
 
         return classDecoder.get(0).decode(path, configNode, klass, this);

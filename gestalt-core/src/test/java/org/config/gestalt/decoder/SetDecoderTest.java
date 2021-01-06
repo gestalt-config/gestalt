@@ -40,6 +40,12 @@ class SetDecoderTest {
     }
 
     @Test
+    void priority() {
+        SetDecoder decoder = new SetDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         SetDecoder decoder = new SetDecoder();
         Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));

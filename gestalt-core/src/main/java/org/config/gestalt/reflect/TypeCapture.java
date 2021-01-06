@@ -8,28 +8,33 @@ public class TypeCapture<T> {
     final Type type;
     final int hashCode;
 
+    @SuppressWarnings("unchecked")
     protected TypeCapture() {
         this.type = getSuperclassTypeParameter(getClass());
         this.rawType = (Class<? super T>) buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
+    @SuppressWarnings("unchecked")
     private TypeCapture(Class<T> klass) {
         this.type = klass;
         this.rawType = (Class<? super T>) buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
+    @SuppressWarnings("unchecked")
     private TypeCapture(Type klass) {
         this.type = klass;
         this.rawType = (Class<? super T>) buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> TypeCapture<T> of(Class<T> klass) {       // NOPMD
         return new TypeCapture(klass);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> TypeCapture<T> of(Type klass) {       // NOPMD
         return new TypeCapture(klass);
     }
@@ -42,6 +47,15 @@ public class TypeCapture<T> {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
             return (Class<?>) parameterized.getActualTypeArguments()[0];
+        } else {
+            return null;
+        }
+    }
+
+    public Type[] getParameterTypes() {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterized = (ParameterizedType) type;
+            return parameterized.getActualTypeArguments();
         } else {
             return null;
         }

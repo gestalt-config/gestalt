@@ -9,6 +9,11 @@ import org.config.gestalt.utils.ValidateOf;
 public class FloatDecoder extends LeafDecoder<Float> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Float";
     }

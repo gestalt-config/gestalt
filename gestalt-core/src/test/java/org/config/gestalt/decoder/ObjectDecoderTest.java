@@ -20,9 +20,6 @@ class ObjectDecoderTest {
     SentenceLexer lexer = new PathLexer();
     DecoderRegistry registry;
 
-    ObjectDecoderTest() {
-    }
-
     @BeforeEach
     void setup() throws ConfigurationException {
         configNodeService = new ConfigNodeManager();
@@ -37,18 +34,29 @@ class ObjectDecoderTest {
     }
 
     @Test
+    void priority() {
+        ObjectDecoder decoder = new ObjectDecoder();
+        Assertions.assertEquals(Priority.VERY_LOW, decoder.priority());
+    }
+
+    @Test
     void matches() {
         ObjectDecoder decoder = new ObjectDecoder();
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(DBInfo.class)));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfo.class)));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfoExtended.class)));
         Assertions.assertFalse(decoder.matches(TypeCapture.of(Long.class)));
         Assertions.assertFalse(decoder.matches(new TypeCapture<Long>() {
         }));
         Assertions.assertFalse(decoder.matches(TypeCapture.of(long.class)));
 
         Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertTrue(decoder.matches(TypeCapture.of(Date.class)));
         Assertions.assertFalse(decoder.matches(new TypeCapture<List<Long>>() {
+        }));
+        Assertions.assertFalse(decoder.matches(new TypeCapture<Map<String, Long>>() {
+        }));
+        Assertions.assertFalse(decoder.matches(new TypeCapture<DBInfoGeneric<String>>() {
         }));
     }
 

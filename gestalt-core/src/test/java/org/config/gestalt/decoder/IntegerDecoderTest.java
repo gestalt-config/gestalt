@@ -34,6 +34,12 @@ class IntegerDecoderTest {
     }
 
     @Test
+    void priority() {
+        IntegerDecoder decoder = new IntegerDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         IntegerDecoder integerDecoder = new IntegerDecoder();
 

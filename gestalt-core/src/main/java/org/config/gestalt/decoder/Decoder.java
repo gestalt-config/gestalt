@@ -6,6 +6,8 @@ import org.config.gestalt.utils.ValidateOf;
 
 public interface Decoder<T> {
 
+    Priority priority();
+
     String name();
 
     boolean matches(TypeCapture<?> klass);

@@ -33,6 +33,12 @@ class CharDecoderTest {
     }
 
     @Test
+    void priority() {
+        CharDecoder decoder = new CharDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         CharDecoder decoder = new CharDecoder();
 

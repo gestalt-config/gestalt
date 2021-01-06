@@ -167,6 +167,20 @@ class DecoderRegistryTest {
     }
 
     @Test
+    void decodeNodeDuplicatesCustom() throws GestaltException {
+        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder(), new LongDecoderCustomHigh(), new LongDecoderCustomVH()), configNodeService, lexer);
+
+        ConfigNode leaf = new LeafNode("100");
+
+        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class));
+        Assertions.assertTrue(test.hasResults());
+        Assertions.assertFalse(test.hasErrors());
+
+        Assertions.assertEquals(1000L, test.results());
+    }
+
+    @Test
     void decodeNodeEmpty() throws GestaltException {
         DecoderRegistry decoderRegistry = new DecoderRegistry(Collections.emptyList(), configNodeService, lexer);
 
@@ -246,5 +260,53 @@ class DecoderRegistryTest {
 
         Mockito.verify(lexer, Mockito.times(0)).scan(any());
         Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(), any());
+    }
+
+    private static class LongDecoderCustomHigh extends LeafDecoder<Long> {
+
+        @Override
+        public Priority priority() {
+            return Priority.HIGH;
+        }
+
+        @Override
+        public String name() {
+            return "LongDecoderCustom1";
+        }
+
+        @Override
+        public boolean matches(TypeCapture<?> klass) {
+            return klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class);
+        }
+
+
+        @Override
+        protected ValidateOf<Long> leafDecode(String path, ConfigNode node) {
+            return ValidateOf.valid(10L);
+        }
+    }
+
+    private static class LongDecoderCustomVH extends LeafDecoder<Long> {
+
+        @Override
+        public Priority priority() {
+            return Priority.VERY_HIGH;
+        }
+
+        @Override
+        public String name() {
+            return "LongDecoderCustom1";
+        }
+
+        @Override
+        public boolean matches(TypeCapture<?> klass) {
+            return klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class);
+        }
+
+
+        @Override
+        protected ValidateOf<Long> leafDecode(String path, ConfigNode node) {
+            return ValidateOf.valid(1000L);
+        }
     }
 }

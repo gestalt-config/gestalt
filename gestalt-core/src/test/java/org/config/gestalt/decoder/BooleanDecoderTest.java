@@ -28,6 +28,18 @@ class BooleanDecoderTest {
     }
 
     @Test
+    void name() {
+        BooleanDecoder decoder = new BooleanDecoder();
+        Assertions.assertEquals("Boolean", decoder.name());
+    }
+
+    @Test
+    void priority() {
+        BooleanDecoder decoder = new BooleanDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         BooleanDecoder decoder = new BooleanDecoder();
 

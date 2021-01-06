@@ -39,6 +39,13 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes"})
+    void priority() {
+        ArrayDecoder decoder = new ArrayDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     void matches() {
         ArrayDecoder decoder = new ArrayDecoder();

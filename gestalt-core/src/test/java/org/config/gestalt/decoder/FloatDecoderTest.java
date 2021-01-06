@@ -33,6 +33,12 @@ class FloatDecoderTest {
     }
 
     @Test
+    void priority() {
+        FloatDecoder decoder = new FloatDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         FloatDecoder floatDecoder = new FloatDecoder();
 

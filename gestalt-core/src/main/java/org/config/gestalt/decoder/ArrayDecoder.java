@@ -16,6 +16,11 @@ import java.util.stream.Collectors;
 public class ArrayDecoder<T> implements Decoder<T[]> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Array";
     }

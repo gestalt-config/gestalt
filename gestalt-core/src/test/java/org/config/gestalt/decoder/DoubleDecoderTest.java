@@ -33,6 +33,12 @@ class DoubleDecoderTest {
     }
 
     @Test
+    void priority() {
+        DoubleDecoder decoder = new DoubleDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 

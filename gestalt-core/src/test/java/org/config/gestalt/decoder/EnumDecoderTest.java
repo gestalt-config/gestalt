@@ -34,6 +34,12 @@ class EnumDecoderTest {
     }
 
     @Test
+    void priority() {
+        EnumDecoder decoder = new EnumDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         EnumDecoder decoder = new EnumDecoder();
 

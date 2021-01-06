@@ -38,6 +38,12 @@ class ListDecoderTest {
     }
 
     @Test
+    void priority() {
+        ListDecoder decoder = new ListDecoder();
+        Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
+    }
+
+    @Test
     void matches() {
         ListDecoder decoder = new ListDecoder();
         Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));

@@ -10,6 +10,11 @@ import java.nio.charset.Charset;
 public class ByteDecoder extends LeafDecoder<Byte> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Byte";
     }

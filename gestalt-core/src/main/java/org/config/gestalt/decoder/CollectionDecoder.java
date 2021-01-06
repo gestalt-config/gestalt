@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 public abstract class CollectionDecoder<T extends Collection<?>> implements Decoder<T> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         ValidateOf<T> results;
         if (node instanceof ArrayNode) {

@@ -9,6 +9,11 @@ import org.config.gestalt.utils.ValidateOf;
 public class DoubleDecoder extends LeafDecoder<Double> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Double";
     }

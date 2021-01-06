@@ -9,6 +9,11 @@ import org.config.gestalt.utils.ValidateOf;
 public class ShortDecoder extends LeafDecoder<Short> {
 
     @Override
+    public Priority priority() {
+        return Priority.MEDIUM;
+    }
+
+    @Override
     public String name() {
         return "Short";
     }
