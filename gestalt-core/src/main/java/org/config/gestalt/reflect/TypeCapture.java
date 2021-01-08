@@ -1,66 +1,83 @@
 package org.config.gestalt.reflect;
 
 import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TypeCapture<T> {
-    final Class<? super T> rawType;
-    final Type type;
-    final int hashCode;
+    protected Class<?> rawType;
+    protected Type type;
+    protected int hashCode;
 
-    @SuppressWarnings("unchecked")
     protected TypeCapture() {
         this.type = getSuperclassTypeParameter(getClass());
-        this.rawType = (Class<? super T>) buildRawType(type);
+        this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
-    @SuppressWarnings("unchecked")
-    private TypeCapture(Class<T> klass) {
+    protected TypeCapture(Class<T> klass) {
         this.type = klass;
-        this.rawType = (Class<? super T>) buildRawType(type);
+        this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
-    @SuppressWarnings("unchecked")
-    private TypeCapture(Type klass) {
+    protected TypeCapture(Type klass) {
         this.type = klass;
-        this.rawType = (Class<? super T>) buildRawType(type);
+        this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> TypeCapture<T> of(Class<T> klass) {       // NOPMD
-        return new TypeCapture(klass);
+    public static <T> TypeCapture<T> of(Class<T> klass) {   // NOPMD
+        return new TypeCapture<>(klass);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> TypeCapture<T> of(Type klass) {       // NOPMD
-        return new TypeCapture(klass);
+        return new TypeCapture<>(klass);
     }
 
     public boolean hasParameter() {
         return type instanceof ParameterizedType;
     }
 
-    public Class<?> getParameterType() {
+    public TypeCapture<?> getFirstParameterType() {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
-            return (Class<?>) parameterized.getActualTypeArguments()[0];
+            return TypeCapture.of(parameterized.getActualTypeArguments()[0]);
         } else {
             return null;
         }
     }
 
-    public Type[] getParameterTypes() {
+    public TypeCapture<?> getSecondParameterType() {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
-            return parameterized.getActualTypeArguments();
+            if (parameterized.getActualTypeArguments().length > 1) {
+                return TypeCapture.of(parameterized.getActualTypeArguments()[1]);
+            }
+        }
+
+        return null;
+    }
+
+    public List<TypeCapture<?>> getParameterTypes() {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterized = (ParameterizedType) type;
+            return Arrays.stream(parameterized.getActualTypeArguments())
+                .map(TypeCapture::of)
+                .collect(Collectors.toList());
         } else {
             return null;
         }
     }
 
+    /**
+     * Returns the Class representing the component type of an array.
+     * If this class does not represent an array class this method returns null.
+     *
+     * @return
+     */
     public Class<?> getComponentType() {
         if (type instanceof Class<?>) {
             Class<?> klass = (Class<?>) type;
@@ -74,6 +91,7 @@ public class TypeCapture<T> {
         return rawType;
     }
 
+
     public String getName() {
         return type.getTypeName();
     }
@@ -83,7 +101,7 @@ public class TypeCapture<T> {
     }
 
 
-    private Type getSuperclassTypeParameter(Class<?> subclass) {
+    protected Type getSuperclassTypeParameter(Class<?> subclass) {
         Type superclass = subclass.getGenericSuperclass();
         if (superclass instanceof Class) {
             throw new RuntimeException("Missing type parameter.");
@@ -94,7 +112,7 @@ public class TypeCapture<T> {
 
     // Lifted from Guice TypeLiteral
     // https://github.com/google/guice/blob/master/core/src/com/google/inject/TypeLiteral.java
-    private Class<?> buildRawType(Type type) {
+    protected Class<?> buildRawType(Type type) {
         if (type instanceof Class<?>) {
             // type is a normal class.
             return (Class<?>) type;
@@ -137,5 +155,13 @@ public class TypeCapture<T> {
     @Override
     public int hashCode() {
         return Objects.hash(rawType, type, hashCode);
+    }
+
+    public boolean isArray() {
+        return getRawType().isArray();
+    }
+
+    public boolean isEnum() {
+        return getRawType().isEnum();
     }
 }

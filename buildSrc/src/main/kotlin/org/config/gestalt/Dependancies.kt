@@ -6,12 +6,19 @@ package org.config.gestalt
 object Application {
     object Versions {
         const val slf4j = "1.7.30"
+
+        const val kotlinVersion = "1.4.21"
     }
 
     object Logging {
         const val slf4japi = "org.slf4j:slf4j-api:${Versions.slf4j}"
     }
+
+    object Kotlin {
+        const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:1.4.21"
+    }
 }
+
 
 object Test {
     private object Versions {

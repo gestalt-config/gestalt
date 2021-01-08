@@ -192,7 +192,8 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", String.class, "test"));
 
-        List<Host> hosts = gestalt.getConfig("db.hosts", new TypeCapture<List<Host>>() { }, Collections.emptyList());
+        List<Host> hosts = gestalt.getConfig("db.hosts", new TypeCapture<List<Host>>() {
+        }, Collections.emptyList());
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).user);
         Assertions.assertEquals("1234", hosts.get(0).password);
@@ -204,7 +205,8 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("9012", hosts.get(2).password);
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", new TypeCapture<List<Host>>() { }, Collections.emptyList());
+        List<Host> noHosts = gestalt.getConfig("db.not.hosts", new TypeCapture<List<Host>>() {
+        }, Collections.emptyList());
         Assertions.assertEquals(0, noHosts.size());
 
         User admin = gestalt.getConfig("admin", new TypeCapture<User>() {
@@ -216,7 +218,8 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(Role.LEVEL0, admin.accessRole);
         Assertions.assertTrue(admin.overrideEnabled);
 
-        User user = gestalt.getConfig("employee", new TypeCapture<User>() { });
+        User user = gestalt.getConfig("employee", new TypeCapture<User>() {
+        });
         Assertions.assertEquals(1, user.user.length);
         Assertions.assertEquals("Janice", user.user[0]);
         Assertions.assertEquals(Role.LEVEL1, user.accessRole);

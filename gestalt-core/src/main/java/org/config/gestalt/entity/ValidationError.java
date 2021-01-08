@@ -1,10 +1,9 @@
 package org.config.gestalt.entity;
 
 import org.config.gestalt.node.ConfigNode;
+import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.token.Token;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class ValidationError {
@@ -383,9 +382,9 @@ public abstract class ValidationError {
 
     public static class DecodingExpectedMap extends ValidationError {
         private final String path;
-        private final Type[] types;
+        private final List<TypeCapture<?>> types;
 
-        public DecodingExpectedMap(String path, Type[] types) {
+        public DecodingExpectedMap(String path, List<TypeCapture<?>> types) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.types = types;
@@ -393,7 +392,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Expected a map on path: " + path + ", received inavalid types: " + Arrays.asList(types).toString();
+            return "Expected a map on path: " + path + ", received inavalid types: " + types.toString();
         }
     }
 
@@ -526,6 +525,28 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Unable to find node matching path: " + path + ", for class: " + klass;
+        }
+    }
+
+    public static class NoResultsFoundForDecodingNode extends ValidationError {
+        private final String path;
+        private final String klass;
+
+        public NoResultsFoundForDecodingNode(String path, String klass) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.klass = klass;
+        }
+
+        public NoResultsFoundForDecodingNode(String path, Class<?> klass) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.klass = klass.getSimpleName();
+        }
+
+        @Override
+        public String description() {
+            return "Unable to decode node matching path: " + path + ", for class: " + klass;
         }
     }
 
