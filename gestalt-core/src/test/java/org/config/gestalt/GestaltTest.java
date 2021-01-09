@@ -193,32 +193,32 @@ class GestaltTest {
         List<ValidationError> errors = gestalt.getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
-        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class, "aaa"));
-        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class, "aaa"));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class, 1));
-        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class, 2L));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", "aaa", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", 1, Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", 2L, Long.class));
 
-        Assertions.assertEquals(123, gestalt.getConfig("redis.port", Integer.class, 123));
-        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", String.class, "redis.io"));
-        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", String.class, "redis.io"));
-        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", String.class, "Scott"));
+        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, Integer.class));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class));
+        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", String.class));
 
-        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
-        }, "aaa"));
-        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class), "aaa"));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
-        }, 1));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class), 1));
-        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), 2L));
-        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Long>() {
-        }, 2L));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", "aaa", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", 1, new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", 1, TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", 2L, TypeCapture.of(Long.class)));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", 2L, new TypeCapture<Long>() {
+        }));
 
-        Assertions.assertEquals(123, gestalt.getConfig("redis.port", TypeCapture.of(Integer.class), 123));
-        Assertions.assertEquals(123, gestalt.getConfig("redis.port", new TypeCapture<Integer>() {
-        }, 123));
-        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", TypeCapture.of(String.class), "redis.io"));
-        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", TypeCapture.of(String.class), "redis.io"));
-        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", TypeCapture.of(String.class), "Scott"));
+        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", TypeCapture.of(String.class)));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", TypeCapture.of(String.class)));
     }
 
     @Test
@@ -246,7 +246,7 @@ class GestaltTest {
         List<ValidationError> errors = gestalt.getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
-        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3a]", String.class, "Scott"));
+        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3a]", "Scott", String.class));
     }
 
     @Test

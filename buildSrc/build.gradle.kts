@@ -22,7 +22,7 @@ dependencies {
     implementation("net.ltgt.gradle:gradle-errorprone-plugin:1.3.0")
     implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.21")
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.15.0")
 }
 

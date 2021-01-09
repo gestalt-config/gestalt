@@ -115,12 +115,12 @@ public class GestaltCore implements Gestalt {
 
 
     @Override
-    public <T> T getConfig(String path, Class<T> klass, T defaultVal) {
-        return getConfig(path, TypeCapture.of(klass), defaultVal);
+    public <T> T getConfig(String path, T defaultVal, Class<T> klass) {
+        return getConfig(path, defaultVal, TypeCapture.of(klass));
     }
 
     @Override
-    public <T> T getConfig(String path, TypeCapture<T> klass, T defaultVal) {
+    public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(path);
         if (tokens.hasErrors()) {
             String errorMsg = ErrorsUtil.buildErrorMessage("Unable to parse path: " + path, tokens.getErrors());
