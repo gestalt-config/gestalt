@@ -33,7 +33,7 @@ public class ObjectDecoder implements Decoder<Object> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return !klass.getRawType().isPrimitive() && !klass.getRawType().isArray() && !klass.getRawType().isEnum() &&
+        return !klass.getRawType().isPrimitive() && !klass.isArray() && !klass.isEnum() &&
             !klass.hasParameter() && !ignoreTypes.contains(klass.getRawType());
     }
 
@@ -45,67 +45,65 @@ public class ObjectDecoder implements Decoder<Object> {
 
     @Override
     public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
-        ValidateOf<Object> results;
-        if (node instanceof MapNode) {
-            Class<?> klass = type.getRawType();
+        if (!(node instanceof MapNode)) {
+            return ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
+        }
 
-            try {
-                Constructor<?> constructor = klass.getDeclaredConstructor();
-                if (Modifier.isPrivate(constructor.getModifiers())) {
-                    return ValidateOf.inValid(new ValidationError.ConstructorNotPublic(path, klass.getName()));
-                }
+        Class<?> klass = type.getRawType();
 
-                List<ValidationError> errors = new ArrayList<>();
-
-                Object obj = klass.getDeclaredConstructor().newInstance();
-
-                List<Field> classFields = getClassFields(klass);
-                for (Field field : classFields) {
-                    int modifiers = field.getModifiers();
-                    String name = field.getName();
-                    Type fieldClass = field.getGenericType();
-
-                    String nextPath = path != null && !path.isEmpty() ? path + "." + name : name;
-
-                    if (!Modifier.isStatic(modifiers)) {
-                        field.setAccessible(true);
-
-                        ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
-
-                        errors.addAll(configNode.getErrors(ValidationLevel.WARN));
-                        if (configNode.hasErrors(ValidationLevel.ERROR)) {
-                            errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
-                        } else if (!configNode.hasResults()) {
-                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
-                        } else {
-                            ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
-                                TypeCapture.of(fieldClass));
-                            if (fieldValidateOf.hasErrors()) {
-                                errors.addAll(fieldValidateOf.getErrors());
-                            }
-
-                            if (fieldValidateOf.hasResults()) {
-                                field.set(obj, fieldValidateOf.results());
-                            } else {
-                                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
-                            }
-                        }
-                    } else {
-                        logger.warn("Ignoring static field for class: " + klass.getName() + " field " + name);
-                    }
-                }
-
-                return ValidateOf.validateOf(obj, errors);
-            } catch (NoSuchMethodException e) {
-                return ValidateOf.inValid(new ValidationError.NoDefaultConstructor(path, klass.getName()));
-            } catch (SecurityException | InstantiationException | IllegalAccessException |
-                IllegalArgumentException | InvocationTargetException e) {
+        try {
+            Constructor<?> constructor = klass.getDeclaredConstructor();
+            if (Modifier.isPrivate(constructor.getModifiers())) {
                 return ValidateOf.inValid(new ValidationError.ConstructorNotPublic(path, klass.getName()));
             }
-        } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
+
+            List<ValidationError> errors = new ArrayList<>();
+
+            Object obj = klass.getDeclaredConstructor().newInstance();
+
+            List<Field> classFields = getClassFields(klass);
+            for (Field field : classFields) {
+                int modifiers = field.getModifiers();
+                String name = field.getName();
+                Type fieldClass = field.getGenericType();
+
+                String nextPath = path != null && !path.isEmpty() ? path + "." + name : name;
+
+                if (!Modifier.isStatic(modifiers)) {
+                    field.setAccessible(true);
+
+                    ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
+
+                    errors.addAll(configNode.getErrors(ValidationLevel.WARN));
+                    if (configNode.hasErrors(ValidationLevel.ERROR)) {
+                        errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
+                    } else if (!configNode.hasResults()) {
+                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
+                    } else {
+                        ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
+                            TypeCapture.of(fieldClass));
+                        if (fieldValidateOf.hasErrors()) {
+                            errors.addAll(fieldValidateOf.getErrors());
+                        }
+
+                        if (fieldValidateOf.hasResults()) {
+                            field.set(obj, fieldValidateOf.results());
+                        } else {
+                            errors.add(new ValidationError.NoResultsFoundForDecodingNode(nextPath, field.getType()));
+                        }
+                    }
+                } else {
+                    logger.warn("Ignoring static field for class: " + klass.getName() + " field " + name);
+                }
+            }
+
+            return ValidateOf.validateOf(obj, errors);
+        } catch (NoSuchMethodException e) {
+            return ValidateOf.inValid(new ValidationError.NoDefaultConstructor(path, klass.getName()));
+        } catch (SecurityException | InstantiationException | IllegalAccessException |
+            IllegalArgumentException | InvocationTargetException e) {
+            return ValidateOf.inValid(new ValidationError.ConstructorNotPublic(path, klass.getName()));
         }
-        return results;
     }
 
     private List<Field> getClassFields(Class<?> klass) {

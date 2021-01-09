@@ -27,6 +27,5 @@ checkstyle {
 pmd {
     isConsoleOutput = true
     toolVersion = "6.21.0"
-    rulePriority = 5
     ruleSets = listOf(rootDir.path + "/config/pmd/custom_ruleset.xml")
 }

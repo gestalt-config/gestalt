@@ -8,7 +8,6 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.Pair;
 import org.config.gestalt.utils.ValidateOf;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class MapDecoder implements Decoder<Map<?, ?>> {
@@ -33,13 +32,13 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
         ValidateOf<Map<?, ?>> results;
         if (node instanceof MapNode) {
             MapNode mapNode = (MapNode) node;
-            Type[] genericInterfaces = type.getParameterTypes();
+            List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
 
-            if (genericInterfaces == null || genericInterfaces.length != 2) {
+            if (genericInterfaces == null || genericInterfaces.size() != 2) {
                 results = ValidateOf.inValid(new ValidationError.DecodingExpectedMap(path, genericInterfaces));
             } else {
-                Type keyType = genericInterfaces[0];
-                Type valueType = genericInterfaces[1];
+                TypeCapture<?> keyType = genericInterfaces.get(0);
+                TypeCapture<?> valueType = genericInterfaces.get(1);
 
                 List<ValidationError> errors = new ArrayList<>();
 
@@ -52,8 +51,10 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
                         }
 
                         String nextPath = path != null && !path.isEmpty() ? path + "." + key : key;
-                        ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key), TypeCapture.of(keyType));
-                        ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(), TypeCapture.of(valueType));
+                        ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key),
+                            (TypeCapture<Object>) keyType);
+                        ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(),
+                            (TypeCapture<Object>) valueType);
 
                         errors.addAll(keyValidate.getErrors());
                         errors.addAll(valueValidate.getErrors());

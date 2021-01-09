@@ -54,16 +54,16 @@ public class GestaltCache implements Gestalt {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getConfig(String path, Class<T> klass, T defaultVal) {
+    public <T> T getConfig(String path, T defaultVal, Class<T> klass) {
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
         Pair<String, TypeCapture<?>> key = new Pair<>(path, typeCapture);
-        return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, typeCapture, defaultVal));
+        return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, typeCapture));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getConfig(String path, TypeCapture<T> klass, T defaultVal) {
+    public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
         Pair<String, TypeCapture<?>> key = new Pair<>(path, klass);
-        return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, klass, defaultVal));
+        return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, klass));
     }
 }

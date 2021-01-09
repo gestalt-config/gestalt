@@ -188,7 +188,7 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
                 "LeafNode{value='aaaa'} attempting to decode Integer",
             validate.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int",
+        Assertions.assertEquals("Unable to decode node matching path: db.host.port, for class: int",
             validate.getErrors().get(1).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
@@ -214,7 +214,7 @@ class ObjectDecoderTest {
         Assertions.assertEquals(2, validate.getErrors().size());
         Assertions.assertEquals("Leaf on path: db.host.port, missing value, LeafNode{value='null'} attempting to decode Integer",
             validate.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int",
+        Assertions.assertEquals("Unable to decode node matching path: db.host.port, for class: int",
             validate.getErrors().get(1).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();

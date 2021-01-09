@@ -27,7 +27,7 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
 
     @Override
     public boolean matches(TypeCapture<?> type) {
-        return type.getRawType().isArray();
+        return type.isArray();
     }
 
     @Override

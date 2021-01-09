@@ -6,20 +6,27 @@ package org.config.gestalt
 object Application {
     object Versions {
         const val slf4j = "1.7.30"
+
+        const val kotlinVersion = "1.4.21"
     }
 
     object Logging {
         const val slf4japi = "org.slf4j:slf4j-api:${Versions.slf4j}"
     }
+
+    object Kotlin {
+        const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:1.4.21"
+    }
 }
+
 
 object Test {
     private object Versions {
         const val junit5 = "5.7.0"
         const val assertJ = "3.18.1"
-        const val mockito = "3.6.28"
-        const val mockk = "1.10.2"
-        const val kotlinTestAssertions = "4.3.0"
+        const val mockito = "3.7.0"
+        const val mockk = "1.10.4"
+        const val kotlinTestAssertions = "4.3.2"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
@@ -36,7 +43,7 @@ object Test {
 object Plugins {
     object Versions {
         const val errorprone = "2.4.0"
-        const val detekt = "1.14.2"
+        const val detekt = "1.15.0"
     }
 
     const val errorProne = "com.google.errorprone:error_prone_core:${Versions.errorprone}"

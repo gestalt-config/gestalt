@@ -29,7 +29,7 @@ public class ListDecoder extends CollectionDecoder<List<?>> {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
                 String nextPath = path != null && !path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
-                ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, TypeCapture.of(klass.getParameterType()));
+                ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, klass.getFirstParameterType());
 
                 errors.addAll(validateOf.getErrors());
                 if (validateOf.hasResults()) {

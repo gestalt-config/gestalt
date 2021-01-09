@@ -39,6 +39,7 @@ public class GestaltBuilder {
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean envVarsTreatErrorsAsWarnings = null;
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public GestaltBuilder addDefaultDecoders() {
         List<Decoder<?>> decoders = Arrays.asList(new ArrayDecoder(), new BooleanDecoder(),
             new ByteDecoder(), new CharDecoder(), new DoubleDecoder(), new EnumDecoder(), new FloatDecoder(), new IntegerDecoder(),
@@ -147,6 +148,7 @@ public class GestaltBuilder {
         return this;
     }
 
+    @SuppressWarnings("rawtypes")
     public GestaltBuilder addDecoder(Decoder decoder) {
         Objects.requireNonNull(decoder, "Decoder should not be null");
         this.decoders.add(decoder);

@@ -10,7 +10,7 @@ public interface Gestalt {
 
     <T> T getConfig(String path, TypeCapture<T> klass) throws GestaltException;
 
-    <T> T getConfig(String path, Class<T> klass, T defaultVal);
+    <T> T getConfig(String path, T defaultVal, Class<T> klass);
 
-    <T> T getConfig(String path, TypeCapture<T> klass, T defaultVal);
+    <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass);
 }
