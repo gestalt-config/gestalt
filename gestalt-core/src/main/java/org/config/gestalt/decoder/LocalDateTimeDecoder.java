@@ -11,14 +11,18 @@ import java.time.format.DateTimeParseException;
 
 public class LocalDateTimeDecoder extends LeafDecoder<LocalDateTime> {
 
-    private final DateTimeFormatter format;
+    private final DateTimeFormatter formatter;
 
     public LocalDateTimeDecoder() {
-        this.format = DateTimeFormatter.ISO_DATE_TIME;
+        this.formatter = DateTimeFormatter.ISO_DATE_TIME;
     }
 
-    public LocalDateTimeDecoder(String format) {
-        this.format = DateTimeFormatter.ofPattern(format);
+    public LocalDateTimeDecoder(String formatter) {
+        if(formatter  != null && !formatter.isEmpty()) {
+            this.formatter = DateTimeFormatter.ofPattern(formatter);
+        } else {
+            this.formatter = DateTimeFormatter.ISO_DATE_TIME;
+        }
     }
 
     @Override
@@ -42,7 +46,7 @@ public class LocalDateTimeDecoder extends LeafDecoder<LocalDateTime> {
 
         String value = node.getValue().orElse("");
         try {
-            results = ValidateOf.valid(LocalDateTime.parse(value, format));
+            results = ValidateOf.valid(LocalDateTime.parse(value, formatter));
         } catch (DateTimeParseException e) {
             results = ValidateOf.inValid(new ValidationError.ErrorDecodingException(path, node, name()));
         }

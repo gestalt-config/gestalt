@@ -9,6 +9,10 @@ public class GestaltConfig {
     // this setting is specific to environment vars loader, as there can often be false positive errors.
     private boolean envVarsTreatErrorsAsWarnings = false;
 
+    private String dateDecoderFormat = null;
+    private String localDateTimeFormat = null;
+    private String localDateFormat = null;
+
     public boolean isTreatWarningsAsErrors() {
         return treatWarningsAsErrors;
     }
@@ -39,6 +43,30 @@ public class GestaltConfig {
 
     public void setEnvVarsTreatErrorsAsWarnings(boolean envVarsTreatErrorsAsWarnings) {
         this.envVarsTreatErrorsAsWarnings = envVarsTreatErrorsAsWarnings;
+    }
+
+    public String getDateDecoderFormat() {
+        return dateDecoderFormat;
+    }
+
+    public void setDateDecoderFormat(String dateDecoderFormat) {
+        this.dateDecoderFormat = dateDecoderFormat;
+    }
+
+    public String getLocalDateTimeFormat() {
+        return localDateTimeFormat;
+    }
+
+    public void setLocalDateTimeFormat(String localDateTimeFormat) {
+        this.localDateTimeFormat = localDateTimeFormat;
+    }
+
+    public String getLocalDateFormat() {
+        return localDateFormat;
+    }
+
+    public void setLocalDateFormat(String localDateFormat) {
+        this.localDateFormat = localDateFormat;
     }
 
 }

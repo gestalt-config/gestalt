@@ -14,14 +14,18 @@ import java.util.Date;
 
 public class DateDecoder extends LeafDecoder<Date> {
 
-    private final DateTimeFormatter format;
+    private final DateTimeFormatter formatter;
 
     public DateDecoder() {
-        this.format = DateTimeFormatter.ISO_DATE_TIME;
+        this.formatter = DateTimeFormatter.ISO_DATE_TIME;
     }
 
-    public DateDecoder(String format) {
-        this.format = DateTimeFormatter.ofPattern(format);
+    public DateDecoder(String formatter) {
+        if(formatter  != null && !formatter.isEmpty()) {
+            this.formatter = DateTimeFormatter.ofPattern(formatter);
+        } else {
+            this.formatter = DateTimeFormatter.ISO_DATE_TIME;
+        }
     }
 
     @Override
@@ -45,7 +49,7 @@ public class DateDecoder extends LeafDecoder<Date> {
 
         String value = node.getValue().orElse("");
         try {
-            LocalDateTime ldt = LocalDateTime.parse(value, format);
+            LocalDateTime ldt = LocalDateTime.parse(value, formatter);
             Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
             results = ValidateOf.valid(Date.from(instant));
         } catch (DateTimeParseException e) {

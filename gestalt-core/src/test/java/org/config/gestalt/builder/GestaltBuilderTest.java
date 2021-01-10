@@ -121,6 +121,9 @@ class GestaltBuilderTest {
             .setEnvVarsTreatErrorsAsWarnings(true)
             .setTreatMissingArrayIndexAsError(true)
             .setTreatMissingValuesAsErrors(true)
+            .setDateDecoderFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .setLocalDateFormat("yyyy-MM-dd")
+            .setLocalDateTimeFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .build();
 
         gestalt.loadConfigs();

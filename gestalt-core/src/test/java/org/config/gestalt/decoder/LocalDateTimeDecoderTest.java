@@ -68,6 +68,22 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
+    void decodeFormatNull() throws GestaltException {
+        LocalDateTimeDecoder decoder = new LocalDateTimeDecoder(null);
+
+        String now = Instant.now().toString();
+
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        Assertions.assertEquals(now, validate.results().toString() + "Z");
+        Assertions.assertEquals(0, validate.getErrors().size());
+    }
+
+
+    @Test
     void decodeFormatter() throws GestaltException {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder("yyyy-MM-dd'T'HH:mm:ss'Z'");
 

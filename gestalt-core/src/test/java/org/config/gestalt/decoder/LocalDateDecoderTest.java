@@ -70,6 +70,22 @@ class LocalDateDecoderTest {
     }
 
     @Test
+    void decodeFormatNull() throws GestaltException {
+        LocalDateDecoder decoder = new LocalDateDecoder(null);
+
+        String date = "2021-01-10";
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        Assertions.assertEquals(localDate, validate.results());
+        Assertions.assertEquals(0, validate.getErrors().size());
+    }
+
+    @Test
     void decodeFormatter() throws GestaltException {
         LocalDateDecoder decoder = new LocalDateDecoder("yyyy-MM-dd");
 

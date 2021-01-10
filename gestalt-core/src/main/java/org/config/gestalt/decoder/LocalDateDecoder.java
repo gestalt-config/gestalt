@@ -18,7 +18,11 @@ public class LocalDateDecoder extends LeafDecoder<LocalDate> {
     }
 
     public LocalDateDecoder(String format) {
-        this.formatter = DateTimeFormatter.ofPattern(format);
+        if(format  != null && !format.isEmpty()) {
+            this.formatter = DateTimeFormatter.ofPattern(format);
+        } else {
+            this.formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        }
     }
 
 
