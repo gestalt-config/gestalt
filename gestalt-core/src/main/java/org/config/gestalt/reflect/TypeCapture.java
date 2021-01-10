@@ -75,7 +75,6 @@ public class TypeCapture<T> {
     /**
      * Returns the Class representing the component type of an array.
      * If this class does not represent an array class this method returns null.
-     *
      * @return
      */
     public Class<?> getComponentType() {

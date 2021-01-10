@@ -464,6 +464,24 @@ public abstract class ValidationError {
         }
     }
 
+    public static class ErrorDecodingException extends ValidationError {
+        private final String path;
+        private final ConfigNode node;
+        private final String decoder;
+
+        public ErrorDecodingException(String path, ConfigNode node, String decoder) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.node = node;
+            this.decoder = decoder;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to decode a " + decoder +  " on path: " + path + ", from node: " + node;
+        }
+    }
+
     public static class DecodersMapKeyNull extends ValidationError {
         private final String path;
 
