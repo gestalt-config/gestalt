@@ -1,6 +1,8 @@
 plugins {
     id("gestalt.java-common-conventions")
     id("gestalt.java-test-conventions")
+    id("gestalt.kotlin-common-conventions")
+    id("gestalt.kotlin-test-conventions")
 }
 
 repositories {
@@ -8,5 +10,6 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.config.gestalt:gestalt-core:0.1.0")
+    testImplementation("org.config.gestalt:gestalt-core:0.2.0")
+    testImplementation("org.config.gestalt:gestalt-kotlin:0.2.0")
 }
