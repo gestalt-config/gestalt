@@ -15,7 +15,7 @@ object Application {
     }
 
     object Kotlin {
-        const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:1.4.21"
+        const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
     }
 }
 
