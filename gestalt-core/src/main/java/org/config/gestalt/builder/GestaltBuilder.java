@@ -39,11 +39,18 @@ public class GestaltBuilder {
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean envVarsTreatErrorsAsWarnings = null;
 
+    private String dateDecoderFormat = null;
+    private String localDateTimeFormat = null;
+    private String localDateFormat = null;
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public GestaltBuilder addDefaultDecoders() {
-        List<Decoder<?>> decoders = Arrays.asList(new ArrayDecoder(), new BooleanDecoder(),
-            new ByteDecoder(), new CharDecoder(), new DoubleDecoder(), new EnumDecoder(), new FloatDecoder(), new IntegerDecoder(),
-            new ListDecoder(), new LongDecoder(), new ObjectDecoder(), new SetDecoder(), new ShortDecoder(), new StringDecoder());
+        List<Decoder<?>> decoders = Arrays.asList(new ArrayDecoder(), new BigDecimalDecoder(), new BigIntegerDecoder(),
+            new BooleanDecoder(), new ByteDecoder(), new CharDecoder(), new DateDecoder(gestaltConfig.getDateDecoderFormat()),
+            new DoubleDecoder(), new DurationDecoder(), new EnumDecoder(), new FileDecoder(), new FloatDecoder(), new InstantDecoder(),
+            new IntegerDecoder(), new ListDecoder(), new LocalDateDecoder(gestaltConfig.getLocalDateFormat()),
+            new LocalDateTimeDecoder(gestaltConfig.getLocalDateTimeFormat()), new LongDecoder(), new MapDecoder(), new ObjectDecoder(),
+            new PathDecoder(), new PatternDecoder(), new SetDecoder(), new ShortDecoder(), new StringDecoder(), new UUIDDecoder());
         this.decoders.addAll(decoders);
         return this;
     }
@@ -180,6 +187,22 @@ public class GestaltBuilder {
         return this;
     }
 
+
+    public GestaltBuilder setDateDecoderFormat(String dateDecoderFormat) {
+        this.dateDecoderFormat = dateDecoderFormat;
+        return this;
+    }
+
+    public GestaltBuilder setLocalDateTimeFormat(String localDateTimeFormat) {
+        this.localDateTimeFormat = localDateTimeFormat;
+        return this;
+    }
+
+    public GestaltBuilder setLocalDateFormat(String localDateFormat) {
+        this.localDateFormat = localDateFormat;
+        return this;
+    }
+
     protected List<Decoder<?>> dedupeDecoders() {
         Map<String, List<Decoder<?>>> decoderMap = decoders
             .stream()
@@ -282,6 +305,24 @@ public class GestaltBuilder {
             newConfig.setEnvVarsTreatErrorsAsWarnings(envVarsTreatErrorsAsWarnings);
         } else {
             newConfig.setEnvVarsTreatErrorsAsWarnings(gestaltConfig.isEnvVarsTreatErrorsAsWarnings());
+        }
+
+        if (dateDecoderFormat != null) {
+            newConfig.setDateDecoderFormat(dateDecoderFormat);
+        } else {
+            newConfig.setDateDecoderFormat(gestaltConfig.getDateDecoderFormat());
+        }
+
+        if (localDateTimeFormat != null) {
+            newConfig.setLocalDateTimeFormat(localDateTimeFormat);
+        } else {
+            newConfig.setLocalDateTimeFormat(gestaltConfig.getLocalDateTimeFormat());
+        }
+
+        if (localDateFormat != null) {
+            newConfig.setLocalDateFormat(localDateFormat);
+        } else {
+            newConfig.setLocalDateFormat(gestaltConfig.getLocalDateFormat());
         }
 
         return newConfig;
