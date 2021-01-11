@@ -230,19 +230,13 @@ class GestaltKotlinSample {
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool", KTypeCapture.of<HttpPool>(typeOf<HttpPool>())) as HttpPool
         assertEquals(1000, pool.maxTotal.toInt())
-        assertEquals(1000.toShort(), gestalt.getConfig("http.pool.maxTotal"))
+        assertEquals(1000, gestalt.getConfig("http.pool.noVal", 1000, KTypeCapture.of<Int>(typeOf<Int>())))
         assertEquals(50L, pool.maxPerRoute)
         assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute"))
         assertEquals(6000, pool.validateAfterInactivity)
         assertEquals(60000.0, pool.keepAliveTimeoutMs)
         assertEquals(25, pool.idleTimeoutSec)
         assertEquals(33.0f, pool.defaultWait)
-        var startTime: Long = System.nanoTime()
-        gestalt.getConfig("db", DataBase::class.java)
-        val timeTaken: Long = System.nanoTime() - startTime
-        startTime = System.nanoTime()
-        val db: DataBase = gestalt.getConfig("db", DataBase::class.java)
-        val cacheTimeTaken: Long = System.nanoTime() - startTime
     }
 
     enum class Role {
