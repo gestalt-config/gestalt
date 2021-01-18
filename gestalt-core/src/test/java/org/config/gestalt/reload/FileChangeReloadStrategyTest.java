@@ -66,7 +66,14 @@ class FileChangeReloadStrategyTest {
 
         Thread.sleep(100);
         Files.write(path, "user=userB".getBytes(UTF_8));
-        Thread.sleep(100);
+
+        for (int i = 0; i < 5; i++) {
+            if (listener.count > 1) {
+                break;
+            } else {
+                Thread.sleep(10);
+            }
+        }
 
         Assertions.assertTrue(listener.count >= 1);
 
