@@ -116,8 +116,8 @@ class FileChangeReloadStrategyTest {
             }
         }
 
-        Assertions.assertEquals(1, listener.count);
-
+        Assertions.assertTrue(listener.count >= 1);
+        int previousCount = listener.count;
         strategy.removeListener(listener);
         // change the ..data link like Kubernetes does
         Files.delete(dataLn);
@@ -125,7 +125,7 @@ class FileChangeReloadStrategyTest {
 
         Thread.sleep(100);
 
-        Assertions.assertEquals(1, listener.count);
+        Assertions.assertEquals(previousCount, listener.count);
     }
 
     private static class ConfigListener implements ConfigReloadListener {
