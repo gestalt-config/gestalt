@@ -17,7 +17,7 @@ import java.util.UUID;
 public class FileConfigSource implements ConfigSource {
     private static final Logger logger = LoggerFactory.getLogger(FileConfigSource.class.getName());
 
-        private final Path path;
+    private final Path path;
     private final UUID id = UUID.randomUUID();
 
     public FileConfigSource(File file) throws GestaltException {

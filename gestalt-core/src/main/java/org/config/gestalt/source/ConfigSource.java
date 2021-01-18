@@ -52,7 +52,7 @@ public interface ConfigSource {
     /**
      * human readable name for logging.
      *
-     * @return human readable name for logging
+     * @return human readable name for logging.
      */
     String name();
 

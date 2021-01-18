@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ConfigNodeContainerTest {
 
     @Test
@@ -90,7 +88,7 @@ class ConfigNodeContainerTest {
         dbNode2.put("port", new LeafNode("3306"));
 
         Map<String, ConfigNode> root2Node = new HashMap<>();
-        root2Node.put("db", new MapNode(dbNode));
+        root2Node.put("db", new MapNode(dbNode2));
         root2Node.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(root2Node);
 

@@ -32,16 +32,15 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
     public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws ConfigurationException {
         super(source);
         this.executor = executor;
-        if (source instanceof FileConfigSource) {
-            path = ((FileConfigSource) source).getPath();
-            try {
-                watcher = FileSystems.getDefault().newWatchService();
-                path.toAbsolutePath().getParent().register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-            } catch (IOException e) {
-                throw new ConfigurationException("unable to create a watch service on file " + path);
-            }
-        } else {
+        if (!(source instanceof FileConfigSource)) {
             throw new ConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
+        }
+        path = ((FileConfigSource) source).getPath();
+        try {
+            watcher = FileSystems.getDefault().newWatchService();
+            path.toAbsolutePath().getParent().register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
+        } catch (IOException e) {
+            throw new ConfigurationException("unable to create a watch service on file " + path);
         }
     }
 

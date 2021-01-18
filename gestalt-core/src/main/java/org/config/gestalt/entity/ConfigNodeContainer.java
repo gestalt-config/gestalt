@@ -24,8 +24,12 @@ public class ConfigNodeContainer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ConfigNodeContainer)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ConfigNodeContainer)) {
+            return false;
+        }
         ConfigNodeContainer that = (ConfigNodeContainer) o;
         return Objects.equals(id, that.id);
     }

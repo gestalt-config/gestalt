@@ -3,15 +3,14 @@ package org.config.gestalt.reload;
 import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.source.FileConfigSource;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 class FileChangeReloadStrategyTest {
 
@@ -20,7 +19,7 @@ class FileChangeReloadStrategyTest {
         Path path;
         path = Files.createTempFile("gestalt", "test.properties");
         path.toFile().deleteOnExit();
-        Files.write(path, "user=userA".getBytes());
+        Files.write(path, "user=userA".getBytes(UTF_8));
 
         FileConfigSource source = new FileConfigSource(path);
         ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
@@ -28,25 +27,25 @@ class FileChangeReloadStrategyTest {
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
 
-        Files.write(path, "user=userB".getBytes());
+        Files.write(path, "user=userB".getBytes(UTF_8));
 
-        for(int i = 0; i < 5; i++) {
-            if(listener.count > 1) {
+        for (int i = 0; i < 5; i++) {
+            if (listener.count > 1) {
                 break;
             } else {
                 Thread.sleep(10);
             }
         }
 
-        Assertions.assertEquals(1, listener.count);
-
+        Assertions.assertTrue(listener.count >= 1);
+        int previousCount = listener.count;
         strategy.removeListener(listener);
 
-        Files.write(path, "user=userC".getBytes());
+        Files.write(path, "user=userC".getBytes(UTF_8));
 
         Thread.sleep(100);
 
-        Assertions.assertEquals(1, listener.count);
+        Assertions.assertEquals(previousCount, listener.count);
     }
 
     @Test
@@ -57,31 +56,28 @@ class FileChangeReloadStrategyTest {
         folder.toFile().mkdirs();
         folder.toFile().deleteOnExit();
 
-        Files.write(path, "user=userA".getBytes());
+        Files.write(path, "user=userA".getBytes(UTF_8));
 
         FileConfigSource source = new FileConfigSource(path);
         ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
 
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
-        Files.write(path, "user=userB".getBytes());
-        for(int i = 0; i < 5; i++) {
-            if(listener.count >= 1) {
-                break;
-            } else {
-                Thread.sleep(10);
-            }
-        }
 
-        Assertions.assertEquals(1, listener.count);
+        Thread.sleep(100);
+        Files.write(path, "user=userB".getBytes(UTF_8));
+        Thread.sleep(100);
 
+        Assertions.assertTrue(listener.count >= 1);
+
+        int previousCount = listener.count;
         strategy.removeListener(listener);
 
-        Files.write(path, "user=userC".getBytes());
+        Files.write(path, "user=userC".getBytes(UTF_8));
 
         Thread.sleep(100);
 
-        Assertions.assertEquals(1, listener.count);
+        Assertions.assertEquals(previousCount, listener.count);
     }
 
     @Test
@@ -96,10 +92,10 @@ class FileChangeReloadStrategyTest {
         Path dataLn = Files.createSymbolicLink(folder.resolve("..data"), folder.relativize(numbered1));
 
         Path file1 = numbered1.resolve("reloadedfile.properties");
-        Files.write(file1, "user=userA".getBytes());
+        Files.write(file1, "user=userA".getBytes(UTF_8));
 
         Path file2 = numbered2.resolve("reloadedfile.properties");
-        Files.write(file2, "user=userB".getBytes());
+        Files.write(file2, "user=userB".getBytes(UTF_8));
 
         Path configFileLn = Files.createSymbolicLink(folder.resolve("reloadedfile.properties"),
             folder.relativize(dataLn).resolve("reloadedfile.properties"));
