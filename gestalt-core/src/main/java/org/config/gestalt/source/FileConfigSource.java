@@ -12,11 +12,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class FileConfigSource implements ConfigSource {
     private static final Logger logger = LoggerFactory.getLogger(FileConfigSource.class.getName());
 
-    private final Path path;
+        private final Path path;
+    private final UUID id = UUID.randomUUID();
 
     public FileConfigSource(File file) throws GestaltException {
         this(Objects.requireNonNull(file, "file can not be null").toPath());
@@ -37,6 +39,10 @@ public class FileConfigSource implements ConfigSource {
         } else if ("".equals(format(path))) {
             logger.debug("Unable to find a format for the file: {}", path.toString());
         }
+        return path;
+    }
+
+    public Path getPath() {
         return path;
     }
 
@@ -84,5 +90,26 @@ public class FileConfigSource implements ConfigSource {
         return "File source: " + path.toString();
     }
 
+    @Override
+    public UUID id() {  //NOPMD
+        return id;
+    }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FileConfigSource)) {
+            return false;
+        }
+        FileConfigSource that = (FileConfigSource) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

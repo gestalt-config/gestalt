@@ -12,6 +12,7 @@ import org.config.gestalt.loader.ConfigLoaderRegistry;
 import org.config.gestalt.loader.MapConfigLoader;
 import org.config.gestalt.node.ConfigNodeManager;
 import org.config.gestalt.node.LeafNode;
+import org.config.gestalt.reload.TimedConfigReloadStrategy;
 import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.source.MapConfigSource;
 import org.config.gestalt.utils.ValidateOf;
@@ -19,12 +20,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.time.Duration;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 class GestaltBuilderTest {
+
+    private static class CoreReloadListener implements org.config.gestalt.reload.CoreReloadListener {
+
+        @Override
+        public void reload() {
+
+        }
+    }
 
     @Test
     public void build() throws GestaltException {
@@ -50,6 +60,8 @@ class GestaltBuilderTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer();
 
+        CoreReloadListener coreReloadListener = new CoreReloadListener();
+
         builder = builder.setDecoderService(new DecoderRegistry(Arrays.asList(new StringDecoder(), new DoubleDecoder()),
             configNodeManager, lexer))
             .setDecoders(decoders)
@@ -62,7 +74,9 @@ class GestaltBuilderTest {
             .addSource(new MapConfigSource(configs))
             .addSource(new MapConfigSource(configs2))
             .setSentenceLexer(new PathLexer())
-            .setConfigNodeService(configNodeManager);
+            .setConfigNodeService(configNodeManager)
+            .addCoreReloadListener(coreReloadListener)
+            .addReloadStrategy(new TimedConfigReloadStrategy(sources.get(0), Duration.ofMillis(100)));
 
         Gestalt gestalt = builder.build();
         gestalt.loadConfigs();

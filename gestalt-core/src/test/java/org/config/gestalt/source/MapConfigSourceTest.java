@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,5 +64,23 @@ class MapConfigSourceTest {
     void name() {
         MapConfigSource mapConfigSource = new MapConfigSource(configs);
         Assertions.assertEquals("mapConfig", mapConfigSource.name());
+    }
+
+
+    @Test
+    void equals() {
+        MapConfigSource mapConfigSource = new MapConfigSource(configs);
+        MapConfigSource mapConfigSource2 = new MapConfigSource(configs);
+
+        Assertions.assertEquals(mapConfigSource, mapConfigSource);
+        Assertions.assertNotEquals(mapConfigSource, mapConfigSource2);
+        Assertions.assertNotEquals(mapConfigSource, null);
+        Assertions.assertNotEquals(mapConfigSource, Long.valueOf(1));
+    }
+
+    @Test
+    void hash() {
+        MapConfigSource mapConfigSource = new MapConfigSource(configs);
+        Assertions.assertTrue(mapConfigSource.hashCode() != 0);
     }
 }

@@ -5,6 +5,7 @@ import org.config.gestalt.utils.Pair;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Interface to define a stream config loader.
@@ -54,4 +55,11 @@ public interface ConfigSource {
      * @return human readable name for logging
      */
     String name();
+
+    /**
+     * Id that represents this source as unique
+     *
+     * @return id
+     */
+    UUID id();  //NOPMD
 }

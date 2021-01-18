@@ -36,5 +36,21 @@ class EnvironmentConfigSourceTest {
         Assertions.assertFalse(envConfig.hasStream());
         Assertions.assertThrows(GestaltException.class, envConfig::loadStream);
     }
+
+    @Test
+    void equals() {
+        EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
+        EnvironmentConfigSource envConfig2 = new EnvironmentConfigSource();
+        Assertions.assertEquals(envConfig, envConfig);
+        Assertions.assertNotEquals(envConfig, envConfig2);
+        Assertions.assertNotEquals(envConfig, null);
+        Assertions.assertNotEquals(envConfig, Long.valueOf(1));
+    }
+
+    @Test
+    void hash() {
+        EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
+        Assertions.assertTrue(envConfig.hashCode() != 0);
+    }
 }
 

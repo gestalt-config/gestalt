@@ -11,6 +11,9 @@ import org.config.gestalt.lexer.SentenceLexer;
 import org.config.gestalt.loader.*;
 import org.config.gestalt.node.ConfigNodeManager;
 import org.config.gestalt.node.ConfigNodeService;
+import org.config.gestalt.reload.ConfigReloadStrategy;
+import org.config.gestalt.reload.CoreReloadStrategy;
+import org.config.gestalt.reload.CoreReloadListener;
 import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.utils.CollectionUtils;
 import org.slf4j.Logger;
@@ -21,13 +24,13 @@ import java.util.stream.Collectors;
 
 public class GestaltBuilder {
     private static final Logger logger = LoggerFactory.getLogger(GestaltBuilder.class.getName());
-
+    private final List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>();
+    private final List<CoreReloadListener> coreCoreReloadListeners = new ArrayList<>();
     private ConfigLoaderService configLoaderService = new ConfigLoaderRegistry();
     private DecoderService decoderService;
     private SentenceLexer sentenceLexer = new PathLexer();
     private GestaltConfig gestaltConfig = new GestaltConfig();
     private ConfigNodeService configNodeService = new ConfigNodeManager();
-
     private List<ConfigSource> sources = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
@@ -82,6 +85,30 @@ public class GestaltBuilder {
     public GestaltBuilder addSource(ConfigSource source) {
         Objects.requireNonNull(source, "Source should not be null");
         this.sources.add(source);
+        return this;
+    }
+
+    public GestaltBuilder addReloadStrategy(ConfigReloadStrategy configReloadStrategy) {
+        Objects.requireNonNull(configReloadStrategy, "reloadStrategy should not be null");
+        this.reloadStrategies.add(configReloadStrategy);
+        return this;
+    }
+
+    public GestaltBuilder addReloadStrategies(List<ConfigReloadStrategy> reloadStrategies) {
+        Objects.requireNonNull(reloadStrategies, "reloadStrategies should not be null");
+        this.reloadStrategies.addAll(reloadStrategies);
+        return this;
+    }
+
+    public GestaltBuilder addCoreReloadListener(CoreReloadListener coreReloadListener) {
+        Objects.requireNonNull(coreReloadListener, "coreReloadListener should not be null");
+        this.coreCoreReloadListeners.add(coreReloadListener);
+        return this;
+    }
+
+    public GestaltBuilder addCoreReloadListener(List<CoreReloadListener> coreCoreReloadListeners) {
+        Objects.requireNonNull(reloadStrategies, "reloadStrategies should not be null");
+        this.coreCoreReloadListeners.addAll(coreCoreReloadListeners);
         return this;
     }
 
@@ -273,11 +300,27 @@ public class GestaltBuilder {
         List<ConfigLoader> dedupedConfigs = dedupeConfigLoaders();
         configLoaderService.setLoaders(dedupedConfigs);
 
-        Gestalt gestalt = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig, configNodeService);
+        // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        final GestaltCore gestaltCore = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig,
+            configNodeService, coreReloadStrategy);
+
+        // register gestaltCore with all the source reload strategies.
+        reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
+        // Add all listeners for the core update.
+        coreCoreReloadListeners.forEach(coreReloadStrategy::registerListener);
+
         if (useCacheDecorator) {
-            gestalt = new GestaltCache(gestalt);
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore);
+
+            // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
+            // we can clear the cache.
+            coreReloadStrategy.registerListener(gestaltCache);
+            return gestaltCache;
+        } else {
+            return gestaltCore;
         }
-        return gestalt;
+
     }
 
     private GestaltConfig rebuildConfig() {

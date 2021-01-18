@@ -3,9 +3,12 @@ package org.config.gestalt.exceptions;
 import org.config.gestalt.entity.ValidationError;
 import org.config.gestalt.utils.ErrorsUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GestaltException extends Exception {
+
+    List<GestaltException> exceptions = new ArrayList<>();
 
     public GestaltException(String message) {
         super(message);
@@ -21,5 +24,9 @@ public class GestaltException extends Exception {
 
     public GestaltException(String message, List<ValidationError> errors) {
         super(ErrorsUtil.buildErrorMessage(message, errors));
+    }
+
+    public GestaltException(List<GestaltException> exceptions) {
+        this.exceptions.addAll(exceptions);
     }
 }
