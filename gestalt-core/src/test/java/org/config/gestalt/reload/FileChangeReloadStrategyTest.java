@@ -119,7 +119,7 @@ class FileChangeReloadStrategyTest {
             if (listener.count >= 1) {
                 break;
             } else {
-                Thread.sleep(10);
+                Thread.sleep(100);
             }
         }
 

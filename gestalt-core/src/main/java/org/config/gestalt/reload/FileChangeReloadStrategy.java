@@ -88,14 +88,15 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
                         // file itself, has been created/modified, reload
                         List<Path> linkChain = new ArrayList<>();
                         Path currentPath = path;
+                        linkChain.add(currentPath);
                         while (Files.isSymbolicLink(currentPath)) {
-
+                            Path nextSymLink = Files.readSymbolicLink(currentPath).iterator().next();
+                            currentPath = currentPath.getParent().resolve(nextSymLink);
                             linkChain.add(currentPath);
-                            currentPath = currentPath.getParent().resolve(Files.readSymbolicLink(currentPath));
                         }
 
-                        if (linkChain.contains(path.getParent().resolve(fileName)) ||
-                            path.getParent().resolve(fileName).equals(path.toRealPath())) {
+                        Path parentFile = path.getParent().resolve(fileName);
+                        if (linkChain.contains(parentFile)) {
                             reload();
                         }
                     }
