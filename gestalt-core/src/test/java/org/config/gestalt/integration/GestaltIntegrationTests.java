@@ -11,6 +11,7 @@ import org.config.gestalt.source.EnvironmentConfigSource;
 import org.config.gestalt.source.FileConfigSource;
 import org.config.gestalt.source.MapConfigSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -140,7 +141,8 @@ public class GestaltIntegrationTests {
     }
 
     @Test
-    public void integrationTestReload() throws GestaltException, IOException, InterruptedException {
+    @Disabled
+    public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
         configs.put("db.hosts[1].password", "5678");
