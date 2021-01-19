@@ -1,6 +1,7 @@
 package org.config.gestalt;
 
 import org.config.gestalt.decoder.DecoderService;
+import org.config.gestalt.entity.ConfigNodeContainer;
 import org.config.gestalt.entity.GestaltConfig;
 import org.config.gestalt.entity.ValidationError;
 import org.config.gestalt.entity.ValidationLevel;
@@ -12,6 +13,8 @@ import org.config.gestalt.loader.ConfigLoaderService;
 import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.node.ConfigNodeService;
 import org.config.gestalt.reflect.TypeCapture;
+import org.config.gestalt.reload.ConfigReloadListener;
+import org.config.gestalt.reload.CoreReloadStrategy;
 import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.token.Token;
 import org.config.gestalt.utils.ErrorsUtil;
@@ -25,7 +28,7 @@ import java.util.List;
 import static org.config.gestalt.entity.ValidationLevel.ERROR;
 import static org.config.gestalt.entity.ValidationLevel.WARN;
 
-public class GestaltCore implements Gestalt {
+public class GestaltCore implements Gestalt, ConfigReloadListener {
     private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
 
     private final ConfigLoaderService configLoaderService;
@@ -34,17 +37,20 @@ public class GestaltCore implements Gestalt {
     private final SentenceLexer sentenceLexer;
     private final GestaltConfig gestaltConfig;
     private final ConfigNodeService configNodeService;
+    private final CoreReloadStrategy coreReloadStrategy;
 
     private final List<ValidationError> loadErrors = new ArrayList<>();
 
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSource> sources, DecoderService decoderService,
-                       SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService) {
+                       SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService,
+                       CoreReloadStrategy reloadStrategy) {
         this.configLoaderService = configLoaderService;
         this.sources = sources;
         this.decoderService = decoderService;
         this.sentenceLexer = sentenceLexer;
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
+        this.coreReloadStrategy = reloadStrategy;
     }
 
     List<ValidationError> getLoadErrors() {
@@ -63,13 +69,45 @@ public class GestaltCore implements Gestalt {
 
             validateLoadResultsForErrors(newNode);
             if (newNode.hasResults()) {
-                ValidateOf<ConfigNode> mergedNode = configNodeService.addNode(newNode.results());
+                ValidateOf<ConfigNode> mergedNode = configNodeService.addNode(new ConfigNodeContainer(newNode.results(), source.id()));
                 validateLoadResultsForErrors(mergedNode);
                 loadErrors.addAll(mergedNode.getErrors());
             } else {
                 logger.warn("Failed to load node: {} did not have any results", source.name());
             }
         }
+    }
+
+    @Override
+    public void reload(ConfigSource reloadSource) throws GestaltException {
+        if (reloadSource == null) {
+            throw new GestaltException("No sources provided, unable to reload any configs");
+        }
+
+        if (sources == null || sources.isEmpty()) {
+            throw new GestaltException("No sources provided, unable to reload any configs");
+        }
+
+        if (!sources.contains(reloadSource)) {
+            throw new GestaltException("Can not reload a source that does not exist.");
+        }
+
+        ConfigLoader configLoader = configLoaderService.getLoader(reloadSource.format());
+        ValidateOf<ConfigNode> reloadNode = configLoader.loadSource(reloadSource);
+        validateLoadResultsForErrors(reloadNode);
+
+        if (!reloadNode.hasResults()) {
+            throw new GestaltException("no results found reloading source " + reloadSource.name());
+        }
+
+        ValidateOf<ConfigNode> mergedNode = configNodeService.reloadNode(new ConfigNodeContainer(reloadNode.results(), reloadSource.id()));
+        validateLoadResultsForErrors(mergedNode);
+
+        if (!mergedNode.hasResults()) {
+            throw new GestaltException("no results found merging source " + reloadSource.name());
+        }
+
+        coreReloadStrategy.reload();
     }
 
     private void validateLoadResultsForErrors(ValidateOf<ConfigNode> results) throws ConfigurationException {
@@ -191,4 +229,5 @@ public class GestaltCore implements Gestalt {
 
         return error.level() != ERROR;
     }
+
 }

@@ -114,4 +114,28 @@ class FileConfigSourceTest {
         Assertions.assertFalse(fileConfigSource.hasList());
         Assertions.assertThrows(GestaltException.class, fileConfigSource::loadList);
     }
+
+    @Test
+    void equals() throws GestaltException {
+        URL testFileURL = FileConfigSourceTest.class.getClassLoader().getResource("test");
+        File testFile = new File(testFileURL.getFile());
+        FileConfigSource fileConfigSource = new FileConfigSource(testFile.toPath());
+
+        URL testFileURL2 = FileConfigSourceTest.class.getClassLoader().getResource("test");
+        File testFile2 = new File(testFileURL2.getFile());
+        FileConfigSource fileConfigSource2 = new FileConfigSource(testFile2.toPath());
+
+        Assertions.assertEquals(fileConfigSource, fileConfigSource);
+        Assertions.assertNotEquals(fileConfigSource, fileConfigSource2);
+        Assertions.assertNotEquals(fileConfigSource, null);
+        Assertions.assertNotEquals(fileConfigSource, Long.valueOf(1));
+    }
+
+    @Test
+    void hash() throws GestaltException {
+        URL testFileURL = FileConfigSourceTest.class.getClassLoader().getResource("test");
+        File testFile = new File(testFileURL.getFile());
+        FileConfigSource fileConfigSource = new FileConfigSource(testFile.toPath());
+        Assertions.assertTrue(fileConfigSource.hashCode() != 0);
+    }
 }

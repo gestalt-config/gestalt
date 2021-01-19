@@ -2,12 +2,13 @@ package org.config.gestalt;
 
 import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.reflect.TypeCapture;
+import org.config.gestalt.reload.CoreReloadListener;
 import org.config.gestalt.utils.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GestaltCache implements Gestalt {
+public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Pair<String, TypeCapture<?>>, Object> cache = new HashMap<>();
 
@@ -65,5 +66,10 @@ public class GestaltCache implements Gestalt {
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
         Pair<String, TypeCapture<?>> key = new Pair<>(path, klass);
         return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, klass));
+    }
+
+    @Override
+    public void reload() {
+        cache.clear();
     }
 }

@@ -63,4 +63,22 @@ class MapConfigSourceTest {
         MapConfigSource mapConfigSource = new MapConfigSource(configs);
         Assertions.assertEquals("mapConfig", mapConfigSource.name());
     }
+
+
+    @Test
+    void equals() {
+        MapConfigSource mapConfigSource = new MapConfigSource(configs);
+        MapConfigSource mapConfigSource2 = new MapConfigSource(configs);
+
+        Assertions.assertEquals(mapConfigSource, mapConfigSource);
+        Assertions.assertNotEquals(mapConfigSource, mapConfigSource2);
+        Assertions.assertNotEquals(mapConfigSource, null);
+        Assertions.assertNotEquals(mapConfigSource, Long.valueOf(1));
+    }
+
+    @Test
+    void hash() {
+        MapConfigSource mapConfigSource = new MapConfigSource(configs);
+        Assertions.assertTrue(mapConfigSource.hashCode() != 0);
+    }
 }

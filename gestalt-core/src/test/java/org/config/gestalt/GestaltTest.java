@@ -12,6 +12,9 @@ import org.config.gestalt.loader.MapConfigLoader;
 import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.node.ConfigNodeManager;
 import org.config.gestalt.reflect.TypeCapture;
+import org.config.gestalt.reload.CoreReloadListener;
+import org.config.gestalt.reload.CoreReloadStrategy;
+import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.source.MapConfigSource;
 import org.config.gestalt.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +46,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager);
+            lexer, new GestaltConfig(), configNodeManager, null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -96,7 +99,7 @@ class GestaltTest {
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -148,7 +151,7 @@ class GestaltTest {
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2), new MapConfigSource(configs3)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -187,7 +190,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -240,7 +243,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -279,7 +282,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-                new ListDecoder()), configNodeManager, lexer), lexer, config, new ConfigNodeManager());
+                new ListDecoder()), configNodeManager, lexer), lexer, config, new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -341,7 +344,7 @@ class GestaltTest {
             Collections.emptyList(),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         try {
             gestalt.loadConfigs();
@@ -370,7 +373,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -407,7 +410,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -442,7 +445,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager);
+            lexer, new GestaltConfig(), configNodeManager, null);
 
         try {
             gestalt.loadConfigs();
@@ -482,7 +485,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, config, new ConfigNodeManager());
+            lexer, config, new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -522,7 +525,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, config, new ConfigNodeManager());
+            lexer, config, new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
 
@@ -560,7 +563,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, config, new ConfigNodeManager());
+            lexer, config, new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
 
@@ -593,7 +596,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager());
+            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager(), null);
 
         gestalt.loadConfigs();
 
@@ -604,6 +607,374 @@ class GestaltTest {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Unable to parse path: admin[a3]\n" +
                     " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
+        }
+    }
+
+    @Test
+    public void testReload() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreListener coreListener = new CoreListener();
+        coreReloadStrategy.registerListener(coreListener);
+        ConfigSource source = new MapConfigSource(configs);
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(source),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        configs.put("db.name", "test1");
+        gestalt.reload(source);
+
+        Assertions.assertEquals(1, coreListener.count);
+        Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testReloadNullReloadSource() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreListener coreListener = new CoreListener();
+        coreReloadStrategy.registerListener(coreListener);
+        ConfigSource source = new MapConfigSource(configs);
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(source),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        try {
+            gestalt.reload(null);
+        } catch (GestaltException e) {
+            assertThat(e).hasMessage("No sources provided, unable to reload any configs");
+        }
+
+        Assertions.assertEquals(0, coreListener.count);
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testReloadNullSource() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+        ConfigSource source = new MapConfigSource(configs);
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreListener coreListener = new CoreListener();
+        coreReloadStrategy.registerListener(coreListener);
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            null,
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+
+        try {
+            gestalt.reload(source);
+        } catch (GestaltException e) {
+            assertThat(e).hasMessage("No sources provided, unable to reload any configs");
+        }
+
+        Assertions.assertEquals(0, coreListener.count);
+    }
+
+    @Test
+    public void testReloadUnknownSource() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+        ConfigSource source = new MapConfigSource(configs);
+
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreListener coreListener = new CoreListener();
+        coreReloadStrategy.registerListener(coreListener);
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(source),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs.put("db.name", "test1");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+        ConfigSource source2 = new MapConfigSource(configs2);
+
+        try {
+            gestalt.reload(source2);
+        } catch (GestaltException e) {
+            assertThat(e).hasMessage("Can not reload a source that does not exist.");
+        }
+
+        Assertions.assertEquals(0, coreListener.count);
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testReloadNoResults() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+        ConfigSource source = new MapConfigSource(configs);
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreListener coreListener = new CoreListener();
+        coreReloadStrategy.registerListener(coreListener);
+
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(source),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        configs.put("db.name[a]", "test1");
+
+        try {
+            gestalt.reload(source);
+        } catch (GestaltException e) {
+            assertThat(e).hasMessage("Exception loading config source mapConfig\n" +
+                " - level: ERROR, message: Unable to tokenize element name[a] for path: db.name[a]");
+        }
+
+        Assertions.assertEquals(0, coreListener.count);
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testReloadRemoveListener() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreListener coreListener = new CoreListener();
+        coreReloadStrategy.registerListener(coreListener);
+        ConfigSource source = new MapConfigSource(configs);
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(source),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        configs.put("db.name", "test1");
+        gestalt.reload(source);
+
+        Assertions.assertEquals(1, coreListener.count);
+        Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+
+        coreReloadStrategy.removeListener(coreListener);
+        configs.put("db.name", "test2");
+        gestalt.reload(source);
+        Assertions.assertEquals(1, coreListener.count);
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+
+    }
+
+    private static class CoreListener implements CoreReloadListener {
+
+        public int count = 0;
+
+        public CoreListener() {
+
+        }
+
+        @Override
+        public void reload() {
+            count++;
         }
     }
 

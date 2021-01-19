@@ -1,5 +1,6 @@
 package org.config.gestalt.node;
 
+import org.config.gestalt.entity.ConfigNodeContainer;
 import org.config.gestalt.entity.ValidationError;
 import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.token.ArrayToken;
@@ -12,14 +13,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ConfigNodeManager implements ConfigNodeService {
-    private final List<ConfigNode> configNodes = new ArrayList<>();
+    private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
     private ConfigNode root;
 
     public ConfigNodeManager() {
     }
 
     @Override
-    public ValidateOf<ConfigNode> addNode(ConfigNode newNode) throws GestaltException {
+    public ValidateOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException {
         if (newNode == null) {
             throw new GestaltException("No node provided");
         }
@@ -28,9 +29,9 @@ public class ConfigNodeManager implements ConfigNodeService {
         configNodes.add(newNode);
 
         if (root == null) {
-            root = newNode;
+            root = newNode.getConfigNode();
         } else {
-            ValidateOf<ConfigNode> mergedNode = mergeNodes("", root, newNode);
+            ValidateOf<ConfigNode> mergedNode = mergeNodes("", root, newNode.getConfigNode());
 
             if (mergedNode.hasResults()) {
                 root = mergedNode.results();
@@ -42,6 +43,43 @@ public class ConfigNodeManager implements ConfigNodeService {
         errors.addAll(validateNode(root));
         errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
 
+        return ValidateOf.validateOf(root, errors);
+    }
+
+    @Override
+    public ValidateOf<ConfigNode> reloadNode(ConfigNodeContainer newNode) throws GestaltException {
+        ConfigNode newRoot = null;
+        List<ValidationError> errors = new ArrayList<>();
+
+        int index = 0;
+        for (ConfigNodeContainer nodePair : configNodes) {
+
+            ConfigNode currentNode = nodePair.getConfigNode();
+            if (nodePair.getId().equals(newNode.getId())) {
+                configNodes.set(index, newNode);
+                currentNode = newNode.getConfigNode();
+            }
+
+            if (newRoot == null) {
+                newRoot = currentNode;
+            } else {
+
+                ValidateOf<ConfigNode> mergedNode = mergeNodes("", newRoot, currentNode);
+
+                if (mergedNode.hasResults()) {
+                    newRoot = mergedNode.results();
+                }
+
+                errors.addAll(mergedNode.getErrors());
+
+            }
+            index++;
+        }
+
+        errors.addAll(validateNode(newRoot));
+        errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
+
+        root = newRoot;
         return ValidateOf.validateOf(root, errors);
     }
 
