@@ -246,7 +246,13 @@ public class GestaltIntegrationTests {
 
         Files.write(devFile.toPath(), config.getBytes());
 
-        Thread.sleep(100);
+        for (int i = 0; i < 10; i++) {
+            if (reloadListener.count > 1) {
+                break;
+            } else {
+                Thread.sleep(100);
+            }
+        }
         db = gestalt.getConfig("db", DataBase.class);
         Assertions.assertTrue(reloadListener.count >= 1);
 
