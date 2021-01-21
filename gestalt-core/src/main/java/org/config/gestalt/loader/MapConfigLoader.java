@@ -13,6 +13,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.util.List;
 
+/**
+ * Loads an in memory map from MapConfigSource
+ *
+ * @author Colin Redmond
+ */
 public class MapConfigLoader implements ConfigLoader {
 
     private final ConfigParser parser;

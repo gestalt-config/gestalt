@@ -4,6 +4,11 @@ import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
+/**
+ * Decode a boolean
+ *
+ * @author Colin Redmond
+ */
 public class BooleanDecoder extends LeafDecoder<Boolean> {
 
     @Override

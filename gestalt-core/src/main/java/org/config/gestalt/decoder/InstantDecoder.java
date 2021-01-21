@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Decode an Instant
+ *
+ * @author Colin Redmond
+ */
 public class InstantDecoder extends LeafDecoder<Instant> {
 
     @Override

@@ -13,6 +13,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Decodes primitive arrays of any type.
+ *
+ * @param <T> type of array
+ * @author Colin Redmond
+ */
 public class ArrayDecoder<T> implements Decoder<T[]> {
 
     @Override

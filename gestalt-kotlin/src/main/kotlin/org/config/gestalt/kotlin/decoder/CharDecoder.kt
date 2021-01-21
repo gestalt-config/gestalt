@@ -10,7 +10,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class CharDecoder : LeafDecoder<Char>() {
     override fun name(): String {
-        return "Character"
+        return "kCharacter"
     }
 
     override fun priority(): Priority {

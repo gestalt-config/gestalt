@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+/**
+ * Loads from a property files from multiple sources.
+ *
+ * @author Colin Redmond
+ */
 public class PropertyLoader implements ConfigLoader {
 
     private final ConfigParser parser;

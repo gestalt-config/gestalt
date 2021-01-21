@@ -11,7 +11,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class FloatDecoder : LeafDecoder<Float>() {
     override fun name(): String {
-        return "Float"
+        return "kFloat"
     }
 
     override fun priority(): Priority {

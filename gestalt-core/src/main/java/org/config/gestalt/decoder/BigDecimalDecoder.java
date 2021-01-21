@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.math.BigDecimal;
 
+/**
+ * Decode Big Decimals.
+ *
+ * @author Colin Redmond
+ */
 public class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
 
     @Override

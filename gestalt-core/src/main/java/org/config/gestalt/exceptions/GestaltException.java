@@ -6,6 +6,11 @@ import org.config.gestalt.utils.ErrorsUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Exception from Gestalt.
+ *
+ * @author Colin Redmond
+ */
 public class GestaltException extends Exception {
 
     List<GestaltException> exceptions = new ArrayList<>();

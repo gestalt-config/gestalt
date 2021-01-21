@@ -1,5 +1,10 @@
 package org.config.gestalt.entity;
 
+/**
+ * Configuration for Gestalt.
+ *
+ * @author Colin Redmond
+ */
 public class GestaltConfig {
 
     private boolean treatWarningsAsErrors = false;

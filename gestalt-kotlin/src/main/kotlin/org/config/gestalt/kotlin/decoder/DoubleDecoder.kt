@@ -11,7 +11,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class DoubleDecoder : LeafDecoder<Double>() {
     override fun name(): String {
-        return "Double"
+        return "kDouble"
     }
 
     override fun priority(): Priority {

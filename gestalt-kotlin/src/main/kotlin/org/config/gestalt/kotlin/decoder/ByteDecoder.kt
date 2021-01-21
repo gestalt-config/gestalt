@@ -11,7 +11,7 @@ import java.nio.charset.Charset
 
 class ByteDecoder : LeafDecoder<Byte>() {
     override fun name(): String {
-        return "Byte"
+        return "kByte"
     }
 
     override fun priority(): Priority {

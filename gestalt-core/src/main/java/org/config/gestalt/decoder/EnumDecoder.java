@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Decode an Enum
+ *
+ * @author Colin Redmond
+ */
 public class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 
     @Override

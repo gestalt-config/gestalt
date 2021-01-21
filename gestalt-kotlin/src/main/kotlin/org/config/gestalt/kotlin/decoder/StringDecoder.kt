@@ -10,7 +10,7 @@ import org.config.gestalt.utils.ValidateOf
 @Suppress("UNCHECKED_CAST")
 class StringDecoder : LeafDecoder<String>() {
     override fun name(): String {
-        return "String"
+        return "kString"
     }
 
     override fun priority(): Priority {

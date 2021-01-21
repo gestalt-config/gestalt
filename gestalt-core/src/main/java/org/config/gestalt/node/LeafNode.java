@@ -3,6 +3,11 @@ package org.config.gestalt.node;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * leaf node that holds a value.
+ *
+ * @author Colin Redmond
+ */
 public class LeafNode implements ConfigNode {
     private final String value;
 

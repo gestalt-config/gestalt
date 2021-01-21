@@ -6,8 +6,23 @@ import org.config.gestalt.node.LeafNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
+/**
+ * Base class for leaf decoders. Will decode leaf types, including booleans, integers ect.
+ *
+ * @param <T> generic type for this leaf decoder
+ * @author Colin Redmond
+ */
 public abstract class LeafDecoder<T> implements Decoder<T> {
 
+    /**
+     * Validates that the current node is a leaf and if it is call leafDecode
+     *
+     * @param path the current path
+     * @param node the current node we are decoding.
+     * @param type the type of object we are decoding.
+     * @param decoderService decoder Service used to decode members if needed. Such as class fields.
+     * @return ValidateOf the current node with details of either success or failures.
+     */
     @Override
     public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         ValidateOf<T> results;
@@ -23,9 +38,24 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
         return results;
     }
 
+    /**
+     * Decode a leaf value
+     *
+     * @param path the current path
+     * @param node the current node we are decoding.
+     * @param type the type of object we are decoding.
+     * @return ValidateOf the current node with details of either success or failures.
+     */
     protected ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
         return leafDecode(path, node);
     }
 
+    /**
+     * Decode a leaf value
+     *
+     * @param path the current path
+     * @param node the current node we are decoding.
+     * @return ValidateOf the current node with details of either success or failures.
+     */
     protected abstract ValidateOf<T> leafDecode(String path, ConfigNode node);
 }

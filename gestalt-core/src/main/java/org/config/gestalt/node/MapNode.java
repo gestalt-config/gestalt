@@ -5,6 +5,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Map node holds a map of config nodes we can get by key.
+ *
+ * @author Colin Redmond
+ */
 public class MapNode implements ConfigNode {
 
     private final Map<String, ConfigNode> mapNode;

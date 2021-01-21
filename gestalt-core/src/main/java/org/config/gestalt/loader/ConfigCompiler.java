@@ -18,6 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Static utility functions to analyze and build a config node.
+ *
+ * @author Colin Redmond
+ */
 public final class ConfigCompiler {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigCompiler.class.getName());
@@ -25,6 +30,18 @@ public final class ConfigCompiler {
     private ConfigCompiler() {
     }
 
+    /**
+     * Uses the SentenceLexer to tokenize the configs.
+     * Then validates the tokens for any errors.
+     * If everything is ok it will send the tokens to the parser.
+     *
+     * @param lexer the SentenceLexer used to tokenize the configs.
+     * @param parser ConfigParser to parse the tokens into a config node.
+     * @param sourceName name of the source.
+     * @param configs the configuration to parse.
+     * @return the ValidateOf of the config node with the results or errors.
+     * @throws ConfigurationException on any exceptions.
+     */
     public static ValidateOf<ConfigNode> analyze(SentenceLexer lexer,
                                                  ConfigParser parser,
                                                  String sourceName,
@@ -33,6 +50,19 @@ public final class ConfigCompiler {
         return analyze(false, lexer, parser, sourceName, configs);
     }
 
+    /**
+     * Uses the SentenceLexer to tokenize the configs.
+     * Then validates the tokens for any errors.
+     * If everything is ok it will send the tokens to the parser.
+     *
+     * @param treatErrorsAsWarnings if we want to treat errors as warnings.
+     * @param lexer the SentenceLexer used to tokenize the configs.
+     * @param parser ConfigParser to parse the tokens into a config node.
+     * @param sourceName name of the source.
+     * @param configs the configuration to parse.
+     * @return the ValidateOf of the config node with the results or errors.
+     * @throws ConfigurationException on any exceptions.
+     */
     public static ValidateOf<ConfigNode> analyze(boolean treatErrorsAsWarnings,
                                                  SentenceLexer lexer,
                                                  ConfigParser parser,

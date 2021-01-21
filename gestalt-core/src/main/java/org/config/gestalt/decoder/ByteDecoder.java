@@ -7,6 +7,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.nio.charset.Charset;
 
+/**
+ * Decode Byte
+ *
+ * @author Colin Redmond
+ */
 public class ByteDecoder extends LeafDecoder<Byte> {
 
     @Override

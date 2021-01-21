@@ -22,6 +22,19 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Builder to setup and create the Gestalt config class.
+ * <p>
+ * The minimum requirements for building a config is to provide a source.
+ * Gestalt gestalt = new GestaltBuilder()
+ * .addSource(new FileConfigSource(defaultFile))
+ * .build();
+ * <p>
+ * The builder will automatically add config loaders and decoders.
+ * You can customise and replace functionality as needed using the appropriate builder methods.
+ *
+ * @author Colin Redmond
+ */
 public class GestaltBuilder {
     private static final Logger logger = LoggerFactory.getLogger(GestaltBuilder.class.getName());
     private final List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>();
@@ -46,6 +59,11 @@ public class GestaltBuilder {
     private String localDateTimeFormat = null;
     private String localDateFormat = null;
 
+    /**
+     * Adds all default decoders to the builder. The default decoders include all decoders in this project.
+     *
+     * @return GestaltBuilder builder
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public GestaltBuilder addDefaultDecoders() {
         List<Decoder<?>> decoders = Arrays.asList(new ArrayDecoder(), new BigDecimalDecoder(), new BigIntegerDecoder(),
@@ -58,12 +76,24 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Add default config loaders for Map Config, Property and Environment Variables.
+     *
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addDefaultConfigLoaders() {
         configLoaders.addAll(Arrays.asList(new MapConfigLoader(), new PropertyLoader(),
             new EnvironmentVarsLoader(gestaltConfig.isEnvVarsTreatErrorsAsWarnings())));
         return this;
     }
 
+    /**
+     * Sets the list of sources to load. Replaces any sources already set.
+     *
+     * @param sources list of sources to load.
+     * @return GestaltBuilder builder
+     * @throws ConfigurationException exception if there are no sources
+     */
     public GestaltBuilder setSources(List<ConfigSource> sources) throws ConfigurationException {
         if (sources == null || sources.isEmpty()) {
             throw new ConfigurationException("No sources provided while setting sources");
@@ -73,6 +103,13 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * List of sources to add to the builder.
+     *
+     * @param sources list of sources to add.
+     * @return GestaltBuilder builder
+     * @throws ConfigurationException no sources provided
+     */
     public GestaltBuilder addSources(List<ConfigSource> sources) throws ConfigurationException {
         if (sources == null || sources.isEmpty()) {
             throw new ConfigurationException("No sources provided while adding sources");
@@ -82,42 +119,84 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Add a single source to the builder.
+     *
+     * @param source add a single sources
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addSource(ConfigSource source) {
         Objects.requireNonNull(source, "Source should not be null");
         this.sources.add(source);
         return this;
     }
 
+    /**
+     * Add a config reload strategy to the builder.
+     *
+     * @param configReloadStrategy add a config reload strategy.
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addReloadStrategy(ConfigReloadStrategy configReloadStrategy) {
         Objects.requireNonNull(configReloadStrategy, "reloadStrategy should not be null");
         this.reloadStrategies.add(configReloadStrategy);
         return this;
     }
 
+    /**
+     * Add a list of config reload strategies to the builder.
+     *
+     * @param reloadStrategies list of config reload strategies.
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addReloadStrategies(List<ConfigReloadStrategy> reloadStrategies) {
         Objects.requireNonNull(reloadStrategies, "reloadStrategies should not be null");
         this.reloadStrategies.addAll(reloadStrategies);
         return this;
     }
 
+    /**
+     * Add a Core reload listener to the builder.
+     *
+     * @param coreReloadListener a Core reload listener
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addCoreReloadListener(CoreReloadListener coreReloadListener) {
         Objects.requireNonNull(coreReloadListener, "coreReloadListener should not be null");
         this.coreCoreReloadListeners.add(coreReloadListener);
         return this;
     }
 
+    /**
+     * Add a list of Core reload listener
+     *
+     * @param coreCoreReloadListeners a list of Core reload listener
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addCoreReloadListener(List<CoreReloadListener> coreCoreReloadListeners) {
         Objects.requireNonNull(reloadStrategies, "reloadStrategies should not be null");
         this.coreCoreReloadListeners.addAll(coreCoreReloadListeners);
         return this;
     }
 
+    /**
+     * Add a config loader service to the builder
+     *
+     * @param configLoaderService a config loader service
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setConfigLoaderService(ConfigLoaderService configLoaderService) {
         Objects.requireNonNull(configLoaderService, "ConfigLoaderRegistry should not be null");
         this.configLoaderService = configLoaderService;
         return this;
     }
 
+    /**
+     * Sets a list of config loader to the builder. Replaces any currently set.
+     *
+     * @param configLoaders a list of config loader
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setConfigLoaders(List<ConfigLoader> configLoaders) throws ConfigurationException {
         if (configLoaders == null || configLoaders.isEmpty()) {
             throw new ConfigurationException("No config loader provided while setting config loaders");
@@ -126,7 +205,12 @@ public class GestaltBuilder {
         return this;
     }
 
-
+    /**
+     * Adds a list of config loader to the builder.
+     *
+     * @param configLoaders a list of config loader
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addConfigLoaders(List<ConfigLoader> configLoaders) throws ConfigurationException {
         if (configLoaders == null || configLoaders.isEmpty()) {
             throw new ConfigurationException("No config loader provided while adding config loaders");
@@ -135,30 +219,60 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Add a config loader
+     *
+     * @param configLoader a config loader
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder addConfigLoader(ConfigLoader configLoader) {
         Objects.requireNonNull(configLoader, "ConfigLoader should not be null");
         this.configLoaders.add(configLoader);
         return this;
     }
 
+    /**
+     * Set the sentence lexer that will be passed through to the DecoderRegistry.
+     *
+     * @param sentenceLexer for the DecoderRegistry
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setSentenceLexer(SentenceLexer sentenceLexer) {
         Objects.requireNonNull(sentenceLexer, "SentenceLexer should not be null");
         this.sentenceLexer = sentenceLexer;
         return this;
     }
 
+    /**
+     * Set the configuration for Gestalt. Will be overridden by any settings specified in the builder
+     *
+     * @param gestaltConfig configuration for the Gestalt
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setGestaltConfig(GestaltConfig gestaltConfig) {
         Objects.requireNonNull(gestaltConfig, "GestaltConfig should not be null");
         this.gestaltConfig = gestaltConfig;
         return this;
     }
 
+    /**
+     * Set the config node service if you want to provide your own. Otherwise a default is provided.
+     *
+     * @param configNodeService a config node service
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setConfigNodeService(ConfigNodeService configNodeService) {
         Objects.requireNonNull(configNodeService, "ConfigNodeManager should not be null");
         this.configNodeService = configNodeService;
         return this;
     }
 
+    /**
+     * Set the decoder service if you want to provide your own. Otherwise a default is provided.
+     *
+     * @param decoderService decoder service
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setDecoderService(DecoderService decoderService) {
         Objects.requireNonNull(decoderService, "DecoderService should not be null");
         this.decoderService = decoderService;
@@ -166,6 +280,13 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Set a list of decoders, replaces the existing decoders .
+     *
+     * @param decoders list of decoders
+     * @return GestaltBuilder builder
+     * @throws ConfigurationException no decoders provided
+     */
     public GestaltBuilder setDecoders(List<Decoder<?>> decoders) throws ConfigurationException {
         if (decoders == null || decoders.isEmpty()) {
             throw new ConfigurationException("No decoders provided while setting decoders");
@@ -174,6 +295,13 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Add a list of decoders.
+     *
+     * @param decoders list of decoders
+     * @return GestaltBuilder builder
+     * @throws ConfigurationException no decoders provided
+     */
     public GestaltBuilder addDecoders(List<Decoder<?>> decoders) throws ConfigurationException {
         if (decoders == null || decoders.isEmpty()) {
             throw new ConfigurationException("No decoders provided while adding decoders");
@@ -182,6 +310,12 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Add a decoder.
+     *
+     * @param decoder add a decoder
+     * @return GestaltBuilder builder
+     */
     @SuppressWarnings("rawtypes")
     public GestaltBuilder addDecoder(Decoder decoder) {
         Objects.requireNonNull(decoder, "Decoder should not be null");
@@ -189,47 +323,100 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Treat warnings as errors.
+     *
+     * @param warningsAsErrors treat warnings as errors.
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setTreatWarningsAsErrors(boolean warningsAsErrors) {
         treatWarningsAsErrors = warningsAsErrors;
         return this;
     }
 
+    /**
+     * Treat missing array indexes as errors.
+     *
+     * @param treatMissingArrayIndexAsError treat missing array indexes as errors.
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setTreatMissingArrayIndexAsError(Boolean treatMissingArrayIndexAsError) {
         this.treatMissingArrayIndexAsError = treatMissingArrayIndexAsError;
         return this;
     }
 
+    /**
+     * treat missing object values as errors.
+     *
+     * @param treatMissingValuesAsErrors treat missing object values as errors
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setTreatMissingValuesAsErrors(Boolean treatMissingValuesAsErrors) {
         this.treatMissingValuesAsErrors = treatMissingValuesAsErrors;
         return this;
     }
 
+    /**
+     * treat Environment Variables errors as Warnings. Since we can not control Env Vars as closely,
+     * we may need to ignore errors while building the node config tree.
+     *
+     * @param envVarsTreatErrorsAsWarnings treat Environment Variables errors as Warnings.
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setEnvVarsTreatErrorsAsWarnings(boolean envVarsTreatErrorsAsWarnings) {
         this.envVarsTreatErrorsAsWarnings = envVarsTreatErrorsAsWarnings;
         return this;
     }
 
+    /**
+     * Add a cache layer to gestalt.
+     *
+     * @param useCacheDecorator use a cache decorator.
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder useCacheDecorator(boolean useCacheDecorator) {
         this.useCacheDecorator = useCacheDecorator;
         return this;
     }
 
-
+    /**
+     * Set a date decoder format. Used to decode date times.
+     *
+     * @param dateDecoderFormat a date decoder format
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setDateDecoderFormat(String dateDecoderFormat) {
         this.dateDecoderFormat = dateDecoderFormat;
         return this;
     }
 
+    /**
+     * Set a local date time format. Used to decode local date times.
+     *
+     * @param localDateTimeFormat a date decoder format
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setLocalDateTimeFormat(String localDateTimeFormat) {
         this.localDateTimeFormat = localDateTimeFormat;
         return this;
     }
 
+    /**
+     * Set a local date format. Used to decode local date.
+     *
+     * @param localDateFormat a local date decoder format
+     * @return GestaltBuilder builder
+     */
     public GestaltBuilder setLocalDateFormat(String localDateFormat) {
         this.localDateFormat = localDateFormat;
         return this;
     }
 
+    /**
+     * dedupe decoders and return the deduped list
+     *
+     * @return deduped list of decoders.
+     */
     protected List<Decoder<?>> dedupeDecoders() {
         Map<String, List<Decoder<?>>> decoderMap = decoders
             .stream()
@@ -247,6 +434,11 @@ public class GestaltBuilder {
         return decoders.stream().filter(CollectionUtils.distinctBy(Decoder::name)).collect(Collectors.toList());
     }
 
+    /**
+     * Dedupe the list of config loaders and return the deduped list
+     *
+     * @return a list of deduped config loaders.
+     */
     protected List<ConfigLoader> dedupeConfigLoaders() {
         Map<String, List<ConfigLoader>> configMap = configLoaders
             .stream()
@@ -264,6 +456,12 @@ public class GestaltBuilder {
         return configLoaders.stream().filter(CollectionUtils.distinctBy(ConfigLoader::name)).collect(Collectors.toList());
     }
 
+    /**
+     * Build Gestalt
+     *
+     * @return Gestalt
+     * @throws ConfigurationException multiple validations can throw exceptions
+     */
     public Gestalt build() throws ConfigurationException {
         if (sources.isEmpty()) {
             throw new ConfigurationException("No sources provided");

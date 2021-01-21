@@ -10,6 +10,12 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.util.*;
 
+/**
+ * Decode a Map. Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int.
+ * The value can be any type we can decode.
+ *
+ * @author Colin Redmond
+ */
 public class MapDecoder implements Decoder<Map<?, ?>> {
 
     @Override
@@ -35,7 +41,7 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
 
             if (genericInterfaces == null || genericInterfaces.size() != 2) {
-                results = ValidateOf.inValid(new ValidationError.DecodingExpectedMap(path, genericInterfaces));
+                results = ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces));
             } else {
                 TypeCapture<?> keyType = genericInterfaces.get(0);
                 TypeCapture<?> valueType = genericInterfaces.get(1);

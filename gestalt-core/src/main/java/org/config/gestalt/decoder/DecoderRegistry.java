@@ -19,6 +19,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Contains all decoders and functionality interact and decode a node.
+ *
+ * @author Colin Redmond
+ */
 public class DecoderRegistry implements DecoderService {
     private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
 
@@ -27,6 +32,14 @@ public class DecoderRegistry implements DecoderService {
 
     private List<Decoder<?>> decoders = new ArrayList<>();
 
+    /**
+     * Constructor to build Decoder Registry.
+     *
+     * @param decoders list of all supported decoders
+     * @param configNodeService config node service that holds the config nodes.
+     * @param lexer sentence lexer to decode
+     * @throws ConfigurationException any configuration exceptions for empty parameters.
+     */
     public DecoderRegistry(List<Decoder<?>> decoders, ConfigNodeService configNodeService, SentenceLexer lexer)
         throws ConfigurationException {
         if (configNodeService == null) {

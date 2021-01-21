@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 /**
  * Class to convert a sentence to tokens
  * This class is fully customizable by passing in your own tokenizer and evaluator functions.
+ *
+ * @author Colin Redmond
  */
 public abstract class SentenceLexer {
 

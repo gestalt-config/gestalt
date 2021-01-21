@@ -9,7 +9,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class BooleanDecoder : LeafDecoder<Boolean>() {
     override fun name(): String {
-        return "Boolean"
+        return "kBoolean"
     }
 
     override fun priority(): Priority {

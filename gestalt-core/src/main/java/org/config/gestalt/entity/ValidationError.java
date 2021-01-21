@@ -6,6 +6,11 @@ import org.config.gestalt.token.Token;
 
 import java.util.List;
 
+/**
+ * Validation errors for every possible error.
+ *
+ * @author Colin Redmond
+ */
 public abstract class ValidationError {
     private ValidationLevel level;
 
@@ -23,7 +28,9 @@ public abstract class ValidationError {
         this.level = level;
     }
 
-    //parser errors
+    /**
+     * Empty path provided to tokenizer. Parsing error.
+     */
     public static class EmptyPath extends ValidationError {
 
         public EmptyPath() {
@@ -36,7 +43,9 @@ public abstract class ValidationError {
         }
     }
 
-    //parser errors
+    /**
+     * Empty element/word in a path. Parsing error.
+     */
     public static class EmptyElement extends ValidationError {
         private final String path;
 
@@ -51,6 +60,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Failed to tokenize a element/word.
+     */
     public static class FailedToTokenizeElement extends ValidationError {
         private final String element;
         private final String path;
@@ -67,6 +79,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * A word pattern must have a name, an array and index is optional.
+     */
     public static class UnableToParseName extends ValidationError {
         private final String path;
 
@@ -81,6 +96,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * A word is an array but doesn't have an index or match the pattern.
+     */
     public static class InvalidArrayToken extends ValidationError {
         private final String path;
         private final String element;
@@ -100,6 +118,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * A word is an array but doesn't have an index.
+     */
     public static class InvalidArrayIndexToken extends ValidationError {
         private final String path;
         private final String element;
@@ -116,6 +137,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * A word is an array but the index is negative.
+     */
     public static class InvalidArrayNegativeIndexToken extends ValidationError {
         private final String path;
         private final String element;
@@ -134,7 +158,9 @@ public abstract class ValidationError {
         }
     }
 
-    //parsing errors
+    /**
+     * No tokens provided while building the config node
+     */
     public static class EmptyToken extends ValidationError {
 
         public EmptyToken() {
@@ -143,25 +169,13 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Empty or null token provided";
+            return "Empty or null token provided while building the config node";
         }
     }
 
-    public static class UnknownToken extends ValidationError {
-        private final Token token;
-
-        public UnknownToken(Token token) {
-            super(ValidationLevel.ERROR);
-            this.token = token;
-        }
-
-        @Override
-        public String description() {
-            return "Unknown token type " + token;
-        }
-    }
-
-
+    /**
+     * Unknown token type while building a config node
+     */
     public static class UnknownTokenWithPath extends ValidationError {
         private final Token token;
         private final String path;
@@ -178,6 +192,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Mismatched path lengths received for path, this could be because a node is both a leaf and an object
+     */
     public static class MismatchedPathLength extends ValidationError {
         private final String paths;
 
@@ -192,6 +209,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * No tokens provided while building a config node
+     */
     public static class NoTokensInPath extends ValidationError {
         private final String path;
 
@@ -202,10 +222,13 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Unable to find a token for path: " + path;
+            return "Unable to find a token for path: " + path + " while building a config node";
         }
     }
 
+    /**
+     * For a specific path there are multiple token types. This can happen when a node is an array and an object
+     */
     public static class MultipleTokenTypes extends ValidationError {
         private final String path;
         private final List<Token> tokens;
@@ -222,6 +245,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Array is missing an index.
+     */
     public static class ArrayMissingIndex extends ValidationError {
         private final long index;
         private final String path;
@@ -248,6 +274,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Invalid array index. For negative array indexes while building a config node.
+     */
     public static class ArrayInvalidIndex extends ValidationError {
         private final long index;
         private final String path;
@@ -264,6 +293,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Array has duplicate index's while building config node.
+     */
     public static class ArrayDuplicateIndex extends ValidationError {
         private final long index;
         private final String path;
@@ -280,6 +312,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Array has both leaf and non leaf values while building config node.
+     */
     public static class ArrayLeafAndNotLeaf extends ValidationError {
         private final String path;
         private final List<Integer> sizes;
@@ -296,6 +331,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * No results found for path while building config node.
+     */
     public static class NoResultsFoundForPath extends ValidationError {
         private final String path;
 
@@ -310,6 +348,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a leaf it is missing its value.
+     */
     public static class DecodingLeafMissingValue extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -328,6 +369,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a leaf we received a non leaf node.
+     */
     public static class DecodingExpectedLeafNodeType extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -346,6 +390,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding an array we received a non array node.
+     */
     public static class DecodingExpectedArrayNodeType extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -364,27 +411,14 @@ public abstract class ValidationError {
         }
     }
 
-    public static class DecodingUnsupportedOperation extends ValidationError {
-        private final ConfigNode node;
-        private final String nodeType;
-
-        public DecodingUnsupportedOperation(ConfigNode node, String nodeType) {
-            super(ValidationLevel.ERROR);
-            this.node = node;
-            this.nodeType = nodeType;
-        }
-
-        @Override
-        public String description() {
-            return "Unsupported operation decoding node: " + node + " attempting to decode " + nodeType;
-        }
-    }
-
-    public static class DecodingExpectedMap extends ValidationError {
+    /**
+     * While decoding a map we received a non map node.
+     */
+    public static class DecodingExpectedMapNodeType extends ValidationError {
         private final String path;
         private final List<TypeCapture<?>> types;
 
-        public DecodingExpectedMap(String path, List<TypeCapture<?>> types) {
+        public DecodingExpectedMapNodeType(String path, List<TypeCapture<?>> types) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.types = types;
@@ -396,6 +430,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a number the value is not a number
+     */
     public static class DecodingNumberParsing extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -414,6 +451,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a number received a number format exception
+     */
     public static class DecodingNumberFormatException extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -432,6 +472,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While deciding a char, expected a single value character but received more
+     */
     public static class DecodingCharWrongSize extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -448,6 +491,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While deciding a byte, expected a single value but received more
+     */
     public static class DecodingByteTooLong extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -464,6 +510,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a value received an exception.
+     */
     public static class ErrorDecodingException extends ValidationError {
         private final String path;
         private final ConfigNode node;
@@ -478,10 +527,13 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Unable to decode a " + decoder +  " on path: " + path + ", from node: " + node;
+            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " + node;
         }
     }
 
+    /**
+     * While decoding a maps key the key was null.
+     */
     public static class DecodersMapKeyNull extends ValidationError {
         private final String path;
 
@@ -496,6 +548,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While deocing a maps value, it was null.
+     */
     public static class DecodersMapValueNull extends ValidationError {
         private final String path;
 
@@ -510,6 +565,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * No decoders found
+     */
     public static class NoDecodersFound extends ValidationError {
         private final String klass;
 
@@ -524,6 +582,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While trying to get a configuration, was unable to find a value.
+     */
     public static class NoResultsFoundForNode extends ValidationError {
         private final String path;
         private final String klass;
@@ -546,6 +607,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a node no results were found.
+     */
     public static class NoResultsFoundForDecodingNode extends ValidationError {
         private final String path;
         private final String klass;
@@ -568,6 +632,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While building a config node an empty node name was provided
+     */
     public static class EmptyNodeNameProvided extends ValidationError {
         private final String path;
 
@@ -582,6 +649,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While building a config node an empty value name was provided
+     */
     public static class EmptyNodeValueProvided extends ValidationError {
         private final String path;
         private final String key;
@@ -598,6 +668,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While navigating to an array, did not receive a array node.
+     */
     public static class UnableToFindArrayNodeForPath extends ValidationError {
         private final String path;
         private final Token token;
@@ -614,6 +687,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While navigating to an object, did not receive an object node.
+     */
     public static class UnableToFindObjectNodeForPath extends ValidationError {
         private final String path;
         private final Token token;
@@ -630,6 +706,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Received the wrong node type while navigating to a node.
+     */
     public static class MismatchedObjectNodeForPath extends ValidationError {
         private final String path;
         private final Class<?> expectedKlass;
@@ -649,6 +728,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Config node was null while navigating to a path.
+     */
     public static class NullNodeForPath extends ValidationError {
         private final String path;
 
@@ -663,6 +745,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Token provided is null for path
+     */
     public static class NullTokenForPath extends ValidationError {
         private final String path;
 
@@ -677,6 +762,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Unknown token type found while navigating to a node
+     */
     public static class UnsupportedTokenType extends ValidationError {
         private final String path;
         private final Token token;
@@ -693,6 +781,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Unable to merge nodes of different types. Can not merge an array with a object or an object with a leaf.
+     */
     public static class UnableToMergeDifferentNodes extends ValidationError {
         private final Class<?> klass1;
         private final Class<?> klass2;
@@ -709,6 +800,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Unknown node type while building config node
+     */
     public static class UnknownNodeType extends ValidationError {
         private final String nodeType;
 
@@ -723,6 +817,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Failed to decode an Enum, as the value doesn't exist.
+     */
     public static class EnumValueNotFound extends ValidationError {
         private final String path;
         private final String enumValue;
@@ -742,6 +839,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Exception while decoding an enum.
+     */
     public static class ExceptionDecodingEnum extends ValidationError {
         private final String path;
         private final String enumValue;
@@ -763,6 +863,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Leaf node is null
+     */
     public static class LeafNodesIsNull extends ValidationError {
         private final String path;
 
@@ -777,6 +880,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Leaf node has no values.
+     */
     public static class LeafNodesHaveNoValues extends ValidationError {
         private final String path;
 
@@ -791,6 +897,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a Object the constructor was not public. Unable to create the object.
+     */
     public static class ConstructorNotPublic extends ValidationError {
         private final String path;
         private final String klassName;
@@ -807,6 +916,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a Object no default constructor found.
+     */
     public static class NoDefaultConstructor extends ValidationError {
         private final String path;
         private final String klassName;

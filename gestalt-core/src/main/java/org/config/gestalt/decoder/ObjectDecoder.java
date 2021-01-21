@@ -12,6 +12,14 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.*;
 import java.util.*;
 
+/**
+ * Decode a class. This decoder is best suited for pojo style classes.
+ * Will fail if the constructor is private.
+ * Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors.
+ * Decodes member classes and lists as well.
+ *
+ * @author Colin Redmond
+ */
 public class ObjectDecoder implements Decoder<Object> {
     private static final Logger logger = LoggerFactory.getLogger(ObjectDecoder.class.getName());
 

@@ -11,7 +11,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class LongDecoder : LeafDecoder<Long>() {
     override fun name(): String {
-        return "Long"
+        return "kLong"
     }
 
     override fun priority(): Priority {

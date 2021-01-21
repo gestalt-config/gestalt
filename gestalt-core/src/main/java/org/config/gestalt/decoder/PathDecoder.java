@@ -7,6 +7,11 @@ import org.config.gestalt.utils.ValidateOf;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Decode a Path
+ *
+ * @author Colin Redmond
+ */
 public class PathDecoder extends LeafDecoder<Path> {
 
     @Override

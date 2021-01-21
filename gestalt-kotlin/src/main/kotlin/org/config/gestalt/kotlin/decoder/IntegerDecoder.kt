@@ -11,7 +11,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class IntegerDecoder : LeafDecoder<Int>() {
     override fun name(): String {
-        return "Int"
+        return "kInt"
     }
 
     override fun priority(): Priority {

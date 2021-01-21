@@ -11,7 +11,7 @@ import org.config.gestalt.utils.ValidateOf
 
 class ShortDecoder : LeafDecoder<Short>() {
     override fun name(): String {
-        return "Short"
+        return "kShort"
     }
 
     override fun priority(): Priority {

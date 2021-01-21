@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Decode char
+ *
+ * @author Colin Redmond
+ */
 public class CharDecoder extends LeafDecoder<Character> {
 
     @Override
