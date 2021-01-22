@@ -28,7 +28,7 @@ internal class ShortDecoderTest {
     @Test
     fun name() {
         val decoder = ShortDecoder()
-        Assertions.assertEquals("Short", decoder.name())
+        Assertions.assertEquals("kShort", decoder.name())
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class ShortDecoderTest {
 
     @Test
     @Throws(GestaltException::class)
-    fun notAnInteger() {
+    fun `not A Short`() {
         val decoder = ShortDecoder()
         val validate: ValidateOf<Short> = decoder.decode(
             "db.port", LeafNode("12s4"), TypeCapture.of(
@@ -76,14 +76,14 @@ internal class ShortDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
-                "attempting to decode Short",
+                "attempting to decode kShort",
             validate.errors[0].description()
         )
     }
 
     @Test
     @Throws(GestaltException::class)
-    fun notAShortTooLarge() {
+    fun `not A Short Too Large`() {
         val decoder = ShortDecoder()
         val validate: ValidateOf<Short> = decoder.decode(
             "db.port", LeafNode("12345678901234567890123456789012345678901234567890123456789"),
@@ -96,7 +96,7 @@ internal class ShortDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to decode a number on path: db.port, from node: " +
-                "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode Short",
+                "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode kShort",
             validate.errors[0].description()
         )
     }

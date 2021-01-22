@@ -28,7 +28,7 @@ internal class FloatDecoderTest {
     @Test
     fun name() {
         val decoder = FloatDecoder()
-        Assertions.assertEquals("Float", decoder.name())
+        Assertions.assertEquals("kFloat", decoder.name())
     }
 
     @Test
@@ -92,7 +92,7 @@ internal class FloatDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.timeout, from node: LeafNode{value='12s4'} " +
-                "attempting to decode Float",
+                "attempting to decode kFloat",
             validate.errors[0].description()
         )
     }

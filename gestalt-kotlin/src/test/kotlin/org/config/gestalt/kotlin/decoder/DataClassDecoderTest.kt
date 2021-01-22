@@ -169,7 +169,7 @@ class DataClassDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
         Assertions.assertEquals(
-            "Unable to parse a number on Path: db.host.port, from node: LeafNode{value='abc'} attempting to decode Int",
+            "Unable to parse a number on Path: db.host.port, from node: LeafNode{value='abc'} attempting to decode kInt",
             validate.errors[0].description()
         )
         Assertions.assertEquals(
@@ -196,7 +196,7 @@ class DataClassDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
         Assertions.assertEquals(
-            "Leaf on path: db.host.port, missing value, LeafNode{value='null'} attempting to decode Int",
+            "Leaf on path: db.host.port, missing value, LeafNode{value='null'} attempting to decode kInt",
             validate.errors[0].description()
         )
         Assertions.assertEquals(

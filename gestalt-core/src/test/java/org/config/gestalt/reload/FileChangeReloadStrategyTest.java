@@ -4,6 +4,7 @@ import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.source.ConfigSource;
 import org.config.gestalt.source.FileConfigSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -88,6 +89,7 @@ class FileChangeReloadStrategyTest {
     }
 
     @Test
+    @Disabled
     public void changeContentsOfFileWithSymlinkChain() throws GestaltException, IOException, InterruptedException {
         Path folder = Files.createTempDirectory("gestalt");
 

@@ -28,7 +28,7 @@ internal class LongDecoderTest {
     @Test
     fun name() {
         val decoder = LongDecoder()
-        Assertions.assertEquals("Long", decoder.name())
+        Assertions.assertEquals("kLong", decoder.name())
     }
 
     @Test
@@ -76,7 +76,7 @@ internal class LongDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.port, from node: " +
-                "LeafNode{value='12s4'} attempting to decode Long",
+                "LeafNode{value='12s4'} attempting to decode kLong",
             validate.errors[0].description()
         )
     }
@@ -96,7 +96,7 @@ internal class LongDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to decode a number on path: db.port, from node: " +
-                "LeafNode{value='12345678901234567890123456789012345678901234567890123456'} attempting to decode Long",
+                "LeafNode{value='12345678901234567890123456789012345678901234567890123456'} attempting to decode kLong",
             validate.errors[0].description()
         )
     }

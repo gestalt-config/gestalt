@@ -28,7 +28,7 @@ internal class CharDecoderTest {
     @Test
     fun name() {
         val decoder = CharDecoder()
-        Assertions.assertEquals("Character", decoder.name())
+        Assertions.assertEquals("kCharacter", decoder.name())
     }
 
     @Test

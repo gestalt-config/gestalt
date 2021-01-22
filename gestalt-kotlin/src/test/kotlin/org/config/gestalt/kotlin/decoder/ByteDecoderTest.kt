@@ -29,7 +29,7 @@ internal class ByteDecoderTest {
     @Test
     fun name() {
         val decoder = ByteDecoder()
-        Assertions.assertEquals("Byte", decoder.name())
+        Assertions.assertEquals("kByte", decoder.name())
     }
 
     @Test

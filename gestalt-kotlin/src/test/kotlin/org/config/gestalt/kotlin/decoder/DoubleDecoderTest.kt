@@ -28,7 +28,7 @@ internal class DoubleDecoderTest {
     @Test
     fun name() {
         val decoder = DoubleDecoder()
-        Assertions.assertEquals("Double", decoder.name())
+        Assertions.assertEquals("kDouble", decoder.name())
     }
 
     @Test
@@ -108,7 +108,7 @@ internal class DoubleDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
-                "attempting to decode Double",
+                "attempting to decode kDouble",
             validate.errors[0].description()
         )
     }

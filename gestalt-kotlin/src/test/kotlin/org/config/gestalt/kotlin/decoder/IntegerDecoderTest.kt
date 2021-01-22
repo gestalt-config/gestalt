@@ -28,7 +28,7 @@ internal class IntegerDecoderTest {
     @Test
     fun name() {
         val decoder = IntegerDecoder()
-        Assertions.assertEquals("Int", decoder.name())
+        Assertions.assertEquals("kInt", decoder.name())
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class IntegerDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
-                "attempting to decode Int",
+                "attempting to decode kInt",
             validate.errors[0].description()
         )
     }
@@ -96,7 +96,7 @@ internal class IntegerDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Unable to decode a number on path: db.port, from node: " +
-                "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode Int",
+                "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode kInt",
             validate.errors[0].description()
         )
     }
