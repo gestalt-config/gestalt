@@ -11,6 +11,10 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 dependencies {
     //Kotlin
     implementation(kotlin("stdlib-jdk8"))
