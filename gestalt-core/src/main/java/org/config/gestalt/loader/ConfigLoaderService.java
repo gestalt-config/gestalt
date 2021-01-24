@@ -40,11 +40,11 @@ public interface ConfigLoaderService {
     List<ConfigLoader> getConfigLoaders();
 
     /**
-     * find the config loader matching the format.
+     * find the first config loader matching the format.
      *
      * @param format format we want to load.
      * @return the config loader matching the format.
-     * @throws ConfigurationException any exception
+     * @throws ConfigurationException if there are no matching config loaders for the format. 
      */
     ConfigLoader getLoader(String format) throws ConfigurationException;
 }

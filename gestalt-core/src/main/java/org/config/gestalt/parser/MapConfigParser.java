@@ -65,19 +65,24 @@ public class MapConfigParser implements ConfigParser {
             return ValidateOf.inValid(new ValidationError.EmptyToken());
         }
 
+        // build the current path, mostly for logging.
         String currentPath = PathUtil.toPath(tokens.get(0).getFirst().subList(0, index));
         List<ValidationError> errorList = new ArrayList<>();
 
+        // if there is only 1 token and we are at the end of the path return a valid leaf.
         if (tokens.size() == 1 && tokens.get(0).getFirst().size() <= index) {
             ConfigValue configValue = tokens.get(0).getSecond();
             return ValidateOf.valid(new LeafNode(configValue.getValue()));
         }
 
+        // validate any mis-matched path's, this is most like when a path is both a leaf and an object and an array.
         List<ValidationError> mismatchedPathLengthErrors = getMismatchedPathLengthErrors(tokens, index, currentPath);
         if (!mismatchedPathLengthErrors.isEmpty()) {
             return ValidateOf.inValid(mismatchedPathLengthErrors);
         }
 
+        // group the tokens at the index, for example all object tokens with the same name will be grouped, or arrays with the same index.
+        // these grouped objects represent a child object
         Map<Token, List<Pair<List<Token>, ConfigValue>>> tokensAtIndexGrouped = tokens
             .stream()
             .collect(Collectors.groupingBy(tokenPair -> tokenPair.getFirst().get(index)));
@@ -87,14 +92,16 @@ public class MapConfigParser implements ConfigParser {
             .filter(CollectionUtils.distinctBy(Token::getClass))
             .collect(Collectors.toList());
 
+        // do some validation on the node.
         if (tokenTypes.isEmpty()) {
             errorList.add(new ValidationError.NoTokensInPath(currentPath));
         } else if (tokenTypes.size() > 1) {
-            // if there is more than one token type
+            // if there is more than one token type we add the error
             errorList.add(new ValidationError.MultipleTokenTypes(currentPath, tokenTypes));
         } else {
             // if there is only 1 token type all tokens at this level of the config tree are the same.
             if (tokenTypes.get(0) instanceof ArrayToken) {
+                // validate possible array errors.
                 errorList.addAll(validateArrayInvalidIndex(tokens, index, currentPath));
                 errorList.addAll(validateArrayMissingIndex(tokens, index, currentPath));
                 errorList.addAll(validateArrayDuplicateLeafIndex(tokensAtIndexGrouped, index, currentPath));
@@ -177,9 +184,17 @@ public class MapConfigParser implements ConfigParser {
         return ValidateOf.inValid(new ValidationError.NoResultsFoundForPath(currentPath));
     }
 
+    /**
+     * Return a list of errors for any array tokens that have an index less than 0
+     *
+     * @param tokens array tokens to validate
+     * @param index the index or depth in the tree we are analyzing.
+     * @param currentPath the current path.
+     * @return list of errors for any array tokens that have an index less than 0
+     */
     private List<ValidationError> validateArrayInvalidIndex(List<Pair<List<Token>, ConfigValue>> tokens,
                                                             int index, String currentPath) {
-        // Return a
+
         return tokens.stream()
             .map(token -> (ArrayToken) token.getFirst().get(index))
             .filter(arrayToken -> arrayToken.getIndex() < 0)

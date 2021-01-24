@@ -83,6 +83,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
+    /**
+     * Find the specific source that we wish to reload.
+     * Then reload the config and update the configNodeService with the new config node tree.
+     *
+     * @param reloadSource source to reload
+     * @throws GestaltException any exception
+     */
     @Override
     public void reload(ConfigSource reloadSource) throws GestaltException {
         if (reloadSource == null) {
