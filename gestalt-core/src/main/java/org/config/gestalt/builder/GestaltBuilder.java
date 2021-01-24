@@ -30,11 +30,13 @@ import java.util.stream.Collectors;
  * .addSource(new FileConfigSource(defaultFile))
  * .build();
  *
- * <p>The builder will automatically add config loaders and decoders.
+ * <p>The builder will automatically add the default config loaders and decoders.
  * You can customise and replace functionality as needed using the appropriate builder methods.
  *
  * <p>If there are any decoders set, it will not add the default decoders. So you will need to add the defaults manually if needed.
  * If there are any config loaders set, it will not add the default config loaders. So you will need to add the defaults manually if needed.
+ *
+ * <p>The builder can be used to customize and replace any of the functionality of Gestalt.
  *
  * @author Colin Redmond
  */
