@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Decode a Set type
+ * Decode a Set type.
  *
  * @author Colin Redmond
  */

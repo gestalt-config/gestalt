@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Decode a LocalDate
+ * Decode a LocalDate.
  *
  * @author Colin Redmond
  */

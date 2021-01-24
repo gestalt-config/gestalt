@@ -1,5 +1,10 @@
 package org.config.gestalt.utils;
 
+/**
+ * String utils.
+ *
+ * @author Colin Redmond
+ */
 public final class StringUtils {
     private StringUtils() {
 
@@ -9,6 +14,7 @@ public final class StringUtils {
      * Returns true if a string is an integer.
      *
      * @param value the string to test if it is a integer
+     * @return true if this string represents an integer.
      */
     public static boolean isInteger(String value) {
         return isInteger(value, 10);
@@ -19,6 +25,7 @@ public final class StringUtils {
      *
      * @param value the string to test if it is a integer
      * @param radix the radix to test with.
+     * @return true if this string represents an integer.
      */
     public static boolean isInteger(String value, int radix) {
         if (value == null || value.isEmpty()) {
@@ -52,6 +59,7 @@ public final class StringUtils {
      * Returns true if a string is a real.
      *
      * @param value the string to test if it is a real
+     * @return true if this string represents an real number.
      */
     public static boolean isReal(String value) {
         return isReal(value, 10);
@@ -62,6 +70,7 @@ public final class StringUtils {
      *
      * @param value the string to test if it is a real
      * @param radix the radix to test with.
+     * @return true if this string represents an real number.
      */
     public static boolean isReal(String value, int radix) {
         if (value == null || value.isEmpty()) {

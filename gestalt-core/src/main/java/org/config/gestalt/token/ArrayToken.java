@@ -2,14 +2,29 @@ package org.config.gestalt.token;
 
 import java.util.Objects;
 
+/**
+ * Token for an array that has an index.
+ * Must be a positive number
+ *
+ * @author Colin Redmond
+ */
 public class ArrayToken extends Token {
     private final int index;
 
-    // a -1 one means that no array index was specified so place it in order of seen
+    /**
+     * Must be a positive number.
+     *
+     * @param index for the array token
+     */
     public ArrayToken(int index) {
         this.index = index;
     }
 
+    /**
+     * array index for this token.
+     *
+     * @return index
+     */
     public int getIndex() {
         return index;
     }

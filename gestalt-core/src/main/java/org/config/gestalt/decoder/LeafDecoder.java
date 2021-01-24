@@ -15,7 +15,7 @@ import org.config.gestalt.utils.ValidateOf;
 public abstract class LeafDecoder<T> implements Decoder<T> {
 
     /**
-     * Validates that the current node is a leaf and if it is call leafDecode
+     * Validates that the current node is a leaf and if it is call leafDecode.
      *
      * @param path the current path
      * @param node the current node we are decoding.
@@ -39,7 +39,7 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     }
 
     /**
-     * Decode a leaf value
+     * Decode a leaf value.
      *
      * @param path the current path
      * @param node the current node we are decoding.
@@ -51,7 +51,7 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     }
 
     /**
-     * Decode a leaf value
+     * Decode a leaf value.
      *
      * @param path the current path
      * @param node the current node we are decoding.

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Decode a list type
+ * Decode a list type.
  *
  * @author Colin Redmond
  */

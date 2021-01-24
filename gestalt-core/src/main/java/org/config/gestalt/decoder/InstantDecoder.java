@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 
 /**
- * Decode an Instant
+ * Decode an Instant.
  *
  * @author Colin Redmond
  */

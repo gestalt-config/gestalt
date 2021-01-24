@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
  * Convert the Environment Variables to a property file.
  * Apply the supplied transforms as we convert it.
  * Then write that as an input stream for the next stage in the parsing.
+ *
+ * @author Colin Redmond
  */
 public class EnvironmentConfigSource implements ConfigSource {
 

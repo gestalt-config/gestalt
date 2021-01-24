@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Decode an Enum
+ * Decode an Enum.
  *
  * @author Colin Redmond
  */

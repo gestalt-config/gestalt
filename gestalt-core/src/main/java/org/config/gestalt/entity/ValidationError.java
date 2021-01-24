@@ -159,7 +159,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * No tokens provided while building the config node
+     * No tokens provided while building the config node.
      */
     public static class EmptyToken extends ValidationError {
 
@@ -174,7 +174,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Unknown token type while building a config node
+     * Unknown token type while building a config node.
      */
     public static class UnknownTokenWithPath extends ValidationError {
         private final Token token;
@@ -193,7 +193,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Mismatched path lengths received for path, this could be because a node is both a leaf and an object
+     * Mismatched path lengths received for path, this could be because a node is both a leaf and an object.
      */
     public static class MismatchedPathLength extends ValidationError {
         private final String paths;
@@ -210,7 +210,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * No tokens provided while building a config node
+     * No tokens provided while building a config node.
      */
     public static class NoTokensInPath extends ValidationError {
         private final String path;
@@ -431,7 +431,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While decoding a number the value is not a number
+     * While decoding a number the value is not a number.
      */
     public static class DecodingNumberParsing extends ValidationError {
         private final String path;
@@ -452,7 +452,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While decoding a number received a number format exception
+     * While decoding a number received a number format exception.
      */
     public static class DecodingNumberFormatException extends ValidationError {
         private final String path;
@@ -473,7 +473,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While deciding a char, expected a single value character but received more
+     * While deciding a char, expected a single value character but received more.
      */
     public static class DecodingCharWrongSize extends ValidationError {
         private final String path;
@@ -492,7 +492,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While deciding a byte, expected a single value but received more
+     * While deciding a byte, expected a single value but received more.
      */
     public static class DecodingByteTooLong extends ValidationError {
         private final String path;
@@ -566,7 +566,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * No decoders found
+     * No decoders found.
      */
     public static class NoDecodersFound extends ValidationError {
         private final String klass;
@@ -633,7 +633,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While building a config node an empty node name was provided
+     * While building a config node an empty node name was provided.
      */
     public static class EmptyNodeNameProvided extends ValidationError {
         private final String path;
@@ -650,7 +650,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While building a config node an empty value name was provided
+     * While building a config node an empty value name was provided.
      */
     public static class EmptyNodeValueProvided extends ValidationError {
         private final String path;
@@ -746,7 +746,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Token provided is null for path
+     * Token provided is null for path.
      */
     public static class NullTokenForPath extends ValidationError {
         private final String path;
@@ -763,7 +763,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Unknown token type found while navigating to a node
+     * Unknown token type found while navigating to a node.
      */
     public static class UnsupportedTokenType extends ValidationError {
         private final String path;
@@ -801,7 +801,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Unknown node type while building config node
+     * Unknown node type while building config node.
      */
     public static class UnknownNodeType extends ValidationError {
         private final String nodeType;
@@ -864,7 +864,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Leaf node is null
+     * Leaf node is null.
      */
     public static class LeafNodesIsNull extends ValidationError {
         private final String path;

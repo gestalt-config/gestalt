@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Decode a Path
+ * Decode a Path.
  *
  * @author Colin Redmond
  */

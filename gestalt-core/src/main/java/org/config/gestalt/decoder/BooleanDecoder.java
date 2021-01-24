@@ -5,7 +5,7 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
 /**
- * Decode a boolean
+ * Decode a boolean.
  *
  * @author Colin Redmond
  */

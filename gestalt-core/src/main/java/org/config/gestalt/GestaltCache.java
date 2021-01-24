@@ -5,12 +5,18 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.reload.CoreReloadListener;
 import org.config.gestalt.utils.Pair;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A cache layer that stores configurations by path and type.
+ * Expects to be registered as a CoreReloadListener and will clear the configs
+ *
+ * @author Colin Redmond
+ */
 public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
-    private final Map<Pair<String, TypeCapture<?>>, Object> cache = new HashMap<>();
+    private final Map<Pair<String, TypeCapture<?>>, Object> cache = new ConcurrentHashMap<>();
 
     public GestaltCache(Gestalt delegate) {
         this.delegate = delegate;

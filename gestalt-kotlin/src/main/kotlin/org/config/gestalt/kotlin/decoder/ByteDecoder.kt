@@ -9,6 +9,11 @@ import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.ValidateOf
 import java.nio.charset.Charset
 
+/**
+ * Kotlin Byte Decoder.
+ *
+ * @author Colin Redmond
+ */
 class ByteDecoder : LeafDecoder<Byte>() {
     override fun name(): String {
         return "kByte"

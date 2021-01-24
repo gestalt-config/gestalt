@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ConfigNode {
 
     /**
-     * Get the node type
+     * Get the node type.
      *
      * @return the node type
      */

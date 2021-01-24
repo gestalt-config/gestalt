@@ -33,7 +33,7 @@ public interface ConfigLoaderService {
     void setLoaders(List<ConfigLoader> configLoaders);
 
     /**
-     * get the current config loaders
+     * get the current config loaders.
      *
      * @return current config loaders
      */

@@ -15,7 +15,8 @@ public class ConfigValue {
     }
 
     /**
-     * Get the config value
+     * Get the config value.
+     *
      * @return config value
      */
     public String getValue() {

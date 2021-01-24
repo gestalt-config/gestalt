@@ -15,6 +15,11 @@ import org.config.gestalt.utils.ValidateOf
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
+/**
+ * Kotlin Data Decoder.
+ *
+ * @author Colin Redmond
+ */
 class DataClassDecoder : Decoder<Any> {
     override fun name(): String {
         return "DataClass"

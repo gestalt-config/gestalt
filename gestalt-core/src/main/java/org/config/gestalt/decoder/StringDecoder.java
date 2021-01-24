@@ -5,7 +5,7 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
 /**
- * Decode a String
+ * Decode a String.
  *
  * @author Colin Redmond
  */

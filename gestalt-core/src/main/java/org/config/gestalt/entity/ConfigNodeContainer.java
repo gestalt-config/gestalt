@@ -20,7 +20,8 @@ public class ConfigNodeContainer {
     }
 
     /**
-     * Return the config node
+     * Return the config node.
+     *
      * @return config node
      */
     public ConfigNode getConfigNode() {
@@ -28,7 +29,7 @@ public class ConfigNodeContainer {
     }
 
     /**
-     * unique ID for the config node related to the source
+     * unique ID for the config node related to the source.
      *
      * @return unique ID for the config node related to the source
      */

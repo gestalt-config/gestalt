@@ -24,14 +24,17 @@ import java.util.stream.Collectors;
 
 /**
  * Builder to setup and create the Gestalt config class.
- * <p>
- * The minimum requirements for building a config is to provide a source.
+ *
+ * <p>The minimum requirements for building a config is to provide a source.
  * Gestalt gestalt = new GestaltBuilder()
  * .addSource(new FileConfigSource(defaultFile))
  * .build();
- * <p>
- * The builder will automatically add config loaders and decoders.
+ *
+ * <p>The builder will automatically add config loaders and decoders.
  * You can customise and replace functionality as needed using the appropriate builder methods.
+ *
+ * <p>If there are any decoders set, it will not add the default decoders. So you will need to add the defaults manually if needed.
+ * If there are any config loaders set, it will not add the default config loaders. So you will need to add the defaults manually if needed.
  *
  * @author Colin Redmond
  */
@@ -168,7 +171,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a list of Core reload listener
+     * Add a list of Core reload listener.
      *
      * @param coreCoreReloadListeners a list of Core reload listener
      * @return GestaltBuilder builder
@@ -180,7 +183,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a config loader service to the builder
+     * Add a config loader service to the builder.
      *
      * @param configLoaderService a config loader service
      * @return GestaltBuilder builder
@@ -193,9 +196,11 @@ public class GestaltBuilder {
 
     /**
      * Sets a list of config loader to the builder. Replaces any currently set.
+     * If there are any config loaders set, it will not add the defaults. So you will need to add the defaults manually if needed.
      *
      * @param configLoaders a list of config loader
      * @return GestaltBuilder builder
+     * @throws ConfigurationException if there are no config loaders.
      */
     public GestaltBuilder setConfigLoaders(List<ConfigLoader> configLoaders) throws ConfigurationException {
         if (configLoaders == null || configLoaders.isEmpty()) {
@@ -207,9 +212,11 @@ public class GestaltBuilder {
 
     /**
      * Adds a list of config loader to the builder.
+     * If there are any config loaders set, it will not add the defaults. So you will need to add the defaults manually if needed.
      *
      * @param configLoaders a list of config loader
      * @return GestaltBuilder builder
+     * @throws ConfigurationException if the config loaders are empty
      */
     public GestaltBuilder addConfigLoaders(List<ConfigLoader> configLoaders) throws ConfigurationException {
         if (configLoaders == null || configLoaders.isEmpty()) {
@@ -220,7 +227,8 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a config loader
+     * Add a config loader.
+     * If there are any config loaders set, it will not add the defaults. So you will need to add the defaults manually if needed.
      *
      * @param configLoader a config loader
      * @return GestaltBuilder builder
@@ -269,6 +277,7 @@ public class GestaltBuilder {
 
     /**
      * Set the decoder service if you want to provide your own. Otherwise a default is provided.
+     * If there are any decoders set, it will not add the default decoders. So you will need to add the defaults manually if needed.
      *
      * @param decoderService decoder service
      * @return GestaltBuilder builder
@@ -281,7 +290,8 @@ public class GestaltBuilder {
     }
 
     /**
-     * Set a list of decoders, replaces the existing decoders .
+     * Set a list of decoders, replaces the existing decoders.
+     * If there are any decoders set, it will not add the default decoders. So you will need to add the defaults manually if needed.
      *
      * @param decoders list of decoders
      * @return GestaltBuilder builder
@@ -297,6 +307,7 @@ public class GestaltBuilder {
 
     /**
      * Add a list of decoders.
+     * If there are any decoders set, it will not add the default decoders. So you will need to add the defaults manually if needed.
      *
      * @param decoders list of decoders
      * @return GestaltBuilder builder
@@ -312,6 +323,7 @@ public class GestaltBuilder {
 
     /**
      * Add a decoder.
+     * If there are any decoders set, it will not add the default decoders. So you will need to add the defaults manually if needed.
      *
      * @param decoder add a decoder
      * @return GestaltBuilder builder
@@ -413,7 +425,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * dedupe decoders and return the deduped list
+     * dedupe decoders and return the deduped list.
      *
      * @return deduped list of decoders.
      */
@@ -435,7 +447,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * Dedupe the list of config loaders and return the deduped list
+     * Dedupe the list of config loaders and return the deduped list.
      *
      * @return a list of deduped config loaders.
      */
@@ -457,7 +469,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * Build Gestalt
+     * Build Gestalt.
      *
      * @return Gestalt
      * @throws ConfigurationException multiple validations can throw exceptions

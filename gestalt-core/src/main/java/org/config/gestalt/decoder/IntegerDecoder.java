@@ -7,7 +7,7 @@ import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
 /**
- * Decode an Integer
+ * Decode an Integer.
  *
  * @author Colin Redmond
  */

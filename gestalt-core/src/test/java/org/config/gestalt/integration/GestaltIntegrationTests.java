@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class GestaltIntegrationTests {
 
     @Test
@@ -246,7 +248,7 @@ public class GestaltIntegrationTests {
             "admin.user=Peter, Kim, Steve\n" +
             "admin.overrideEnabled=true\n";
 
-        Files.write(devFile.toPath(), config.getBytes());
+        Files.write(devFile.toPath(), config.getBytes(UTF_8));
 
         for (int i = 0; i < 10; i++) {
             if (reloadListener.count > 1) {

@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Interface to define a stream config loader.
+ * Interface to define a stream or map based config loader.
+ *
+ * @author Colin Redmond
  */
 public interface ConfigSource {
     /**
@@ -57,7 +59,7 @@ public interface ConfigSource {
     String name();
 
     /**
-     * Id that represents this source as unique
+     * Id that represents this source as unique.
      *
      * @return id
      */

@@ -13,7 +13,8 @@ import java.util.List;
  */
 public interface DecoderService {
     /**
-     * Get a list of decoders supported
+     * Get a list of decoders supported.
+     *
      * @return ist of decoders supported
      */
     List<Decoder<?>> getDecoders();

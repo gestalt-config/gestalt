@@ -13,7 +13,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 /**
- * Decode a date
+ * Decode a date.
  *
  * @author Colin Redmond
  */

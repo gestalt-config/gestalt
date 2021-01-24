@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Load a config source from a local file.
+ *
+ * @author Colin Redmond
+ */
 public class FileConfigSource implements ConfigSource {
     private static final Logger logger = LoggerFactory.getLogger(FileConfigSource.class.getName());
 

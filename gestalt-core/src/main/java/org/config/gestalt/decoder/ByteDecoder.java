@@ -8,7 +8,7 @@ import org.config.gestalt.utils.ValidateOf;
 import java.nio.charset.Charset;
 
 /**
- * Decode Byte
+ * Decode Byte.
  *
  * @author Colin Redmond
  */

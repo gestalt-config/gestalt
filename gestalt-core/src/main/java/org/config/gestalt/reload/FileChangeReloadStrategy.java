@@ -14,6 +14,15 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * File change reload strategy for listening for local file changes.
+ *
+ * <p>Listens for local file changes including symlink changes.
+ *
+ * <p>Creates a thread in the background to watch for file changes.
+ *
+ * @author Colin Redmond
+ */
 public class FileChangeReloadStrategy extends ConfigReloadStrategy {
     private static final Logger logger = LoggerFactory.getLogger(FileChangeReloadStrategy.class.getName());
     private final Path path;
@@ -24,11 +33,25 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
 
     private volatile boolean isWatching = false;
 
-
+    /**
+     * constructor.
+     *
+     * @param source the source to watch for reload
+     *
+     * @throws ConfigurationException if this is not a file source or other errors.
+     */
     public FileChangeReloadStrategy(ConfigSource source) throws ConfigurationException {
         this(source, Executors.newSingleThreadExecutor());
     }
 
+    /**
+     * constructor.
+     *
+     * @param source the source to watch for reload
+     * @param executor ExecutorService to get thread from.
+     *
+     * @throws ConfigurationException if this is not a file source or other errors.
+     */
     public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws ConfigurationException {
         super(source);
         this.executor = executor;
@@ -70,7 +93,6 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
     // Here, Kubernetes creates a new timestamped directory when the configmap changes, and just modifies the ..data symlink to point to it
     // FileWatcher raises symlink changes (e.g. overwrite an existing link target on Linux via `ln -sfn`) as ENTRY_CREATE
     // we don't use toRealPath() here, because we *want* the parent the file appears to be in, not the file's real parent
-
     private void fileWatchTask() {
         try {
             WatchKey key;

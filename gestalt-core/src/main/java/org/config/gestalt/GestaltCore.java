@@ -28,6 +28,11 @@ import java.util.List;
 import static org.config.gestalt.entity.ValidationLevel.ERROR;
 import static org.config.gestalt.entity.ValidationLevel.WARN;
 
+/**
+ * Main API to get build and get configurations.
+ *
+ * @author Colin Redmond
+ */
 public class GestaltCore implements Gestalt, ConfigReloadListener {
     private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
 

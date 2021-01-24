@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Base class for decoding collections. Will handle validation of the node type
+ * Base class for decoding collections. Will handle validation of the node type.
  *
  * @param <T> generic type of the collection
  * @author Colin Redmond

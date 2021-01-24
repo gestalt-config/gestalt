@@ -13,7 +13,7 @@ import org.config.gestalt.utils.ValidateOf;
  */
 public interface ConfigLoader {
     /**
-     * Name of the config loader
+     * Name of the config loader.
      *
      * @return name
      */
@@ -28,7 +28,7 @@ public interface ConfigLoader {
     boolean accepts(String format);
 
     /**
-     * the validated config node.
+     * Load a ConfigSource then build the validated config node.
      *
      * @param source source we want to load with this config loader.
      * @return the validated config node.

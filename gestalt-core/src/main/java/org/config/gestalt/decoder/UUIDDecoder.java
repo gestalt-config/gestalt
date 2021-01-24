@@ -8,7 +8,7 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.UUID;
 
 /**
- * Decode a UUID
+ * Decode a UUID.
  *
  * @author Colin Redmond
  */

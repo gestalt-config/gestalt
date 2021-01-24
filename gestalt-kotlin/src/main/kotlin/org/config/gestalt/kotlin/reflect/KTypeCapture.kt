@@ -7,6 +7,9 @@ import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.typeOf
 
+/**
+ * Kotlin specific TypeCapture
+ */
 class KTypeCapture<T> private constructor(val kType: KType) : TypeCapture<Any>(kType.javaType) {
 
     companion object {

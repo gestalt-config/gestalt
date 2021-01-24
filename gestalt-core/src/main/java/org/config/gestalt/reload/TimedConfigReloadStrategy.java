@@ -9,6 +9,11 @@ import java.time.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Reloads a sources every specified duration.
+ *
+ * @author Colin Redmond
+ */
 public class TimedConfigReloadStrategy extends ConfigReloadStrategy {
     private static final Logger logger = LoggerFactory.getLogger(TimedConfigReloadStrategy.class.getName());
 

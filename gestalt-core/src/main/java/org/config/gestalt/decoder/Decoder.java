@@ -20,13 +20,15 @@ public interface Decoder<T> {
     Priority priority();
 
     /**
-     * Name of the encoder
+     * Name of the encoder.
+     *
      * @return encoder name
      */
     String name();
 
     /**
-     * true if this decoder matches the type capture
+     * true if this decoder matches the type capture.
+     *
      * @param klass TypeCapture we are looking for a decoder.
      * @return true if this decoder matches the type capture
      */

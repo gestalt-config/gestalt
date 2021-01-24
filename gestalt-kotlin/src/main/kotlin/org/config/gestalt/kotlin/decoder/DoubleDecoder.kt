@@ -9,6 +9,11 @@ import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.StringUtils
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Double Decoder.
+ *
+ * @author Colin Redmond
+ */
 class DoubleDecoder : LeafDecoder<Double>() {
     override fun name(): String {
         return "kDouble"

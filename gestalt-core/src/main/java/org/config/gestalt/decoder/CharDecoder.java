@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Decode char
+ * Decode char.
  *
  * @author Colin Redmond
  */

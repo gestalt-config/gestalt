@@ -21,6 +21,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Takes in a tokenized config and returns a config node tree.
+ *
+ * @author Colin Redmond
+ */
 public class MapConfigParser implements ConfigParser {
     private static final Logger logger = LoggerFactory.getLogger(MapConfigParser.class.getName());
 
@@ -29,6 +34,13 @@ public class MapConfigParser implements ConfigParser {
     public MapConfigParser() {
     }
 
+    /**
+     * If we should treat errors as warnings, and continue processing even when we receive an error.
+     * This may be useful for environment properties as you dont have absolute control over them and
+     * may need to be more flexible.
+     *
+     * @param treatErrorsAsWarnings if we should treat warnings as errors.
+     */
     public MapConfigParser(boolean treatErrorsAsWarnings) {
         this.treatErrorsAsWarnings = treatErrorsAsWarnings;
     }
@@ -118,7 +130,7 @@ public class MapConfigParser implements ConfigParser {
             errorList.addAll(recursiveErrors.get(ValidationLevel.WARN));
         }
 
-        // if there are any error level return immediately.
+        // if there are any error level return immediately unless we have treatErrorsAsWarnings enabled.
         if (recursiveErrors.containsKey(ValidationLevel.ERROR)) {
             errorList.addAll(recursiveErrors.get(ValidationLevel.ERROR));
             if (!treatErrorsAsWarnings) {

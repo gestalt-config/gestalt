@@ -2,6 +2,11 @@ package org.config.gestalt.token;
 
 import java.util.Objects;
 
+/**
+ * Token that stores an objects by name.
+ *
+ * @author Colin Redmond
+ */
 public class ObjectToken extends Token {
     private final String name;
 

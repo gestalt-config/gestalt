@@ -14,7 +14,7 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.List;
 
 /**
- * Loads an in memory map from MapConfigSource
+ * Loads an in memory map from MapConfigSource.
  *
  * @author Colin Redmond
  */

@@ -6,16 +6,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * a java doesn't have reified generics so if we are trying to get the type of a list at runtime
+ * we are unable to.
+ * This class is modeled on the TypeToken from Guava, TypeLiteral from guice and jackson.
+ *
+ * @param <T> type to capture
+ *
+ * @author Colin Redmond
+ */
 public class TypeCapture<T> {
     protected Class<?> rawType;
     protected Type type;
     protected int hashCode;
 
+    /**
+     * The default constructor is used in the form new TypeCapture&#60;List&#60;String&#62;&#62;() { };
+     * This will capture the type of List&#60;string&#62; and save it, allowing us to know at runtime the type of a list.
+     */
     protected TypeCapture() {
         this.type = getSuperclassTypeParameter(getClass());
         this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
     }
+
 
     protected TypeCapture(Class<T> klass) {
         this.type = klass;
@@ -23,24 +37,51 @@ public class TypeCapture<T> {
         this.hashCode = type.hashCode();
     }
 
+
     protected TypeCapture(Type klass) {
         this.type = klass;
         this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
+    /**
+     * When we only have a class, we can get the type from the class.
+     * This should not be used with classes that have generic type parameters.
+     *
+     * @param klass to get type of.
+     * @param <T> type of capture
+     * @return the TypeCapture
+     */
     public static <T> TypeCapture<T> of(Class<T> klass) {   // NOPMD
         return new TypeCapture<>(klass);
     }
 
+    /**
+     * When we only have a class, we can get the type from the class.
+     * This should not be used with classes that have generic type parameters.
+     *
+     * @param klass type to capture.
+     * @param <T> type of capture
+     * @return the TypeCapture
+     */
     public static <T> TypeCapture<T> of(Type klass) {       // NOPMD
         return new TypeCapture<>(klass);
     }
 
+    /**
+     * If this class has a generic parameter.
+     *
+     * @return If this class has a generic parameter
+     */
     public boolean hasParameter() {
         return type instanceof ParameterizedType;
     }
 
+    /**
+     * Get the TypeCapture of the first generic parameter or null if there is none.
+     *
+     * @return the TypeCapture of the first generic parameter or null if there is none.
+     */
     public TypeCapture<?> getFirstParameterType() {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
@@ -50,6 +91,11 @@ public class TypeCapture<T> {
         }
     }
 
+    /**
+     * Get the TypeCapture of the second generic parameter or null if there is none.
+     *
+     * @return the TypeCapture of the second generic parameter or null if there is none.
+     */
     public TypeCapture<?> getSecondParameterType() {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
@@ -61,6 +107,11 @@ public class TypeCapture<T> {
         return null;
     }
 
+    /**
+     * Get all generic parameter types.
+     *
+     * @return list of all generic parameter types.
+     */
     public List<TypeCapture<?>> getParameterTypes() {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
@@ -75,7 +126,8 @@ public class TypeCapture<T> {
     /**
      * Returns the Class representing the component type of an array.
      * If this class does not represent an array class this method returns null.
-     * @return
+     *
+     * @return component type
      */
     public Class<?> getComponentType() {
         if (type instanceof Class<?>) {
@@ -86,19 +138,33 @@ public class TypeCapture<T> {
         }
     }
 
+    /**
+     * Get the raw type of this class.
+     *
+     * @return the raw type of this class.
+     */
     public Class<?> getRawType() {
         return rawType;
     }
 
-
+    /**
+     * Get the name of the class.
+     *
+     * @return name of the class
+     */
     public String getName() {
         return type.getTypeName();
     }
 
+    /**
+     * If this class is assignable from a type.
+     *
+     * @param classType type to check if we are asignable
+     * @return If this class is assignable from a type.
+     */
     public boolean isAssignableFrom(Type classType) {
         return rawType.isAssignableFrom(buildRawType(classType));
     }
-
 
     protected Type getSuperclassTypeParameter(Class<?> subclass) {
         Type superclass = subclass.getGenericSuperclass();
