@@ -8,6 +8,7 @@ import org.config.gestalt.utils.ValidateOf;
 /**
  * Interface for a config loader.
  * Allows a config to specify what types of configs it will load, property, environment variables, ect..
+ * Each source has a format, and this will load the matching sources.
  *
  * @author Colin Redmond
  */

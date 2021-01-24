@@ -12,6 +12,9 @@ public interface Gestalt {
 
     /**
      * Loads the configurations from the source and builds a config tree.
+     * For each sources it will find the config loader that matches the source format.
+     * It will use the config loader to build a config node tree.
+     * Then merge the configs in order. With the newer configs overwriting the older configs.
      *
      * @throws GestaltException any errors
      */
