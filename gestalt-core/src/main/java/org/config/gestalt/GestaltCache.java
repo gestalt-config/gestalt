@@ -6,6 +6,7 @@ import org.config.gestalt.reload.CoreReloadListener;
 import org.config.gestalt.utils.Pair;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -72,6 +73,34 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
         Pair<String, TypeCapture<?>> key = new Pair<>(path, klass);
         return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, klass));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getConfigOptional(String path, Class<T> klass) {
+        TypeCapture<T> typeCapture = TypeCapture.of(klass);
+        Pair<String, TypeCapture<?>> key = new Pair<>(path, typeCapture);
+        if (cache.containsKey(key)) {
+            return (Optional<T>) cache.get(key);
+        } else {
+            Optional<T> result = delegate.getConfigOptional(path, typeCapture);
+            cache.put(key, result);
+
+            return result;
+        }
+    }
+
+    @Override
+    public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
+        Pair<String, TypeCapture<?>> key = new Pair<>(path, klass);
+        if (cache.containsKey(key)) {
+            return (Optional<T>) cache.get(key);
+        } else {
+            Optional<T> result = delegate.getConfigOptional(path, klass);
+            cache.put(key, result);
+
+            return result;
+        }
     }
 
     @Override

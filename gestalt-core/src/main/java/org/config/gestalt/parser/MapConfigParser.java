@@ -185,7 +185,7 @@ public class MapConfigParser implements ConfigParser {
     }
 
     /**
-     * Return a list of errors for any array tokens that have an index less than 0
+     * Return a list of errors for any array tokens that have an index less than 0.
      *
      * @param tokens array tokens to validate
      * @param index the index or depth in the tree we are analyzing.

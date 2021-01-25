@@ -10,7 +10,7 @@ import org.config.gestalt.utils.ValidateOf;
  * Allows a loader to specify what types of configs it will load, property, environment variables, ect..
  * Each source has a format, and this will load the matching sources.
  *
- * A config loader knows how to load a specific format, so a property loader will load a stream of properties.
+ * <p>A config loader knows how to load a specific format, so a property loader will load a stream of properties.
  * An Environment Vars loader will load a list of Environment Variables.
  *
  * @author Colin Redmond

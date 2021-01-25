@@ -3,6 +3,8 @@ package org.config.gestalt;
 import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.reflect.TypeCapture;
 
+import java.util.Optional;
+
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
  *
@@ -65,4 +67,25 @@ public interface Gestalt {
      * @return the configuration, or the default if the configuration is not found.
      */
     <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass);
+
+    /**
+     * Get a config Optional for a path and a given class. If there are any exceptions or errors it will return an Optional.empty()
+     *
+     *
+     * @param path path to get the config for.
+     * @param klass class to get the class for.
+     * @param <T> type of class to get.
+     * @return the configuration or Optional.empty() if it failed.
+     */
+    <T> Optional<T> getConfigOptional(String path, Class<T> klass);
+
+    /**
+     * Get a config Optional for a path and a given TypeCapture. If there are any exceptions or errors it will return an Optional.empty()
+     *
+     * @param path path to get the config for.
+     * @param klass TypeCapture to get the class for.
+     * @param <T> type of class to get.
+     * @return the configuration or Optional.empty() if it failed.
+     */
+    <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass);
 }

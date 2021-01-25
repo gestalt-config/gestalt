@@ -253,6 +253,76 @@ class GestaltTest {
     }
 
     @Test
+    public void testGetOptional() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals(Optional.of("test"), gestalt.getConfigOptional("db.name", String.class));
+        Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class));
+        Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class));
+        Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class));
+
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.port", Integer.class));
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", String.class));
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", String.class));
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("admin[3]", String.class));
+
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("admin[3]", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testGetOptionalBadPathInvalidToken() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("admin[3a]", String.class));
+    }
+
+    @Test
     public void testMergeArraysMissingIndex() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
