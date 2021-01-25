@@ -12,6 +12,11 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Holds and manages config nodes.
+ *
+ * @author Colin Redmond
+ */
 public class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
     private ConfigNode root;
@@ -47,7 +52,7 @@ public class ConfigNodeManager implements ConfigNodeService {
     }
 
     @Override
-    public ValidateOf<ConfigNode> reloadNode(ConfigNodeContainer newNode) throws GestaltException {
+    public ValidateOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException {
         ConfigNode newRoot = null;
         List<ValidationError> errors = new ArrayList<>();
 
@@ -55,9 +60,9 @@ public class ConfigNodeManager implements ConfigNodeService {
         for (ConfigNodeContainer nodePair : configNodes) {
 
             ConfigNode currentNode = nodePair.getConfigNode();
-            if (nodePair.getId().equals(newNode.getId())) {
-                configNodes.set(index, newNode);
-                currentNode = newNode.getConfigNode();
+            if (nodePair.getId().equals(reloadNode.getId())) {
+                configNodes.set(index, reloadNode);
+                currentNode = reloadNode.getConfigNode();
             }
 
             if (newRoot == null) {

@@ -7,10 +7,14 @@ import org.config.gestalt.node.ConfigNode
 import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.ValidateOf
 
-@Suppress("UNCHECKED_CAST")
+/**
+ * Kotlin String Decoder.
+ *
+ * @author Colin Redmond
+ */
 class StringDecoder : LeafDecoder<String>() {
     override fun name(): String {
-        return "String"
+        return "kString"
     }
 
     override fun priority(): Priority {

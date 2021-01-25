@@ -2,6 +2,11 @@ package org.config.gestalt.entity;
 
 import java.util.Objects;
 
+/**
+ * Value for a config. Used to store the leaf value while parsing the configs.
+ *
+ * @author Colin Redmond
+ */
 public class ConfigValue {
     private final String value;
 
@@ -9,6 +14,11 @@ public class ConfigValue {
         this.value = Objects.requireNonNull(value, "value can not be null");
     }
 
+    /**
+     * Get the config value.
+     *
+     * @return config value
+     */
     public String getValue() {
         return value;
     }

@@ -21,6 +21,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Takes in a tokenized config and returns a config node tree.
+ *
+ * @author Colin Redmond
+ */
 public class MapConfigParser implements ConfigParser {
     private static final Logger logger = LoggerFactory.getLogger(MapConfigParser.class.getName());
 
@@ -29,6 +34,13 @@ public class MapConfigParser implements ConfigParser {
     public MapConfigParser() {
     }
 
+    /**
+     * If we should treat errors as warnings, and continue processing even when we receive an error.
+     * This may be useful for environment properties as you dont have absolute control over them and
+     * may need to be more flexible.
+     *
+     * @param treatErrorsAsWarnings if we should treat warnings as errors.
+     */
     public MapConfigParser(boolean treatErrorsAsWarnings) {
         this.treatErrorsAsWarnings = treatErrorsAsWarnings;
     }
@@ -53,19 +65,24 @@ public class MapConfigParser implements ConfigParser {
             return ValidateOf.inValid(new ValidationError.EmptyToken());
         }
 
+        // build the current path, mostly for logging.
         String currentPath = PathUtil.toPath(tokens.get(0).getFirst().subList(0, index));
         List<ValidationError> errorList = new ArrayList<>();
 
+        // if there is only 1 token and we are at the end of the path return a valid leaf.
         if (tokens.size() == 1 && tokens.get(0).getFirst().size() <= index) {
             ConfigValue configValue = tokens.get(0).getSecond();
             return ValidateOf.valid(new LeafNode(configValue.getValue()));
         }
 
+        // validate any mis-matched path's, this is most like when a path is both a leaf and an object and an array.
         List<ValidationError> mismatchedPathLengthErrors = getMismatchedPathLengthErrors(tokens, index, currentPath);
         if (!mismatchedPathLengthErrors.isEmpty()) {
             return ValidateOf.inValid(mismatchedPathLengthErrors);
         }
 
+        // group the tokens at the index, for example all object tokens with the same name will be grouped, or arrays with the same index.
+        // these grouped objects represent a child object
         Map<Token, List<Pair<List<Token>, ConfigValue>>> tokensAtIndexGrouped = tokens
             .stream()
             .collect(Collectors.groupingBy(tokenPair -> tokenPair.getFirst().get(index)));
@@ -75,14 +92,16 @@ public class MapConfigParser implements ConfigParser {
             .filter(CollectionUtils.distinctBy(Token::getClass))
             .collect(Collectors.toList());
 
+        // do some validation on the node.
         if (tokenTypes.isEmpty()) {
             errorList.add(new ValidationError.NoTokensInPath(currentPath));
         } else if (tokenTypes.size() > 1) {
-            // if there is more than one token type
+            // if there is more than one token type we add the error
             errorList.add(new ValidationError.MultipleTokenTypes(currentPath, tokenTypes));
         } else {
             // if there is only 1 token type all tokens at this level of the config tree are the same.
             if (tokenTypes.get(0) instanceof ArrayToken) {
+                // validate possible array errors.
                 errorList.addAll(validateArrayInvalidIndex(tokens, index, currentPath));
                 errorList.addAll(validateArrayMissingIndex(tokens, index, currentPath));
                 errorList.addAll(validateArrayDuplicateLeafIndex(tokensAtIndexGrouped, index, currentPath));
@@ -118,7 +137,7 @@ public class MapConfigParser implements ConfigParser {
             errorList.addAll(recursiveErrors.get(ValidationLevel.WARN));
         }
 
-        // if there are any error level return immediately.
+        // if there are any error level return immediately unless we have treatErrorsAsWarnings enabled.
         if (recursiveErrors.containsKey(ValidationLevel.ERROR)) {
             errorList.addAll(recursiveErrors.get(ValidationLevel.ERROR));
             if (!treatErrorsAsWarnings) {
@@ -165,9 +184,17 @@ public class MapConfigParser implements ConfigParser {
         return ValidateOf.inValid(new ValidationError.NoResultsFoundForPath(currentPath));
     }
 
+    /**
+     * Return a list of errors for any array tokens that have an index less than 0.
+     *
+     * @param tokens array tokens to validate
+     * @param index the index or depth in the tree we are analyzing.
+     * @param currentPath the current path.
+     * @return list of errors for any array tokens that have an index less than 0
+     */
     private List<ValidationError> validateArrayInvalidIndex(List<Pair<List<Token>, ConfigValue>> tokens,
                                                             int index, String currentPath) {
-        // Return a
+
         return tokens.stream()
             .map(token -> (ArrayToken) token.getFirst().get(index))
             .filter(arrayToken -> arrayToken.getIndex() < 0)

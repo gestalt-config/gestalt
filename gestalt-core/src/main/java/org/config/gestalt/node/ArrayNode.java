@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Array config node that holds a list of configs.
+ *
+ * @author Colin Redmond
+ */
 public class ArrayNode implements ConfigNode {
     private final List<ConfigNode> values;
 

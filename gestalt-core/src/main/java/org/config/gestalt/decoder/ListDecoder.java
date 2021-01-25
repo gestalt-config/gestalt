@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Decode a list type.
+ *
+ * @author Colin Redmond
+ */
 public class ListDecoder extends CollectionDecoder<List<?>> {
 
     @Override

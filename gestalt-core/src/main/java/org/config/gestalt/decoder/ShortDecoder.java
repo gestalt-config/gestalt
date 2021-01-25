@@ -6,6 +6,11 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
+/**
+ * Decode a Short.
+ *
+ * @author Colin Redmond
+ */
 public class ShortDecoder extends LeafDecoder<Short> {
 
     @Override

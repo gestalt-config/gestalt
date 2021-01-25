@@ -9,9 +9,14 @@ import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.StringUtils
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Long Decoder.
+ *
+ * @author Colin Redmond
+ */
 class LongDecoder : LeafDecoder<Long>() {
     override fun name(): String {
-        return "Long"
+        return "kLong"
     }
 
     override fun priority(): Priority {

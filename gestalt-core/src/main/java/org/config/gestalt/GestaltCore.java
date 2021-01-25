@@ -24,10 +24,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.config.gestalt.entity.ValidationLevel.ERROR;
 import static org.config.gestalt.entity.ValidationLevel.WARN;
 
+/**
+ * Central access point to Gestalt that has API's to build and get configurations.
+ *
+ * @author Colin Redmond
+ */
 public class GestaltCore implements Gestalt, ConfigReloadListener {
     private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
 
@@ -78,6 +84,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
+    /**
+     * Find the specific source that we wish to reload.
+     * Then reload the config and update the configNodeService with the new config node tree.
+     *
+     * @param reloadSource source to reload
+     * @throws GestaltException any exception
+     */
     @Override
     public void reload(ConfigSource reloadSource) throws GestaltException {
         if (reloadSource == null) {
@@ -151,7 +164,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         throw new GestaltException("No results for config path: " + path + ", and class: " + klass.getName());
     }
 
-
     @Override
     public <T> T getConfig(String path, T defaultVal, Class<T> klass) {
         return getConfig(path, defaultVal, TypeCapture.of(klass));
@@ -191,6 +203,49 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         logger.warn(errorMsg);
 
         return defaultVal;
+    }
+
+    @Override
+    public <T> Optional<T> getConfigOptional(String path, Class<T> klass) {
+        return getConfigOptional(path, TypeCapture.of(klass));
+    }
+
+    @Override
+    public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
+        ValidateOf<List<Token>> tokens = sentenceLexer.scan(path);
+        if (tokens.hasErrors()) {
+            String errorMsg = ErrorsUtil.buildErrorMessage("Unable to parse path: " + path + " returning empty optional",
+                tokens.getErrors());
+            logger.warn(errorMsg);
+
+            return Optional.empty();
+        } else {
+            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
+
+            if (checkErrorsShouldFail(results)) {
+                String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + path +
+                    ", for class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
+                logger.warn(errorMsg);
+
+                return Optional.empty();
+
+            } else if (results.hasErrors()) {
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
+                    ", for class: " + klass.getName(), tokens.getErrors());
+                logger.warn(errorMsg);
+            }
+
+            if (results.hasResults()) {
+                return Optional.of(results.results());
+            }
+        }
+
+        String errorMsg = ErrorsUtil.buildErrorMessage("No results for config path: " + path + ", and class: " +
+                klass.getName() + " returning empty Optional",
+            tokens.getErrors());
+        logger.warn(errorMsg);
+
+        return Optional.empty();
     }
 
     private <T> ValidateOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass) {

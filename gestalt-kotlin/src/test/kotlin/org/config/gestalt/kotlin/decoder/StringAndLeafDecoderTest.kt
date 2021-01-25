@@ -29,7 +29,7 @@ internal class StringAndLeafDecoderTest {
     @Test
     fun name() {
         val decoder = StringDecoder()
-        Assertions.assertEquals("String", decoder.name())
+        Assertions.assertEquals("kString", decoder.name())
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class StringAndLeafDecoderTest {
 
     @Test
     @Throws(GestaltException::class)
-    fun invalidLeafNode() {
+    fun `invalid Leaf Node`() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
             "db.user", LeafNode(null), TypeCapture.of(
@@ -75,14 +75,14 @@ internal class StringAndLeafDecoderTest {
         Assertions.assertNotNull(validate.errors)
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
-            "Leaf on path: db.user, missing value, LeafNode{value='null'} attempting to decode String",
+            "Leaf on path: db.user, missing value, LeafNode{value='null'} attempting to decode kString",
             validate.errors[0].description()
         )
     }
 
     @Test
     @Throws(GestaltException::class)
-    fun decodeInvalidNode() {
+    fun `decode Invalid Node`() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
             "db.user", MapNode(HashMap()), TypeCapture.of(
@@ -97,7 +97,7 @@ internal class StringAndLeafDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
             "Expected a leaf on path: db.user, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode String",
+                "attempting to decode kString",
             validate.errors[0].description()
         )
     }

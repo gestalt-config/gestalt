@@ -8,9 +8,14 @@ import org.config.gestalt.node.ConfigNode
 import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Char Decoder.
+ *
+ * @author Colin Redmond
+ */
 class CharDecoder : LeafDecoder<Char>() {
     override fun name(): String {
-        return "Character"
+        return "kCharacter"
     }
 
     override fun priority(): Priority {

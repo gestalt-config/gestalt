@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 /**
  * Class to convert a sentence to tokens
  * This class is fully customizable by passing in your own tokenizer and evaluator functions.
+ *
+ * @author Colin Redmond
  */
 public abstract class SentenceLexer {
 
@@ -17,6 +19,7 @@ public abstract class SentenceLexer {
      * Takes in a string representation of a path. Ie abc.def or ABC_DEF then returns each element separated by the delimiter
      *
      * @param sentence the sentence to tokenize
+     * @return list of tokenized strings from sentance.
      */
     protected abstract List<String> tokenizer(String sentence);
 
@@ -25,6 +28,7 @@ public abstract class SentenceLexer {
      *
      * @param word     The First string in the method params is the word in the string we are evaluating
      * @param sentence second string in the method params is the path the word is in.
+     * @return ValidateOf list of tokens from a word.
      */
     protected abstract ValidateOf<List<Token>> evaluator(String word, String sentence);
 

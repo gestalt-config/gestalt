@@ -13,6 +13,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * An implementation of a SentenceLexer that divides a sentence into words using a provided delimiter. The delimiter is a regex.
+ * Then parses the words into tokens.
+ *
+ * <p>By default it tokenizes based on a "." then evaluates each word with a provided regex.
+ *
+ * @author Colin Redmond
+ */
 public class PathLexer extends SentenceLexer {
 
     public static final String DEFAULT_EVALUATOR = "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$";

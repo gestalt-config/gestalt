@@ -5,6 +5,8 @@ import java.util.Objects;
 /**
  * A simple class that holds a pair of values. There are many implementations of this but i didnt want to pull in
  * another library only for a simple class.
+ *
+ * @author Colin Redmond
  */
 public class Pair<A, B> {
 
@@ -16,10 +18,20 @@ public class Pair<A, B> {
         this.second = second;
     }
 
+    /**
+     * Get the first of the pair.
+     *
+     * @return first of the pair
+     */
     public A getFirst() {
         return first;
     }
 
+    /**
+     * Get the second of the pair.
+     *
+     * @return second of the pair
+     */
     public B getSecond() {
         return second;
     }

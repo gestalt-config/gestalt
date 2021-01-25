@@ -30,7 +30,7 @@ internal class BooleanDecoderTest {
     @Test
     fun name() {
         val decoder = BooleanDecoder()
-        Assertions.assertEquals("Boolean", decoder.name())
+        Assertions.assertEquals("kBoolean", decoder.name())
     }
 
     @ExperimentalStdlibApi
@@ -93,7 +93,7 @@ internal class BooleanDecoderTest {
         Assertions.assertNotNull(validate.errors)
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
-            "Leaf on path: db.enabled, missing value, LeafNode{value='null'} attempting to decode Boolean",
+            "Leaf on path: db.enabled, missing value, LeafNode{value='null'} attempting to decode kBoolean",
             validate.errors[0].description()
         )
     }

@@ -5,6 +5,11 @@ import org.config.gestalt.utils.ErrorsUtil;
 
 import java.util.List;
 
+/**
+ * Configuration type exception for gestalt.
+ *
+ * @author Colin Redmond
+ */
 public class ConfigurationException extends GestaltException {
     public ConfigurationException(String message, List<ValidationError> errors) {
         super(ErrorsUtil.buildErrorMessage(message, errors));

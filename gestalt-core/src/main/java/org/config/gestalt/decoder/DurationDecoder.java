@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.time.Duration;
 
+/**
+ * Decode a duration.
+ *
+ * @author Colin Redmond
+ */
 public class DurationDecoder extends LeafDecoder<Duration> {
 
     @Override

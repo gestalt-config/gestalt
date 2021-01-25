@@ -9,9 +9,14 @@ import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.StringUtils
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Int Decoder.
+ *
+ * @author Colin Redmond
+ */
 class IntegerDecoder : LeafDecoder<Int>() {
     override fun name(): String {
-        return "Int"
+        return "kInt"
     }
 
     override fun priority(): Priority {

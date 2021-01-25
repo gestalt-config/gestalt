@@ -12,6 +12,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
+/**
+ * Decode a date.
+ *
+ * @author Colin Redmond
+ */
 public class DateDecoder extends LeafDecoder<Date> {
 
     private final DateTimeFormatter formatter;

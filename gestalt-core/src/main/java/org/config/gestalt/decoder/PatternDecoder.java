@@ -6,6 +6,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.util.regex.Pattern;
 
+/**
+ * Decode a Pattern.
+ *
+ * @author Colin Redmond
+ */
 public class PatternDecoder extends LeafDecoder<Pattern> {
 
     @Override

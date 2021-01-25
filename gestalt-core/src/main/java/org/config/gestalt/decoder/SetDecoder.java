@@ -10,6 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Decode a Set type.
+ *
+ * @author Colin Redmond
+ */
 public class SetDecoder extends CollectionDecoder<Set<?>> {
 
     @Override

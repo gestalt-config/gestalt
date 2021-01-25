@@ -7,6 +7,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.util.UUID;
 
+/**
+ * Decode a UUID.
+ *
+ * @author Colin Redmond
+ */
 public class UUIDDecoder extends LeafDecoder<UUID> {
 
     @Override

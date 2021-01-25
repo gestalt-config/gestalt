@@ -9,6 +9,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Decode a LocalDate.
+ *
+ * @author Colin Redmond
+ */
 public class LocalDateDecoder extends LeafDecoder<LocalDate> {
 
     private final DateTimeFormatter formatter;

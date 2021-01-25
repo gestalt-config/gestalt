@@ -4,6 +4,11 @@ import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.ValidateOf;
 
+/**
+ * Decode a String.
+ *
+ * @author Colin Redmond
+ */
 public class StringDecoder extends LeafDecoder<String> {
 
     @Override

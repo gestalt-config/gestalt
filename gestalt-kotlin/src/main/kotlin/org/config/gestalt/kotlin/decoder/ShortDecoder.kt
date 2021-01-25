@@ -9,9 +9,14 @@ import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.StringUtils
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Short Decoder.
+ *
+ * @author Colin Redmond
+ */
 class ShortDecoder : LeafDecoder<Short>() {
     override fun name(): String {
-        return "Short"
+        return "kShort"
     }
 
     override fun priority(): Priority {

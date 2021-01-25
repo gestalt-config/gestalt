@@ -8,6 +8,11 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Decode a File.
+ *
+ * @author Colin Redmond
+ */
 public class FileDecoder extends LeafDecoder<File> {
 
     @Override

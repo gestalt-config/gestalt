@@ -1,16 +1,27 @@
 package org.config.gestalt.entity;
 
+/**
+ * Configuration for Gestalt.
+ *
+ * @author Colin Redmond
+ */
 public class GestaltConfig {
 
+    // Treat all warnings as errors
     private boolean treatWarningsAsErrors = false;
+    // Treat missing array index's as errors. If false it will inject null values for missing array index's.
     private boolean treatMissingArrayIndexAsError = false;
+    // Treat missing object values as errors. If false it will leave the default values or null.
     private boolean treatMissingValuesAsErrors = false;
 
     // this setting is specific to environment vars loader, as there can often be false positive errors.
     private boolean envVarsTreatErrorsAsWarnings = false;
 
+    // Java date decoder format.
     private String dateDecoderFormat = null;
+    // Java local date time decoder format.
     private String localDateTimeFormat = null;
+    // Java local date decoder format.
     private String localDateFormat = null;
 
     public boolean isTreatWarningsAsErrors() {

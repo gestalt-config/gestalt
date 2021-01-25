@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
  * Convert the Environment Variables to a property file.
  * Apply the supplied transforms as we convert it.
  * Then write that as an input stream for the next stage in the parsing.
+ *
+ * @author Colin Redmond
  */
 public class EnvironmentConfigSource implements ConfigSource {
 
@@ -37,6 +39,11 @@ public class EnvironmentConfigSource implements ConfigSource {
         return true;
     }
 
+    /**
+     * gets the Environment Variables and converts them to a list of pairs. The first is the key and the second the value.
+     *
+     * @return list of environment variables.
+     */
     @Override
     public List<Pair<String, String>> loadList() {
         return System.getenv().entrySet()

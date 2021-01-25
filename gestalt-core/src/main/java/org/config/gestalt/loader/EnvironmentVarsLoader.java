@@ -14,6 +14,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.util.List;
 
+/**
+ * Loads Environment Variables from EnvironmentConfigSource.
+ *
+ * @author Colin Redmond
+ */
 public class EnvironmentVarsLoader implements ConfigLoader {
 
     private final ConfigParser parser;

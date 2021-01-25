@@ -7,6 +7,11 @@ import org.config.gestalt.token.Token;
 
 import java.util.List;
 
+/**
+ * Utility class for paths.
+ *
+ * @author Colin Redmond
+ */
 public final class PathUtil {
     private PathUtil() {
 
@@ -16,6 +21,7 @@ public final class PathUtil {
      * Returns the path for a list of tokens.
      *
      * @param tokens list of tokens on the path.
+     * @return the path built from the tokens
      */
     public static String toPath(List<Token> tokens) {
         StringBuilder pathBuilder = new StringBuilder();

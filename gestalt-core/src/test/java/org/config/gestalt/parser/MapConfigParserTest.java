@@ -234,7 +234,7 @@ class MapConfigParserTest {
         List<ValidationError> results = validateOfResults.getErrors();
         assertEquals(1, results.size());
         assertEquals(ValidationLevel.ERROR, results.get(0).level());
-        assertEquals("Empty or null token provided", results.get(0).description());
+        assertEquals("Empty or null token provided while building the config node", results.get(0).description());
     }
 
     @Test

@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * ConfigLoaderRegistry.
+ *
+ *  @author Colin Redmond
+ */
 public class ConfigLoaderRegistry implements ConfigLoaderService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigLoaderRegistry.class.getName());

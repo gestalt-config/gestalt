@@ -9,9 +9,14 @@ import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.StringUtils
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Float Decoder.
+ *
+ * @author Colin Redmond
+ */
 class FloatDecoder : LeafDecoder<Float>() {
     override fun name(): String {
-        return "Float"
+        return "kFloat"
     }
 
     override fun priority(): Priority {

@@ -15,6 +15,15 @@ import org.config.gestalt.utils.ValidateOf
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
+/**
+ * Kotlin Data Decoder.
+ * Builds a Kotlin Data class by creating a map of parameters. If there are any missing required parameters it fails.
+ * Required parameters are ones that don't have a default and are not nullable. An exception will be thrown in this case.
+ *
+ * <p>If all members are optional and we have no parameters we will try and create the class with the default empty constructor.
+ *
+ * @author Colin Redmond
+ */
 class DataClassDecoder : Decoder<Any> {
     override fun name(): String {
         return "DataClass"
@@ -105,30 +114,3 @@ class DataClassDecoder : Decoder<Any> {
         return ValidateOf.inValid(DataClassCanNotBeConstructed(path, ""))
     }
 }
-
-/*
-  // Only support data classes with primary constructor
-        val constructor = type.constructors.first()
-
-        val parameters = constructor.parameters
-            .associateWith {
-                val configParam: Any? = configProvider.getOrNull(config + "." + it.name, it.type.javaType)
-                if (!it.isOptional && configParam == null) {
-                    throw SmokedMeatException(
-                        StatusCode.InternalServerError,
-                        "unable to load config for class ${type.simpleName} non-optional parameter ${it.name} " +
-                            "and config path $config"
-                    )
-                }
-                configParam
-            }
-            .filterValues { it != null }
-
-        obj = if (parameters.isNotEmpty()) {
-            constructor.callBy(parameters)
-        } else {
-            // so try and use the default constructor, it may provide all the default args
-            // if not it will fail constructing.
-            type.createInstance()
-        }
- */

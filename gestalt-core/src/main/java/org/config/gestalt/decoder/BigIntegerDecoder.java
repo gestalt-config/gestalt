@@ -8,6 +8,11 @@ import org.config.gestalt.utils.ValidateOf;
 
 import java.math.BigInteger;
 
+/**
+ * Decode Big Integers.
+ *
+ * @author Colin Redmond
+ */
 public class BigIntegerDecoder extends LeafDecoder<BigInteger> {
 
     @Override

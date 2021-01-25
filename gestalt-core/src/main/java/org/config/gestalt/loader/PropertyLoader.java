@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+/**
+ * Loads from a property files from multiple sources, such as a file.
+ *
+ * @author Colin Redmond
+ */
 public class PropertyLoader implements ConfigLoader {
 
     private final ConfigParser parser;
@@ -39,6 +44,15 @@ public class PropertyLoader implements ConfigLoader {
         return "properties".equals(format) || "props".equals(format);
     }
 
+    /**
+     * Loads the source with a stream into a java Properties class.
+     * Then convert them to a list of pairs with the path and value.
+     * Pass these into the ConfigCompiler to build a config node tree.
+     *
+     * @param source source we want to load with this config loader.
+     * @return ValidateOf config node or errors.
+     * @throws GestaltException any errors.
+     */
     @Override
     public ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException {
         Properties properties = new Properties();

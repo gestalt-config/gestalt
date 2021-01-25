@@ -12,6 +12,12 @@ import java.util.stream.Collectors;
 
 /**
  * Allows a user to provide a custom config source as a map.
+ * would take the same form as a property file with a key that can be tokenized and a value.
+ * db.port = 1234
+ * db.password = password
+ * dp.user = notroot
+ *
+ * @author Colin Redmond
  */
 public class MapConfigSource implements ConfigSource {
 
@@ -19,6 +25,11 @@ public class MapConfigSource implements ConfigSource {
     private final Map<String, String> customConfig;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * takes a map of configs.
+     *
+     * @param customConfig map of configs.
+     */
     public MapConfigSource(Map<String, String> customConfig) {
         this.customConfig = customConfig;
     }
@@ -39,6 +50,11 @@ public class MapConfigSource implements ConfigSource {
         return true;
     }
 
+    /**
+     * Convert the map to a list of pairs of configs.
+     *
+     * @return list of pairs of configs.
+     */
     @Override
     public List<Pair<String, String>> loadList() {
         return customConfig.entrySet()

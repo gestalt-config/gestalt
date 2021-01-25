@@ -7,9 +7,14 @@ import org.config.gestalt.node.ConfigNode
 import org.config.gestalt.reflect.TypeCapture
 import org.config.gestalt.utils.ValidateOf
 
+/**
+ * Kotlin Boolean Decoder.
+ *
+ * @author Colin Redmond
+ */
 class BooleanDecoder : LeafDecoder<Boolean>() {
     override fun name(): String {
-        return "Boolean"
+        return "kBoolean"
     }
 
     override fun priority(): Priority {

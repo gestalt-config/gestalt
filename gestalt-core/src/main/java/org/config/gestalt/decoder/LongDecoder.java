@@ -6,6 +6,11 @@ import org.config.gestalt.reflect.TypeCapture;
 import org.config.gestalt.utils.StringUtils;
 import org.config.gestalt.utils.ValidateOf;
 
+/**
+ * Decode a Long.
+ *
+ * @author Colin Redmond
+ */
 public class LongDecoder extends LeafDecoder<Long> {
 
     @Override
