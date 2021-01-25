@@ -4,7 +4,7 @@ import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.reflect.TypeCapture;
 
 /**
- * Main API to get build and get configurations.
+ * Central access point to Gestalt that has API's to build and get configurations.
  *
  * @author Colin Redmond
  */

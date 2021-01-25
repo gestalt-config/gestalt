@@ -25,6 +25,11 @@ public class MapConfigSource implements ConfigSource {
     private final Map<String, String> customConfig;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * takes a map of configs.
+     *
+     * @param customConfig map of configs.
+     */
     public MapConfigSource(Map<String, String> customConfig) {
         this.customConfig = customConfig;
     }
@@ -45,6 +50,11 @@ public class MapConfigSource implements ConfigSource {
         return true;
     }
 
+    /**
+     * Convert the map to a list of pairs of configs.
+     *
+     * @return list of pairs of configs.
+     */
     @Override
     public List<Pair<String, String>> loadList() {
         return customConfig.entrySet()

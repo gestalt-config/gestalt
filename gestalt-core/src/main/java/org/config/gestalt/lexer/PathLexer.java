@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * An implementation of a SentenceLexer that divides a sentence into words using a provided delimiter. The delimiter is a regex.
  * Then parses the words into tokens.
  *
- * <p>By default it tokenizes based on a "." then evaluates each work with a provided regex.
+ * <p>By default it tokenizes based on a "." then evaluates each word with a provided regex.
  *
  * @author Colin Redmond
  */

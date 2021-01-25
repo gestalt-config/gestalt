@@ -45,7 +45,7 @@ public interface DecoderService {
     void addDecoders(List<Decoder<?>> decoder);
 
     /**
-     * Gets the next node in a path for a string.
+     * Gets the next node from a config node, in a path for a string.
      *
      * @param path Current path we are decoding, used for logging
      * @param nextString path of the next node
@@ -55,7 +55,7 @@ public interface DecoderService {
     ValidateOf<ConfigNode> getNextNode(String path, String nextString, ConfigNode configNode);
 
     /**
-     * Gets the next node in a path for a int index.
+     * Gets the next node from a config node, in a path for a int index.
      *
      * @param path Current path we are decoding, used for logging
      * @param nextIndex path of the next node

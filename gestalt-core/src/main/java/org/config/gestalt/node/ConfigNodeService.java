@@ -45,8 +45,10 @@ public interface ConfigNodeService {
 
     /**
      * From a given node navigate to the next node.
+     * If an ArrayToken and the config node is an ArrayNode it will return the next node by index.
+     * If a ObjectToken and the config node is a MapNode it will return the next node by key.
      *
-     * @param path to navigate to
+     * @param path to here for logging.
      * @param token token for the next node
      * @param currentNode current node we want to navigate from
      * @return ValidateOf node or any errors.

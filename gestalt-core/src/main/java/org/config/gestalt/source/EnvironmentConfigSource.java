@@ -39,6 +39,11 @@ public class EnvironmentConfigSource implements ConfigSource {
         return true;
     }
 
+    /**
+     * gets the Environment Variables and converts them to a list of pairs. The first is the key and the second the value.
+     *
+     * @return list of environment variables.
+     */
     @Override
     public List<Pair<String, String>> loadList() {
         return System.getenv().entrySet()

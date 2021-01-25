@@ -29,7 +29,7 @@ import static org.config.gestalt.entity.ValidationLevel.ERROR;
 import static org.config.gestalt.entity.ValidationLevel.WARN;
 
 /**
- * Main API to get build and get configurations.
+ * Central access point to Gestalt that has API's to build and get configurations.
  *
  * @author Colin Redmond
  */
