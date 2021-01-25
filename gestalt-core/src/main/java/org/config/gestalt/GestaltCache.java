@@ -30,19 +30,9 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getConfig(String path, Class<T> klass) throws GestaltException {
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        Pair<String, TypeCapture<?>> key = new Pair<>(path, typeCapture);
-        if (cache.containsKey(key)) {
-            return (T) cache.get(key);
-        } else {
-            T result = delegate.getConfig(path, typeCapture);
-            if (result != null) {
-                cache.put(key, result);
-            }
-            return result;
-        }
+        return getConfig(path, typeCapture);
     }
 
     @Override
@@ -61,11 +51,9 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getConfig(String path, T defaultVal, Class<T> klass) {
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        Pair<String, TypeCapture<?>> key = new Pair<>(path, typeCapture);
-        return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, typeCapture));
+        return getConfig(path, defaultVal, typeCapture);
     }
 
     @Override
@@ -76,28 +64,22 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigOptional(String path, Class<T> klass) {
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        Pair<String, TypeCapture<?>> key = new Pair<>(path, typeCapture);
-        if (cache.containsKey(key)) {
-            return (Optional<T>) cache.get(key);
-        } else {
-            Optional<T> result = delegate.getConfigOptional(path, typeCapture);
-            cache.put(key, result);
-
-            return result;
-        }
+        return getConfigOptional(path, typeCapture);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
         Pair<String, TypeCapture<?>> key = new Pair<>(path, klass);
         if (cache.containsKey(key)) {
-            return (Optional<T>) cache.get(key);
+            return Optional.of((T) cache.get(key));
         } else {
             Optional<T> result = delegate.getConfigOptional(path, klass);
-            cache.put(key, result);
+            if (result != null && result.isPresent()) {
+                cache.put(key, result.get());
+            }
 
             return result;
         }
