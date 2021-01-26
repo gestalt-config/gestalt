@@ -178,7 +178,8 @@ short maxTotal  gestalt.getConfig("http.pool.maxTotal", Short.class);
 long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", Long.class);
 
 // get a list of objects as well.
-List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {});
+List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
+  new TypeCapture<List<Host>>() {});
 ```
 With kotlin this is made easier with the inline reified methods that automatically capture the type for you based on return type. 
 ```kotlin
