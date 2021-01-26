@@ -17,11 +17,13 @@ class GestaltKotlinSample {
     @org.junit.jupiter.api.Test
     @kotlin.Throws(GestaltException::class)
     fun integrationTest() {
-        val configs: MutableMap<String, String> = HashMap<String, String>()
-        configs.put("db.hosts[0].password", "1234")
-        configs.put("db.hosts[1].password", "5678")
-        configs.put("db.hosts[2].password", "9012")
-        configs.put("db.idleTimeout", "123")
+        val configs: MutableMap<String, String> = mutableMapOf(
+            "db.hosts[0].password" to "1234",
+            "db.hosts[1].password" to "5678",
+            "db.hosts[2].password" to "9012",
+            "db.idleTimeout" to "123"
+        )
+
         val defaultFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("default.properties")
         val defaultFile: java.io.File = java.io.File(defaultFileURL.file)
         val devFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("dev.properties")
@@ -243,10 +245,10 @@ class GestaltKotlinSample {
         LEVEL0, LEVEL1
     }
 
-    data class HttpPool (
+    data class HttpPool(
         var maxTotal: Short = 0,
         var maxPerRoute: Long = 0,
-        var validateAfterInactivity:Int = 0,
+        var validateAfterInactivity: Int = 0,
         var keepAliveTimeoutMs: Double = 6000.0,
         var idleTimeoutSec: Short = 10,
         var defaultWait: Float = 33.0f
