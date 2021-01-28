@@ -175,9 +175,9 @@ HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 // or get a spcific config value
 short maxTotal  gestalt.getConfig("http.pool.maxTotal", Short.class);
 // get with a default if you want a fallback from code
-long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", Long.class);
+long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", 24, Long.class);
 
-// get a list of objects as well.
+// get a list of objects, or an empty collection if there is no hosts found.
 List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
   new TypeCapture<List<Host>>() {});
 ```
@@ -193,7 +193,7 @@ data class HttpPool(
 )
 // load a kotlin data class
 val pool: HttpPool = gestalt.getConfig("http.pool")
-// get a list of objects as well.
+// get a list of objects, or an empty collection if there is no hosts found.
 val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```   
 
