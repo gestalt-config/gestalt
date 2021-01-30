@@ -10,6 +10,6 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.config.gestalt:gestalt-core:0.2.0")
-    testImplementation("org.config.gestalt:gestalt-kotlin:0.2.0")
+    testImplementation("org.config.gestalt:gestalt-core:0.3.2")
+    testImplementation("org.config.gestalt:gestalt-kotlin:0.3.2")
 }

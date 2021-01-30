@@ -177,6 +177,7 @@ short maxTotal  gestalt.getConfig("http.pool.maxTotal", Short.class);
 // get with a default if you want a fallback from code
 long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", 24, Long.class);
 
+
 // get a list of objects, or an empty collection if there is no hosts found.
 List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
   new TypeCapture<List<Host>>() {});
@@ -198,4 +199,90 @@ val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```   
 
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
+
+#ConfigSource
+
+A config source provides an interface for providing a configuration that a ConfigLoader can understand and parse into a config node. Each ConfigSource has a format that a specific ConfigLoader will understand. So a ConfigLoader that loads "property" files can load them from multiple sources. A ConfigSource can provide either a InputStream or list of pairs of paths and values. 
+You can write your own ConfigSource by implementing the interface and passing though the format that represents your source. For example, you could add a new URL ConfigSource that loads from a URL, depending on the file extension, has a different format.
+Each source must have a unique ID, that Gestalt uses to keep track of the source, the config node tree built from the source and when reloading the id of the source.  
+```java
+    /**
+     * The format of the config source, for example this can be envVars, the extension of a file (properties, json, ect).
+     *
+     * @return The format of the config source
+     */
+    String format();
+    
+    /**
+     * If this config source has a stream, this will return the stream of data.
+     * Or if not supported it will throw an exception.
+     *
+     * @return input stream of data
+     * @throws GestaltException if there are any IO or if this is an unsupported operation
+     */
+    InputStream loadStream() throws GestaltException;
+
+    /**
+     * provides a list of config values.
+     *
+     * @return provides a list of config values
+     * @throws GestaltException if there are any IO or if this is an unsupported operation
+     */
+    List<Pair<String, String>> loadList() throws GestaltException;
+```
+
+#ConfigLoader
+
+A ConfigLoader accepts a specific source format. It reads in the config source as either a list or input stream. It is then responsible for converting the sources into a ValidateOf with either a config node tree or validation errors.
+You can write your own ConfigLoader by implementing the interface and accepting a specific format. Then read in the provided ConfigSource InputStream or list and parse the values. For example you can add a json loader that takes an InputStream and uses Jackson to load and build a config tree.  
+```java
+/**
+     * True if the config loader accepts the format.
+     *
+     * @param format config format.
+     * @return True if the config loader accepts the format.
+     */
+    boolean accepts(String format);
+
+    /**
+     * Load a ConfigSource then build the validated config node.
+     *
+     * @param source source we want to load with this config loader.
+     * @return the validated config node.
+     * @throws GestaltException any exceptions
+     */
+    ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
+```
+
+#SentenceLexer
+Gestalt uses a SentenceLexer's in several places, to convert a string path into tokens that can be followed and to in the ConfigParser to turn the configuration paths into tokens then into config nodes.
+You can customize the SentenceLexer to use your own format of path. For example in Gestalt Environment Variables use a '_' to delimitate the tokens whereas property files use '.'. If you wanted to use camel case you could build a sentence lexer for that.  
+
+#Decoder
+Decoders allow Gestalt to decode a config node into a specific value, class or collection. A Decoder can either work on a leaf and decode a single value, or it can work on a Map or Array node and decode a class or collection.
+You can create your own decoder by implementing the Decoder interface. By returning true for the matches Gestalt will ask your decoder to decode the current node by calling your Decoders decode method. Gestalt will pass in the current path, the current node to decode and the DecoderService so we can decode any subnodes.   
+```java
+    /**
+    * true if this decoder matches the type capture.
+    *
+    * @param klass TypeCapture we are looking for a decoder.
+    * @return true if this decoder matches the type capture
+    */
+    boolean matches(TypeCapture<?> klass);
+
+    /**
+     * Decode the current node. If the current node is a class or list we may need to decode sub nodes.
+     *
+     * @param path the current path
+     * @param node the current node we are decoding.
+     * @param type the type of object we are decoding.
+     * @param decoderService decoder Service used to decode members if needed. Such as class fields.
+     * @return ValidateOf the current node with details of either success or failures.
+     */
+    ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService);
+```
+
+#ConfigReloadStrategy
+You are able to reload a single source and rebuild the config tree by implementing your own ConfigReloadStrategy.
+
 
