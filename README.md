@@ -200,7 +200,7 @@ val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
 
-#ConfigSource
+# ConfigSource
 
 A config source provides an interface for providing a configuration that a ConfigLoader can understand and parse into a config node. Each ConfigSource has a format that a specific ConfigLoader will understand. So a ConfigLoader that loads "property" files can load them from multiple sources. A ConfigSource can provide either a InputStream or list of pairs of paths and values. 
 You can write your own ConfigSource by implementing the interface and passing though the format that represents your source. For example, you could add a new URL ConfigSource that loads from a URL, depending on the file extension, has a different format.
@@ -231,7 +231,7 @@ Each source must have a unique ID, that Gestalt uses to keep track of the source
     List<Pair<String, String>> loadList() throws GestaltException;
 ```
 
-#ConfigLoader
+# ConfigLoader
 
 A ConfigLoader accepts a specific source format. It reads in the config source as either a list or input stream. It is then responsible for converting the sources into a ValidateOf with either a config node tree or validation errors.
 You can write your own ConfigLoader by implementing the interface and accepting a specific format. Then read in the provided ConfigSource InputStream or list and parse the values. For example you can add a json loader that takes an InputStream and uses Jackson to load and build a config tree.  
@@ -254,11 +254,11 @@ You can write your own ConfigLoader by implementing the interface and accepting 
     ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
 ```
 
-#SentenceLexer
+# SentenceLexer
 Gestalt uses a SentenceLexer's in several places, to convert a string path into tokens that can be followed and to in the ConfigParser to turn the configuration paths into tokens then into config nodes.
 You can customize the SentenceLexer to use your own format of path. For example in Gestalt Environment Variables use a '_' to delimitate the tokens whereas property files use '.'. If you wanted to use camel case you could build a sentence lexer for that.  
 
-#Decoder
+# Decoder
 Decoders allow Gestalt to decode a config node into a specific value, class or collection. A Decoder can either work on a leaf and decode a single value, or it can work on a Map or Array node and decode a class or collection.
 You can create your own decoder by implementing the Decoder interface. By returning true for the matches Gestalt will ask your decoder to decode the current node by calling your Decoders decode method. Gestalt will pass in the current path, the current node to decode and the DecoderService so we can decode any subnodes.   
 ```java
@@ -282,7 +282,7 @@ You can create your own decoder by implementing the Decoder interface. By return
     ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService);
 ```
 
-#ConfigReloadStrategy
+# ConfigReloadStrategy
 You are able to reload a single source and rebuild the config tree by implementing your own ConfigReloadStrategy.
 
 
