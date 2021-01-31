@@ -198,8 +198,40 @@ val pool: HttpPool = gestalt.getConfig("http.pool")
 val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```   
 
-# Reload Strategies
+# Gestalt getConfig path options
+Gestalt uses a SentenceLexer provided by the builder to convert the path passed to the Gestalt getConfig interface into tokens that Gestalt can use to navigate to your sub node. The default SentenceLexer supports paths seperated by the '.' and indexing into arrays using a '[0]' format. 
+If you want to use a different path style you can provide your own SentenceLexer to Gestalt.
 
+```java
+// load a whole class, this works best with pojo's
+HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
+// or get a specific config value from a class
+short maxTotal  gestalt.getConfig("http.pool.maxTotal", Short.class);
+// get with a default if you want a fallback from code
+long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", 24, Long.class);
+
+// get a list of Host objects, or an empty collection if there is no hosts found.
+List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
+  new TypeCapture<List<Host>>() {});
+
+// Get a class at a specific list index. 
+Host host = gestalt.getConfig("db.hosts[2]", Host.class);
+// get a value of a class from a specific list index.
+String password = gestalt.getConfig("db.hosts[2].password", String.class);
+```
+
+# Reload Strategies
+When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config. 
+Once Gestalt has reloaded the config it will send out its own Gestalt Core Reload event. you can add a listener to the builder to get a notification when a Gestalt Core Reload has completed. The Gestalt Cache uses this to clear the cache when a Config Source has changed.  
+
+```java
+ConfigSource devFileSource = new FileConfigSource(devFile);
+Gestalt gestalt = builder
+  .addSource(devFileSource)
+  .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
+  .addCoreReloadListener(reloadListener)
+  .build();
+```
 
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
 
