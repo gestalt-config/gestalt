@@ -198,9 +198,14 @@ val pool: HttpPool = gestalt.getConfig("http.pool")
 val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```   
 
+# Reload Strategies
+
+
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
 
-# ConfigSource
+# Architectural details
+This section is more for those wishing to know more about how Gestalt works, or how to add their own functionality. If you only wish to get configuration from Gestalt As Is, then feel free to skip it. 
+## ConfigSource
 
 A config source provides an interface for providing a configuration that a ConfigLoader can understand and parse into a config node. Each ConfigSource has a format that a specific ConfigLoader will understand. So a ConfigLoader that loads "property" files can load them from multiple sources. A ConfigSource can provide either a InputStream or list of pairs of paths and values. 
 You can write your own ConfigSource by implementing the interface and passing though the format that represents your source. For example, you could add a new URL ConfigSource that loads from a URL, depending on the file extension, has a different format.
@@ -231,7 +236,7 @@ Each source must have a unique ID, that Gestalt uses to keep track of the source
     List<Pair<String, String>> loadList() throws GestaltException;
 ```
 
-# ConfigLoader
+## ConfigLoader
 
 A ConfigLoader accepts a specific source format. It reads in the config source as either a list or input stream. It is then responsible for converting the sources into a ValidateOf with either a config node tree or validation errors.
 You can write your own ConfigLoader by implementing the interface and accepting a specific format. Then read in the provided ConfigSource InputStream or list and parse the values. For example you can add a json loader that takes an InputStream and uses Jackson to load and build a config tree.  
@@ -254,11 +259,13 @@ You can write your own ConfigLoader by implementing the interface and accepting 
     ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
 ```
 
-# SentenceLexer
+## SentenceLexer
+
 Gestalt uses a SentenceLexer's in several places, to convert a string path into tokens that can be followed and to in the ConfigParser to turn the configuration paths into tokens then into config nodes.
 You can customize the SentenceLexer to use your own format of path. For example in Gestalt Environment Variables use a '_' to delimitate the tokens whereas property files use '.'. If you wanted to use camel case you could build a sentence lexer for that.  
 
-# Decoder
+## Decoder
+
 Decoders allow Gestalt to decode a config node into a specific value, class or collection. A Decoder can either work on a leaf and decode a single value, or it can work on a Map or Array node and decode a class or collection.
 You can create your own decoder by implementing the Decoder interface. By returning true for the matches Gestalt will ask your decoder to decode the current node by calling your Decoders decode method. Gestalt will pass in the current path, the current node to decode and the DecoderService so we can decode any subnodes.   
 ```java
@@ -282,7 +289,30 @@ You can create your own decoder by implementing the Decoder interface. By return
     ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService);
 ```
 
-# ConfigReloadStrategy
+## ConfigReloadStrategy
+
 You are able to reload a single source and rebuild the config tree by implementing your own ConfigReloadStrategy.
 
+## ConfigNodeService
 
+The ConfigNodeService is the central storage for the merged config node tree along with holding the original config nodes stored in a ConfigNodeContainer with the original source id. This is so when we reload a config source, we can link the source being reloaded with the config tree it produces. 
+Gestalt uses the ConfigNodeService to save, merge, validate the config tree, navigate and find the node Gestalt is looking for.
+
+## Gestalt
+
+The external facing portion of Java Config Library, it is the keystone of the system and is responsible for bringing together all the pieces of project. Since Gestalt relies on multiple services, the Builder makes it simple to construct a functional and default version of Gestalt.
+
+### loadConfigs
+
+The built Gestalt is used to load the config sources by adding them to the builder and then passed through to the Gestalt constructor. 
+Gestalt will use the ConfigLoaderService to find a ConfigLoader that will load the source by a format. It will add the config node tree loaded to the ConfigNodeService to be added with the rest of the config trees. The new config tree will be merged and where applicable overwrite any of the existing config nodes.
+
+### reload
+
+When a source needs to be reloaded, it will be passed into the reload function. The sources will then be converted into a Config node as in the loading. Then Gestalt will use the ConfigNodeService to reload the source. Since the ConfigNodeService holds onto the source ID with the ConfigNodeContainer we are able to determine with config node to reload then take all the config nodes and re-merge them in the same order to rebuild teh config tree with the newly loaded node.
+
+### getConfig
+
+To get a config Gestalt needs to know what type of config to get. For simple classes you can use the interface for classes, for Generic classes you need to use the new TypeCapture<List<Host>>() {} to capture the generic type. This allows you to decode Lists, and Sets with a generic type. 
+There are multiple ways to get a config with either a default, an Optional or the straight value. With the default and Optional Gestalt will not throw an exception if there is an error, instead returning a default or an empty Option.
+Gestal uses the SentenceLexer provided by the builder to tokenize the path then use the ConfigNodeService to navigate to the node. With the node Gestalt calls the decoderService to convert the node into the appropriate type.  
