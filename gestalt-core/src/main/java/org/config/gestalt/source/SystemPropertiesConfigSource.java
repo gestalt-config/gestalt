@@ -3,6 +3,9 @@ package org.config.gestalt.source;
 import org.config.gestalt.exceptions.GestaltException;
 import org.config.gestalt.utils.Pair;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
@@ -22,12 +25,20 @@ public class SystemPropertiesConfigSource implements ConfigSource {
 
     @Override
     public boolean hasStream() {
-        return false;
+        return true;
     }
 
     @Override
     public InputStream loadStream() throws GestaltException {
-        throw new GestaltException("Unsupported operation load stream on an SystemPropertiesConfigSource");
+        Properties properties = System.getProperties();
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            properties.store(output, null);
+            return new ByteArrayInputStream(output.toByteArray());
+        } catch (IOException e) {
+            throw new GestaltException("Exception while converting system properties to a InputStream", e);
+        }
     }
 
     @Override

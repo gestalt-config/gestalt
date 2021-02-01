@@ -7,6 +7,7 @@ import org.config.gestalt.node.ConfigNode;
 import org.config.gestalt.parser.ConfigParser;
 import org.config.gestalt.parser.MapConfigParser;
 import org.config.gestalt.source.ConfigSource;
+import org.config.gestalt.source.SystemPropertiesConfigSource;
 import org.config.gestalt.utils.Pair;
 import org.config.gestalt.utils.ValidateOf;
 
@@ -41,7 +42,7 @@ public class PropertyLoader implements ConfigLoader {
 
     @Override
     public boolean accepts(String format) {
-        return "properties".equals(format) || "props".equals(format);
+        return "properties".equals(format) || "props".equals(format) || SystemPropertiesConfigSource.SYSTEM_PROPERTIES.equals(format);
     }
 
     /**
