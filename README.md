@@ -250,6 +250,11 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
     .build();
 ```
 
+| Reload Strategy | Details |
+| --------------- | ------- | 
+| FileChangeReload | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file |
+| TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every Duration |
+
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
 
 # Architectural details
