@@ -16,13 +16,13 @@ class SystemPropertiesConfigSourceTest {
     void hasStream() {
         SystemPropertiesConfigSource configSource = new SystemPropertiesConfigSource();
 
-        Assertions.assertFalse(configSource.hasStream());
+        Assertions.assertTrue(configSource.hasStream());
     }
 
     @Test
-    void loadStream() {
+    void loadStream() throws GestaltException {
         SystemPropertiesConfigSource configSource = new SystemPropertiesConfigSource();
-        Assertions.assertThrows(GestaltException.class, configSource::loadStream);
+        Assertions.assertNotNull(configSource.loadStream());
     }
 
     @Test
