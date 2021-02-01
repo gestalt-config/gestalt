@@ -236,6 +236,34 @@ Using the extension functions you don't need to specify the type if the return t
   val pool: HttpPool = gestalt.getConfig("http.pool")
   val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```
+# Config Sources
+Adding a ConfigSource to the builder is the minimum step needed to build the Gestalt Library. 
+You can add several ConfigSources to the builder and Gestalt, they will be loaded in the order they are added. Where each new source will be merged with the existing source and where applicable overwrite the values of the previous sources. 
+
+```java
+  Gestalt gestalt = builder
+    .addSource(new FileConfigSource(devFile))
+    .addSource(new EnvironmentConfigSource())
+    .build();
+```
+In the above example we first load a file devFile then overwrite any values from the Environment Variables. 
+
+| Config Source | Details |
+| --------------- | ------- | 
+| EnvironmentConfigSource | Loads all Environment Variables in the system, will convert them to a list of key values from the Env Map for the config loader. |
+| FileConfigSource | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.  |
+| MapConfigSource | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader. |
+| SystemPropertiesConfigSource | Loads the Java System Properties and convert them to a list of key values or the config loader. |
+
+# Config Loader
+Each config loader understands how to load a specific type of config. Often this is associated with a specific ConfigSource. For example the EnvironmentVarsLoader only loads the EnvironmentConfigSource. However, some loaders expect a format of the config, but accept it from multiple sources. For example the PropertyLoader expects the typical java property file, but it can come from any source as long as it is an input stream. It may be the system properties, local file, github, or S3.   
+
+| Config Loader | Formats supported | details |
+| ------------- | ----------------- | ------- |
+| EnvironmentVarsLoader | envVars | Loads Environment Variables from the EnvironmentConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "_". You can also enable treatErrorsAsWarnings if you are receiving errors from the environment variables, as you can not always control what is present. By treating Errors as warnings it will not fail if it finds a configuration the parser doesn't understand. Instead it will ignore the specific config. |
+| MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
+| PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
+
 
 # Reload Strategies
 When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config. 
@@ -252,8 +280,8 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
 
 | Reload Strategy | Details |
 | --------------- | ------- | 
-| FileChangeReload | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file |
-| TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every Duration |
+| FileChangeReload | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file. When the file changes it will tell Gestalt to reload the file. Also works with symlink and will reload if the symlink change.  |
+| TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration |
 
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
 
@@ -367,6 +395,6 @@ When a source needs to be reloaded, it will be passed into the reload function. 
 
 ### getConfig
 
-To get a config Gestalt needs to know what type of config to get. For simple classes you can use the interface for classes, for Generic classes you need to use the new TypeCapture<List<Host>>() {} to capture the generic type. This allows you to decode Lists, and Sets with a generic type. 
+To get a config Gestalt needs to know what type of config to get. For simple classes you can use the interface for classes, for Generic classes you need to use the `new TypeCapture<List<Host>>() {}` to capture the generic type. This allows you to decode Lists, and Sets with a generic type. 
 There are multiple ways to get a config with either a default, an Optional or the straight value. With the default and Optional Gestalt will not throw an exception if there is an error, instead returning a default or an empty Option.
 Gestal uses the SentenceLexer provided by the builder to tokenize the path then use the ConfigNodeService to navigate to the node. With the node Gestalt calls the decoderService to convert the node into the appropriate type.  
