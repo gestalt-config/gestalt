@@ -144,6 +144,7 @@ public class GestaltSample {
     }
 
     @Test
+    @Disabled
     public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
