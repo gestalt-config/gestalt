@@ -10,6 +10,8 @@ A simple but powerful interface allows you to navigate to a path within your con
 - **Merge Multiple Sources:** Merge multiple config sources together by layering on your configurations.
 - **Flexible and configurable:** Library is a collection of lego pieces with well-defined interfaces, so you can add to or modify any part of it. 
 - **Easy to use builder:** Easy to use builder can get you running quick, or be used to customize any part of the library.
+- **Receive all errors up front:** When there is an error with your config, you will receive multiple errors in a friendly log. So you can fix multiple errors at once instead of one at a time waiting for the next error. 
+- **Modular support for features** Only include what you need into your build, so if you dont need the Kotlin module, dont include it. 
 
 # Getting Started
 1. Add the Bintray repository:
@@ -264,6 +266,45 @@ Each config loader understands how to load a specific type of config. Often this
 | MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
 | PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
 
+# Decoders
+| Type | details |
+| ---- | ------- |
+| Array | Java primitive array type with any generic class, Can decode simple types from a single comma separated value, or from an array node |
+| BigDecimal | |
+| BigInteger| |
+| Boolean | Boolean and boolean |
+| Byte | Byte and byte |
+| Char | Char and char |
+| Date | takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME |
+| Double | Double and double |
+| Duration | |
+| Enum | |
+| File | |
+| Float | Float and float |
+| Instant | |
+| Integer | Integer and int |
+| List | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node |
+| LocalDate | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_LOCAL_DATE |
+| LocalDateTime | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME |
+| Long | Long or long |
+| Map | A map, Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int. The value can be any type we can decode. |
+| Object | Decodes a java Bean style class, although it will work with any java class.  Will fail if the constructor is private. Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors which you can disable using treatMissingValuesAsErrors = true. Decodes member classes and lists as well. |
+| Path | |
+| Pattern | |
+| Set | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node  |
+| Short | Short or short |
+| String | |
+| UUID | |
+
+For Kotlin, it has the following decoders. The decoders are only selected when calling from the Kotlin Gestalt extension function, or when using KTypeCapture. Otherwise, will match the Java Boolean
+Kotlin decoders: Boolean, Byte, Char, Data, Double, Duration, Float, Integer, Long, Short, String
+
+For kotlin data classes it builds a Kotlin Data class by creating a map of parameters. If there are any missing required parameters it will fail.
+
+Required parameters are ones that don't have a default and are not nullable. An exception will be thrown in this case.
+
+If all members are optional, and we have no parameters we will try and create the class with the default empty constructor.
+
 
 # Reload Strategies
 When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config. 
@@ -282,6 +323,18 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
 | --------------- | ------- | 
 | FileChangeReload | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file. When the file changes it will tell Gestalt to reload the file. Also works with symlink and will reload if the symlink change.  |
 | TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration |
+
+# Gestalt configuration
+
+| Configuration | default | Details |
+| ------------- | ------- | ------- | 
+| treatWarningsAsErrors | false | if we treat warnings as errors Gestalt will fail on any warnings |
+| treatMissingArrayIndexAsError | false | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead |
+| treatMissingValuesAsErrors | false | By default Gestalt will insert null values into an object. By enabling this you will get an exception instead | 
+| envVarsTreatErrorsAsWarnings | false | Since Environment Variables are sometimes hard to control, there may be un-correctable errors while parsing. This disables errors while parsing, instead it will make a best attempt. If there are any errors on a path it will ignore the path. So use with caution. |
+| dateDecoderFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
+| localDateTimeFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
+| localDateFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
 
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
