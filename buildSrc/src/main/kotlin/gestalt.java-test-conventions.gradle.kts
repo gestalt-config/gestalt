@@ -1,4 +1,4 @@
-import org.config.gestalt.Test
+import org.github.gestalt.config.Test
 
 /*
  * Apply the plugin to setup testing dependencies and tasks.
@@ -11,14 +11,14 @@ plugins {
 
 dependencies {
     // Use JUnit Jupiter API for testing.
-    testImplementation(Test.junitAPI)
+    testImplementation(org.github.gestalt.config.Test.junitAPI)
 
     // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly(Test.junitEngine)
+    testRuntimeOnly(org.github.gestalt.config.Test.junitEngine)
 
-    testImplementation(Test.assertJ)
+    testImplementation(org.github.gestalt.config.Test.assertJ)
 
-    testImplementation(Test.mockito)
+    testImplementation(org.github.gestalt.config.Test.mockito)
 }
 
 tasks.test {

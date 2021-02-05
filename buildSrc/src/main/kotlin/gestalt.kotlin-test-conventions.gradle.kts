@@ -1,4 +1,4 @@
-import org.config.gestalt.Test
+import org.github.gestalt.config.Test
 
 plugins {
     jacoco
@@ -7,11 +7,11 @@ plugins {
 
 dependencies {
     //Testing dependencies
-    testImplementation(Test.junitAPI)
-    testRuntimeOnly(Test.junitEngine)
-    testImplementation(Test.mockk)
-    testImplementation(Test.kotlinTestAssertions)
-    testImplementation(Test.mockito)
+    testImplementation(org.github.gestalt.config.Test.junitAPI)
+    testRuntimeOnly(org.github.gestalt.config.Test.junitEngine)
+    testImplementation(org.github.gestalt.config.Test.mockk)
+    testImplementation(org.github.gestalt.config.Test.kotlinTestAssertions)
+    testImplementation(org.github.gestalt.config.Test.mockito)
 }
 
 tasks.test {
