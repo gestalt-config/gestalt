@@ -1,13 +1,15 @@
 package org.github.gestalt.config.kotlin.integration
 
-import org.config.gestalt.builder.GestaltBuilder
-import org.config.gestalt.exceptions.GestaltException
-import org.config.gestalt.kotlin.addDefaultDecodersAndKotlin
-import org.config.gestalt.kotlin.getConfig
-import org.config.gestalt.kotlin.reflect.KTypeCapture
-import org.config.gestalt.reflect.TypeCapture
-import org.config.gestalt.source.FileConfigSource
-import org.config.gestalt.source.MapConfigSource
+import org.github.gestalt.config.Gestalt
+import org.github.gestalt.config.builder.GestaltBuilder
+import org.github.gestalt.config.exceptions.GestaltException
+import org.github.gestalt.config.kotlin.addDefaultDecodersAndKotlin
+import org.github.gestalt.config.kotlin.getConfig
+import org.github.gestalt.config.kotlin.reflect.KTypeCapture
+import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.source.EnvironmentConfigSource
+import org.github.gestalt.config.source.FileConfigSource
+import org.github.gestalt.config.source.MapConfigSource
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -125,11 +127,11 @@ class GestaltKotlinSample {
         val devFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("dev.properties")
         val devFile: java.io.File = java.io.File(devFileURL.file)
         val builder: GestaltBuilder = GestaltBuilder()
-        val gestalt: org.config.gestalt.Gestalt = builder
+        val gestalt: Gestalt = builder
             .addSource(FileConfigSource(defaultFile))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
-            .addSource(org.config.gestalt.source.EnvironmentConfigSource())
+            .addSource(EnvironmentConfigSource())
             .setEnvVarsTreatErrorsAsWarnings(true)
             .addDefaultDecodersAndKotlin()
             .build()

@@ -1,15 +1,15 @@
 package org.github.gestalt.config.integration;
 
-import org.config.gestalt.Gestalt;
-import org.config.gestalt.builder.GestaltBuilder;
-import org.config.gestalt.exceptions.GestaltException;
-import org.config.gestalt.reflect.TypeCapture;
-import org.config.gestalt.reload.CoreReloadListener;
-import org.config.gestalt.reload.FileChangeReloadStrategy;
-import org.config.gestalt.source.ConfigSource;
-import org.config.gestalt.source.EnvironmentConfigSource;
-import org.config.gestalt.source.FileConfigSource;
-import org.config.gestalt.source.MapConfigSource;
+import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.builder.GestaltBuilder;
+import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.reload.CoreReloadListener;
+import org.github.gestalt.config.reload.FileChangeReloadStrategy;
+import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.EnvironmentConfigSource;
+import org.github.gestalt.config.source.FileConfigSource;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

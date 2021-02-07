@@ -6,10 +6,10 @@ plugins {
 }
 
 repositories {
-    maven(url = "https://dl.bintray.com/credmond/gestalt" )
+    mavenCentral()
 }
 
 dependencies {
-    testImplementation("org.config.gestalt:gestalt-core:0.3.2")
-    testImplementation("org.config.gestalt:gestalt-kotlin:0.3.2")
+    testImplementation("com.github.gestalt-config:gestalt-core:0.4.1")
+    testImplementation("com.github.gestalt-config:gestalt-kotlin:0.4.1")
 }
