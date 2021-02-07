@@ -8,6 +8,6 @@ plugins {
 }
 
 allprojects {
-    group = "org.config.gestalt"
+    group = "com.github.gestalt-config"
     version = "0.4.0"
 }

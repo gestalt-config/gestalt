@@ -1,4 +1,4 @@
-import org.config.gestalt.Application
+import org.github.gestalt.config.Application
 
 plugins {
     id("gestalt.kotlin-common-conventions")

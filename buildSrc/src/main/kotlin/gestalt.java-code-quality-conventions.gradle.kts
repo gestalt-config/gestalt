@@ -1,5 +1,5 @@
 import net.ltgt.gradle.errorprone.errorprone
-import org.config.gestalt.Plugins
+import org.github.gestalt.config.Plugins
 
 /**
  * Apply to all modules to include multiple code quality plugins to your module.
@@ -11,7 +11,7 @@ plugins {
 }
 
 dependencies {
-    errorprone(Plugins.errorProne)
+    errorprone(org.github.gestalt.config.Plugins.errorProne)
 }
 
 tasks.withType<JavaCompile>().configureEach {
