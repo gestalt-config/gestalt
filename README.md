@@ -17,24 +17,24 @@ A simple but powerful interface allows you to navigate to a path within your con
 1. Add the Bintray repository:
 ```kotlin
 repositories {
-    jcenter()
+    mavenCentral()
 }
 ```
 2. Import gestalt-core, and the specific modules you need to support your use cases. 
 Gradle example:
 ```groovy
-implementation 'org.config.gestalt:gestalt-core:${version}'
-implementation 'org.config.gestalt:gestalt-kotlin:${version}'
+implementation 'com.github.gestalt-config:gestalt-core:${version}'
+implementation 'com.github.gestalt-config:gestalt-kotlin:${version}'
 ```
 Or
 ```kotlin
-testImplementation("org.config.gestalt:gestalt-core:$version")
-testImplementation("org.config.gestalt:gestalt-kotlin:$version")
+testImplementation("com.github.gestalt-config:gestalt-core:$version")
+testImplementation("com.github.gestalt-config:gestalt-kotlin:$version")
 ```
 Maven Example:
 ```xml
 <dependency>
-  <groupId>org.config.gestalt</groupId>
+  <groupId>com.github.gestalt-config</groupId>
   <artifactId>gestalt-core</artifactId>
   <version>${version}</version>
 </dependency>
