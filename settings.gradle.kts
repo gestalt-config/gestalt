@@ -10,6 +10,13 @@
 rootProject.name = "gestalt"
 include("gestalt-core", "gestalt-kotlin", "gestalt-sample")
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
