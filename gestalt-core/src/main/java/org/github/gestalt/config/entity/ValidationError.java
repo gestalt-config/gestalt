@@ -227,6 +227,23 @@ public abstract class ValidationError {
     }
 
     /**
+     * Unknown tokens provided while building a config node.
+     */
+    public static class UnknownTokensInPath extends ValidationError {
+        private final String path;
+
+        public UnknownTokensInPath(String path) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown token found for path: " + path + " while building a config node";
+        }
+    }
+
+    /**
      * For a specific path there are multiple token types. This can happen when a node is an array and an object
      */
     public static class MultipleTokenTypes extends ValidationError {

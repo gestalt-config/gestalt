@@ -8,7 +8,7 @@
  */
 
 rootProject.name = "gestalt"
-include("gestalt-core", "gestalt-kotlin", "gestalt-sample")
+include("gestalt-core", "gestalt-json", "gestalt-kotlin", "gestalt-sample", "gestalt-yaml")
 
 pluginManagement {
     repositories {
@@ -23,3 +23,4 @@ dependencyResolutionManagement {
         jcenter()
     }
 }
+
