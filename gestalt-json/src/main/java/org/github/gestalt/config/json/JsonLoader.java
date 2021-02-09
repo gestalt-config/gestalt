@@ -1,4 +1,4 @@
-package org.github.gestalt.config.yaml;
+package org.github.gestalt.config.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,51 +71,13 @@ public class JsonLoader implements ConfigLoader {
     }
 
     private ValidateOf<ConfigNode> buildConfigTree(String path, JsonNode jsonNode) {
-        List<ValidationError> errors = new ArrayList<>();
         switch (jsonNode.getNodeType()) {
-            case ARRAY: {
-                List<ConfigNode> array = new ArrayList<>();
-                int arraySize = jsonNode.size();
-                for (int i = 0; i < arraySize; i++) {
-                    String currentPath = path + "[" + i + "]";
-
-                    JsonNode arrayNodes = jsonNode.get(i);
-                    ValidateOf<ConfigNode> node = buildConfigTree(currentPath, arrayNodes);
-                    errors.addAll(node.getErrors());
-                    if (!node.hasResults()) {
-                        errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
-                    } else {
-                        array.add(node.results());
-                    }
-                }
-                ConfigNode arrayNode = new ArrayNode(array);
-                return ValidateOf.validateOf(arrayNode, errors);
-            }
-
+            case ARRAY:
+                return buildArrayConfigTree(path, jsonNode);
 
             case OBJECT:
-            case POJO: {
-                Map<String, ConfigNode> mapNode = new HashMap<>();
-
-                for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
-                    Map.Entry<String, JsonNode> entry = it.next();
-                    String key = entry.getKey();
-                    JsonNode jsonValue = entry.getValue();
-
-                    String currentPath = path.length() > 0 ? path + "." + key : key;
-
-                    ValidateOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
-                    errors.addAll(node.getErrors());
-                    if (!node.hasResults()) {
-                        errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
-                    } else {
-                        mapNode.put(key, node.results());
-                    }
-                }
-
-                ConfigNode mapConfigNode = new MapNode(mapNode);
-                return ValidateOf.validateOf(mapConfigNode, errors);
-            }
+            case POJO:
+                return buildObjectConfigTree(path, jsonNode);
 
             case STRING:
             case BINARY:
@@ -129,5 +91,53 @@ public class JsonLoader implements ConfigLoader {
             default:
                 return ValidateOf.inValid(new ValidationError.UnknownTokensInPath(path));
         }
+    }
+
+    private String normalizeSentence(String sentence) {
+        return sentence.toLowerCase();
+    }
+
+    private ValidateOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {
+        List<ValidationError> errors = new ArrayList<>();
+        List<ConfigNode> array = new ArrayList<>();
+        int arraySize = jsonNode.size();
+        for (int i = 0; i < arraySize; i++) {
+            String currentPath = path + "[" + i + "]";
+
+            JsonNode arrayNodes = jsonNode.get(i);
+            ValidateOf<ConfigNode> node = buildConfigTree(currentPath, arrayNodes);
+            errors.addAll(node.getErrors());
+            if (!node.hasResults()) {
+                errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
+            } else {
+                array.add(node.results());
+            }
+        }
+        ConfigNode arrayNode = new ArrayNode(array);
+        return ValidateOf.validateOf(arrayNode, errors);
+    }
+
+    private ValidateOf<ConfigNode> buildObjectConfigTree(String path, JsonNode jsonNode) {
+        List<ValidationError> errors = new ArrayList<>();
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+
+        for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = it.next();
+            String key = normalizeSentence(entry.getKey());
+            JsonNode jsonValue = entry.getValue();
+
+            String currentPath = path.length() > 0 ? path + "." + key : key;
+
+            ValidateOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
+            errors.addAll(node.getErrors());
+            if (!node.hasResults()) {
+                errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
+            } else {
+                mapNode.put(key, node.results());
+            }
+        }
+
+        ConfigNode mapConfigNode = new MapNode(mapNode);
+        return ValidateOf.validateOf(mapConfigNode, errors);
     }
 }

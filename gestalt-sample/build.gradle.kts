@@ -6,10 +6,14 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    testImplementation("com.github.gestalt-config:gestalt-core:0.4.1")
-    testImplementation("com.github.gestalt-config:gestalt-kotlin:0.4.1")
+    val gestaltVersion = "0.5.0"
+    testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
+    testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
+    testImplementation("com.github.gestalt-config:gestalt-json:$gestaltVersion")
+    testImplementation("com.github.gestalt-config:gestalt-yaml:$gestaltVersion")
 }

@@ -1,0 +1,27 @@
+---
+db:
+  hosts:
+    - user: credmond
+      url: jdbc:postgresql://localhost:5432/mydb1
+    - user: credmond
+      url: jdbc:postgresql://localhost:5432/mydb2
+    - user: credmond
+      url: jdbc:postgresql://localhost:5432/mydb3
+  connectionTimeout: 6000
+  idleTimeout: 600
+  maxLifetime: 60000
+http:
+  pool:
+    maxTotal: 100
+    maxPerRoute: 10
+    validateAfterInactivity: 6000
+    keepAliveTimeoutMs: 60000
+    idleTimeoutSec: 25
+admin:
+  user: John, Sarah
+  overrideEnabled: false
+  accessRole: level0
+employee:
+  user: Janice
+  accessRole: level1
+serviceMode: active

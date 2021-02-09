@@ -1,4 +1,4 @@
-package org.github.gestalt.config.yaml;
+package org.github.gestalt.config.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.exceptions.GestaltException;

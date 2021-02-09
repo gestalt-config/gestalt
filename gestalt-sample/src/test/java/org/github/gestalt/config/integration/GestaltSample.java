@@ -3,6 +3,7 @@ package org.github.gestalt.config.integration;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.json.JsonLoader;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
@@ -10,6 +11,7 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.EnvironmentConfigSource;
 import org.github.gestalt.config.source.FileConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.yaml.YamlLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -52,95 +54,7 @@ public class GestaltSample {
 
         gestalt.loadConfigs();
 
-        HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
-
-        Assertions.assertEquals(1000, pool.maxTotal);
-        Assertions.assertEquals((short) 1000, gestalt.getConfig("http.pool.maxTotal", Short.class));
-        Assertions.assertEquals(50L, pool.maxPerRoute);
-        Assertions.assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute", Long.class));
-        Assertions.assertEquals(6000, pool.validateAfterInactivity);
-        Assertions.assertEquals(60000D, pool.keepAliveTimeoutMs);
-        Assertions.assertEquals(25, pool.idleTimeoutSec);
-        Assertions.assertEquals(33.0F, pool.defaultWait);
-
-        long startTime = System.nanoTime();
-        gestalt.getConfig("db", DataBase.class);
-        long timeTaken = System.nanoTime() - startTime;
-
-        startTime = System.nanoTime();
-        DataBase db = gestalt.getConfig("db", DataBase.class);
-        long cacheTimeTaken = System.nanoTime() - startTime;
-
-        // not really a great test for ensuring we are hitting a cache
-        Assertions.assertTrue(timeTaken > cacheTimeTaken);
-
-        Assertions.assertEquals(600, db.connectionTimeout);
-        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", Integer.class));
-        Assertions.assertEquals(123, db.idleTimeout);
-        Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
-
-        Assertions.assertEquals(3, db.hosts.size());
-        Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
-        // index into the path of an array.
-        Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
-        Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", db.hosts.get(0).url);
-        Assertions.assertEquals("credmond", db.hosts.get(1).getUser());
-        Assertions.assertEquals("5678", db.hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", db.hosts.get(1).url);
-        Assertions.assertEquals("credmond", db.hosts.get(2).getUser());
-        Assertions.assertEquals("9012", db.hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts.get(2).url);
-
-        Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
-
-        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
-        });
-        Assertions.assertEquals(3, hosts.size());
-        Assertions.assertEquals("credmond", hosts.get(0).getUser());
-        Assertions.assertEquals("1234", hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hosts.get(0).url);
-        Assertions.assertEquals("credmond", hosts.get(1).getUser());
-        Assertions.assertEquals("5678", hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hosts.get(1).url);
-        Assertions.assertEquals("credmond", hosts.get(2).getUser());
-        Assertions.assertEquals("9012", hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
-
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
-        });
-        Assertions.assertEquals(0, noHosts.size());
-
-        User admin = gestalt.getConfig("admin", new TypeCapture<User>() {
-        });
-        Assertions.assertEquals(3, admin.user.length);
-        Assertions.assertEquals("Peter", admin.user[0]);
-        Assertions.assertEquals("Kim", admin.user[1]);
-        Assertions.assertEquals("Steve", admin.user[2]);
-        Assertions.assertEquals(Role.LEVEL0, admin.accessRole);
-        Assertions.assertTrue(admin.overrideEnabled);
-
-        User user = gestalt.getConfig("employee", new TypeCapture<User>() {
-        });
-        Assertions.assertEquals(1, user.user.length);
-        Assertions.assertEquals("Janice", user.user[0]);
-        Assertions.assertEquals(Role.LEVEL1, user.accessRole);
-        Assertions.assertFalse(user.overrideEnabled);
-
-        Assertions.assertEquals("active", gestalt.getConfig("serviceMode", TypeCapture.of(String.class)));
-        Assertions.assertEquals('a', gestalt.getConfig("serviceMode", TypeCapture.of(Character.class)));
-    }
-
-    public static class TestReloadListener implements CoreReloadListener {
-
-        int count = 0;
-
-        @Override
-        public void reload() {
-            count++;
-        }
+        validateResults(gestalt);
     }
 
     @Test
@@ -284,7 +198,8 @@ public class GestaltSample {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {});
+        hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
         Assertions.assertEquals("1234", hosts.get(0).getPassword());
@@ -323,6 +238,104 @@ public class GestaltSample {
 
         gestalt.loadConfigs();
 
+        validateResults(gestalt);
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    @Test
+    public void integrationTestJson() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.json");
+        File defaultFile = new File(defaultFileURL.getFile());
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.json");
+        File devFile = new File(devFileURL.getFile());
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .addDefaultConfigLoaders()
+            .addConfigLoader(new JsonLoader())
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
+    public void integrationTestYaml() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.yml");
+        File defaultFile = new File(defaultFileURL.getFile());
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.yml");
+        File devFile = new File(devFileURL.getFile());
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .addDefaultConfigLoaders()
+            .addConfigLoader(new YamlLoader())
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
+    public void integrationTestJsonAndYaml() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.json");
+        File defaultFile = new File(defaultFileURL.getFile());
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.yml");
+        File devFile = new File(devFileURL.getFile());
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .addDefaultConfigLoaders()
+            .addConfigLoader(new YamlLoader())
+            .addConfigLoader(new JsonLoader())
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 
         Assertions.assertEquals(1000, pool.maxTotal);
@@ -354,15 +367,16 @@ public class GestaltSample {
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
+        // index into the path of an array.
         Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
         Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", db.hosts.get(0).getUrl());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", db.hosts.get(0).url);
         Assertions.assertEquals("credmond", db.hosts.get(1).getUser());
         Assertions.assertEquals("5678", db.hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", db.hosts.get(1).getUrl());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", db.hosts.get(1).url);
         Assertions.assertEquals("credmond", db.hosts.get(2).getUser());
         Assertions.assertEquals("9012", db.hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts.get(2).getUrl());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts.get(2).url);
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
@@ -371,13 +385,13 @@ public class GestaltSample {
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
         Assertions.assertEquals("1234", hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hosts.get(0).getUrl());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hosts.get(0).url);
         Assertions.assertEquals("credmond", hosts.get(1).getUser());
         Assertions.assertEquals("5678", hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hosts.get(1).getUrl());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hosts.get(1).url);
         Assertions.assertEquals("credmond", hosts.get(2).getUser());
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).getUrl());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
         List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
         });
@@ -401,16 +415,20 @@ public class GestaltSample {
 
         Assertions.assertEquals("active", gestalt.getConfig("serviceMode", TypeCapture.of(String.class)));
         Assertions.assertEquals('a', gestalt.getConfig("serviceMode", TypeCapture.of(Character.class)));
-
-        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
-        Assertions.assertTrue(booking.isEnabled());
-        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
-        Assertions.assertEquals(443, booking.getService().getPort());
-        Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
     public enum Role {
         LEVEL0, LEVEL1
+    }
+
+    public static class TestReloadListener implements CoreReloadListener {
+
+        int count = 0;
+
+        @Override
+        public void reload() {
+            count++;
+        }
     }
 
     public static class HttpPool {
