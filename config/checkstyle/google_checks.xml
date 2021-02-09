@@ -258,7 +258,7 @@
         </module-->
         <module name="OverloadMethodsDeclarationOrder"/>
         <!--module name="VariableDeclarationUsageDistance"/-->
-        <module name="CustomImportOrder">
+        <!--module name="CustomImportOrder">
             <property name="severity" value="error"/>
             <property name="customImportOrderRules"
                       value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
@@ -266,7 +266,7 @@
             <property name="standardPackageRegExp" value="^java\."/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
-        </module>
+        </module-->
         <module name="MethodParamPad">
             <property name="tokens"
                       value="CTOR_DEF, LITERAL_NEW, METHOD_CALL, METHOD_DEF,

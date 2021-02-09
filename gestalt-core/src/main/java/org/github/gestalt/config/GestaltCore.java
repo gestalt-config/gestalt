@@ -98,7 +98,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltException("No sources provided, unable to reload any configs");
         }
 
-        if (! sources.contains(reloadSource)) {
+        if (!sources.contains(reloadSource)) {
             throw new GestaltException("Can not reload a source that does not exist.");
         }
 
@@ -106,14 +106,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         ValidateOf<ConfigNode> reloadNode = configLoader.loadSource(reloadSource);
         validateLoadResultsForErrors(reloadNode);
 
-        if (! reloadNode.hasResults()) {
+        if (!reloadNode.hasResults()) {
             throw new GestaltException("no results found reloading source " + reloadSource.name());
         }
 
         ValidateOf<ConfigNode> mergedNode = configNodeService.reloadNode(new ConfigNodeContainer(reloadNode.results(), reloadSource.id()));
         validateLoadResultsForErrors(mergedNode);
 
-        if (! mergedNode.hasResults()) {
+        if (!mergedNode.hasResults()) {
             throw new GestaltException("no results found merging source " + reloadSource.name());
         }
 
@@ -150,7 +150,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
             } else if (results.hasErrors()) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
-                    ", for class: " + klass.getName(), tokens.getErrors());
+                    ", for class: " + klass.getName(), results.getErrors());
                 logger.warn(errorMsg);
             }
 
@@ -179,14 +179,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
             if (checkErrorsShouldFail(results)) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + path +
-                    ", for class: " + klass.getName() + " returning default value", tokens.getErrors());
+                    ", for class: " + klass.getName() + " returning default value", results.getErrors());
                 logger.warn(errorMsg);
 
                 return defaultVal;
 
             } else if (results.hasErrors()) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
-                    ", for class: " + klass.getName(), tokens.getErrors());
+                    ", for class: " + klass.getName(), results.getErrors());
                 logger.warn(errorMsg);
             }
 
@@ -221,14 +221,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
             if (checkErrorsShouldFail(results)) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + path +
-                    ", for class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
+                    ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
                 logger.warn(errorMsg);
 
                 return Optional.empty();
 
             } else if (results.hasErrors()) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
-                    ", for class: " + klass.getName(), tokens.getErrors());
+                    ", for class: " + klass.getName(), results.getErrors());
                 logger.warn(errorMsg);
             }
 
@@ -269,13 +269,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private boolean ignoreError(ValidationError error) {
         if (gestaltConfig.isTreatWarningsAsErrors()) {
             return false;
-        } else if (error instanceof ValidationError.ArrayMissingIndex && ! gestaltConfig.isTreatMissingArrayIndexAsError()) {
+        } else if (error instanceof ValidationError.ArrayMissingIndex && !gestaltConfig.isTreatMissingArrayIndexAsError()) {
             return true;
         } else if ((error instanceof ValidationError.DecodingLeafMissingValue ||
             error instanceof ValidationError.NoResultsFoundForPath ||
             error instanceof ValidationError.NoResultsFoundForNode ||
             error instanceof ValidationError.UnableToFindObjectNodeForPath) &&
-            ! gestaltConfig.isTreatMissingValuesAsErrors()) {
+            !gestaltConfig.isTreatMissingValuesAsErrors()) {
             return true;
         }
 

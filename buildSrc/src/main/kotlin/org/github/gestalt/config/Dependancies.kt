@@ -8,6 +8,8 @@ object Application {
         const val slf4j = "1.7.30"
 
         const val kotlinVersion = "1.4.30"
+
+        const val jackson = "2.12.1"
     }
 
     object Logging {
@@ -16,6 +18,15 @@ object Application {
 
     object Kotlin {
         const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
+    }
+
+    object Json {
+        const val jacksonCore = "com.fasterxml.jackson.core:jackson-core:${Versions.jackson}"
+        const val jacksonDataBind = "com.fasterxml.jackson.core:jackson-databind:${Versions.jackson}"
+        const val jacksonDataformatYaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${Versions.jackson}"
+
+        const val jacksonJava8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${Versions.jackson}"
+        const val jacksonJsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson}"
     }
 }
 
