@@ -3,7 +3,6 @@ package org.github.gestalt.config.kotlin.integration
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
-import org.github.gestalt.config.kotlin.addDefaultDecodersAndKotlin
 import org.github.gestalt.config.kotlin.getConfig
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
@@ -35,7 +34,6 @@ class GestaltKotlinSample {
             .addSource(FileConfigSource(defaultFile))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
-            .addDefaultDecodersAndKotlin()
             .build()
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool")
@@ -133,7 +131,6 @@ class GestaltKotlinSample {
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
             .setEnvVarsTreatErrorsAsWarnings(true)
-            .addDefaultDecodersAndKotlin()
             .build()
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool")
@@ -229,7 +226,6 @@ class GestaltKotlinSample {
             .addSource(FileConfigSource(defaultFile))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
-            .addDefaultDecodersAndKotlin()
             .build()
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool", KTypeCapture.of<HttpPool>(typeOf<HttpPool>())) as HttpPool
