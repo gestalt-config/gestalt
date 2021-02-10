@@ -195,7 +195,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
         }
 
-        String errorMsg = ErrorsUtil.buildErrorMessage("No results for config with default path: " + path + ", and class: " + klass.getName(),
+        String errorMsg = ErrorsUtil.buildErrorMessage("No results for config with default path: " + path +
+                ", and class: " + klass.getName(),
             tokens.getErrors());
         logger.debug(errorMsg);
 
