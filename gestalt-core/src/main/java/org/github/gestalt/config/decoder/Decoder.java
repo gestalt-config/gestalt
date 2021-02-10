@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -25,6 +26,15 @@ public interface Decoder<T> {
      * @return encoder name
      */
     String name();
+
+    /**
+     * Apply the GestaltConfig to the Decoder. Needed when building via the ServiceLoader
+     * It is a default method as most Decoders don't need to apply configs.
+     *
+     * @param config GestaltConfig to update the ConfigLoader
+     */
+    default void applyConfig(GestaltConfig config) {
+    }
 
     /**
      * true if this decoder matches the type capture.

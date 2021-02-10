@@ -266,6 +266,9 @@ Each config loader understands how to load a specific type of config. Often this
 | MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
 | PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
 
+If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Config loaders. It will configure them by passing in the GestaltConfig to applyConfig. 
+To register your own default add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
+
 # Decoders
 | Type | details |
 | ---- | ------- |
@@ -305,6 +308,8 @@ Required parameters are ones that don't have a default and are not nullable. An 
 
 If all members are optional, and we have no parameters we will try and create the class with the default empty constructor.
 
+If you didn't manually add any Decoders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Decoders. It will configure them by passing in the GestaltConfig to applyConfig.
+To register your own default add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
 
 # Reload Strategies
 When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config. 

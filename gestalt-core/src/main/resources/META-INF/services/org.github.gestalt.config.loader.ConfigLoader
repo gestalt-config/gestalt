@@ -1,0 +1,3 @@
+org.github.gestalt.config.loader.EnvironmentVarsLoader
+org.github.gestalt.config.loader.MapConfigLoader
+org.github.gestalt.config.loader.PropertyLoader

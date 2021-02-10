@@ -1,5 +1,6 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.ConfigSource;
@@ -30,6 +31,15 @@ public interface ConfigLoader {
      * @return True if the config loader accepts the format.
      */
     boolean accepts(String format);
+
+    /**
+     * Apply the GestaltConfig to the Config Loader. Needed when building via the ServiceLoader
+     * It is a default method as most Config Loaders don't need to apply configs.
+     *
+     * @param config GestaltConfig to update the ConfigLoader
+     */
+    default void applyConfig(GestaltConfig config) {
+    }
 
     /**
      * Load a ConfigSource then build the validated config node.

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -23,7 +24,7 @@ public class EnvironmentVarsLoader implements ConfigLoader {
 
     private final ConfigParser parser;
     private final SentenceLexer lexer;
-    private final boolean treatErrorsAsWarnings;
+    private boolean treatErrorsAsWarnings;
 
     public EnvironmentVarsLoader() {
         this(false, new PathLexer("_"), new MapConfigParser(false));
@@ -47,6 +48,14 @@ public class EnvironmentVarsLoader implements ConfigLoader {
     @Override
     public boolean accepts(String format) {
         return EnvironmentConfigSource.ENV_VARS.equals(format);
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        treatErrorsAsWarnings = config.isEnvVarsTreatErrorsAsWarnings();
+        if(parser instanceof MapConfigParser) {
+            ((MapConfigParser)parser).setTreatErrorsAsWarnings(treatErrorsAsWarnings);
+        }
     }
 
     @Override
