@@ -3,12 +3,16 @@ package org.github.gestalt.config.builder;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.GestaltCache;
 import org.github.gestalt.config.GestaltCore;
-import org.github.gestalt.config.decoder.*;
+import org.github.gestalt.config.decoder.Decoder;
+import org.github.gestalt.config.decoder.DecoderRegistry;
+import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.ConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.loader.*;
+import org.github.gestalt.config.loader.ConfigLoader;
+import org.github.gestalt.config.loader.ConfigLoaderRegistry;
+import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
@@ -65,7 +69,7 @@ public class GestaltBuilder {
     private String localDateFormat = null;
 
     /**
-     * Adds all default decoders to the builder. The default decoders include all decoders in this project.
+     * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
      *
      * @return GestaltBuilder builder
      */
@@ -73,23 +77,27 @@ public class GestaltBuilder {
     public GestaltBuilder addDefaultDecoders() {
         List<Decoder<?>> decodersSet = new ArrayList<>();
         ServiceLoader<Decoder> loader = ServiceLoader.load(Decoder.class);
-        loader.forEach(decodersSet::add);
+        loader.forEach(it -> {
+            it.applyConfig(gestaltConfig);
+            decodersSet.add(it);
+        });
         this.decoders.addAll(decodersSet);
         return this;
     }
 
     /**
-     * Add default config loaders for Map Config, Property and Environment Variables.
+     * Add default config loaders to the builder. Uses the ServiceLoader to find all registered Config Loaders and adds them
      *
      * @return GestaltBuilder builder
      */
     public GestaltBuilder addDefaultConfigLoaders() {
         List<ConfigLoader> configLoaderSet = new ArrayList<>();
         ServiceLoader<ConfigLoader> loader = ServiceLoader.load(ConfigLoader.class);
-        loader.forEach(configLoaderSet::add);
-        // todo apply config
-        configLoaders.addAll(Arrays.asList(new MapConfigLoader(), new PropertyLoader(),
-            new EnvironmentVarsLoader(gestaltConfig.isEnvVarsTreatErrorsAsWarnings())));
+        loader.forEach(it -> {
+            it.applyConfig(gestaltConfig);
+            configLoaderSet.add(it);
+        });
+        configLoaders.addAll(configLoaderSet);
         return this;
     }
 
