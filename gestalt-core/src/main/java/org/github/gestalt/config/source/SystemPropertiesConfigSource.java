@@ -81,7 +81,7 @@ public class SystemPropertiesConfigSource implements ConfigSource {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof SystemPropertiesConfigSource)) {
+        if (!(o instanceof SystemPropertiesConfigSource)) {
             return false;
         }
         SystemPropertiesConfigSource that = (SystemPropertiesConfigSource) o;

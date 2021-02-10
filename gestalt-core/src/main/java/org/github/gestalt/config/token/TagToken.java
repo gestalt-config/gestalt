@@ -24,7 +24,7 @@ public class TagToken extends Token {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof TagToken)) {
+        if (!(o instanceof TagToken)) {
             return false;
         }
         TagToken tagToken = (TagToken) o;

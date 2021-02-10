@@ -72,7 +72,7 @@ public class EnvironmentConfigSource implements ConfigSource {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof EnvironmentConfigSource)) {
+        if (!(o instanceof EnvironmentConfigSource)) {
             return false;
         }
         EnvironmentConfigSource that = (EnvironmentConfigSource) o;

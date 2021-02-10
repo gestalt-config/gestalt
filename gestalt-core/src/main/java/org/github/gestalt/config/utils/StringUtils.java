@@ -100,7 +100,7 @@ public final class StringUtils {
         }
 
         for (int i = startAt; i < length; i++) {
-            if (value.charAt(i) == '.' && ! hasDecimal) {
+            if (value.charAt(i) == '.' && !hasDecimal) {
                 hasDecimal = true;
             } else if (Character.digit(value.charAt(i), radix) < 0) {
                 return false;

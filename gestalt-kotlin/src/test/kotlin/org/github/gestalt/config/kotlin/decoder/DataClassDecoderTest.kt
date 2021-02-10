@@ -2,9 +2,7 @@ package org.github.gestalt.config.kotlin.decoder
 
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.decoder.Priority
-import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.ConfigurationException
-import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.kotlin.test.classes.DBInfo
 import org.github.gestalt.config.kotlin.test.classes.DBInfoNoDefault
@@ -13,7 +11,6 @@ import org.github.gestalt.config.lexer.PathLexer
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.*
 import org.github.gestalt.config.reflect.TypeCapture
-import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

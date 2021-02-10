@@ -41,8 +41,8 @@ public class ObjectDecoder implements Decoder<Object> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return ! klass.getRawType().isPrimitive() && ! klass.isArray() && ! klass.isEnum() &&
-            ! klass.hasParameter() && ! ignoreTypes.contains(klass.getRawType());
+        return !klass.getRawType().isPrimitive() && !klass.isArray() && !klass.isEnum() &&
+            !klass.hasParameter() && !ignoreTypes.contains(klass.getRawType());
     }
 
     private Set<Class<?>> getIgnoreTypes() {
@@ -53,7 +53,7 @@ public class ObjectDecoder implements Decoder<Object> {
 
     @Override
     public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
-        if (! (node instanceof MapNode)) {
+        if (!(node instanceof MapNode)) {
             return ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
         }
 
@@ -75,9 +75,9 @@ public class ObjectDecoder implements Decoder<Object> {
                 String name = field.getName();
                 Type fieldClass = field.getGenericType();
 
-                String nextPath = path != null && ! path.isEmpty() ? path + "." + name : name;
+                String nextPath = path != null && !path.isEmpty() ? path + "." + name : name;
 
-                if (! Modifier.isStatic(modifiers)) {
+                if (!Modifier.isStatic(modifiers)) {
                     field.setAccessible(true);
 
                     ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
@@ -85,7 +85,7 @@ public class ObjectDecoder implements Decoder<Object> {
                     errors.addAll(configNode.getErrors(ValidationLevel.WARN));
                     if (configNode.hasErrors(ValidationLevel.ERROR)) {
                         errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
-                    } else if (! configNode.hasResults()) {
+                    } else if (!configNode.hasResults()) {
                         errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
                     } else {
                         ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),

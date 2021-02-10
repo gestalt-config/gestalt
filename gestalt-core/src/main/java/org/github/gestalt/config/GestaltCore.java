@@ -151,7 +151,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             } else if (results.hasErrors()) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
                     ", for class: " + klass.getName(), results.getErrors());
-                logger.warn(errorMsg);
+                logger.debug(errorMsg);
             }
 
             if (results.hasResults()) {
@@ -178,16 +178,16 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
 
             if (checkErrorsShouldFail(results)) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + path +
+                String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config with default path: " + path +
                     ", for class: " + klass.getName() + " returning default value", results.getErrors());
                 logger.warn(errorMsg);
 
                 return defaultVal;
 
             } else if (results.hasErrors()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config with default path: " + path +
                     ", for class: " + klass.getName(), results.getErrors());
-                logger.warn(errorMsg);
+                logger.debug(errorMsg);
             }
 
             if (results.hasResults()) {
@@ -195,9 +195,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
         }
 
-        String errorMsg = ErrorsUtil.buildErrorMessage("No results for config path: " + path + ", and class: " + klass.getName(),
+        String errorMsg = ErrorsUtil.buildErrorMessage("No results for config with default path: " + path + ", and class: " + klass.getName(),
             tokens.getErrors());
-        logger.warn(errorMsg);
+        logger.debug(errorMsg);
 
         return defaultVal;
     }
@@ -220,16 +220,16 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
 
             if (checkErrorsShouldFail(results)) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + path +
+                String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + path +
                     ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
                 logger.warn(errorMsg);
 
                 return Optional.empty();
 
             } else if (results.hasErrors()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + path +
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + path +
                     ", for class: " + klass.getName(), results.getErrors());
-                logger.warn(errorMsg);
+                logger.debug(errorMsg);
             }
 
             if (results.hasResults()) {
@@ -237,10 +237,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
         }
 
-        String errorMsg = ErrorsUtil.buildErrorMessage("No results for config path: " + path + ", and class: " +
+        String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + path + ", and class: " +
                 klass.getName() + " returning empty Optional",
             tokens.getErrors());
-        logger.warn(errorMsg);
+        logger.debug(errorMsg);
 
         return Optional.empty();
     }

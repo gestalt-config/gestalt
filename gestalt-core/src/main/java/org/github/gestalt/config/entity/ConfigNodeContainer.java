@@ -42,7 +42,7 @@ public class ConfigNodeContainer {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof ConfigNodeContainer)) {
+        if (!(o instanceof ConfigNodeContainer)) {
             return false;
         }
         ConfigNodeContainer that = (ConfigNodeContainer) o;

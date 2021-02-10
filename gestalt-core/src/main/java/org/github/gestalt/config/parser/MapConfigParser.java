@@ -77,7 +77,7 @@ public class MapConfigParser implements ConfigParser {
 
         // validate any mis-matched path's, this is most like when a path is both a leaf and an object and an array.
         List<ValidationError> mismatchedPathLengthErrors = getMismatchedPathLengthErrors(tokens, index, currentPath);
-        if (! mismatchedPathLengthErrors.isEmpty()) {
+        if (!mismatchedPathLengthErrors.isEmpty()) {
             return ValidateOf.inValid(mismatchedPathLengthErrors);
         }
 
@@ -106,7 +106,7 @@ public class MapConfigParser implements ConfigParser {
                 errorList.addAll(validateArrayMissingIndex(tokens, index, currentPath));
                 errorList.addAll(validateArrayDuplicateLeafIndex(tokensAtIndexGrouped, index, currentPath));
                 errorList.addAll(validateArrayLeafAndNonLeaf(tokensAtIndexGrouped, index, currentPath));
-            } else if (! (tokenTypes.get(0) instanceof ObjectToken)) {
+            } else if (!(tokenTypes.get(0) instanceof ObjectToken)) {
                 // if this is not a ArrayToken or a ObjectToken then it is an unknown token.
                 errorList.add(new ValidationError.UnknownTokenWithPath(tokenTypes.get(0), currentPath));
             }
@@ -140,7 +140,7 @@ public class MapConfigParser implements ConfigParser {
         // if there are any error level return immediately unless we have treatErrorsAsWarnings enabled.
         if (recursiveErrors.containsKey(ValidationLevel.ERROR)) {
             errorList.addAll(recursiveErrors.get(ValidationLevel.ERROR));
-            if (! treatErrorsAsWarnings) {
+            if (!treatErrorsAsWarnings) {
                 return ValidateOf.inValid(errorList);
             }
         }
@@ -148,7 +148,7 @@ public class MapConfigParser implements ConfigParser {
         // pull out the valid config nodes.
         List<Pair<Token, ConfigNode>> configs = configsValidateOf
             .stream()
-            .filter(it -> (treatErrorsAsWarnings || ! it.getSecond().hasErrors(ValidationLevel.ERROR)) && it.getSecond().hasResults())
+            .filter(it -> (treatErrorsAsWarnings || !it.getSecond().hasErrors(ValidationLevel.ERROR)) && it.getSecond().hasResults())
             .map(it -> new Pair<>(it.getFirst(), it.getSecond().results()))
             .collect(Collectors.toList());
 
@@ -211,10 +211,10 @@ public class MapConfigParser implements ConfigParser {
             .collect(Collectors.groupingBy(ArrayToken::getIndex, Collectors.counting()));
 
         // Validate that we are not missing any index's in the array
-        long maxIndex = arrayIndexCounts.keySet().stream().max(Comparator.comparing(Long::valueOf)).orElse(- 1);
+        long maxIndex = arrayIndexCounts.keySet().stream().max(Comparator.comparing(Long::valueOf)).orElse(-1);
 
         return IntStream.rangeClosed(0, Math.toIntExact(maxIndex))
-            .filter(it -> ! arrayIndexCounts.containsKey(it))
+            .filter(it -> !arrayIndexCounts.containsKey(it))
             .mapToObj(it -> new ValidationError.ArrayMissingIndex(it, currentPath))
             .collect(Collectors.toList());
     }
@@ -278,7 +278,7 @@ public class MapConfigParser implements ConfigParser {
             .collect(Collectors.toList());
 
         List<ValidationError> errorList = new ArrayList<>();
-        if (! nodesWithMismatchedPathLengths.isEmpty()) {
+        if (!nodesWithMismatchedPathLengths.isEmpty()) {
             errorList.add(new ValidationError.MismatchedPathLength(currentPath));
         }
 

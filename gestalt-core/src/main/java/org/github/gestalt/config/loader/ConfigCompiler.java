@@ -79,13 +79,13 @@ public final class ConfigCompiler {
             .flatMap(Collection::stream)
             .collect(Collectors.groupingBy(ValidationError::level));
 
-        if (! validationErrors.isEmpty()) {
+        if (!validationErrors.isEmpty()) {
             List<ValidationError> errorMessage = validationErrors.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-            if (! treatErrorsAsWarnings && validationErrors.containsKey(ValidationLevel.ERROR)) {
+            if (!treatErrorsAsWarnings && validationErrors.containsKey(ValidationLevel.ERROR)) {
                 throw new ConfigurationException("Exception loading config source " + sourceName, errorMessage);
             } else {
                 String errors = errorMessage.stream()
@@ -97,7 +97,7 @@ public final class ConfigCompiler {
 
         List<Pair<List<Token>, ConfigValue>> validTokens = validatedTokens
             .stream()
-            .filter(validatedToken -> ! validatedToken.getFirst().hasErrors() &&
+            .filter(validatedToken -> !validatedToken.getFirst().hasErrors() &&
                 validatedToken.getFirst().hasResults() &&
                 validatedToken.getFirst().results().size() > 0)
             .map(validatedToken ->

@@ -40,7 +40,7 @@ public class SetDecoder extends CollectionDecoder<Set<?>> {
         for (int i = 0; i < node.size(); i++) {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
-                String nextPath = path != null && ! path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
+                String nextPath = path != null && !path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
                 ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, klass.getFirstParameterType());
 
                 errors.addAll(validateOf.getErrors());
@@ -54,6 +54,6 @@ public class SetDecoder extends CollectionDecoder<Set<?>> {
         }
 
 
-        return ValidateOf.validateOf(! results.isEmpty() ? results : null, errors);
+        return ValidateOf.validateOf(!results.isEmpty() ? results : null, errors);
     }
 }

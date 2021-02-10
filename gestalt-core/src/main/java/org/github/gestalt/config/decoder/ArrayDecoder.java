@@ -65,7 +65,7 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
         for (int i = 0; i < node.size(); i++) {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
-                String nextPath = path != null && ! path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
+                String nextPath = path != null && !path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
                 ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, TypeCapture.of(klass.getComponentType()));
 
                 errors.addAll(validateOf.getErrors());

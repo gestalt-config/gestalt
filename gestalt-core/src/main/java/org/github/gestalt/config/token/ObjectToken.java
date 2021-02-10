@@ -23,7 +23,7 @@ public class ObjectToken extends Token {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof ObjectToken)) {
+        if (!(o instanceof ObjectToken)) {
             return false;
         }
         ObjectToken that = (ObjectToken) o;

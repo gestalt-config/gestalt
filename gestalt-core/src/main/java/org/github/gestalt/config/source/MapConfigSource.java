@@ -83,7 +83,7 @@ public class MapConfigSource implements ConfigSource {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof MapConfigSource)) {
+        if (!(o instanceof MapConfigSource)) {
             return false;
         }
         MapConfigSource that = (MapConfigSource) o;

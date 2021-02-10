@@ -55,7 +55,7 @@ public class ArrayNode implements ConfigNode {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof ArrayNode)) {
+        if (!(o instanceof ArrayNode)) {
             return false;
         }
         ArrayNode arrayNode = (ArrayNode) o;

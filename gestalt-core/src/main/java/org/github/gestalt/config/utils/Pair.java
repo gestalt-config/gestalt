@@ -50,7 +50,7 @@ public class Pair<A, B> {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof Pair)) {
+        if (!(o instanceof Pair)) {
             return false;
         }
         Pair<?, ?> pair = (Pair<?, ?>) o;

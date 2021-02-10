@@ -77,7 +77,7 @@ public final class ValidateOf<T> {
      * @return true if the ValidateOf has errors
      */
     public Boolean hasErrors() {
-        return ! errors.isEmpty();
+        return !errors.isEmpty();
     }
 
     /**

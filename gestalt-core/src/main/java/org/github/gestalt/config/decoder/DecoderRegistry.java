@@ -108,7 +108,7 @@ public class DecoderRegistry implements DecoderService {
             return ValidateOf.inValid(listValidateOf.getErrors());
         }
 
-        if (! listValidateOf.hasResults()) {
+        if (!listValidateOf.hasResults()) {
             return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class));
         }
 

@@ -58,7 +58,7 @@ public class PathLexer extends SentenceLexer {
 
     @Override
     protected List<String> tokenizer(String sentence) {
-        return sentence != null && ! sentence.isEmpty() ? Arrays.asList(sentence.split(delimiter)) : Collections.emptyList();
+        return sentence != null && !sentence.isEmpty() ? Arrays.asList(sentence.split(delimiter)) : Collections.emptyList();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class PathLexer extends SentenceLexer {
         }
 
         Matcher matcher = pathPattern.matcher(word);
-        if (! matcher.find()) {
+        if (!matcher.find()) {
             return ValidateOf.inValid(new ValidationError.FailedToTokenizeElement(word, sentence));
         }
 
@@ -84,7 +84,7 @@ public class PathLexer extends SentenceLexer {
         String arrayIndex = matcher.group("index");
 
         @SuppressWarnings("rawtypes") ValidateOf results;
-        if (array != null && arrayIndex != null && ! arrayIndex.equals("")) {
+        if (array != null && arrayIndex != null && !arrayIndex.equals("")) {
             if (StringUtils.isInteger(arrayIndex)) {
                 int index = Integer.parseInt(arrayIndex);
                 if (index >= 0) {

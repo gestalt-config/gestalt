@@ -35,11 +35,11 @@ public class FileConfigSource implements ConfigSource {
 
     private Path validatePath(Path path) throws GestaltException {
         Objects.requireNonNull(path, "Path can not be null");
-        if (! Files.exists(path)) {
+        if (!Files.exists(path)) {
             throw new GestaltException("File does not exist from path: " + path.toString());
-        } else if (! Files.isRegularFile(path)) {
+        } else if (!Files.isRegularFile(path)) {
             throw new GestaltException("Path is not a regular file: " + path.toString());
-        } else if (! Files.isReadable(path)) {
+        } else if (!Files.isReadable(path)) {
             throw new GestaltException("Path is not a readable: " + path.toString());
         } else if ("".equals(format(path))) {
             logger.debug("Unable to find a format for the file: {}", path.toString());
@@ -106,7 +106,7 @@ public class FileConfigSource implements ConfigSource {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof FileConfigSource)) {
+        if (!(o instanceof FileConfigSource)) {
             return false;
         }
         FileConfigSource that = (FileConfigSource) o;

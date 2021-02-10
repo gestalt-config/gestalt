@@ -109,7 +109,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         List<ValidationError> errors = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            if (! node.getIndex(i).isPresent()) {
+            if (!node.getIndex(i).isPresent()) {
                 errors.add(new ValidationError.ArrayMissingIndex(i, path));
             } else {
                 errors.addAll(validateNode(path + "[" + i + "]", node.getIndex(i).get()));
@@ -139,7 +139,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         List<ValidationError> errors = new ArrayList<>();
         if (node == null) {
             errors.add(new ValidationError.LeafNodesIsNull(path));
-        } else if (! node.getValue().isPresent()) {
+        } else if (!node.getValue().isPresent()) {
             errors.add(new ValidationError.LeafNodesHaveNoValues(path));
         }
 

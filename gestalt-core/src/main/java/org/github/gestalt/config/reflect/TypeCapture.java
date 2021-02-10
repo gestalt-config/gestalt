@@ -209,7 +209,7 @@ public class TypeCapture<T> {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof TypeCapture)) {
+        if (!(o instanceof TypeCapture)) {
             return false;
         }
         TypeCapture<?> that = (TypeCapture<?>) o;

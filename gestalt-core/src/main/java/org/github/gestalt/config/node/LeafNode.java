@@ -45,7 +45,7 @@ public class LeafNode implements ConfigNode {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof LeafNode)) {
+        if (!(o instanceof LeafNode)) {
             return false;
         }
         LeafNode leafNode = (LeafNode) o;

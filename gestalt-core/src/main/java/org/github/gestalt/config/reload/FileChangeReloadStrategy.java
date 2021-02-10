@@ -53,7 +53,7 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
     public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws ConfigurationException {
         super(source);
         this.executor = executor;
-        if (! (source instanceof FileConfigSource)) {
+        if (!(source instanceof FileConfigSource)) {
             throw new ConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
         }
         path = ((FileConfigSource) source).getPath();
@@ -68,7 +68,7 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
     @Override
     public void registerListener(ConfigReloadListener listener) {
         super.registerListener(listener);
-        if (! isWatching) {
+        if (!isWatching) {
             isWatching = true;
             executor.execute(this::fileWatchTask);
         }
@@ -122,7 +122,7 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
                     }
 
                     boolean valid = key.reset();
-                    if (! valid) {
+                    if (!valid) {
                         break;
                     }
                 } catch (IOException | GestaltException e) {

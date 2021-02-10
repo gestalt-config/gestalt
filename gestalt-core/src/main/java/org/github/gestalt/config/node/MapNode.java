@@ -60,7 +60,7 @@ public class MapNode implements ConfigNode {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof MapNode)) {
+        if (!(o instanceof MapNode)) {
             return false;
         }
         MapNode mapNode1 = (MapNode) o;

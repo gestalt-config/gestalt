@@ -56,7 +56,7 @@ public class ConfigReloadStrategy {
             }
         }
 
-        if (! exceptions.isEmpty()) {
+        if (!exceptions.isEmpty()) {
             throw new GestaltException(exceptions);
         }
     }

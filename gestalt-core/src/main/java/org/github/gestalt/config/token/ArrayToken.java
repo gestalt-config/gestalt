@@ -34,7 +34,7 @@ public class ArrayToken extends Token {
         if (this == o) {
             return true;
         }
-        if (! (o instanceof ArrayToken)) {
+        if (!(o instanceof ArrayToken)) {
             return false;
         }
         ArrayToken that = (ArrayToken) o;

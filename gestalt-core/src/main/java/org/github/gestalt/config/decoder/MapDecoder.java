@@ -56,7 +56,7 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
                             return null;
                         }
 
-                        String nextPath = path != null && ! path.isEmpty() ? path + "." + key : key;
+                        String nextPath = path != null && !path.isEmpty() ? path + "." + key : key;
                         ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key),
                             (TypeCapture<Object>) keyType);
                         ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(),
@@ -65,10 +65,10 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
                         errors.addAll(keyValidate.getErrors());
                         errors.addAll(valueValidate.getErrors());
 
-                        if (! keyValidate.hasResults()) {
+                        if (!keyValidate.hasResults()) {
                             errors.add(new ValidationError.DecodersMapKeyNull(nextPath));
                         }
-                        if (! valueValidate.hasResults()) {
+                        if (!valueValidate.hasResults()) {
                             errors.add(new ValidationError.DecodersMapValueNull(nextPath));
                         }
 

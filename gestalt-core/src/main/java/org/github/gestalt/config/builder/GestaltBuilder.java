@@ -440,7 +440,7 @@ public class GestaltBuilder {
             .filter(it -> it.getValue().size() > 1)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        if (! decoderMap.isEmpty()) {
+        if (!decoderMap.isEmpty()) {
             String duplicates = String.join(", ", decoderMap.keySet());
             logger.warn("Found duplicate decoders {}", duplicates);
         }
@@ -462,7 +462,7 @@ public class GestaltBuilder {
             .filter(it -> it.getValue().size() > 1)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        if (! configMap.isEmpty()) {
+        if (!configMap.isEmpty()) {
             String duplicates = String.join(", ", configMap.keySet());
             logger.warn("Found duplicate config loaders {}", duplicates);
         }
