@@ -71,13 +71,10 @@ public class GestaltBuilder {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public GestaltBuilder addDefaultDecoders() {
-        List<Decoder<?>> decoders = Arrays.asList(new ArrayDecoder(), new BigDecimalDecoder(), new BigIntegerDecoder(),
-            new BooleanDecoder(), new ByteDecoder(), new CharDecoder(), new DateDecoder(gestaltConfig.getDateDecoderFormat()),
-            new DoubleDecoder(), new DurationDecoder(), new EnumDecoder(), new FileDecoder(), new FloatDecoder(), new InstantDecoder(),
-            new IntegerDecoder(), new ListDecoder(), new LocalDateDecoder(gestaltConfig.getLocalDateFormat()),
-            new LocalDateTimeDecoder(gestaltConfig.getLocalDateTimeFormat()), new LongDecoder(), new MapDecoder(), new ObjectDecoder(),
-            new PathDecoder(), new PatternDecoder(), new SetDecoder(), new ShortDecoder(), new StringDecoder(), new UUIDDecoder());
-        this.decoders.addAll(decoders);
+        List<Decoder<?>> decodersSet = new ArrayList<>();
+        ServiceLoader<Decoder> loader = ServiceLoader.load(Decoder.class);
+        loader.forEach(decodersSet::add);
+        this.decoders.addAll(decodersSet);
         return this;
     }
 
@@ -87,6 +84,10 @@ public class GestaltBuilder {
      * @return GestaltBuilder builder
      */
     public GestaltBuilder addDefaultConfigLoaders() {
+        List<ConfigLoader> configLoaderSet = new ArrayList<>();
+        ServiceLoader<ConfigLoader> loader = ServiceLoader.load(ConfigLoader.class);
+        loader.forEach(configLoaderSet::add);
+        // todo apply config
         configLoaders.addAll(Arrays.asList(new MapConfigLoader(), new PropertyLoader(),
             new EnvironmentVarsLoader(gestaltConfig.isEnvVarsTreatErrorsAsWarnings())));
         return this;
