@@ -2,7 +2,6 @@ package org.github.gestalt.config.kotlin.integration
 
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
-import org.github.gestalt.config.kotlin.addDefaultDecodersAndKotlin
 import org.github.gestalt.config.kotlin.getConfig
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.EnvironmentConfigSource
@@ -31,7 +30,6 @@ class KotlinGestaltIntegrationTests {
             .addSource(FileConfigSource(defaultFile))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
-            .addDefaultDecodersAndKotlin()
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig<HttpPool>("http.pool")
@@ -129,7 +127,6 @@ class KotlinGestaltIntegrationTests {
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
             .setEnvVarsTreatErrorsAsWarnings(true)
-            .addDefaultDecodersAndKotlin()
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig("http.pool", HttpPool::class.java)

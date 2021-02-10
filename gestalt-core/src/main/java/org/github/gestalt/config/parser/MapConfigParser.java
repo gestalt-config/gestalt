@@ -45,6 +45,10 @@ public class MapConfigParser implements ConfigParser {
         this.treatErrorsAsWarnings = treatErrorsAsWarnings;
     }
 
+    public void setTreatErrorsAsWarnings(boolean treatErrorsAsWarnings) {
+        this.treatErrorsAsWarnings = treatErrorsAsWarnings;
+    }
+
     @Override
     public ValidateOf<ConfigNode> parse(List<Pair<List<Token>, ConfigValue>> configs) {
         return buildConfigTree(configs, 0);

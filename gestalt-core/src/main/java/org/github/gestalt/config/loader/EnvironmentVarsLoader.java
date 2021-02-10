@@ -53,6 +53,9 @@ public class EnvironmentVarsLoader implements ConfigLoader {
     @Override
     public void applyConfig(GestaltConfig config) {
         treatErrorsAsWarnings = config.isEnvVarsTreatErrorsAsWarnings();
+        if(parser instanceof MapConfigParser) {
+            ((MapConfigParser)parser).setTreatErrorsAsWarnings(treatErrorsAsWarnings);
+        }
     }
 
     @Override
