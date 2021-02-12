@@ -201,6 +201,7 @@ With kotlin this is made easier with the inline reified methods that automatical
 ```   
 
 # Gestalt getConfig path options
+Gestalt is **not case sensitive**. Since Gestalt interops between Environment Variables and other sources with various cases, all strings in Gestalt are normalized to a lower case. 
 Gestalt uses a SentenceLexer provided by the builder to convert the path passed to the Gestalt getConfig interface into tokens that Gestalt can use to navigate to your sub node. The default SentenceLexer supports paths seperated by the '.' and indexing into arrays using a '[0]' format. 
 If you want to use a different path style you can provide your own SentenceLexer to Gestalt.
 
@@ -252,9 +253,11 @@ In the above example we first load a file devFile then overwrite any values from
 
 | Config Source | Details |
 | --------------- | ------- | 
+| ClassPathConfigSource | Load a file from the java class path. Uses getResourceAsStream to find and load the InputStream. |
 | EnvironmentConfigSource | Loads all Environment Variables in the system, will convert them to a list of key values from the Env Map for the config loader. |
 | FileConfigSource | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.  |
 | MapConfigSource | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader. |
+| StringConfigSource | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader. |
 | SystemPropertiesConfigSource | Loads the Java System Properties and convert them to a list of key values or the config loader. |
 
 # Config Loader
@@ -265,6 +268,9 @@ Each config loader understands how to load a specific type of config. Often this
 | EnvironmentVarsLoader | envVars | Loads Environment Variables from the EnvironmentConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "_". You can also enable treatErrorsAsWarnings if you are receiving errors from the environment variables, as you can not always control what is present. By treating Errors as warnings it will not fail if it finds a configuration the parser doesn't understand. Instead it will ignore the specific config. |
 | MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
 | PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
+| JsonLoader| json | Leverages Jackson to load json files and convert them into a ConfigNode tree. |
+| YamlLoader| yml and yaml | Leverages Jackson to load yaml files and convert them into a ConfigNode tree. |
+| HoconLoader| config | Leverages com.typesafe:config to load hocon files, supports substitutions.  |
 
 If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Config loaders. It will configure them by passing in the GestaltConfig to applyConfig. 
 To register your own default add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
