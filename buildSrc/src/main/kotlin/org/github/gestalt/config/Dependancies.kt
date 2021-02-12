@@ -10,6 +10,8 @@ object Application {
         const val kotlinVersion = "1.4.30"
 
         const val jackson = "2.12.1"
+
+        const val hocon = "1.4.1"
     }
 
     object Logging {
@@ -27,6 +29,10 @@ object Application {
 
         const val jacksonJava8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${Versions.jackson}"
         const val jacksonJsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson}"
+    }
+
+    object Hocon {
+        const val hocon = "com.typesafe:config:${Versions.hocon}"
     }
 }
 

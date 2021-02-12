@@ -4,17 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
-import org.github.gestalt.config.source.ConfigSource;
-import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.UUID;
 
 class YamlLoaderTest {
 
@@ -35,7 +28,7 @@ class YamlLoaderTest {
     @Test
     void loadSource() throws GestaltException {
 
-        InputConfigSource source = new InputConfigSource("name: Steve\n" +
+        StringConfigSource source = new StringConfigSource("name: Steve\n" +
             "age: 42\n" +
             "cars: \n" +
             "  - name: Ford\n" +
@@ -43,7 +36,7 @@ class YamlLoaderTest {
             "  - name: BMW\n" +
             "    models: [320, X3, X5]\n" +
             "  - name: Fiat\n" +
-            "    models: [500, Panda]");
+            "    models: [500, Panda]", "yml");
 
         YamlLoader yamlLoader = new YamlLoader();
 
@@ -68,7 +61,7 @@ class YamlLoaderTest {
     @Test
     void loadSourceCustomMapper() throws GestaltException {
 
-        InputConfigSource source = new InputConfigSource("name: Steve\n" +
+        StringConfigSource source = new StringConfigSource("name: Steve\n" +
             "age: 42\n" +
             "cars: \n" +
             "  - name: Ford\n" +
@@ -76,7 +69,7 @@ class YamlLoaderTest {
             "  - name: BMW\n" +
             "    models: [320, X3, X5]\n" +
             "  - name: Fiat\n" +
-            "    models: [500, Panda]");
+            "    models: [500, Panda]", "yml");
 
         YamlLoader yamlLoader = new YamlLoader(new ObjectMapper(new YAMLFactory()));
 
@@ -101,8 +94,8 @@ class YamlLoaderTest {
     @Test
     void loadSourceEmptyValue() throws GestaltException {
 
-        InputConfigSource source = new InputConfigSource("name: Steve\n" +
-            "age: \n");
+        StringConfigSource source = new StringConfigSource("name: Steve\n" +
+            "age: \n", "yml");
 
         YamlLoader yamlLoader = new YamlLoader();
 
@@ -120,9 +113,9 @@ class YamlLoaderTest {
     @Test
     void loadSourceEmptyArray() throws GestaltException {
 
-        InputConfigSource source = new InputConfigSource("name: Steve\n" +
+        StringConfigSource source = new StringConfigSource("name: Steve\n" +
             "age: 42\n" +
-            "cars: \n");
+            "cars: \n", "yml");
 
         YamlLoader yamlLoader = new YamlLoader();
 
@@ -138,9 +131,9 @@ class YamlLoaderTest {
     }
 
     @Test
-    void loadSourceBadInput() {
+    void loadSourceBadInput() throws GestaltException {
 
-        InputConfigSource source = new InputConfigSource("&&&& ");
+        StringConfigSource source = new StringConfigSource("&&&& ", "yml");
 
         YamlLoader yamlLoader = new YamlLoader();
 
@@ -148,52 +141,7 @@ class YamlLoaderTest {
             yamlLoader.loadSource(source);
             Assertions.fail("should not reach here");
         } catch (Exception e) {
-            Assertions.assertEquals("Exception loading source: yml no yaml found", e.getMessage());
-        }
-    }
-
-
-    private static class InputConfigSource implements ConfigSource {
-
-        private final String value;
-
-        InputConfigSource(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean hasStream() {
-            return true;
-        }
-
-        @Override
-        public InputStream loadStream() throws GestaltException {
-            return new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
-        }
-
-        @Override
-        public boolean hasList() {
-            return false;
-        }
-
-        @Override
-        public List<Pair<String, String>> loadList() throws GestaltException {
-            return null;
-        }
-
-        @Override
-        public String format() {
-            return "yml";
-        }
-
-        @Override
-        public String name() {
-            return "yml";
-        }
-
-        @Override
-        public UUID id() {    // NOPMD
-            return UUID.randomUUID();
+            Assertions.assertEquals("Exception loading source: String format: yml no yaml found", e.getMessage());
         }
     }
 }
