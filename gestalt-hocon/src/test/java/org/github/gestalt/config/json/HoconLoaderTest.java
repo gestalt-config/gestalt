@@ -1,26 +1,28 @@
 package org.github.gestalt.config.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.typesafe.config.ConfigParseOptions;
+import com.typesafe.config.ConfigSyntax;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.hocon.HoconLoader;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class JsonLoaderTest {
+class HoconLoaderTest {
 
     @Test
     void name() {
-        JsonLoader jsonLoader = new JsonLoader();
-        Assertions.assertEquals("JsonLoader", jsonLoader.name());
+        HoconLoader hoconLoader = new HoconLoader();
+        Assertions.assertEquals("HoconLoader", hoconLoader.name());
     }
 
     @Test
     void accepts() {
-        JsonLoader jsonLoader = new JsonLoader();
-        Assertions.assertTrue(jsonLoader.accepts("json"));
-        Assertions.assertFalse(jsonLoader.accepts("properties"));
+        HoconLoader hoconLoader = new HoconLoader();
+        Assertions.assertTrue(hoconLoader.accepts("conf"));
+        Assertions.assertFalse(hoconLoader.accepts("properties"));
     }
 
     @Test
@@ -34,11 +36,11 @@ class JsonLoaderTest {
             "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
             "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
             "  ]\n" +
-            " } ", "json");
+            " } ", "conf");
 
-        JsonLoader jsonLoader = new JsonLoader();
+        HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.hasResults());
@@ -67,11 +69,11 @@ class JsonLoaderTest {
             "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
             "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
             "  ]\n" +
-            " } ", "json");
+            " } ", "conf");
 
-        JsonLoader jsonLoader = new JsonLoader(new ObjectMapper());
+        HoconLoader hoconLoader = new HoconLoader(ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON));
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.hasResults());
@@ -95,11 +97,11 @@ class JsonLoaderTest {
         StringConfigSource source = new StringConfigSource("{\n" +
             "  \"name\":\"Steve\",\n" +
             "  \"age\":\"\"\n" +
-            " } ", "json");
+            " } ", "conf");
 
-        JsonLoader jsonLoader = new JsonLoader();
+        HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.hasResults());
@@ -114,11 +116,11 @@ class JsonLoaderTest {
             "  \"name\":\"Steve\",\n" +
             "  \"age\":42,\n" +
             "  \"cars\": []\n" +
-            " } ", "json");
+            " } ", "conf");
 
-        JsonLoader jsonLoader = new JsonLoader();
+        HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.hasResults());
@@ -130,15 +132,14 @@ class JsonLoaderTest {
     @Test
     void loadSourceEmptyObject() throws GestaltException {
 
-        StringConfigSource source = new StringConfigSource("{\n" +
-            "  \"name\":\"Steve\",\n" +
-            "  \"age\":42,\n" +
-            "  \"cars\": {}\n" +
-            " } ", "json");
+        StringConfigSource source = new StringConfigSource(
+            "  \"name\"=\"Steve\",\n" +
+                "  \"age\":42,\n" +
+                "  \"cars\": {}\n", "conf");
 
-        JsonLoader jsonLoader = new JsonLoader();
+        HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.hasResults());
@@ -153,16 +154,47 @@ class JsonLoaderTest {
         StringConfigSource source = new StringConfigSource("{\n" +
             "  \"name\":\"Steve\",\n" +
             "  \"age\":42,\n" +
-            "  \"cars\": {},\n" +
-            " } ", "json");
+            "  \"cars\": [1,2,3,,]\n" +
+            " } ", "conf");
 
-        JsonLoader jsonLoader = new JsonLoader();
+        HoconLoader hoconLoader = new HoconLoader();
 
         try {
-            jsonLoader.loadSource(source);
+            hoconLoader.loadSource(source);
             Assertions.fail("should not reach here");
         } catch (Exception e) {
-            Assertions.assertEquals("Exception loading source: String format: json", e.getMessage());
+            Assertions.assertEquals("Exception loading source: String format: conf", e.getMessage());
         }
+    }
+
+    @Test
+    void loadSourceReferential() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource(
+            "path : \"a:b:c\"\n" +
+                "path : ${path}\":d\"", "conf");
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
+
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertEquals("a:b:c:d", result.results().getKey("path").get().getValue().get());
+    }
+
+    @Test
+    void loadSourceReferentialEnvironmentVariables() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource(
+            "path : ${DB_IDLETIMEOUT}", "conf");
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        ValidateOf<ConfigNode> result = hoconLoader.loadSource(source);
+
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertEquals("123", result.results().getKey("path").get().getValue().get());
     }
 }

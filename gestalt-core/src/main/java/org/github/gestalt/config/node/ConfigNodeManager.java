@@ -100,7 +100,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         } else if (node instanceof LeafNode) {
             return validateLeafNode(path, (LeafNode) node);
         } else {
-            return Collections.singletonList(new ValidationError.UnknownNodeType(node.getClass().getName()));
+            return Collections.singletonList(new ValidationError.UnknownNodeType(path, node.getClass().getName()));
         }
     }
 
@@ -158,7 +158,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             } else if (node1 instanceof LeafNode) {
                 return mergeLeafNodes(path, (LeafNode) node1, (LeafNode) node2);
             } else {
-                return ValidateOf.inValid(new ValidationError.UnknownNodeType(node1.getClass().getName()));
+                return ValidateOf.inValid(new ValidationError.UnknownNodeType(path, node1.getClass().getName()));
             }
         }
     }

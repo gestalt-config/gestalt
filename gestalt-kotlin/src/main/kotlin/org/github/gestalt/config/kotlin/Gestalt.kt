@@ -17,7 +17,6 @@ inline fun <reified T> Gestalt.getConfig(path: String): T = this.getConfig(path,
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T> Gestalt.getConfig(path: String, default: T): T = this.getConfig(path, default, KTypeCapture.of<T>(typeOf<T>())) as T
 
-
 /**
  * reified function to get a config with a default, that automatically gets the generic type.
  */
