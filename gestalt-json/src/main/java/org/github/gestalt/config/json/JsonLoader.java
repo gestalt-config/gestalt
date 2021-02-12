@@ -89,7 +89,7 @@ public class JsonLoader implements ConfigLoader {
             case NULL:
                 return ValidateOf.inValid(new ValidationError.NoResultsFoundForPath(path));
             default:
-                return ValidateOf.inValid(new ValidationError.UnknownTokensInPath(path));
+                return ValidateOf.inValid(new ValidationError.UnknownNodeTypeDuringLoad(path, jsonNode.getNodeType().name()));
         }
     }
 

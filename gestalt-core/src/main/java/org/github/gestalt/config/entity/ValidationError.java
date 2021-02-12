@@ -799,6 +799,25 @@ public abstract class ValidationError {
     }
 
     /**
+     * Unknown node type while building config node.
+     */
+    public static class UnknownNodeTypeDuringLoad extends ValidationError {
+        private final String nodeType;
+        private final String path;
+
+        public UnknownNodeTypeDuringLoad(String path, String nodeType) {
+            super(ValidationLevel.ERROR);
+            this.nodeType = nodeType;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown node type: " + nodeType + " on Path: " + path;
+        }
+    }
+
+    /**
      * Unable to merge nodes of different types. Can not merge an array with a object or an object with a leaf.
      */
     public static class UnableToMergeDifferentNodes extends ValidationError {
@@ -822,15 +841,17 @@ public abstract class ValidationError {
      */
     public static class UnknownNodeType extends ValidationError {
         private final String nodeType;
+        private final String path;
 
-        public UnknownNodeType(String nodeType) {
+        public UnknownNodeType(String path, String nodeType) {
             super(ValidationLevel.ERROR);
             this.nodeType = nodeType;
+            this.path = path;
         }
 
         @Override
         public String description() {
-            return "Unknown node type: " + nodeType;
+            return "Unknown node type: " + nodeType + " on Path: " + path;
         }
     }
 
