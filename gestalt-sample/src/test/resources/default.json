@@ -1,5 +1,5 @@
 {
-  "db": {
+  "DB": {
     "hosts": [{
       "user": "credmond",
       "url": "jdbc:postgresql://localhost:5432/mydb1"
@@ -11,7 +11,7 @@
       "url": "jdbc:postgresql://localhost:5432/mydb3"
     }
     ],
-    "connectionTimeout": 6000,
+    "ConnectionTimeout": 6000,
     "idleTimeout": 600,
     "maxLifetime": 60000.0
   },
@@ -24,7 +24,7 @@
       "idleTimeoutSec": 25
     }
   },
-  "admin": {
+  "ADMIN": {
     "user": "John, Sarah",
     "overrideEnabled": false,
     "accessRole": "level0"

@@ -340,6 +340,10 @@ public class GestaltSample {
 
         Assertions.assertEquals(1000, pool.maxTotal);
         Assertions.assertEquals((short) 1000, gestalt.getConfig("http.pool.maxTotal", Short.class));
+
+        //Check with the wrong case
+        Assertions.assertEquals((short) 1000, gestalt.getConfig("HTTP.pool.MAXTotal", Short.class));
+
         Assertions.assertEquals(50L, pool.maxPerRoute);
         Assertions.assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute", Long.class));
         Assertions.assertEquals(6000, pool.validateAfterInactivity);
@@ -359,7 +363,7 @@ public class GestaltSample {
         Assertions.assertTrue(timeTaken > cacheTimeTaken);
 
         Assertions.assertEquals(600, db.connectionTimeout);
-        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", Integer.class));
+        Assertions.assertEquals(600, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
         Assertions.assertNull(db.isEnabled);

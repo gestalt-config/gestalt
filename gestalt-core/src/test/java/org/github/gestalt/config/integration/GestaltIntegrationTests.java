@@ -107,7 +107,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
         Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+        Assertions.assertTrue(gestalt.getConfig("DB.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -162,11 +162,11 @@ public class GestaltIntegrationTests {
                 Thread.sleep(100);
             }
         }
-        db = gestalt.getConfig("db", DataBase.class);
+        db = gestalt.getConfig("DB", DataBase.class);
         Assertions.assertTrue(reloadListener.count >= 1);
 
         Assertions.assertEquals(2222, db.connectionTimeout);
-        Assertions.assertEquals(2222, gestalt.getConfig("db.connectionTimeout", Integer.class));
+        Assertions.assertEquals(2222, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
         Assertions.assertNull(db.isEnabled);
@@ -186,7 +186,7 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        hosts = gestalt.getConfig("db.Hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());

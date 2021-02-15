@@ -1,5 +1,5 @@
 ---
-db:
+DB:
   hosts:
     - user: credmond
       url: jdbc:postgresql://localhost:5432/mydb1
@@ -7,7 +7,7 @@ db:
       url: jdbc:postgresql://localhost:5432/mydb2
     - user: credmond
       url: jdbc:postgresql://localhost:5432/mydb3
-  connectionTimeout: 6000
+  ConnectionTimeout: 6000
   idleTimeout: 600
   maxLifetime: 60000
 http:
@@ -17,7 +17,7 @@ http:
     validateAfterInactivity: 6000
     keepAliveTimeoutMs: 60000
     idleTimeoutSec: 25
-admin:
+ADMIN:
   user: John, Sarah
   overrideEnabled: false
   accessRole: level0

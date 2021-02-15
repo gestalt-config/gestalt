@@ -204,6 +204,28 @@ class PathLexerTest {
     }
 
     @Test
+    public void testDefaultTokenizerCaseChange() {
+        PathLexer pathLexer = new PathLexer();
+
+        ValidateOf<List<Token>> validate = pathLexer.scan("The.Quick[0].BROWN.fox");
+
+        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(validate.hasResults());
+        List<Token> tokens = validate.results();
+        Assertions.assertEquals(5, tokens.size());
+        Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
+        Assertions.assertEquals("the", ((ObjectToken) tokens.get(0)).getName());
+        Assertions.assertEquals(ObjectToken.class, tokens.get(1).getClass());
+        Assertions.assertEquals("quick", ((ObjectToken) tokens.get(1)).getName());
+        Assertions.assertEquals(ArrayToken.class, tokens.get(2).getClass());
+        Assertions.assertEquals(0, ((ArrayToken) tokens.get(2)).getIndex());
+        Assertions.assertEquals(ObjectToken.class, tokens.get(3).getClass());
+        Assertions.assertEquals("brown", ((ObjectToken) tokens.get(3)).getName());
+        Assertions.assertEquals(ObjectToken.class, tokens.get(4).getClass());
+        Assertions.assertEquals("fox", ((ObjectToken) tokens.get(4)).getName());
+    }
+
+    @Test
     public void testScanNull() {
         PathLexer pathLexer = new PathLexer();
 
