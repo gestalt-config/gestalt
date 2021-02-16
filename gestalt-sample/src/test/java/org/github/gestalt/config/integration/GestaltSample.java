@@ -7,10 +7,7 @@ import org.github.gestalt.config.json.JsonLoader;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
-import org.github.gestalt.config.source.ConfigSource;
-import org.github.gestalt.config.source.EnvironmentConfigSource;
-import org.github.gestalt.config.source.FileConfigSource;
-import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.yaml.YamlLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -38,16 +35,13 @@ public class GestaltSample {
         configs.put("db.hosts[2].password", "9012");
         configs.put("db.idleTimeout", "123");
 
-        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.properties");
-        File defaultFile = new File(defaultFileURL.getFile());
-
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
 
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new ClassPathConfigSource("/default.properties"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .build();
@@ -220,8 +214,7 @@ public class GestaltSample {
         configs.put("db.hosts[1].password", "5678");
         configs.put("db.hosts[2].password", "9012");
 
-        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.properties");
-        File defaultFile = new File(defaultFileURL.getFile());
+        String urlFile = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-sample/src/test/resources/default.json";
 
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
@@ -229,7 +222,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new URLConfigSource(urlFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource())
@@ -261,14 +254,11 @@ public class GestaltSample {
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.json");
         File devFile = new File(devFileURL.getFile());
 
-
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
-            .addDefaultConfigLoaders()
-            .addConfigLoader(new JsonLoader())
             .build();
 
         gestalt.loadConfigs();
@@ -284,20 +274,14 @@ public class GestaltSample {
         configs.put("db.hosts[2].password", "9012");
         configs.put("db.idleTimeout", "123");
 
-        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.yml");
-        File defaultFile = new File(defaultFileURL.getFile());
-
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.yml");
         File devFile = new File(devFileURL.getFile());
 
-
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new ClassPathConfigSource("/default.yml"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
-            .addDefaultConfigLoaders()
-            .addConfigLoader(new YamlLoader())
             .build();
 
         gestalt.loadConfigs();
@@ -313,27 +297,42 @@ public class GestaltSample {
         configs.put("db.hosts[2].password", "9012");
         configs.put("db.idleTimeout", "123");
 
-        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.json");
-        File defaultFile = new File(defaultFileURL.getFile());
-
-        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.yml");
-        File devFile = new File(devFileURL.getFile());
-
-
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(new FileConfigSource(devFile))
+            .addSource(new ClassPathConfigSource("/default.json"))
+            .addSource(new ClassPathConfigSource("/dev.yml"))
             .addSource(new MapConfigSource(configs))
-            .addDefaultConfigLoaders()
-            .addConfigLoader(new YamlLoader())
-            .addConfigLoader(new JsonLoader())
             .build();
 
         gestalt.loadConfigs();
 
         validateResults(gestalt);
     }
+
+    /*
+    @Test
+    public void integrationTestHocon() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.yml");
+        File devFile = new File(devFileURL.getFile());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/default.conf"))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+    */
 
     private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
