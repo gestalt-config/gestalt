@@ -3,12 +3,10 @@ package org.github.gestalt.config.integration;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.json.JsonLoader;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
-import org.github.gestalt.config.yaml.YamlLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -309,7 +307,6 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
-    /*
     @Test
     public void integrationTestHocon() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -318,12 +315,15 @@ public class GestaltSample {
         configs.put("db.hosts[2].password", "9012");
         configs.put("db.idleTimeout", "123");
 
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.conf");
+        File defaultFile = new File(defaultFileURL.getFile());
+
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.yml");
         File devFile = new File(devFileURL.getFile());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.conf"))
+            .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .build();
@@ -332,7 +332,6 @@ public class GestaltSample {
 
         validateResults(gestalt);
     }
-    */
 
     private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
