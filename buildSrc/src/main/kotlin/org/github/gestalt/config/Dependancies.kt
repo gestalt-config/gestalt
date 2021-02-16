@@ -1,4 +1,7 @@
 package org.github.gestalt.config
+
+import org.github.gestalt.config.Test.Versions
+
 /**
  * define all dependencies for the project here to keep consistent.
  */
@@ -12,6 +15,7 @@ object Application {
         const val jackson = "2.12.1"
 
         const val hocon = "1.4.1"
+        const val aws = "2.15.82"
     }
 
     object Logging {
@@ -34,6 +38,10 @@ object Application {
     object Hocon {
         const val hocon = "com.typesafe:config:${Versions.hocon}"
     }
+
+    object AWS {
+        const val awsS3 = "software.amazon.awssdk:s3:${Versions.aws}"
+    }
 }
 
 
@@ -44,16 +52,18 @@ object Test {
         const val mockito = "3.7.7"
         const val mockk = "1.10.5"
         const val kotlinTestAssertions = "4.4.0"
+        const val awsMock = "2.1.28"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
     const val junitEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit5}"
-    const val assertJ = "org.assertj:assertj-core:${org.github.gestalt.config.Test.Versions.assertJ}"
+    const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
 
-    const val mockito = "org.mockito:mockito-core:${org.github.gestalt.config.Test.Versions.mockito}"
+    const val mockito = "org.mockito:mockito-core:${Versions.mockito}"
 
-    const val mockk = "io.mockk:mockk:${org.github.gestalt.config.Test.Versions.mockk}"
-    const val kotlinTestAssertions = "io.kotest:kotest-assertions-core-jvm:${org.github.gestalt.config.Test.Versions.kotlinTestAssertions}"
+    const val mockk = "io.mockk:mockk:${Versions.mockk}"
+    const val kotlinTestAssertions = "io.kotest:kotest-assertions-core-jvm:${Versions.kotlinTestAssertions}"
+    const val awsMock = "com.adobe.testing:s3mock-junit5:${Versions.awsMock}"
 
 }
 
