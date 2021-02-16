@@ -259,6 +259,7 @@ In the above example we first load a file devFile then overwrite any values from
 | MapConfigSource | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader. |
 | StringConfigSource | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader. |
 | SystemPropertiesConfigSource | Loads the Java System Properties and convert them to a list of key values or the config loader. |
+| URLConfigSource | Loads a config source from a URL. |
 
 # Config Loader
 Each config loader understands how to load a specific type of config. Often this is associated with a specific ConfigSource. For example the EnvironmentVarsLoader only loads the EnvironmentConfigSource. However, some loaders expect a format of the config, but accept it from multiple sources. For example the PropertyLoader expects the typical java property file, but it can come from any source as long as it is an input stream. It may be the system properties, local file, github, or S3.   
