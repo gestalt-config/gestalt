@@ -32,12 +32,11 @@ public class GestaltIntegrationTests {
         configs.put("db.hosts[1].password", "5678");
         configs.put("db.hosts[2].password", "9012");
 
-        URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
-        File defaultFile = new File(defaultFileURL.getFile());
+        String fileURL = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-core/src/test/resources/default.properties";
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new URLConfigSource(fileURL))
             .addSource(new ClassPathConfigSource("/dev.properties"))
             .addSource(new MapConfigSource(configs))
             .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
