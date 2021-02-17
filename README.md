@@ -209,9 +209,9 @@ If you want to use a different path style you can provide your own SentenceLexer
   // load a whole class, this works best with pojo's
   HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
   // or get a specific config value from a class
-  short maxTotal  gestalt.getConfig("http.pool.maxTotal", Short.class);
+  short maxTotal  gestalt.getConfig("HTTP.pool.maxTotal", Short.class);
   // get with a default if you want a fallback from code
-  long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", 24, Long.class);
+  long maxConnectionsPerRoute = gestalt.getConfig("http.Pool.maxPerRoute", 24, Long.class);
 
   // get a list of Host objects, or an empty collection if there is no hosts found.
   List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
@@ -259,6 +259,7 @@ In the above example we first load a file devFile then overwrite any values from
 | MapConfigSource | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader. |
 | StringConfigSource | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader. |
 | SystemPropertiesConfigSource | Loads the Java System Properties and convert them to a list of key values or the config loader. |
+| S3ConfigSource | Loads a config source from AWS S3, Must include package com.github.gestalt-config:gestalt-s3:version. |
 | URLConfigSource | Loads a config source from a URL. |
 
 # Config Loader
@@ -269,9 +270,9 @@ Each config loader understands how to load a specific type of config. Often this
 | EnvironmentVarsLoader | envVars | Loads Environment Variables from the EnvironmentConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "_". You can also enable treatErrorsAsWarnings if you are receiving errors from the environment variables, as you can not always control what is present. By treating Errors as warnings it will not fail if it finds a configuration the parser doesn't understand. Instead it will ignore the specific config. |
 | MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
 | PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
-| JsonLoader| json | Leverages Jackson to load json files and convert them into a ConfigNode tree. |
-| YamlLoader| yml and yaml | Leverages Jackson to load yaml files and convert them into a ConfigNode tree. |
-| HoconLoader| config | Leverages com.typesafe:config to load hocon files, supports substitutions.  |
+| JsonLoader | json | Leverages Jackson to load json files and convert them into a ConfigNode tree. Must include package com.github.gestalt-config:gestalt-json:version. |
+| YamlLoader | yml and yaml | Leverages Jackson to load yaml files and convert them into a ConfigNode tree. Must include package com.github.gestalt-config:gestalt-yaml:version. |
+| HoconLoader | config | Leverages com.typesafe:config to load hocon files, supports substitutions. Must include package com.github.gestalt-config:gestalt-hocon:version. |
 
 If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Config loaders. It will configure them by passing in the GestaltConfig to applyConfig. 
 To register your own default add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
