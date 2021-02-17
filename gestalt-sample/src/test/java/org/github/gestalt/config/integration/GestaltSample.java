@@ -1,6 +1,8 @@
 package org.github.gestalt.config.integration;
 
+import com.adobe.testing.s3mock.junit5.S3MockExtension;
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -10,6 +12,11 @@ import org.github.gestalt.config.source.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +31,15 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GestaltSample {
+
+    @RegisterExtension
+    static final S3MockExtension S3_MOCK =
+        S3MockExtension.builder().silent().withSecureConnection(false).build();
+
+    private static final String BUCKET_NAME = "testbucket";
+    private static final String UPLOAD_FILE_NAME = "src/test/resources/default.properties";
+
+    private final S3Client s3Client = S3_MOCK.createS3ClientV2();
 
     @Test
     public void integrationTest() throws GestaltException {
@@ -324,6 +340,40 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new FileConfigSource(defaultFile))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
+    public void integrationS3Test() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        final File uploadFile = new File(UPLOAD_FILE_NAME);
+
+        s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
+        s3Client.putObject(
+            PutObjectRequest.builder().bucket(BUCKET_NAME).key(uploadFile.getName()).build(),
+            RequestBody.fromFile(uploadFile));
+
+
+        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, uploadFile.getName());
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
+        File devFile = new File(devFileURL.getFile());
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(source)
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .build();
