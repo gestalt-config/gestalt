@@ -207,6 +207,14 @@ public class GestaltIntegrationTests {
         configs.put("db.hosts[1].password", "5678");
         configs.put("db.hosts[2].password", "9012");
 
+        /*
+        Expects the following environment variables
+            DB_IDLETIMEOUT: 123
+            SUBSERVICE_BOOKING_ISENABLED: true
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_PORT: 443
+         */
+
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/default.properties"))

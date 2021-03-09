@@ -9,7 +9,8 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    //implementation(Application.Git.jgit)
-    implementation("org.eclipse.jgit:org.eclipse.jgit:5.3.2.201906051522-r")
+    implementation(Application.Git.jgit)
+    implementation(Application.Git.jgitApacheSSH)
+    implementation(Application.Git.eddsa)
 }
 
