@@ -16,6 +16,7 @@ object Application {
 
         const val hocon = "1.4.1"
         const val aws = "2.15.82"
+        const val jgit = "5.10.0.202012080955-r"
     }
 
     object Logging {
@@ -41,6 +42,10 @@ object Application {
 
     object AWS {
         const val awsS3 = "software.amazon.awssdk:s3:${Versions.aws}"
+    }
+
+    object Git {
+        const val jgit = "org.eclipse.jgit:org.eclipse.jgit:${Versions.jgit}"
     }
 }
 
