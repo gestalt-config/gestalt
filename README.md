@@ -256,6 +256,7 @@ In the above example we first load a file devFile then overwrite any values from
 | ClassPathConfigSource | Load a file from the java class path. Uses getResourceAsStream to find and load the InputStream. |
 | EnvironmentConfigSource | Loads all Environment Variables in the system, will convert them to a list of key values from the Env Map for the config loader. |
 | FileConfigSource | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.  |
+| GitConfigSource | Syncs a remote repo locally then uses the files to build a configuration. This uses jgit and supports several forms of authentication. See GitConfigSourceTest.java for examples of use. |
 | MapConfigSource | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader. |
 | StringConfigSource | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader. |
 | SystemPropertiesConfigSource | Loads the Java System Properties and convert them to a list of key values or the config loader. |
