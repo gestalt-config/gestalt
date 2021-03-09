@@ -1,6 +1,7 @@
 package org.github.gestalt.config.git;
 
 
+
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,6 +29,7 @@ import java.util.UUID;
  * @author Colin Redmond
  */
 public class GitConfigSource implements ConfigSource {
+
     private final UUID id = UUID.randomUUID();
     private final Path localRepoDirectory;
     private final String configFilePath;
@@ -114,6 +117,7 @@ public class GitConfigSource implements ConfigSource {
     public boolean hasStream() {
         Path configFile = localRepoDirectory.resolve(configFilePath);
         return Files.exists(configFile);
+
     }
 
     @Override
