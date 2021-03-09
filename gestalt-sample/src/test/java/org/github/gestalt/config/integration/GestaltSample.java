@@ -233,6 +233,13 @@ public class GestaltSample {
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
 
+        /*
+        Expects the following environment variables
+            DB_IDLETIMEOUT: 123
+            SUBSERVICE_BOOKING_ISENABLED: true
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_PORT: 443
+         */
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder

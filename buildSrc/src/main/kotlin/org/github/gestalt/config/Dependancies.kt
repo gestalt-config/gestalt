@@ -17,6 +17,8 @@ object Application {
         const val hocon = "1.4.1"
         const val aws = "2.15.82"
         const val jgit = "5.10.0.202012080955-r"
+        const val apacheSshd = "2.6.0"
+        const val eddsa = "0.3.0"
     }
 
     object Logging {
@@ -46,6 +48,8 @@ object Application {
 
     object Git {
         const val jgit = "org.eclipse.jgit:org.eclipse.jgit:${Versions.jgit}"
+        const val jgitApacheSSH = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache:${Versions.jgit}"
+        const val eddsa = "net.i2p.crypto:eddsa:${Versions.eddsa}"
     }
 }
 
