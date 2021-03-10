@@ -1,8 +1,9 @@
 package org.github.gestalt.config.post.process.transform;
 
-import org.github.gestalt.config.node.ConfigNode;
+import java.util.Optional;
 
 public interface Transformer {
     String name();
-    String process(String path, String key);
+
+    Optional<String> process(String path, String key);
 }

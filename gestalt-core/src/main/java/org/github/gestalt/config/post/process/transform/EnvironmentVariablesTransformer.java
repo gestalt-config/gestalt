@@ -1,5 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
+import java.util.Optional;
+
 public class EnvironmentVariablesTransformer implements Transformer {
     @Override
     public String name() {
@@ -7,7 +9,7 @@ public class EnvironmentVariablesTransformer implements Transformer {
     }
 
     @Override
-    public String process(String path, String key) {
-        return System.getenv(key);
+    public Optional<String> process(String path, String key) {
+        return Optional.ofNullable(System.getenv(key));
     }
 }

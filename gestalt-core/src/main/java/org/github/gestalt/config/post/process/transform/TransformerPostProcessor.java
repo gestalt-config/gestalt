@@ -3,12 +3,14 @@ package org.github.gestalt.config.post.process.transform;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,9 +41,9 @@ public class TransformerPostProcessor implements PostProcessor {
     }
 
     @Override
-    public ConfigNode process(String path, ConfigNode currentNode) {
+    public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
         if (!(currentNode instanceof LeafNode) || !currentNode.getValue().isPresent()) {
-            return currentNode;
+            return ValidateOf.valid(currentNode);
         }
 
         String leafValue = currentNode.getValue().get();
@@ -51,17 +53,21 @@ public class TransformerPostProcessor implements PostProcessor {
             String key = matcher.group("key");
 
             if (transformers.containsKey(transformName)) {
-                String value = transformers.get(transformName).process(path, key);
+                Optional<String> value = transformers.get(transformName).process(path, key);
+                if (value.isPresent()) {
+                    String newLeafValue = matcher.replaceAll(value.get());
 
-                String newLeafValue = matcher.replaceAll(value);
-
-                return new LeafNode(newLeafValue);
+                    return ValidateOf.valid(new LeafNode(newLeafValue));
+                } else {
+                    logger.info("Unable to find matching key for transform " + transformName + " with key " + key +
+                        " on path " + path);
+                }
             } else {
                 logger.info("Unable to find matching transform for " + path + " with leaf value " + leafValue +
                     " make sure you registered all expected transforms");
             }
         }
 
-        return currentNode;
+        return ValidateOf.valid(currentNode);
     }
 }
