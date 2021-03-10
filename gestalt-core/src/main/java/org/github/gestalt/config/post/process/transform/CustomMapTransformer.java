@@ -12,7 +12,7 @@ public class CustomMapTransformer implements Transformer {
 
     @Override
     public String name() {
-        return "envVar";
+        return "map";
     }
 
     @Override

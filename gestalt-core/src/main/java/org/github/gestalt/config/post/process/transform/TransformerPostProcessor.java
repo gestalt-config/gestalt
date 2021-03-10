@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
  * The transform represents the source of the data, such as envVar for Environment Variables.
  * The Key is how we look up the data in the data source, such as an Environment Variable JAVA_HOME
  * <p>
- * So you could have a leaf value "hello ${envVar:USER_NAME}" where USER_NAME is colin, will get transformed into "hello Colin"
+ * So you could have a leaf value "hello ${envVar:USER_NAME}" where USER_NAME is john, will get transformed into "hello john"
  *
  * @author Colin Redmond
  */
 public class TransformerPostProcessor implements PostProcessor {
     private static final Logger logger = LoggerFactory.getLogger(TransformerPostProcessor.class.getName());
 
-    private static final Pattern pattern = Pattern.compile("\\${(?<transform>\\w*):(?<key>\\w*)}");
+    private static final Pattern pattern = Pattern.compile("\\$\\{(?<transform>\\w+):(?<key>\\w+)}");
 
     private final Map<String, Transformer> transformers;
 
