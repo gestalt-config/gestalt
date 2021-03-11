@@ -44,5 +44,13 @@ public final class PathUtil {
 
         return pathBuilder.toString();
     }
+
+    public static String pathForKey(String path, String key) {
+        return path == null || path.isEmpty() ? key : path + "." + key;
+    }
+
+    public static String pathForIndex(String path, int index) {
+        return path == null || path.isEmpty() ? "[" + index + "]" : path + "[" + index + "]";
+    }
 }
 

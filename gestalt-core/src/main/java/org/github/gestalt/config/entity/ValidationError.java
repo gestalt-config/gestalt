@@ -972,4 +972,101 @@ public abstract class ValidationError {
             return "No default Constructor for : " + klassName + " on Path: " + path;
         }
     }
+
+    /**
+     * While trying reload a node, was unable to find a value.
+     */
+    public static class NoResultsFoundForNodeDuringReload extends ValidationError {
+        private final String path;
+
+        public NoResultsFoundForNodeDuringReload(String path) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to find node matching path: " + path + ", for during reload";
+        }
+    }
+
+    public static class NoMatchingTransformFound extends ValidationError {
+        private final String path;
+        private final String transformName;
+
+        public NoMatchingTransformFound(String path, String transformName) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.transformName = transformName;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to find matching transform for " + path + " with transform: " + transformName +
+                ". make sure you registered all expected transforms";
+        }
+    }
+
+    public static class NoKeyFoundForTransform extends ValidationError {
+        private final String path;
+        private final String transformName;
+        private final String key;
+
+        public NoKeyFoundForTransform(String path, String transformName, String key) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.transformName = transformName;
+            this.key = key;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to find matching key for transform " + transformName + " with key " + key +
+                " on path " + path;
+        }
+    }
+
+    /**
+     * Unknown node type while building config node.
+     */
+    public static class UnknownNodeTypePostProcess extends ValidationError {
+        private final String nodeType;
+        private final String path;
+
+        public UnknownNodeTypePostProcess(String path, String nodeType) {
+            super(ValidationLevel.ERROR);
+            this.nodeType = nodeType;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown node type: " + nodeType + " on Path: " + path + "while post processing";
+        }
+    }
+
+    /**
+     * While trying to get a configuration, was unable to find a value.
+     */
+    public static class NoResultsFoundForNodeDuringPostProcess extends ValidationError {
+        private final String path;
+        private final String klass;
+
+        public NoResultsFoundForNodeDuringPostProcess(String path, String klass) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.klass = klass;
+        }
+
+        public NoResultsFoundForNodeDuringPostProcess(String path, Class<?> klass) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.klass = klass.getSimpleName();
+        }
+
+        @Override
+        public String description() {
+            return "Unable to find node matching path: " + path + ", for class: " + klass + " during post process";
+        }
+    }
 }

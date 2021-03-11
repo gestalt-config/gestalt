@@ -5,6 +5,7 @@ import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.lang.reflect.Array;
@@ -65,7 +66,7 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
         for (int i = 0; i < node.size(); i++) {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
-                String nextPath = path != null && !path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
+                String nextPath = PathUtil.pathForIndex(path, i);
                 ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, TypeCapture.of(klass.getComponentType()));
 
                 errors.addAll(validateOf.getErrors());

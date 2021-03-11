@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class SetDecoder extends CollectionDecoder<Set<?>> {
         for (int i = 0; i < node.size(); i++) {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
-                String nextPath = path != null && !path.isEmpty() ? path + "[" + i + "]" : "[" + i + "]";
+                String nextPath = PathUtil.pathForIndex(path, i);
                 ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, klass.getFirstParameterType());
 
                 errors.addAll(validateOf.getErrors());

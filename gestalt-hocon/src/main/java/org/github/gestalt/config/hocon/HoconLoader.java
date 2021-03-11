@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.InputStreamReader;
@@ -107,7 +108,7 @@ public class HoconLoader implements ConfigLoader {
         List<ConfigNode> array = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(0);
         configList.forEach(it -> {
-            String currentPath = path + "[" + index.getAndIncrement() + "]";
+            String currentPath = PathUtil.pathForIndex(path, index.getAndIncrement());
 
             ValidateOf<ConfigNode> node = buildConfigTree(currentPath, it);
             errors.addAll(node.getErrors());
@@ -127,7 +128,7 @@ public class HoconLoader implements ConfigLoader {
 
         configObject.forEach((key, value) -> {
             String newPath = normalizeSentence(key);
-            String currentPath = path.length() > 0 ? path + "." + newPath : newPath;
+            String currentPath = PathUtil.pathForKey(path, key);
 
             ValidateOf<ConfigNode> node = buildConfigTree(currentPath, value);
             errors.addAll(node.getErrors());

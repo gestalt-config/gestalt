@@ -6,6 +6,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
@@ -56,7 +57,7 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
                             return null;
                         }
 
-                        String nextPath = path != null && !path.isEmpty() ? path + "." + key : key;
+                        String nextPath = PathUtil.pathForKey(path, key);
                         ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key),
                             (TypeCapture<Object>) keyType);
                         ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(),
