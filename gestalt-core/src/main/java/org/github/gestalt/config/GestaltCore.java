@@ -18,12 +18,14 @@ import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.token.Token;
+import org.github.gestalt.config.utils.CollectionUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +58,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
         this.coreReloadStrategy = reloadStrategy;
-        this.postProcessor = postProcessor;
+        this.postProcessor = postProcessor != null ? postProcessor : Collections.emptyList();
     }
 
     List<ValidationError> getLoadErrors() {

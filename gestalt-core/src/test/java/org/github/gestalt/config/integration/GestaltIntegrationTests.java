@@ -47,6 +47,7 @@ public class GestaltIntegrationTests {
         validateResults(gestalt);
     }
 
+    //to run this test it must be run as an administrator.
     @Test
     @Disabled
     public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {

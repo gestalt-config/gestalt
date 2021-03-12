@@ -1041,7 +1041,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Unknown node type: " + nodeType + " on Path: " + path + "while post processing";
+            return "Unknown node type: " + nodeType + " on Path: " + path + " while post processing";
         }
     }
 

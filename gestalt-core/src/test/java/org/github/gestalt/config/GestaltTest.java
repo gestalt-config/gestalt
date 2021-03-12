@@ -46,7 +46,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, null);
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -99,7 +99,7 @@ class GestaltTest {
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -151,7 +151,7 @@ class GestaltTest {
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2), new MapConfigSource(configs3)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -190,7 +190,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -243,7 +243,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -272,7 +272,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -313,7 +313,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -352,7 +352,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-                new ListDecoder()), configNodeManager, lexer), lexer, config, new ConfigNodeManager(), null);
+                new ListDecoder()), configNodeManager, lexer), lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -414,7 +414,7 @@ class GestaltTest {
             Collections.emptyList(),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         try {
             gestalt.loadConfigs();
@@ -443,7 +443,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -480,7 +480,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null);
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -515,7 +515,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, null);
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         try {
             gestalt.loadConfigs();
@@ -555,7 +555,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, config, new ConfigNodeManager(), null);
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -595,7 +595,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, config, new ConfigNodeManager(), null);
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
 
@@ -633,7 +633,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, config, new ConfigNodeManager(), null);
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
 
@@ -666,7 +666,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager(), null);
+            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
 
@@ -705,7 +705,7 @@ class GestaltTest {
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -763,7 +763,7 @@ class GestaltTest {
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -824,7 +824,7 @@ class GestaltTest {
             null,
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         try {
             gestalt.reload(source);
@@ -861,7 +861,7 @@ class GestaltTest {
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -930,7 +930,7 @@ class GestaltTest {
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -994,7 +994,7 @@ class GestaltTest {
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy);
+            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();

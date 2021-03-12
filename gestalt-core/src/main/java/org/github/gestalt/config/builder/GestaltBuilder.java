@@ -524,7 +524,7 @@ public class GestaltBuilder {
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig,
-            configNodeService, coreReloadStrategy);
+            configNodeService, coreReloadStrategy, Collections.emptyList());
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
