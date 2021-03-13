@@ -3,6 +3,7 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.exceptions.ConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -11,6 +12,8 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
+import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
@@ -168,6 +171,127 @@ class GestaltTest {
         Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", String.class));
 
         Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testPostProcessor() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test aaa", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306 aaa", gestalt.getConfig("db.port", String.class));
+
+
+        Assertions.assertEquals("John aaa", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve aaa", gestalt.getConfig("admin[1]", String.class));
+    }
+
+    @Test
+    public void testPostProcessorNoResults() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
+
+        Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(ValidateOf.validateOf(null, Collections.emptyList()));
+
+        GestaltException e = Assertions.assertThrows(GestaltException.class, gestalt::postProcessConfigs);
+
+        Assertions.assertEquals("no results found post processing the config nodes", e.getMessage());
+    }
+
+    @Test
+    public void testPostProcessorError() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
+
+        Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
+            ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
+
+        GestaltException e = Assertions.assertThrows(GestaltException.class, gestalt::postProcessConfigs);
+        Assertions.assertEquals("Failed post processing config nodes with errors \n" +
+            " - level: ERROR, message: Invalid array index: -1 for path: test", e.getMessage());
+    }
+
+    @Test
+    public void testPostProcessorMinorWarnings() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
+
+        Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
+            ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
+
+        gestalt.postProcessConfigs();
     }
 
     @Test
@@ -536,6 +660,46 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatWarningsAsErrors(true);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(false);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        try {
+            gestalt.getConfig("no.exist.name", String.class);
+            Assertions.fail("Should not reach here");
+        } catch (GestaltException e) {
+            assertThat(e).isInstanceOf(GestaltException.class)
+                .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
+                    " - level: ERROR, message: Unable to find object node for path: no.exist.name, at token: ObjectToken");
+        }
+    }
+
+    @Test
+    public void testNoResultsLoadingNode() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
         ConfigLoader mockConfigLoader = Mockito.mock(ConfigLoader.class);
         Mockito.when(mockConfigLoader.accepts(MapConfigSource.MAP_CONFIG)).thenReturn(true);
         Mockito.when(mockConfigLoader.loadSource(Mockito.any())).thenReturn(ValidateOf.validateOf(null, Collections.emptyList()));
@@ -557,18 +721,8 @@ class GestaltTest {
                 configNodeManager, lexer),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
-        gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
-
-        try {
-            gestalt.getConfig("db.name", String.class);
-            Assertions.fail("Should not reach here");
-        } catch (GestaltException e) {
-            assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: db.name, for class: java.lang.String\n" +
-                    " - level: WARN, message: Null Nodes on path: db.name");
-        }
+        ConfigurationException e = Assertions.assertThrows(ConfigurationException.class, gestalt::loadConfigs);
+        Assertions.assertEquals("No results found for node", e.getMessage());
     }
 
     @Test
@@ -1032,6 +1186,22 @@ class GestaltTest {
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test2", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
 
+    }
+
+    public static class TestPostProcessor implements PostProcessor {
+        private final String add;
+
+        public TestPostProcessor(String add) {
+            this.add = add;
+        }
+
+        @Override
+        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            if (currentNode instanceof LeafNode) {
+                return ValidateOf.valid(new LeafNode(currentNode.getValue().get() + " " + add));
+            }
+            return ValidateOf.valid(currentNode);
+        }
     }
 
     private static class CoreListener implements CoreReloadListener {

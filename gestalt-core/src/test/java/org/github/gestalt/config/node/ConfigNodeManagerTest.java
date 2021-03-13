@@ -1448,7 +1448,8 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
 
-        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"), new TestPostProcessor("def")));
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"),
+            new TestPostProcessor("def")));
         Assertions.assertFalse(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1521,7 +1522,8 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
 
-        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(), new TestPostProcessor("abc")));
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(),
+            new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1557,7 +1559,8 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
 
-        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(), new TestPostProcessor("abc")));
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(),
+            new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1610,7 +1613,8 @@ class ConfigNodeManagerTest {
         Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
                 "on Path: admin[1] while post processing",
             validateOf.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: admin, for class: ArrayNode during post process", validateOf.getErrors().get(1).description());
+        Assertions.assertEquals("Unable to find node matching path: admin, for class: ArrayNode during post process",
+            validateOf.getErrors().get(1).description());
     }
 
     @Test
@@ -1709,7 +1713,8 @@ class ConfigNodeManagerTest {
         @Override
         public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
-                return ValidateOf.validateOf(currentNode, Arrays.asList(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
+                return ValidateOf.validateOf(currentNode,
+                    Arrays.asList(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
             }
             return ValidateOf.valid(currentNode);
         }

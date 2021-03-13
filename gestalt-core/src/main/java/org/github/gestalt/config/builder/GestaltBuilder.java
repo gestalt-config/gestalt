@@ -15,6 +15,7 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
@@ -56,6 +57,7 @@ public class GestaltBuilder {
     private List<ConfigSource> sources = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
+    private List<PostProcessor> postProcessors = new ArrayList<>();
 
     private boolean useCacheDecorator = true;
 
@@ -98,6 +100,21 @@ public class GestaltBuilder {
             configLoaderSet.add(it);
         });
         configLoaders.addAll(configLoaderSet);
+        return this;
+    }
+
+    /**
+     * Add default post processors to the builder. Uses the ServiceLoader to find all registered post processors and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultPostProcessors() {
+        List<PostProcessor> postProcessorsSet = new ArrayList<>();
+        ServiceLoader<PostProcessor> loader = ServiceLoader.load(PostProcessor.class);
+        loader.forEach(it -> {
+            postProcessorsSet.add(it);
+        });
+        postProcessors.addAll(postProcessorsSet);
         return this;
     }
 
@@ -247,6 +264,50 @@ public class GestaltBuilder {
     public GestaltBuilder addConfigLoader(ConfigLoader configLoader) {
         Objects.requireNonNull(configLoader, "ConfigLoader should not be null");
         this.configLoaders.add(configLoader);
+        return this;
+    }
+
+    /**
+     * Sets the list of PostProcessors. Replaces any PostProcessors already set.
+     *
+     * @param postProcessors list of postProcessors to run.
+     * @return GestaltBuilder builder
+     * @throws ConfigurationException exception if there are no postProcessors
+     */
+    public GestaltBuilder setPostProcessors(List<PostProcessor> postProcessors) throws ConfigurationException {
+        if (postProcessors == null || postProcessors.isEmpty()) {
+            throw new ConfigurationException("No PostProcessors provided while setting");
+        }
+        this.postProcessors = postProcessors;
+
+        return this;
+    }
+
+    /**
+     * List of PostProcessor to add to the builder.
+     *
+     * @param postProcessor list of PostProcessor to add.
+     * @return GestaltBuilder builder
+     * @throws ConfigurationException no PostProcessor provided
+     */
+    public GestaltBuilder addPostProcessors(List<PostProcessor> postProcessor) throws ConfigurationException {
+        if (sources == null || sources.isEmpty()) {
+            throw new ConfigurationException("No PostProcessor provided while adding");
+        }
+        this.postProcessors.addAll(postProcessor);
+
+        return this;
+    }
+
+    /**
+     * Add a single PostProcessor to the builder.
+     *
+     * @param postProcessor add a single PostProcessor
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addPostProcessor(PostProcessor postProcessor) {
+        Objects.requireNonNull(postProcessor, "PostProcessor should not be null");
+        this.postProcessors.add(postProcessor);
         return this;
     }
 
@@ -524,7 +585,7 @@ public class GestaltBuilder {
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig,
-            configNodeService, coreReloadStrategy, Collections.emptyList());
+            configNodeService, coreReloadStrategy, postProcessors);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));

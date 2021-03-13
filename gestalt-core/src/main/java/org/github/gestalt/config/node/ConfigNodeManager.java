@@ -63,7 +63,14 @@ public class ConfigNodeManager implements ConfigNodeService {
             return ValidateOf.valid(root);
         }
 
-        return postProcess("", root, postProcessors);
+        ValidateOf<ConfigNode> results = postProcess("", root, postProcessors);
+
+        // If we have results we want to update the root to the new post processed config tree.
+        if(results.hasResults()) {
+            root = results.results();
+        }
+
+        return results;
     }
 
     private ValidateOf<ConfigNode> postProcess(String path, ConfigNode node, List<PostProcessor> postProcessors) throws GestaltException {

@@ -30,11 +30,21 @@ public class TransformerPostProcessor implements PostProcessor {
 
     private final Map<String, Transformer> transformers;
 
+    public TransformerPostProcessor() {
+        this.transformers = Collections.emptyMap();
+    }
+
     public TransformerPostProcessor(List<Transformer> transformers) {
         if (transformers == null) {
             this.transformers = Collections.emptyMap();
         } else {
             this.transformers = transformers.stream().collect(Collectors.toMap(Transformer::name, Function.identity()));
+        }
+    }
+
+    public void addTransformers(List<Transformer> transformers) {
+        if (transformers != null) {
+            transformers.forEach(it -> this.transformers.put(it.name(), it));
         }
     }
 
