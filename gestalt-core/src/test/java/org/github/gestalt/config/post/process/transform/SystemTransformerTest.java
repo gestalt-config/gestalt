@@ -3,8 +3,6 @@ package org.github.gestalt.config.post.process.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class SystemTransformerTest {
 
     @Test
