@@ -6,10 +6,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.utils.ValidateOf;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,8 +27,11 @@ public class TransformerPostProcessor implements PostProcessor {
 
     private final Map<String, Transformer> transformers;
 
+    // by default use the service loader to
     public TransformerPostProcessor() {
-        this.transformers = Collections.emptyMap();
+        this.transformers = new HashMap<>();
+        ServiceLoader<Transformer> loader = ServiceLoader.load(Transformer.class);
+        loader.forEach(it -> transformers.put(it.name(), it));
     }
 
     public TransformerPostProcessor(List<Transformer> transformers) {

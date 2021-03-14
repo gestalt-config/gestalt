@@ -112,6 +112,7 @@ public class GestaltBuilder {
         List<PostProcessor> postProcessorsSet = new ArrayList<>();
         ServiceLoader<PostProcessor> loader = ServiceLoader.load(PostProcessor.class);
         loader.forEach(it -> {
+            it.applyConfig(gestaltConfig);
             postProcessorsSet.add(it);
         });
         postProcessors.addAll(postProcessorsSet);
