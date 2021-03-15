@@ -3,7 +3,7 @@ package org.github.gestalt.config.integration;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.post.process.transform.SystemTransformer;
+import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -301,7 +301,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/dev.properties"))
             .addSource(new MapConfigSource(configs))
             .setEnvVarsTreatErrorsAsWarnings(true)
-            .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemTransformer())))
+            .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
 
         gestalt.loadConfigs();

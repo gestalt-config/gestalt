@@ -2,8 +2,14 @@ package org.github.gestalt.config.post.process.transform;
 
 import java.util.Optional;
 
-public class SystemTransformer implements Transformer {
-    public SystemTransformer() {
+/**
+ * Allows you to inject System Properties into leaf values that match ${envVar:key},
+ * where the key is used to lookup into the Environment Variables.
+ *
+ * @author Colin Redmond
+ */
+public class SystemPropertiesTransformer implements Transformer {
+    public SystemPropertiesTransformer() {
     }
 
     @Override

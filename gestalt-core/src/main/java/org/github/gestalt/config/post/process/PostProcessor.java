@@ -4,6 +4,11 @@ import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.ValidateOf;
 
+/**
+ * Interface for the Post Processing of Config nodes. This will be run against every node in the tree.
+ *
+ * @author Colin Redmond
+ */
 public interface PostProcessor {
     ValidateOf<ConfigNode> process(String path, ConfigNode currentNode);
 

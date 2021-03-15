@@ -556,7 +556,7 @@ public class GestaltBuilder {
 
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
-            logger.debug("No decoders provided, using defaults");
+            logger.info("No decoders provided, using defaults");
             addDefaultDecoders();
         }
 
@@ -573,8 +573,13 @@ public class GestaltBuilder {
 
         // Setup the config loaders.
         if (configLoaders.isEmpty()) {
-            logger.debug("No decoders provided, using defaults");
+            logger.info("No decoders provided, using defaults");
             addDefaultConfigLoaders();
+        }
+
+        if (postProcessors.isEmpty()) {
+            logger.info("No post processors provided, using defaults");
+            addDefaultPostProcessors();
         }
 
         // get all the config loaders from the configLoaderRegistry, combine them with the ones in the builder,

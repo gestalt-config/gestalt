@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Allows you to provide a custom map to inject into leaf values that match ${map:key}, where the key is used to lookup into the map.
+ *
+ * @author Colin Redmond
+ */
 public class CustomMapTransformer implements Transformer {
     private final Map<String, String> replacementVars;
 

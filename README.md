@@ -276,7 +276,7 @@ Each config loader understands how to load a specific type of config. Often this
 | HoconLoader | config | Leverages com.typesafe:config to load hocon files, supports substitutions. Must include package com.github.gestalt-config:gestalt-hocon:version. |
 
 If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Config loaders. It will configure them by passing in the GestaltConfig to applyConfig. 
-To register your own default add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
+To register your own default ConfigLoaders, add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
 
 # Decoders
 | Type | details |
@@ -318,7 +318,7 @@ Required parameters are ones that don't have a default and are not nullable. An 
 If all members are optional, and we have no parameters we will try and create the class with the default empty constructor.
 
 If you didn't manually add any Decoders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Decoders. It will configure them by passing in the GestaltConfig to applyConfig.
-To register your own default add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
+To register your own default Decoders, add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
 
 # Reload Strategies
 When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config. 
@@ -337,6 +337,27 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
 | --------------- | ------- | 
 | FileChangeReload | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file. When the file changes it will tell Gestalt to reload the file. Also works with symlink and will reload if the symlink change.  |
 | TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration |
+
+# Post Processors
+Post processors are run after the config tree has been compiled.
+They can be used to modify the config tree in any way. 
+The main Post Processor is the TransformerPostProcessor which allows for string replacement for a config. 
+For example if we have a properties file with a Database connection you don't want to save your usernames and passwords in the properties files. Instead, you want to inject the username and passwords as Environment Variables.
+You can use multiple string replacements within a single string. 
+
+```properties
+db.user=${envVar:DB_USER}
+db.password=${envVar:DB_IDLETIMEOUT}
+db.uri=jdbc:mysql://${envVar:DB_HOST}:${envVar:DB_PORT}/${envVar:DB_DEFAULT}
+```
+
+Provided TransformerPostProcessor
+
+| keyword | source |
+| ------- | ------|
+| envVar | Environment Variables |
+| sys | Java System Properties |
+| map | A custom map provided to the constructor |
 
 # Gestalt configuration
 
@@ -460,6 +481,63 @@ Gestalt will use the ConfigLoaderService to find a ConfigLoader that will load t
 ### reload
 
 When a source needs to be reloaded, it will be passed into the reload function. The sources will then be converted into a Config node as in the loading. Then Gestalt will use the ConfigNodeService to reload the source. Since the ConfigNodeService holds onto the source ID with the ConfigNodeContainer we are able to determine with config node to reload then take all the config nodes and re-merge them in the same order to rebuild teh config tree with the newly loaded node.
+
+# Post Processors
+
+To implement your own Post Processor you need to inherit from PostProcessor. 
+
+```java
+/**
+ * Interface for the Post Processing of Config nodes. This will be run against every node in the tree. 
+ *
+ * @author Colin Redmond
+ */
+public interface PostProcessor {
+    ValidateOf<ConfigNode> process(String path, ConfigNode currentNode);
+
+    /**
+     * Apply the GestaltConfig to the Post Processor. Needed when building via the ServiceLoader
+     * It is a default method as most Post Processor don't need to apply configs.
+     *
+     * @param config GestaltConfig to update the Post Processor
+     */
+    default void applyConfig(GestaltConfig config) {
+    }
+}
+```
+
+When you write your own applyConfig method, each node of the config tree will be passed into the process method. You can either modify the current node or return it as is. The return value will be used to replace the tree, so if you return nothing your tree will be lost. 
+You can re-write any intermediate node or only modify the leaf nodes as TransformerPostProcessor does.
+To register your own default PostProcessor, add it to a file in META-INF\services\org.github.gestalt.config.post.process.PostProcessor and add the full path to your PostProcessor.
+
+The TransformerPostProcessor is a specific type of PostProcessor that allows you to replace strings in a leaf node that match ${source:key} into a config value. where the source is the name of a Transformer registered with the TransformerPostProcessor, such as in the above PostProcessor section with envMap, sys, and map. The key is a string lookup into the source.
+To implement your own Transformer you need to implement the Transformer class. 
+
+```java
+/**
+ * Allows you to add your own custom source for the TransformerPostProcessor.
+ * Whenever the TransformerPostProcessor sees a value ${name:key} the transform is selected that matches the same name
+ */
+public interface Transformer {
+    /**
+     * the name that will match the ${name:key} the transform is selected that matches the same name
+     * @return
+     */
+    String name();
+
+    /**
+     * When a match is found for ${name:key} the key and the path are passed into the process method.
+     * The returned value replaces the whole ${name:key}
+     * @param path the current path
+     * @param key the key to lookup int this transform.
+     * @return the value to replace the ${name:key}
+     */
+    Optional<String> process(String path, String key);
+}
+```
+
+To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
+
 
 ### getConfig
 

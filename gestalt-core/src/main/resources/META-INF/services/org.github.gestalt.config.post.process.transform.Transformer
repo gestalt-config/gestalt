@@ -1,2 +1,2 @@
 org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer
-org.github.gestalt.config.post.process.transform.CustomMapTransformer
+org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer
