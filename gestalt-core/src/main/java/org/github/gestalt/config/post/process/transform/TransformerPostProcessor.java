@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
  * A Post Processor used to replace leaf values that have the format ${transform:key} with a new value.
  * The transform represents the source of the data, such as envVar for Environment Variables.
  * The Key is how we look up the data in the data source, such as an Environment Variable JAVA_HOME
- * <p>
- * So you could have a leaf value "hello ${envVar:USER_NAME} you are level ${envVar:USER_LEVEL}!" where USER_NAME=john and USER_LEVEL=6,
+ *
+ * <p>So you could have a leaf value "hello ${envVar:USER_NAME} you are level ${envVar:USER_LEVEL}!" where USER_NAME=john and USER_LEVEL=6,
  * will get transformed into "hello john you are level 6!"
  *
  * @author Colin Redmond

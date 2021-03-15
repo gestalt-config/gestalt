@@ -19,7 +19,7 @@ public class SystemPropertiesTransformer implements Transformer {
 
     @Override
     public Optional<String> process(String path, String key) {
-        if(!System.getProperties().containsKey(key)) {
+        if (!System.getProperties().containsKey(key)) {
             return Optional.empty();
         } else {
             return Optional.of(System.getProperties().get(key).toString());

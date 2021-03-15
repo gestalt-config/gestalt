@@ -156,7 +156,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             logger.warn(errorMsg);
         }
 
-        if(!results.hasResults()) {
+        if (!results.hasResults()) {
             throw new ConfigurationException("No results found for node");
         }
     }

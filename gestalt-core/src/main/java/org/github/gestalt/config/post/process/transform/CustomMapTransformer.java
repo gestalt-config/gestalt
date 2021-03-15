@@ -27,7 +27,7 @@ public class CustomMapTransformer implements Transformer {
 
     @Override
     public Optional<String> process(String path, String key) {
-        if(!replacementVars.containsKey(key)) {
+        if (!replacementVars.containsKey(key)) {
             return Optional.empty();
         } else {
             return Optional.of(replacementVars.get(key));
