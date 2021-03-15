@@ -13,6 +13,7 @@ import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -292,6 +293,44 @@ class GestaltTest {
             ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
 
         gestalt.postProcessConfigs();
+    }
+
+    @Test
+    public void testPostProcessorSwap() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("path1.conf1.prop1", "value1");
+        configs.put("path1.conf1.prop2", "value2");
+        configs.put("path1.conf1.prop3", "value3");
+        configs.put("path2.conf2.prop1", "value4");
+        configs.put("path2.conf2.prop2", "value5");
+        configs.put("path2.conf2.prop3", "value6");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null,
+            Arrays.asList(new TestPostProcessorSwapNodes("path1", "path2"), new TestPostProcessorSwapNodes("prop1", "prop2")));
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("value4", gestalt.getConfig("path1.conf2.prop2", String.class));
+        Assertions.assertEquals("value5", gestalt.getConfig("path1.conf2.prop1", String.class));
+        Assertions.assertEquals("value6", gestalt.getConfig("path1.conf2.prop3", String.class));
+
+        Assertions.assertEquals("value1", gestalt.getConfig("path2.conf1.prop2", String.class));
+        Assertions.assertEquals("value2", gestalt.getConfig("path2.conf1.prop1", String.class));
+        Assertions.assertEquals("value3", gestalt.getConfig("path2.conf1.prop3", String.class));
     }
 
     @Test
@@ -1199,6 +1238,32 @@ class GestaltTest {
         public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
                 return ValidateOf.valid(new LeafNode(currentNode.getValue().get() + " " + add));
+            }
+            return ValidateOf.valid(currentNode);
+        }
+    }
+
+    public static class TestPostProcessorSwapNodes implements PostProcessor {
+        private final String node1;
+        private final String node2;
+
+        public TestPostProcessorSwapNodes(String node1, String node2) {
+            this.node1 = node1;
+            this.node2 = node2;
+        }
+
+        @Override
+        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            if (currentNode instanceof MapNode) {
+                Map<String, ConfigNode> mapNode = ((MapNode) currentNode).getMapNode();
+                if (mapNode.containsKey(node1) && mapNode.containsKey(node2)) {
+                    ConfigNode ConfigNode1 = mapNode.get(node1);
+                    ConfigNode ConfigNode2 = mapNode.get(node2);
+
+                    mapNode.put(node1, ConfigNode2);
+                    mapNode.put(node2, ConfigNode1);
+                }
+                return ValidateOf.valid(new MapNode(mapNode));
             }
             return ValidateOf.valid(currentNode);
         }
