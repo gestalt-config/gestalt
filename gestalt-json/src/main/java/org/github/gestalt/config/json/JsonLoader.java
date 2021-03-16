@@ -10,6 +10,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.IOException;
@@ -102,7 +103,7 @@ public class JsonLoader implements ConfigLoader {
         List<ConfigNode> array = new ArrayList<>();
         int arraySize = jsonNode.size();
         for (int i = 0; i < arraySize; i++) {
-            String currentPath = path + "[" + i + "]";
+            String currentPath = PathUtil.pathForIndex(path, i);
 
             JsonNode arrayNodes = jsonNode.get(i);
             ValidateOf<ConfigNode> node = buildConfigTree(currentPath, arrayNodes);
@@ -126,7 +127,7 @@ public class JsonLoader implements ConfigLoader {
             String key = normalizeSentence(entry.getKey());
             JsonNode jsonValue = entry.getValue();
 
-            String currentPath = path.length() > 0 ? path + "." + key : key;
+            String currentPath = PathUtil.pathForKey(path, key);
 
             ValidateOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
             errors.addAll(node.getErrors());

@@ -12,6 +12,7 @@ import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,12 +43,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private final GestaltConfig gestaltConfig;
     private final ConfigNodeService configNodeService;
     private final CoreReloadStrategy coreReloadStrategy;
+    private final List<PostProcessor> postProcessors;
 
     private final List<ValidationError> loadErrors = new ArrayList<>();
 
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSource> sources, DecoderService decoderService,
                        SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService,
-                       CoreReloadStrategy reloadStrategy) {
+                       CoreReloadStrategy reloadStrategy, List<PostProcessor> postProcessor) {
         this.configLoaderService = configLoaderService;
         this.sources = sources;
         this.decoderService = decoderService;
@@ -54,6 +57,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
         this.coreReloadStrategy = reloadStrategy;
+        this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
     }
 
     List<ValidationError> getLoadErrors() {
@@ -79,6 +83,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 logger.warn("Failed to load node: {} did not have any results", source.name());
             }
         }
+
+        postProcessConfigs();
     }
 
     /**
@@ -117,7 +123,27 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltException("no results found merging source " + reloadSource.name());
         }
 
+        postProcessConfigs();
+
         coreReloadStrategy.reload();
+    }
+
+    void postProcessConfigs() throws GestaltException {
+        ValidateOf<ConfigNode> results = configNodeService.postProcess(postProcessors);
+
+        if (checkErrorsShouldFail(results)) {
+            throw new GestaltException("Failed post processing config nodes with errors ",
+                results.getErrors());
+
+        } else if (results.hasErrors()) {
+            String errorMsg = ErrorsUtil.buildErrorMessage("Failed post processing config nodes with errors ",
+                results.getErrors());
+            logger.debug(errorMsg);
+        }
+
+        if (!results.hasResults()) {
+            throw new GestaltException("no results found post processing the config nodes");
+        }
     }
 
     private void validateLoadResultsForErrors(ValidateOf<ConfigNode> results) throws ConfigurationException {
@@ -128,6 +154,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         if (results.hasErrors(ValidationLevel.WARN)) {
             String errorMsg = ErrorsUtil.buildErrorMessage(results.getErrors());
             logger.warn(errorMsg);
+        }
+
+        if (!results.hasResults()) {
+            throw new ConfigurationException("No results found for node");
         }
     }
 

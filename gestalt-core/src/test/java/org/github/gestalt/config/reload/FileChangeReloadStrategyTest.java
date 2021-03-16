@@ -88,6 +88,7 @@ class FileChangeReloadStrategyTest {
         Assertions.assertEquals(previousCount, listener.count);
     }
 
+    //to run this test it must be run as an administrator.
     @Test
     @Disabled
     public void changeContentsOfFileWithSymlinkChain() throws GestaltException, IOException, InterruptedException {

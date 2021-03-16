@@ -2,6 +2,7 @@ package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -23,6 +24,19 @@ public interface ConfigNodeService {
      * @throws GestaltException any exceptions
      */
     ValidateOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException;
+
+    /**
+     * Apply a list of Post Processors on the root node. This allows a post processor to modify the config tree in any way.
+     * It will navigate to each node in the tree and pass it to the post processor.
+     * The post processors are run in order of priority, with the next post processor getting the results from the previous.
+     * The post processor returns a node that is then used to replace the current node.
+     *
+     *
+     * @param postProcessors list of post processors to apply.
+     * @return newly processed node
+     * @throws GestaltException any exceptions
+     */
+    ValidateOf<ConfigNode> postProcess(List<PostProcessor> postProcessors) throws GestaltException;
 
     /**
      * Reload a node, if there are more than one node it will merge it into the config tree in the same order as the existing node.

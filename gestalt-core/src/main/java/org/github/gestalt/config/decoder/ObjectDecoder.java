@@ -5,6 +5,7 @@ import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ public class ObjectDecoder implements Decoder<Object> {
                 String name = field.getName();
                 Type fieldClass = field.getGenericType();
 
-                String nextPath = path != null && !path.isEmpty() ? path + "." + name : name;
+                String nextPath = PathUtil.pathForKey(path, name);
 
                 if (!Modifier.isStatic(modifiers)) {
                     field.setAccessible(true);

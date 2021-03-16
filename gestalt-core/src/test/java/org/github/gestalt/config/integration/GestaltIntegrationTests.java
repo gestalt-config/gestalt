@@ -3,6 +3,8 @@ package org.github.gestalt.config.integration;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
+import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
@@ -47,6 +49,7 @@ public class GestaltIntegrationTests {
         validateResults(gestalt);
     }
 
+    //to run this test it must be run as an administrator.
     @Test
     @Disabled
     public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {
@@ -235,6 +238,82 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    @Test
+    public void integrationTestPostProcessorEnvironment() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        /*
+        Expects the following environment variables
+            DB_IDLETIMEOUT: 123
+            SUBSERVICE_BOOKING_ISENABLED: true
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_PORT: 443
+         */
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
+            .addSource(new ClassPathConfigSource("/dev.properties"))
+            .addSource(new MapConfigSource(configs))
+            .setEnvVarsTreatErrorsAsWarnings(true)
+            .addDefaultPostProcessors()
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    @Test
+    public void integrationTestPostProcessorSystem() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        /*
+        Expects the following environment variables
+            DB_IDLETIMEOUT: 123
+            SUBSERVICE_BOOKING_ISENABLED: true
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_PORT: 443
+         */
+
+        System.getProperties().put("DB_IDLETIMEOUT", "123");
+        System.getProperties().put("SUBSERVICE_BOOKING_ISENABLED", "true");
+        System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_HOST", "https://dev.bookin.host.name");
+        System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_PORT", "443");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
+            .addSource(new ClassPathConfigSource("/dev.properties"))
+            .addSource(new MapConfigSource(configs))
+            .setEnvVarsTreatErrorsAsWarnings(true)
+            .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
 
     private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);

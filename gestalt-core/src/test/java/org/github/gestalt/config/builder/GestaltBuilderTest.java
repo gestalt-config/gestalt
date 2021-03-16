@@ -12,6 +12,8 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
+import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -68,7 +70,11 @@ class GestaltBuilderTest {
             .setSentenceLexer(new PathLexer())
             .setConfigNodeService(configNodeManager)
             .addCoreReloadListener(coreReloadListener)
-            .addReloadStrategy(new TimedConfigReloadStrategy(sources.get(0), Duration.ofMillis(100)));
+            .addReloadStrategy(new TimedConfigReloadStrategy(sources.get(0), Duration.ofMillis(100)))
+            .addPostProcessors(Collections.singletonList(
+                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+            .setPostProcessors(Collections.singletonList(
+            new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))));
 
         Gestalt gestalt = builder.build();
         gestalt.loadConfigs();
@@ -328,6 +334,24 @@ class GestaltBuilderTest {
             Assertions.fail("Should not hit this");
         } catch (ConfigurationException e) {
             Assertions.assertEquals("No decoders provided while setting decoders", e.getMessage());
+        }
+    }
+
+    @Test
+    public void buildBadPostProcessor() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.addPostProcessors(null);
+            Assertions.fail("Should not hit this");
+        } catch (ConfigurationException e) {
+            Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
+        }
+
+        try {
+            builder.setPostProcessors(null);
+            Assertions.fail("Should not hit this");
+        } catch (ConfigurationException e) {
+            Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
         }
     }
 

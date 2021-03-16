@@ -3,10 +3,12 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.CollectionUtils;
+import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
@@ -52,6 +54,101 @@ public class ConfigNodeManager implements ConfigNodeService {
     }
 
     @Override
+    public ValidateOf<ConfigNode> postProcess(List<PostProcessor> postProcessors) throws GestaltException {
+        if (postProcessors == null) {
+            throw new GestaltException("No postProcessors provided");
+        }
+
+        if (postProcessors.isEmpty()) {
+            return ValidateOf.valid(root);
+        }
+
+        ValidateOf<ConfigNode> results = postProcess("", root, postProcessors);
+
+        // If we have results we want to update the root to the new post processed config tree.
+        if (results.hasResults()) {
+            root = results.results();
+        }
+
+        return results;
+    }
+
+    private ValidateOf<ConfigNode> postProcess(String path, ConfigNode node, List<PostProcessor> postProcessors) throws GestaltException {
+        ConfigNode currentNode = node;
+        List<ValidationError> errors = new ArrayList<>();
+
+        // apply the post processors to the node.
+        // If there are multiple post processors, apply them in order, each post processor operates on the result node from the
+        // last post processor.
+        for (PostProcessor it : postProcessors) {
+            ValidateOf<ConfigNode> processedNode = it.process(path, currentNode);
+
+            errors.addAll(processedNode.getErrors());
+            if (processedNode.hasResults()) {
+                currentNode = processedNode.results();
+            } else {
+                errors.add(new ValidationError.NoResultsFoundForNodeDuringPostProcess(path, node.getClass()));
+            }
+        }
+
+        // recursively apply post processing to children nodes. If this is a leaf, we can return.
+        if (currentNode instanceof ArrayNode) {
+            return postProcessArray(path, (ArrayNode) currentNode, postProcessors);
+        } else if (currentNode instanceof MapNode) {
+            return postProcessMap(path, (MapNode) currentNode, postProcessors);
+        } else if (currentNode instanceof LeafNode) {
+            return ValidateOf.validateOf(currentNode, errors);
+        } else {
+            return ValidateOf.inValid(new ValidationError.UnknownNodeTypePostProcess(path, node.getClass().getName()));
+        }
+    }
+
+    private ValidateOf<ConfigNode> postProcessArray(String path, ArrayNode node, List<PostProcessor> postProcessors)
+        throws GestaltException {
+        int size = node.size();
+        List<ValidationError> errors = new ArrayList<>();
+        ConfigNode[] processedNode = new ConfigNode[size];
+
+        for (int i = 0; i < size; i++) {
+            Optional<ConfigNode> currentNodeOption = node.getIndex(i);
+            if (currentNodeOption.isPresent()) {
+                String nextPath = PathUtil.pathForIndex(path, i);
+                ValidateOf<ConfigNode> newNode = postProcess(nextPath, currentNodeOption.get(), postProcessors);
+
+                errors.addAll(newNode.getErrors());
+                if (newNode.hasResults()) {
+                    processedNode[i] = newNode.results();
+                } else {
+                    errors.add(new ValidationError.NoResultsFoundForNodeDuringPostProcess(path, ArrayNode.class));
+                }
+            }
+        }
+
+        return ValidateOf.validateOf(new ArrayNode(Arrays.asList(processedNode)), errors);
+    }
+
+    private ValidateOf<ConfigNode> postProcessMap(String path, MapNode node, List<PostProcessor> postProcessors) throws GestaltException {
+        Map<String, ConfigNode> processedNode = new HashMap<>();
+        List<ValidationError> errors = new ArrayList<>();
+
+        for (Map.Entry<String, ConfigNode> entry : node.getMapNode().entrySet()) {
+            String key = entry.getKey();
+            String nextPath = PathUtil.pathForKey(path, key);
+            ValidateOf<ConfigNode> newNode = postProcess(nextPath, entry.getValue(), postProcessors);
+
+            errors.addAll(newNode.getErrors());
+            if (newNode.hasResults()) {
+                processedNode.put(key, newNode.results());
+            } else {
+                errors.add(new ValidationError.NoResultsFoundForNodeDuringPostProcess(path, MapNode.class));
+            }
+        }
+
+        return ValidateOf.validateOf(new MapNode(processedNode), errors);
+    }
+
+
+    @Override
     public ValidateOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException {
         ConfigNode newRoot = null;
         List<ValidationError> errors = new ArrayList<>();
@@ -68,15 +165,14 @@ public class ConfigNodeManager implements ConfigNodeService {
             if (newRoot == null) {
                 newRoot = currentNode;
             } else {
-
                 ValidateOf<ConfigNode> mergedNode = mergeNodes("", newRoot, currentNode);
 
+                errors.addAll(mergedNode.getErrors());
                 if (mergedNode.hasResults()) {
                     newRoot = mergedNode.results();
+                } else {
+                    errors.add(new ValidationError.NoResultsFoundForNodeDuringReload(""));
                 }
-
-                errors.addAll(mergedNode.getErrors());
-
             }
             index++;
         }
@@ -112,7 +208,8 @@ public class ConfigNodeManager implements ConfigNodeService {
             if (!node.getIndex(i).isPresent()) {
                 errors.add(new ValidationError.ArrayMissingIndex(i, path));
             } else {
-                errors.addAll(validateNode(path + "[" + i + "]", node.getIndex(i).get()));
+                String nextPath = PathUtil.pathForIndex(path, i);
+                errors.addAll(validateNode(nextPath, node.getIndex(i).get()));
             }
         }
         return errors;
@@ -127,7 +224,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             } else if (value == null) {
                 errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
             } else {
-                String nextPath = path.isEmpty() ? key : path + "." + key;
+                String nextPath = PathUtil.pathForKey(path, key);
                 errors.addAll(validateNode(nextPath, value));
             }
         });
@@ -177,13 +274,11 @@ public class ConfigNodeManager implements ConfigNodeService {
             Optional<ConfigNode> array1AtIndex = arrayNode1.getIndex(i);
             Optional<ConfigNode> array2AtIndex = arrayNode2.getIndex(i);
             if (array1AtIndex.isPresent() && array2AtIndex.isPresent()) {
-                ValidateOf<ConfigNode> result = mergeNodes(path + "[" + i + "]", array1AtIndex.get(), array2AtIndex.get());
+                String nextPath = PathUtil.pathForIndex(path, i);
+                ValidateOf<ConfigNode> result = mergeNodes(nextPath, array1AtIndex.get(), array2AtIndex.get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
-                if (result.hasErrors()) {
-                    errors.addAll(result.getErrors());
-                }
-
+                errors.addAll(result.getErrors());
                 if (result.hasResults()) {
                     values[i] = result.results();
                 } else {
@@ -216,14 +311,11 @@ public class ConfigNodeManager implements ConfigNodeService {
             } else if (entry.getValue() == null) {
                 errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
             } else if (mapNode2.getKey(key).isPresent()) {
-                String nextPath = path.isEmpty() ? key : path + "." + key;
+                String nextPath = PathUtil.pathForKey(path, key);
                 ValidateOf<ConfigNode> result = mergeNodes(nextPath, mapNode1.getKey(key).get(), mapNode2.getKey(key).get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
-                if (result.hasErrors()) {
-                    errors.addAll(result.getErrors());
-                }
-
+                errors.addAll(result.getErrors());
                 if (result.hasResults()) {
                     mergedNode.putIfAbsent(key, result.results());
                 } else {

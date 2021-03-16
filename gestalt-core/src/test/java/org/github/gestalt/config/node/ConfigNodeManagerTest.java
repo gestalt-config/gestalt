@@ -1,7 +1,9 @@
 package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -1428,9 +1430,306 @@ class ConfigNodeManagerTest {
         Assertions.assertEquals("June", results2.getKey("admin").get().getIndex(3).get().getValue().get());
     }
 
+    @Test
+    public void testPostProcessor() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
+
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"),
+            new TestPostProcessor("def")));
+        Assertions.assertFalse(validateOf.hasErrors());
+        Assertions.assertTrue(validateOf.hasResults());
+        Assertions.assertNotNull(validateOf.results());
+
+        ConfigNode results = validateOf.results();
+
+        Assertions.assertEquals("test abc def", results.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306 abc def", results.getKey("db").get().getKey("port").get().getValue().get());
+
+        Assertions.assertEquals("John abc def", results.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve abc def", results.getKey("admin").get().getIndex(1).get().getValue().get());
+    }
+
+    @Test
+    public void testPostProcessorNullProcessors() throws GestaltException {
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> configNodeManager.postProcess(null));
+
+        Assertions.assertEquals("No postProcessors provided", e.getMessage());
+    }
+
+    @Test
+    public void testPostProcessorEmpty() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
+
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Collections.emptyList());
+        Assertions.assertFalse(validateOf.hasErrors());
+        Assertions.assertTrue(validateOf.hasResults());
+        Assertions.assertNotNull(validateOf.results());
+
+        ConfigNode results = validateOf.results();
+
+        Assertions.assertEquals("test", results.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", results.getKey("db").get().getKey("port").get().getValue().get());
+
+        Assertions.assertEquals("John", results.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve", results.getKey("admin").get().getIndex(1).get().getValue().get());
+    }
+
+    @Test
+    public void testPostProcessorErrors() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
+
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(),
+            new TestPostProcessor("abc")));
+        Assertions.assertTrue(validateOf.hasErrors());
+        Assertions.assertTrue(validateOf.hasResults());
+        Assertions.assertNotNull(validateOf.results());
+
+        ConfigNode results = validateOf.results();
+
+        Assertions.assertEquals("test abc", results.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306 abc", results.getKey("db").get().getKey("port").get().getValue().get());
+
+        Assertions.assertEquals("John abc", results.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve abc", results.getKey("admin").get().getIndex(1).get().getValue().get());
+
+
+        Assertions.assertEquals(4, validateOf.getErrors().size());
+        assertThat(validateOf.getErrors().get(0).description()).startsWith("Leaf nodes are empty for path: ");
+    }
+
+    @Test
+    public void testPostProcessorNoResults() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
+
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(),
+            new TestPostProcessor("abc")));
+        Assertions.assertTrue(validateOf.hasErrors());
+        Assertions.assertTrue(validateOf.hasResults());
+        Assertions.assertNotNull(validateOf.results());
+
+        ConfigNode results = validateOf.results();
+
+        Assertions.assertEquals("test abc", results.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306 abc", results.getKey("db").get().getKey("port").get().getValue().get());
+
+        Assertions.assertEquals("John abc", results.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve abc", results.getKey("admin").get().getIndex(1).get().getValue().get());
+
+
+        Assertions.assertEquals(4, validateOf.getErrors().size());
+        assertThat(validateOf.getErrors().get(0).description()).startsWith("Unable to find node matching path");
+    }
+
+    @Test
+    public void testPostProcessorUnknownTokenArray() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new TestNode();
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
+
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
+        Assertions.assertTrue(validateOf.hasErrors());
+        Assertions.assertTrue(validateOf.hasResults());
+        Assertions.assertNotNull(validateOf.results());
+
+        ConfigNode results = validateOf.results();
+
+        Assertions.assertEquals("test abc", results.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306 abc", results.getKey("db").get().getKey("port").get().getValue().get());
+
+        Assertions.assertEquals("John abc", results.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertFalse(results.getKey("admin").get().getIndex(1).isPresent());
+
+        Assertions.assertEquals(2, validateOf.getErrors().size());
+        Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
+                "on Path: admin[1] while post processing",
+            validateOf.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: admin, for class: ArrayNode during post process",
+            validateOf.getErrors().get(1).description());
+    }
+
+    @Test
+    public void testPostProcessorUnknownTokenMap() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new TestNode());
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
+
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
+        Assertions.assertTrue(validateOf.hasErrors());
+        Assertions.assertTrue(validateOf.hasResults());
+        Assertions.assertNotNull(validateOf.results());
+
+        ConfigNode results = validateOf.results();
+
+        Assertions.assertEquals("test abc", results.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertFalse(results.getKey("db").get().getKey("port").isPresent());
+
+        Assertions.assertEquals("John abc", results.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve abc", results.getKey("admin").get().getIndex(1).get().getValue().get());
+
+        Assertions.assertEquals(2, validateOf.getErrors().size());
+        Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
+                "on Path: db.port while post processing",
+            validateOf.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: db, for class: MapNode during post process",
+            validateOf.getErrors().get(1).description());
+    }
+
     public static class TestToken extends Token {
 
         public TestToken() {
+        }
+    }
+
+    public static class TestNode implements ConfigNode {
+
+        @Override
+        public NodeType getNodeType() {
+            return null;
+        }
+
+        @Override
+        public Optional<String> getValue() {
+            return Optional.of("testNode");
+        }
+
+        @Override
+        public Optional<ConfigNode> getIndex(int index) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<ConfigNode> getKey(String key) {
+            return Optional.empty();
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+    }
+
+    public static class TestPostProcessor implements PostProcessor {
+        private final String add;
+
+        public TestPostProcessor(String add) {
+            this.add = add;
+        }
+
+        @Override
+        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            if (currentNode instanceof LeafNode) {
+                return ValidateOf.valid(new LeafNode(currentNode.getValue().get() + " " + add));
+            }
+            return ValidateOf.valid(currentNode);
+        }
+    }
+
+    public static class TestPostProcessorErrors implements PostProcessor {
+        public TestPostProcessorErrors() {
+        }
+
+        @Override
+        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            if (currentNode instanceof LeafNode) {
+                return ValidateOf.validateOf(currentNode,
+                    Arrays.asList(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
+            }
+            return ValidateOf.valid(currentNode);
+        }
+    }
+
+    public static class TestPostProcessorNoResults implements PostProcessor {
+        public TestPostProcessorNoResults() {
+        }
+
+        @Override
+        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            if (currentNode instanceof LeafNode) {
+                return ValidateOf.valid(null);
+            }
+            return ValidateOf.valid(currentNode);
         }
     }
 }
