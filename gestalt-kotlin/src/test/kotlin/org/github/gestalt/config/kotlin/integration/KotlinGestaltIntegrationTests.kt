@@ -210,7 +210,7 @@ class KotlinGestaltIntegrationTests {
             )
         )
         Assertions.assertTrue(booking.isEnabled)
-        Assertions.assertEquals("https://dev.bookin.host.name", booking.service!!.host)
+        Assertions.assertEquals("https://dev.booking.host.name", booking.service!!.host)
         Assertions.assertEquals(443, booking.service!!.port)
         Assertions.assertEquals("booking", booking.service!!.path)
     }

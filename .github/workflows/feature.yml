@@ -27,5 +27,5 @@ jobs:
       env:
         DB_IDLETIMEOUT: 123
         SUBSERVICE_BOOKING_ISENABLED: true
-        SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+        SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.booking.host.name
         SUBSERVICE_BOOKING_SERVICE_PORT: 443

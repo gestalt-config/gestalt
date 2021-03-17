@@ -204,7 +204,7 @@ class GestaltKotlinSample {
         assertEquals('a', gestalt.getConfig("serviceMode"))
         val booking: SubService = gestalt.getConfig("subservice.booking")
         assertTrue(booking.isEnabled)
-        assertEquals("https://dev.bookin.host.name", booking.service!!.host)
+        assertEquals("https://dev.booking.host.name", booking.service!!.host)
         assertEquals(443, booking.service!!.port)
         assertEquals("booking", booking.service!!.path)
     }

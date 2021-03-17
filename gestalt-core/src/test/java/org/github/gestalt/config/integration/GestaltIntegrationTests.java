@@ -214,7 +214,7 @@ public class GestaltIntegrationTests {
         Expects the following environment variables
             DB_IDLETIMEOUT: 123
             SUBSERVICE_BOOKING_ISENABLED: true
-            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.booking.host.name
             SUBSERVICE_BOOKING_SERVICE_PORT: 443
          */
 
@@ -233,7 +233,7 @@ public class GestaltIntegrationTests {
 
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
         Assertions.assertTrue(booking.isEnabled());
-        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
         Assertions.assertEquals(443, booking.getService().getPort());
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
@@ -250,14 +250,14 @@ public class GestaltIntegrationTests {
         Expects the following environment variables
             DB_IDLETIMEOUT: 123
             SUBSERVICE_BOOKING_ISENABLED: true
-            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.booking.host.name
             SUBSERVICE_BOOKING_SERVICE_PORT: 443
          */
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
-            .addSource(new ClassPathConfigSource("/dev.properties"))
+            .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .setEnvVarsTreatErrorsAsWarnings(true)
             .addDefaultPostProcessors()
@@ -269,7 +269,7 @@ public class GestaltIntegrationTests {
 
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
         Assertions.assertTrue(booking.isEnabled());
-        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
         Assertions.assertEquals(443, booking.getService().getPort());
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
@@ -283,22 +283,22 @@ public class GestaltIntegrationTests {
         configs.put("db.hosts[2].password", "9012");
 
         /*
-        Expects the following environment variables
+        Expects the following system properties variables
             DB_IDLETIMEOUT: 123
             SUBSERVICE_BOOKING_ISENABLED: true
-            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.bookin.host.name
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.booking.host.name
             SUBSERVICE_BOOKING_SERVICE_PORT: 443
          */
 
         System.getProperties().put("DB_IDLETIMEOUT", "123");
         System.getProperties().put("SUBSERVICE_BOOKING_ISENABLED", "true");
-        System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_HOST", "https://dev.bookin.host.name");
+        System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_HOST", "https://dev.booking.host.name");
         System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_PORT", "443");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
-            .addSource(new ClassPathConfigSource("/dev.properties"))
+            .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .setEnvVarsTreatErrorsAsWarnings(true)
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
@@ -310,7 +310,7 @@ public class GestaltIntegrationTests {
 
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
         Assertions.assertTrue(booking.isEnabled());
-        Assertions.assertEquals("https://dev.bookin.host.name", booking.getService().getHost());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
         Assertions.assertEquals(443, booking.getService().getPort());
         Assertions.assertEquals("booking", booking.getService().getPath());
     }

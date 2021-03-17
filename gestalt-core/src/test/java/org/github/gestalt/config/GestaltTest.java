@@ -1257,11 +1257,11 @@ class GestaltTest {
             if (currentNode instanceof MapNode) {
                 Map<String, ConfigNode> mapNode = ((MapNode) currentNode).getMapNode();
                 if (mapNode.containsKey(node1) && mapNode.containsKey(node2)) {
-                    ConfigNode ConfigNode1 = mapNode.get(node1);
-                    ConfigNode ConfigNode2 = mapNode.get(node2);
+                    ConfigNode configNode1 = mapNode.get(node1);
+                    ConfigNode configNode2 = mapNode.get(node2);
 
-                    mapNode.put(node1, ConfigNode2);
-                    mapNode.put(node2, ConfigNode1);
+                    mapNode.put(node1, configNode2);
+                    mapNode.put(node2, configNode1);
                 }
                 return ValidateOf.valid(new MapNode(mapNode));
             }
