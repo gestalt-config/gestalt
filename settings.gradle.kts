@@ -5,7 +5,7 @@ include("gestalt-core", "gestalt-hocon", "gestalt-json", "gestalt-git", "gestalt
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
     }
 }
 
