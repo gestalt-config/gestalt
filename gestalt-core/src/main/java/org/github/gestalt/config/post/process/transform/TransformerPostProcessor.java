@@ -49,6 +49,7 @@ public class TransformerPostProcessor implements PostProcessor {
         }
     }
 
+    @Override
     public void applyConfig(PostProcessorConfig config) {
         this.transformers.values().forEach(it -> it.applyConfig(config));
     }

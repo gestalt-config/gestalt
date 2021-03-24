@@ -10,13 +10,13 @@ object Application {
     object Versions {
         const val slf4j = "1.7.30"
 
-        const val kotlinVersion = "1.4.30"
+        const val kotlinVersion = "1.4.32"
 
-        const val jackson = "2.12.1"
+        const val jackson = "2.12.2"
 
         const val hocon = "1.4.1"
-        const val aws = "2.15.82"
-        const val jgit = "5.10.0.202012080955-r"
+        const val aws = "2.16.25"
+        const val jgit = "5.11.0.202103091610-r"
 
         const val eddsa = "0.3.0"
 
@@ -60,9 +60,9 @@ object Test {
     private object Versions {
         const val junit5 = "5.7.1"
         const val assertJ = "3.19.0"
-        const val mockito = "3.7.7"
-        const val mockk = "1.10.5"
-        const val kotlinTestAssertions = "4.4.0"
+        const val mockito = "3.8.0"
+        const val mockk = "1.11.0"
+        const val kotlinTestAssertions = "4.4.3"
         const val awsMock = "2.1.28"
     }
 
@@ -80,8 +80,8 @@ object Test {
 
 object Plugins {
     object Versions {
-        const val errorprone = "2.4.0"
-        const val detekt = "1.15.0"
+        const val errorprone = "2.5.1"
+        const val detekt = "1.16.0"
     }
 
     const val errorProne = "com.google.errorprone:error_prone_core:${Versions.errorprone}"

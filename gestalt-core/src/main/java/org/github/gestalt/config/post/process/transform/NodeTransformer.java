@@ -24,6 +24,7 @@ public class NodeTransformer implements Transformer {
         return "node";
     }
 
+    @Override
     public void applyConfig(PostProcessorConfig config) {
         this.config = config;
     }

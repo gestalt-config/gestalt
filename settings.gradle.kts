@@ -15,4 +15,3 @@ dependencyResolutionManagement {
         jcenter()
     }
 }
-include("gestalt-git")
