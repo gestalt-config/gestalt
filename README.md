@@ -358,6 +358,7 @@ Provided TransformerPostProcessor
 | envVar | Environment Variables |
 | sys | Java System Properties |
 | map | A custom map provided to the constructor |
+| node | map to another leaf node in the configuration tree |
 
 # Gestalt configuration
 

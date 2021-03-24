@@ -1069,4 +1069,194 @@ public abstract class ValidationError {
             return "Unable to find node matching path: " + path + ", for class: " + klass + " during post process";
         }
     }
+
+    /**
+     * While trying to get a configuration, was unable to find a value.
+     */
+    public static class NoSystemPropertyFoundPostProcess extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NoSystemPropertyFoundPostProcess(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "No System Property found for: " + property + ", on path: " + path + " during post process";
+        }
+    }
+
+    /**
+     * While trying to get a Custom Map Property during post processing.
+     */
+    public static class NoCustomPropertyFoundPostProcess extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NoCustomPropertyFoundPostProcess(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "No custom Property found for: " + property + ", on path: " + path + " during post process";
+        }
+    }
+
+    /**
+     * While trying to get a Environment Variable during post processing.
+     */
+    public static class NoEnvironmentVariableFoundPostProcess extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NoEnvironmentVariableFoundPostProcess(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "No Environment Variables found for: " + property + ", on path: " + path + " during post process";
+        }
+    }
+
+    /**
+     * No Configuration found for Node Post Processing.
+     */
+    public static class NodePostProcessingConfigMissing extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingConfigMissing(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "node Transform PostProcessorConfig is null, unable to transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing scanned bad tokens.
+     */
+    public static class NodePostProcessingBadTokens extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingBadTokens(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "Errors generating tokens while running node transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing scanned missing tokens.
+     */
+    public static class NodePostProcessingNoResultsForTokens extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingNoResultsForTokens(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "No results generating tokens while running node transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing scanned missing tokens.
+     */
+    public static class NodePostProcessingErrorsNavigatingToNode extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingErrorsNavigatingToNode(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "Errors navigating to node while running node transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing scanned missing tokens.
+     */
+    public static class NodePostProcessingNoNodeFound extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingNoNodeFound(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "No results navigating to node while running node transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing scanned missing tokens.
+     */
+    public static class NodePostProcessingNodeNotLeaf extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingNodeNotLeaf(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "Non leaf node found while running node transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing scanned missing tokens.
+     */
+    public static class NodePostProcessingNodeLeafHasNoValue extends ValidationError {
+        private final String path;
+        private final String property;
+
+        public NodePostProcessingNodeLeafHasNoValue(String path, String property) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.property = property;
+        }
+
+        @Override
+        public String description() {
+            return "leaf node has no value while running node transform path: " + path + " with: " + property;
+        }
+    }
 }

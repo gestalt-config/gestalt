@@ -1,6 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
-import java.util.Optional;
+import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.utils.ValidateOf;
 
 /**
  * Allows you to inject Environment Variables into leaf values that match ${envVar:key},
@@ -15,7 +16,11 @@ public class EnvironmentVariablesTransformer implements Transformer {
     }
 
     @Override
-    public Optional<String> process(String path, String key) {
-        return Optional.ofNullable(System.getenv(key));
+    public ValidateOf<String> process(String path, String key) {
+        if(System.getenv(key) == null) {
+            return ValidateOf.inValid(new ValidationError.NoEnvironmentVariableFoundPostProcess(path, key));
+        } else {
+            return ValidateOf.valid(System.getenv(key));
+        }
     }
 }

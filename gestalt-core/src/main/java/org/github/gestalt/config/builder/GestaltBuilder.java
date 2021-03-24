@@ -16,6 +16,7 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
@@ -112,7 +113,8 @@ public class GestaltBuilder {
         List<PostProcessor> postProcessorsSet = new ArrayList<>();
         ServiceLoader<PostProcessor> loader = ServiceLoader.load(PostProcessor.class);
         loader.forEach(it -> {
-            it.applyConfig(gestaltConfig);
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer);
+            it.applyConfig(config);
             postProcessorsSet.add(it);
         });
         postProcessors.addAll(postProcessorsSet);

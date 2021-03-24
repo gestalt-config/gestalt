@@ -1,5 +1,6 @@
 package org.github.gestalt.config.post.process.transform;
 
+import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,27 @@ class CustomMapTransformerTest {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
-        Assertions.assertEquals("value", transformer.process("hello", "test").get());
-        Assertions.assertFalse(transformer.process("hello", "novalue").isPresent());
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+
+        Assertions.assertTrue(validateOfResults.hasResults());
+        Assertions.assertFalse(validateOfResults.hasErrors());
+        Assertions.assertNotNull(validateOfResults.results());
+        String results = validateOfResults.results();
+        Assertions.assertEquals("value", results);
+    }
+
+    @Test
+    void processMissing() {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("test", "value");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+        ValidateOf<String> validateOfResults = transformer.process("hello", "noExist");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("No custom Property found for: noExist, on path: hello during post process",
+            validateOfResults.getErrors().get(0).description());
     }
 }

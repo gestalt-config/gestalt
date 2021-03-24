@@ -4,6 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
@@ -48,6 +49,10 @@ public class TransformerPostProcessor implements PostProcessor {
         }
     }
 
+    public void applyConfig(PostProcessorConfig config) {
+        this.transformers.values().forEach(it -> it.applyConfig(config));
+    }
+
     @Override
     public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
         if (!(currentNode instanceof LeafNode) || !currentNode.getValue().isPresent()) {
@@ -65,9 +70,9 @@ public class TransformerPostProcessor implements PostProcessor {
             int endOfMatch = matcher.end();
 
             if (transformers.containsKey(transformName)) {
-                Optional<String> value = transformers.get(transformName).process(path, key);
-                if (value.isPresent()) {
-                    newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.get());
+                ValidateOf<String> value = transformers.get(transformName).process(path, key);
+                if (value.hasResults()) {
+                    newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
                     lastIndex = endOfMatch;
 
                 } else {

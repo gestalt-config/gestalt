@@ -1,6 +1,6 @@
 package org.github.gestalt.config.post.process;
 
-import org.github.gestalt.config.entity.GestaltConfig;
+import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -10,14 +10,14 @@ import org.github.gestalt.config.utils.ValidateOf;
  * @author Colin Redmond
  */
 public interface PostProcessor {
-    ValidateOf<ConfigNode> process(String path, ConfigNode currentNode);
+    ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) throws GestaltException;
 
     /**
-     * Apply the GestaltConfig to the Post Processor. Needed when building via the ServiceLoader
+     * Apply the PostProcessorConfig to the Post Processor. Needed when building via the ServiceLoader
      * It is a default method as most Post Processor don't need to apply configs.
      *
      * @param config GestaltConfig to update the Post Processor
      */
-    default void applyConfig(GestaltConfig config) {
+    default void applyConfig(PostProcessorConfig config) {
     }
 }

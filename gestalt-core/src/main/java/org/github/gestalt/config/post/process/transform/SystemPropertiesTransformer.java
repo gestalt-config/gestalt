@@ -1,6 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
-import java.util.Optional;
+import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.utils.ValidateOf;
 
 /**
  * Allows you to inject System Properties into leaf values that match ${envVar:key},
@@ -18,11 +19,11 @@ public class SystemPropertiesTransformer implements Transformer {
     }
 
     @Override
-    public Optional<String> process(String path, String key) {
+    public ValidateOf<String> process(String path, String key) {
         if (!System.getProperties().containsKey(key)) {
-            return Optional.empty();
+            return ValidateOf.inValid(new ValidationError.NoSystemPropertyFoundPostProcess(path, key));
         } else {
-            return Optional.of(System.getProperties().get(key).toString());
+            return ValidateOf.valid(System.getProperties().get(key).toString());
         }
     }
 }

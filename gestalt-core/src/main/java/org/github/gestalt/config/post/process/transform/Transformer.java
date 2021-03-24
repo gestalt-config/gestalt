@@ -1,6 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
-import java.util.Optional;
+import org.github.gestalt.config.post.process.PostProcessorConfig;
+import org.github.gestalt.config.utils.ValidateOf;
 
 /**
  * Allows you to add your own custom source for the TransformerPostProcessor.
@@ -23,5 +24,14 @@ public interface Transformer {
      * @param key the key to lookup int this transform.
      * @return the value to replace the ${name:key}
      */
-    Optional<String> process(String path, String key);
+    ValidateOf<String> process(String path, String key);
+
+    /**
+     * Apply the PostProcessorConfig to the Transformer. Needed when building via the ServiceLoader
+     * It is a default method as most Transformer don't need to apply configs.
+     *
+     * @param config GestaltConfig to update the Post Processor
+     */
+    default void applyConfig(PostProcessorConfig config) {
+    }
 }
