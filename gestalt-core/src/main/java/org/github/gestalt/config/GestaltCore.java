@@ -319,7 +319,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             return true;
         }
 
-        return error.level() != ValidationLevel.ERROR && error.level() != ValidationLevel.FATAL;
+        return error.level() != ValidationLevel.ERROR;
     }
 
 }
