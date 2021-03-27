@@ -2,7 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -38,24 +38,24 @@ public class DecoderRegistry implements DecoderService {
      * @param decoders          list of all supported decoders
      * @param configNodeService config node service that holds the config nodes.
      * @param lexer             sentence lexer to decode
-     * @throws ConfigurationException any configuration exceptions for empty parameters.
+     * @throws GestaltConfigurationException any configuration exceptions for empty parameters.
      */
     public DecoderRegistry(List<Decoder<?>> decoders, ConfigNodeService configNodeService, SentenceLexer lexer)
-        throws ConfigurationException {
+        throws GestaltConfigurationException {
         if (configNodeService == null) {
-            throw new ConfigurationException("ConfigNodeService can not be null");
+            throw new GestaltConfigurationException("ConfigNodeService can not be null");
         }
         this.configNodeService = configNodeService;
 
         if (lexer == null) {
-            throw new ConfigurationException("SentenceLexer can not be null");
+            throw new GestaltConfigurationException("SentenceLexer can not be null");
         }
         this.lexer = lexer;
 
         if (decoders != null) {
             this.decoders.addAll(decoders);
         } else {
-            throw new ConfigurationException("Decoder list was null");
+            throw new GestaltConfigurationException("Decoder list was null");
         }
     }
 
@@ -92,7 +92,7 @@ public class DecoderRegistry implements DecoderService {
         } else if (classDecoder.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));
         } else if (classDecoder.size() > 1) {
-            logger.warn("Found multiple decoders for {}, found: {}, using {}: ", klass, classDecoder, classDecoder.get(0));
+            logger.info("Found multiple decoders for {}, found: {}, using {}: ", klass, classDecoder, classDecoder.get(0));
         }
 
         return classDecoder.get(0).decode(path, configNode, klass, this);
@@ -109,7 +109,7 @@ public class DecoderRegistry implements DecoderService {
         }
 
         if (!listValidateOf.hasResults()) {
-            return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class));
+            return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "decoding"));
         }
 
         List<Token> nextTokens = listValidateOf.results();

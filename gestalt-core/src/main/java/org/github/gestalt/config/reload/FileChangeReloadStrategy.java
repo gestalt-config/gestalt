@@ -1,6 +1,6 @@
 package org.github.gestalt.config.reload;
 
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.FileConfigSource;
@@ -37,9 +37,9 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
      * constructor.
      *
      * @param source the source to watch for reload
-     * @throws ConfigurationException if this is not a file source or other errors.
+     * @throws GestaltConfigurationException if this is not a file source or other errors.
      */
-    public FileChangeReloadStrategy(ConfigSource source) throws ConfigurationException {
+    public FileChangeReloadStrategy(ConfigSource source) throws GestaltConfigurationException {
         this(source, Executors.newSingleThreadExecutor());
     }
 
@@ -48,20 +48,20 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
      *
      * @param source   the source to watch for reload
      * @param executor ExecutorService to get thread from.
-     * @throws ConfigurationException if this is not a file source or other errors.
+     * @throws GestaltConfigurationException if this is not a file source or other errors.
      */
-    public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws ConfigurationException {
+    public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws GestaltConfigurationException {
         super(source);
         this.executor = executor;
         if (!(source instanceof FileConfigSource)) {
-            throw new ConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
+            throw new GestaltConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
         }
         path = ((FileConfigSource) source).getPath();
         try {
             watcher = FileSystems.getDefault().newWatchService();
             path.toAbsolutePath().getParent().register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
-            throw new ConfigurationException("unable to create a watch service on file " + path);
+            throw new GestaltConfigurationException("unable to create a watch service on file " + path);
         }
     }
 

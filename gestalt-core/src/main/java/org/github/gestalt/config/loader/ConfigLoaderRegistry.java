@@ -1,6 +1,6 @@
 package org.github.gestalt.config.loader;
 
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,13 +43,13 @@ public class ConfigLoaderRegistry implements ConfigLoaderService {
     }
 
     @Override
-    public ConfigLoader getLoader(String format) throws ConfigurationException {
+    public ConfigLoader getLoader(String format) throws GestaltConfigurationException {
         List<ConfigLoader> matchingConfig = configLoaders
             .stream()
             .filter(config -> config.accepts(format))
             .collect(Collectors.toList());
         if (matchingConfig.isEmpty()) {
-            throw new ConfigurationException("Unable to find a config loader to match: " + format);
+            throw new GestaltConfigurationException("Unable to find a config loader to match: " + format);
         } else if (matchingConfig.size() > 1) {
             logger.warn("Found more than one configuration loaderFor format: {}, found: {}", format, matchingConfig);
         }

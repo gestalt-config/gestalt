@@ -113,7 +113,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens))
-            .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", MapNode.class)));
+            .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", MapNode.class, "post processing")));
 
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
         ValidateOf<String> validateOfResults = transformer.process("hello", "test");
@@ -122,7 +122,7 @@ class NodeTransformerTest {
         Assertions.assertTrue(validateOfResults.hasErrors());
 
         Assertions.assertEquals(2, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: test, for class: MapNode",
+        Assertions.assertEquals("Unable to find node matching path: test, for class: MapNode, during post processing",
             validateOfResults.getErrors().get(0).description());
         Assertions.assertEquals("Errors navigating to node while running node transform path: hello with: test",
             validateOfResults.getErrors().get(1).description());
@@ -145,7 +145,7 @@ class NodeTransformerTest {
 
         Assertions.assertEquals(2, validateOfResults.getErrors().size());
         Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
-        Assertions.assertEquals("No results navigating to node while running node transform path: hello with: test",
+        Assertions.assertEquals("Unable to find node matching path: hello, for class: test, during NodeTransformer",
             validateOfResults.getErrors().get(1).description());
     }
 

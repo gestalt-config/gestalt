@@ -58,7 +58,7 @@ public class NodeTransformer implements Transformer {
         }
 
         if (!validateOfConfigNode.hasResults()) {
-            errors.add(new ValidationError.NodePostProcessingNoNodeFound(path, key));
+            errors.add(new ValidationError.NoResultsFoundForNode(path, key, "NodeTransformer"));
             return ValidateOf.inValid(errors);
         }
 

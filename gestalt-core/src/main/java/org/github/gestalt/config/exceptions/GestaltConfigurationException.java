@@ -10,12 +10,12 @@ import java.util.List;
  *
  * @author Colin Redmond
  */
-public class ConfigurationException extends GestaltException {
-    public ConfigurationException(String message, List<ValidationError> errors) {
+public class GestaltConfigurationException extends GestaltException {
+    public GestaltConfigurationException(String message, List<ValidationError> errors) {
         super(ErrorsUtil.buildErrorMessage(message, errors));
     }
 
-    public ConfigurationException(String message) {
+    public GestaltConfigurationException(String message) {
         super(message);
     }
 }

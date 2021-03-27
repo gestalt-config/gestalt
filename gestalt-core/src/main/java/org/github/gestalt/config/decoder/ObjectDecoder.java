@@ -87,7 +87,7 @@ public class ObjectDecoder implements Decoder<Object> {
                     if (configNode.hasErrors(ValidationLevel.ERROR)) {
                         errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
                     } else if (!configNode.hasResults()) {
-                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType()));
+                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
                     } else {
                         ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                             TypeCapture.of(fieldClass));
@@ -98,11 +98,11 @@ public class ObjectDecoder implements Decoder<Object> {
                         if (fieldValidateOf.hasResults()) {
                             field.set(obj, fieldValidateOf.results());
                         } else {
-                            errors.add(new ValidationError.NoResultsFoundForDecodingNode(nextPath, field.getType()));
+                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
                         }
                     }
                 } else {
-                    logger.warn("Ignoring static field for class: " + klass.getName() + " field " + name);
+                    logger.info("Ignoring static field for class: " + klass.getName() + " field " + name);
                 }
             }
 

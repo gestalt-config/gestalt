@@ -1,6 +1,6 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -27,7 +27,7 @@ class SetDecoderTest {
     SentenceLexer lexer;
 
     @BeforeEach
-    void setup() throws ConfigurationException {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
         decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer);

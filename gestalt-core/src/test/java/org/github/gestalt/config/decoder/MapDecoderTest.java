@@ -1,6 +1,6 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
@@ -20,7 +20,7 @@ class MapDecoderTest {
     DecoderRegistry registry;
 
     @BeforeEach
-    void setup() throws ConfigurationException {
+    void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
         registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
             new ObjectDecoder(), new FloatDecoder()), configNodeService, lexer);

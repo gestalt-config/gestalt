@@ -7,5 +7,6 @@ package org.github.gestalt.config.entity;
  */
 public enum ValidationLevel {
     ERROR,
-    WARN
+    WARN,
+    DEBUG
 }

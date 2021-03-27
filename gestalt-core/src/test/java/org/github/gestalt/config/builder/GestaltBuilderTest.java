@@ -3,7 +3,7 @@ package org.github.gestalt.config.builder;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.GestaltConfig;
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -146,7 +146,8 @@ class GestaltBuilderTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: admin[1], for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find array node for path: admin[1], at token: ArrayToken");
+                    " - level: ERROR, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -307,14 +308,14 @@ class GestaltBuilderTest {
         try {
             builder.addSources(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No sources provided while adding sources", e.getMessage());
         }
 
         try {
             builder.setSources(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No sources provided while setting sources", e.getMessage());
         }
     }
@@ -325,14 +326,14 @@ class GestaltBuilderTest {
         try {
             builder.addDecoders(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No decoders provided while adding decoders", e.getMessage());
         }
 
         try {
             builder.setDecoders(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No decoders provided while setting decoders", e.getMessage());
         }
     }
@@ -343,14 +344,14 @@ class GestaltBuilderTest {
         try {
             builder.addPostProcessors(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
         }
 
         try {
             builder.setPostProcessors(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
         }
     }
@@ -361,14 +362,14 @@ class GestaltBuilderTest {
         try {
             builder.addConfigLoaders(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No config loader provided while adding config loaders", e.getMessage());
         }
 
         try {
             builder.setConfigLoaders(null);
             Assertions.fail("Should not hit this");
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No config loader provided while setting config loaders", e.getMessage());
         }
     }
@@ -378,7 +379,7 @@ class GestaltBuilderTest {
         GestaltBuilder builder = new GestaltBuilder();
         try {
             builder.build();
-        } catch (ConfigurationException e) {
+        } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No sources provided", e.getMessage());
         }
     }

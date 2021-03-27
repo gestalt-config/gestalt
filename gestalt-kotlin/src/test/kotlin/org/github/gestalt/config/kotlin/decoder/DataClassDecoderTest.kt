@@ -2,7 +2,7 @@ package org.github.gestalt.config.kotlin.decoder
 
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.decoder.Priority
-import org.github.gestalt.config.exceptions.ConfigurationException
+import org.github.gestalt.config.exceptions.GestaltConfigurationException
 import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.kotlin.test.classes.DBInfo
 import org.github.gestalt.config.kotlin.test.classes.DBInfoNoDefault
@@ -22,7 +22,7 @@ class DataClassDecoderTest {
     var registry: DecoderRegistry? = null
 
     @BeforeEach
-    @Throws(ConfigurationException::class)
+    @Throws(GestaltConfigurationException::class)
     fun setup() {
         configNodeService = ConfigNodeManager()
         registry = DecoderRegistry(
@@ -88,7 +88,7 @@ class DataClassDecoderTest {
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(
-            "Unable to find object node for path: db.host.password, at token: ObjectToken",
+            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
             validate.errors[0].description()
         )
 
@@ -125,7 +125,7 @@ class DataClassDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(1, validate.errors.size)
         Assertions.assertEquals(
-            "Unable to find object node for path: db.host.password, at token: ObjectToken",
+            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
             validate.errors[0].description()
         )
 
@@ -147,7 +147,7 @@ class DataClassDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
         Assertions.assertEquals(
-            "Unable to find object node for path: db.host.password, at token: ObjectToken",
+            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
             validate.errors[0].description()
         )
         Assertions.assertEquals(
@@ -173,7 +173,7 @@ class DataClassDecoderTest {
             validate.errors[0].description()
         )
         Assertions.assertEquals(
-            "Unable to decode node matching path: db.host.port, for class: class kotlin.Int",
+            "Unable to find node matching path: db.host.port, for class: class kotlin.Int, during data decoding",
             validate.errors[1].description()
         )
 
@@ -200,7 +200,7 @@ class DataClassDecoderTest {
             validate.errors[0].description()
         )
         Assertions.assertEquals(
-            "Unable to decode node matching path: db.host.port, for class: class kotlin.Int",
+            "Unable to find node matching path: db.host.port, for class: class kotlin.Int, during data decoding",
             validate.errors[1].description()
         )
 

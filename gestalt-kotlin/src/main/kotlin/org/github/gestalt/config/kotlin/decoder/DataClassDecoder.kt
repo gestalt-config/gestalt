@@ -80,7 +80,9 @@ class DataClassDecoder : Decoder<Any> {
                                 }
 
                                 if (!parameter.hasResults()) {
-                                    errors.add(ValidationError.NoResultsFoundForDecodingNode(nextPath, it.type.classifier.toString()))
+                                    errors.add(
+                                        ValidationError.NoResultsFoundForNode(nextPath, it.type.classifier.toString(), "data decoding")
+                                    )
                                 } else {
                                     results = parameter.results()
                                 }

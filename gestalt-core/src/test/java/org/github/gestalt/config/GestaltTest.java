@@ -3,7 +3,7 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -532,7 +532,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
-                    " - level: ERROR, message: Unable to find array node for path: admin.user[2], at token: ArrayToken");
+                    " - level: ERROR, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
+                    "during navigating to next node");
         }
 
         try {
@@ -726,7 +727,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find object node for path: no.exist.name, at token: ObjectToken");
+                    " - level: ERROR, message: Unable to find node matching path: no.exist.name, for class: ObjectToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -760,7 +762,7 @@ class GestaltTest {
                 configNodeManager, lexer),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
-        ConfigurationException e = Assertions.assertThrows(ConfigurationException.class, gestalt::loadConfigs);
+        GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, gestalt::loadConfigs);
         Assertions.assertEquals("No results found for node", e.getMessage());
     }
 
@@ -798,7 +800,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find object node for path: db.password, at token: ObjectToken");
+                    " - level: ERROR, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -836,7 +839,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find array node for path: admin[3], at token: ArrayToken");
+                    " - level: ERROR, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -871,6 +875,13 @@ class GestaltTest {
                 .hasMessage("Unable to parse path: admin[a3]\n" +
                     " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
         }
+
+        Optional<String> result = gestalt.getConfigOptional("admin[a3]", String.class);
+        Assertions.assertFalse(result.isPresent());
+
+        String resultStr = gestalt.getConfig("admin[a3]", "test", String.class);
+        Assertions.assertEquals("test", resultStr);
+
     }
 
     @Test

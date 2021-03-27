@@ -234,7 +234,8 @@ class DecoderRegistryTest {
         Assertions.assertTrue(test.hasErrors());
 
         Assertions.assertEquals(1, test.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: test, for class: MapNode", test.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: test, for class: MapNode, during decoding",
+            test.getErrors().get(0).description());
 
         Mockito.verify(lexer, Mockito.times(1)).scan(any());
         Mockito.verify(configNodeService, Mockito.times(0)).navigateToNextNode(any(), any(), any());

@@ -338,7 +338,8 @@ class ConfigNodeManagerTest {
 
         assertThat(validateOfResults2.getErrors())
             .anyMatch(it -> it.description().equals("Leaf nodes are empty for path: admin[0].port"))
-            .anyMatch(it -> it.description().equals("Unable to find node matching path: admin[0], for class: MapNode"));
+            .anyMatch(it -> it.description().equals("Unable to find node matching path: admin[0], for class: MapNode, " +
+                "during merging maps"));
     }
 
     @Test
@@ -592,7 +593,7 @@ class ConfigNodeManagerTest {
 
         Assertions.assertEquals(2, validateOfResults2.getErrors().size());
         assertThat(validateOfResults2.getErrors())
-            .anyMatch(it -> it.description().equals("Unable to find node matching path: db, for class: MapNode"))
+            .anyMatch(it -> it.description().equals("Unable to find node matching path: db, for class: MapNode, during merging maps"))
             .anyMatch(it -> it.description().equals("Leaf nodes are empty for path: db.name"));
     }
 
@@ -973,7 +974,7 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Unable to find array node for path: admin[0], at token: ArrayToken",
+        Assertions.assertEquals("Unable to find node matching path: admin[0], for class: ArrayToken, during navigating to next node",
             navigateValidate.getErrors().get(0).description());
     }
 
@@ -1009,7 +1010,7 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Unable to find object node for path: db.password, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.password, for class: ObjectToken, during navigating to next node",
             navigateValidate.getErrors().get(0).description());
     }
 
@@ -1189,7 +1190,7 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Unable to find object node for path: db.test, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.test, for class: ObjectToken, during navigating to next node",
             navigateValidate.getErrors().get(0).description());
     }
 
@@ -1234,7 +1235,7 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Unable to find object node for path: db.port, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.port, for class: ObjectToken, during navigating to next node",
             navigateValidate.getErrors().get(0).description());
     }
 
@@ -1270,7 +1271,7 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Unable to find array node for path: array[2], at token: ArrayToken",
+        Assertions.assertEquals("Unable to find node matching path: array[2], for class: ArrayToken, during navigating to next node",
             navigateValidate.getErrors().get(0).description());
     }
 
@@ -1613,7 +1614,7 @@ class ConfigNodeManagerTest {
         Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
                 "on Path: admin[1] while post processing",
             validateOf.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: admin, for class: ArrayNode during post process",
+        Assertions.assertEquals("Unable to find node matching path: admin, for class: ArrayNode, during post processing",
             validateOf.getErrors().get(1).description());
     }
 
@@ -1652,7 +1653,7 @@ class ConfigNodeManagerTest {
         Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
                 "on Path: db.port while post processing",
             validateOf.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: db, for class: MapNode during post process",
+        Assertions.assertEquals("Unable to find node matching path: db, for class: MapNode, during post processing",
             validateOf.getErrors().get(1).description());
     }
 
