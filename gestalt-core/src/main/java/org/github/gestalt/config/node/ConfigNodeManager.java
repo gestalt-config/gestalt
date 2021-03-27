@@ -87,7 +87,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             if (processedNode.hasResults()) {
                 currentNode = processedNode.results();
             } else {
-                errors.add(new ValidationError.NoResultsFoundForNodeDuringPostProcess(path, node.getClass()));
+                errors.add(new ValidationError.NoResultsFoundForNode(path, node.getClass(), "post processing"));
             }
         }
 
@@ -119,7 +119,7 @@ public class ConfigNodeManager implements ConfigNodeService {
                 if (newNode.hasResults()) {
                     processedNode[i] = newNode.results();
                 } else {
-                    errors.add(new ValidationError.NoResultsFoundForNodeDuringPostProcess(path, ArrayNode.class));
+                    errors.add(new ValidationError.NoResultsFoundForNode(path, ArrayNode.class, "post processing"));
                 }
             }
         }
@@ -140,7 +140,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             if (newNode.hasResults()) {
                 processedNode.put(key, newNode.results());
             } else {
-                errors.add(new ValidationError.NoResultsFoundForNodeDuringPostProcess(path, MapNode.class));
+                errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "post processing"));
             }
         }
 
@@ -171,7 +171,7 @@ public class ConfigNodeManager implements ConfigNodeService {
                 if (mergedNode.hasResults()) {
                     newRoot = mergedNode.results();
                 } else {
-                    errors.add(new ValidationError.NoResultsFoundForNodeDuringReload(""));
+                    errors.add(new ValidationError.NoResultsFoundForNode("", "reload node"));
                 }
             }
             index++;
@@ -282,7 +282,7 @@ public class ConfigNodeManager implements ConfigNodeService {
                 if (result.hasResults()) {
                     values[i] = result.results();
                 } else {
-                    errors.add(new ValidationError.NoResultsFoundForNode(path, ArrayNode.class));
+                    errors.add(new ValidationError.NoResultsFoundForNode(path, ArrayNode.class, "merging arrays"));
                 }
             } else if (array1AtIndex.isPresent()) {
                 values[i] = array1AtIndex.get();
@@ -319,7 +319,7 @@ public class ConfigNodeManager implements ConfigNodeService {
                 if (result.hasResults()) {
                     mergedNode.putIfAbsent(key, result.results());
                 } else {
-                    errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class));
+                    errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "merging maps"));
                 }
             } else {
                 mergedNode.putIfAbsent(key, entry.getValue());
@@ -368,7 +368,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             if (result.hasResults()) {
                 currentNode = result.results();
             } else {
-                errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class));
+                errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "navigating to node"));
             }
         }
 
@@ -390,7 +390,7 @@ public class ConfigNodeManager implements ConfigNodeService {
                 if (nextNode.isPresent()) {
                     node = nextNode.get();
                 } else {
-                    return ValidateOf.inValid(new ValidationError.UnableToFindArrayNodeForPath(path, token));
+                    return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, token.getClass(), "navigating to next node"));
                 }
             } else {
                 return ValidateOf.inValid(
@@ -402,7 +402,7 @@ public class ConfigNodeManager implements ConfigNodeService {
                 if (nextNode.isPresent()) {
                     node = nextNode.get();
                 } else {
-                    return ValidateOf.inValid(new ValidationError.UnableToFindObjectNodeForPath(path, token));
+                    return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, token.getClass(), "navigating to next node"));
                 }
             } else {
                 return ValidateOf.inValid(new ValidationError.MismatchedObjectNodeForPath(path, MapNode.class, node.getClass()));

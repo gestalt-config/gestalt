@@ -1,6 +1,6 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -21,7 +21,7 @@ class ObjectDecoderTest {
     DecoderRegistry registry;
 
     @BeforeEach
-    void setup() throws ConfigurationException {
+    void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
         registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
             new ObjectDecoder(), new FloatDecoder()), configNodeService, lexer);
@@ -102,7 +102,8 @@ class ObjectDecoderTest {
         Assertions.assertEquals(10000, results.getTimeout());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find object node for path: db.host.timeout, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.host.timeout, for class: ObjectToken, " +
+                "during navigating to next node",
             validate.getErrors().get(0).description());
 
     }
@@ -161,7 +162,8 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find object node for path: db.host.password, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: ObjectToken, " +
+                "during navigating to next node",
             validate.getErrors().get(0).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
@@ -188,7 +190,7 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
                 "LeafNode{value='aaaa'} attempting to decode Integer",
             validate.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to decode node matching path: db.host.port, for class: int",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int, during object decoding",
             validate.getErrors().get(1).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
@@ -214,7 +216,7 @@ class ObjectDecoderTest {
         Assertions.assertEquals(2, validate.getErrors().size());
         Assertions.assertEquals("Leaf on path: db.host.port, missing value, LeafNode{value='null'} attempting to decode Integer",
             validate.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to decode node matching path: db.host.port, for class: int",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int, during object decoding",
             validate.getErrors().get(1).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
@@ -238,7 +240,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find object node for path: db.host.port, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node",
             validate.getErrors().get(0).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
@@ -279,7 +281,8 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find object node for path: db.host.defaultWait, at token: ObjectToken",
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken, " +
+                "during navigating to next node",
             validate.getErrors().get(0).description());
 
         DBPool results = (DBPool) validate.results();

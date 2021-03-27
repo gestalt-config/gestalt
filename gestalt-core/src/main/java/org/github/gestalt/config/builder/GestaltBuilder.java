@@ -7,7 +7,7 @@ import org.github.gestalt.config.decoder.Decoder;
 import org.github.gestalt.config.decoder.DecoderRegistry;
 import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.entity.GestaltConfig;
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
@@ -126,11 +126,11 @@ public class GestaltBuilder {
      *
      * @param sources list of sources to load.
      * @return GestaltBuilder builder
-     * @throws ConfigurationException exception if there are no sources
+     * @throws GestaltConfigurationException exception if there are no sources
      */
-    public GestaltBuilder setSources(List<ConfigSource> sources) throws ConfigurationException {
+    public GestaltBuilder setSources(List<ConfigSource> sources) throws GestaltConfigurationException {
         if (sources == null || sources.isEmpty()) {
-            throw new ConfigurationException("No sources provided while setting sources");
+            throw new GestaltConfigurationException("No sources provided while setting sources");
         }
         this.sources = sources;
 
@@ -142,11 +142,11 @@ public class GestaltBuilder {
      *
      * @param sources list of sources to add.
      * @return GestaltBuilder builder
-     * @throws ConfigurationException no sources provided
+     * @throws GestaltConfigurationException no sources provided
      */
-    public GestaltBuilder addSources(List<ConfigSource> sources) throws ConfigurationException {
+    public GestaltBuilder addSources(List<ConfigSource> sources) throws GestaltConfigurationException {
         if (sources == null || sources.isEmpty()) {
-            throw new ConfigurationException("No sources provided while adding sources");
+            throw new GestaltConfigurationException("No sources provided while adding sources");
         }
         this.sources.addAll(sources);
 
@@ -231,11 +231,11 @@ public class GestaltBuilder {
      *
      * @param configLoaders a list of config loader
      * @return GestaltBuilder builder
-     * @throws ConfigurationException if there are no config loaders.
+     * @throws GestaltConfigurationException if there are no config loaders.
      */
-    public GestaltBuilder setConfigLoaders(List<ConfigLoader> configLoaders) throws ConfigurationException {
+    public GestaltBuilder setConfigLoaders(List<ConfigLoader> configLoaders) throws GestaltConfigurationException {
         if (configLoaders == null || configLoaders.isEmpty()) {
-            throw new ConfigurationException("No config loader provided while setting config loaders");
+            throw new GestaltConfigurationException("No config loader provided while setting config loaders");
         }
         this.configLoaders = configLoaders;
         return this;
@@ -247,11 +247,11 @@ public class GestaltBuilder {
      *
      * @param configLoaders a list of config loader
      * @return GestaltBuilder builder
-     * @throws ConfigurationException if the config loaders are empty
+     * @throws GestaltConfigurationException if the config loaders are empty
      */
-    public GestaltBuilder addConfigLoaders(List<ConfigLoader> configLoaders) throws ConfigurationException {
+    public GestaltBuilder addConfigLoaders(List<ConfigLoader> configLoaders) throws GestaltConfigurationException {
         if (configLoaders == null || configLoaders.isEmpty()) {
-            throw new ConfigurationException("No config loader provided while adding config loaders");
+            throw new GestaltConfigurationException("No config loader provided while adding config loaders");
         }
         this.configLoaders.addAll(configLoaders);
         return this;
@@ -275,11 +275,11 @@ public class GestaltBuilder {
      *
      * @param postProcessors list of postProcessors to run.
      * @return GestaltBuilder builder
-     * @throws ConfigurationException exception if there are no postProcessors
+     * @throws GestaltConfigurationException exception if there are no postProcessors
      */
-    public GestaltBuilder setPostProcessors(List<PostProcessor> postProcessors) throws ConfigurationException {
+    public GestaltBuilder setPostProcessors(List<PostProcessor> postProcessors) throws GestaltConfigurationException {
         if (postProcessors == null || postProcessors.isEmpty()) {
-            throw new ConfigurationException("No PostProcessors provided while setting");
+            throw new GestaltConfigurationException("No PostProcessors provided while setting");
         }
         this.postProcessors = postProcessors;
 
@@ -291,11 +291,11 @@ public class GestaltBuilder {
      *
      * @param postProcessor list of PostProcessor to add.
      * @return GestaltBuilder builder
-     * @throws ConfigurationException no PostProcessor provided
+     * @throws GestaltConfigurationException no PostProcessor provided
      */
-    public GestaltBuilder addPostProcessors(List<PostProcessor> postProcessor) throws ConfigurationException {
+    public GestaltBuilder addPostProcessors(List<PostProcessor> postProcessor) throws GestaltConfigurationException {
         if (sources == null || sources.isEmpty()) {
-            throw new ConfigurationException("No PostProcessor provided while adding");
+            throw new GestaltConfigurationException("No PostProcessor provided while adding");
         }
         this.postProcessors.addAll(postProcessor);
 
@@ -370,11 +370,11 @@ public class GestaltBuilder {
      *
      * @param decoders list of decoders
      * @return GestaltBuilder builder
-     * @throws ConfigurationException no decoders provided
+     * @throws GestaltConfigurationException no decoders provided
      */
-    public GestaltBuilder setDecoders(List<Decoder<?>> decoders) throws ConfigurationException {
+    public GestaltBuilder setDecoders(List<Decoder<?>> decoders) throws GestaltConfigurationException {
         if (decoders == null || decoders.isEmpty()) {
-            throw new ConfigurationException("No decoders provided while setting decoders");
+            throw new GestaltConfigurationException("No decoders provided while setting decoders");
         }
         this.decoders = decoders;
         return this;
@@ -386,11 +386,11 @@ public class GestaltBuilder {
      *
      * @param decoders list of decoders
      * @return GestaltBuilder builder
-     * @throws ConfigurationException no decoders provided
+     * @throws GestaltConfigurationException no decoders provided
      */
-    public GestaltBuilder addDecoders(List<Decoder<?>> decoders) throws ConfigurationException {
+    public GestaltBuilder addDecoders(List<Decoder<?>> decoders) throws GestaltConfigurationException {
         if (decoders == null || decoders.isEmpty()) {
-            throw new ConfigurationException("No decoders provided while adding decoders");
+            throw new GestaltConfigurationException("No decoders provided while adding decoders");
         }
         this.decoders.addAll(decoders);
         return this;
@@ -547,11 +547,11 @@ public class GestaltBuilder {
      * Build Gestalt.
      *
      * @return Gestalt
-     * @throws ConfigurationException multiple validations can throw exceptions
+     * @throws GestaltConfigurationException multiple validations can throw exceptions
      */
-    public Gestalt build() throws ConfigurationException {
+    public Gestalt build() throws GestaltConfigurationException {
         if (sources.isEmpty()) {
-            throw new ConfigurationException("No sources provided");
+            throw new GestaltConfigurationException("No sources provided");
         }
 
         gestaltConfig = rebuildConfig();

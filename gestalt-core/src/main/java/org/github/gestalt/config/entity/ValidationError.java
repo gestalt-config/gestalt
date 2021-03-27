@@ -604,48 +604,36 @@ public abstract class ValidationError {
      */
     public static class NoResultsFoundForNode extends ValidationError {
         private final String path;
-        private final String klass;
+        private final String area;
+        private String klass;
 
-        public NoResultsFoundForNode(String path, String klass) {
+        public NoResultsFoundForNode(String path, String area) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.area = area;
+        }
+
+        public NoResultsFoundForNode(String path, String klass, String area) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.klass = klass;
+            this.area = area;
         }
 
-        public NoResultsFoundForNode(String path, Class<?> klass) {
+        public NoResultsFoundForNode(String path, Class<?> klass, String area) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.klass = klass.getSimpleName();
+            this.area = area;
         }
 
         @Override
         public String description() {
-            return "Unable to find node matching path: " + path + ", for class: " + klass;
-        }
-    }
-
-    /**
-     * While decoding a node no results were found.
-     */
-    public static class NoResultsFoundForDecodingNode extends ValidationError {
-        private final String path;
-        private final String klass;
-
-        public NoResultsFoundForDecodingNode(String path, String klass) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.klass = klass;
-        }
-
-        public NoResultsFoundForDecodingNode(String path, Class<?> klass) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.klass = klass.getSimpleName();
-        }
-
-        @Override
-        public String description() {
-            return "Unable to decode node matching path: " + path + ", for class: " + klass;
+            if (klass != null) {
+                return "Unable to find node matching path: " + path + ", for class: " + klass + ", during " + area;
+            } else {
+                return "Unable to find node matching path: " + path + ", during " + area;
+            }
         }
     }
 
@@ -682,44 +670,6 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Empty node value provided for path: " + path + "." + key;
-        }
-    }
-
-    /**
-     * While navigating to an array, did not receive a array node.
-     */
-    public static class UnableToFindArrayNodeForPath extends ValidationError {
-        private final String path;
-        private final Token token;
-
-        public UnableToFindArrayNodeForPath(String path, Token token) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.token = token;
-        }
-
-        @Override
-        public String description() {
-            return "Unable to find array node for path: " + path + ", at token: " + token.getClass().getSimpleName();
-        }
-    }
-
-    /**
-     * While navigating to an object, did not receive an object node.
-     */
-    public static class UnableToFindObjectNodeForPath extends ValidationError {
-        private final String path;
-        private final Token token;
-
-        public UnableToFindObjectNodeForPath(String path, Token token) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.token = token;
-        }
-
-        @Override
-        public String description() {
-            return "Unable to find object node for path: " + path + ", at token: " + token.getClass().getSimpleName();
         }
     }
 
@@ -974,22 +924,8 @@ public abstract class ValidationError {
     }
 
     /**
-     * While trying reload a node, was unable to find a value.
+     * No matching transform found for name.
      */
-    public static class NoResultsFoundForNodeDuringReload extends ValidationError {
-        private final String path;
-
-        public NoResultsFoundForNodeDuringReload(String path) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-        }
-
-        @Override
-        public String description() {
-            return "Unable to find node matching path: " + path + ", for during reload";
-        }
-    }
-
     public static class NoMatchingTransformFound extends ValidationError {
         private final String path;
         private final String transformName;
@@ -1042,31 +978,6 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Unknown node type: " + nodeType + " on Path: " + path + " while post processing";
-        }
-    }
-
-    /**
-     * While trying to get a configuration, was unable to find a value.
-     */
-    public static class NoResultsFoundForNodeDuringPostProcess extends ValidationError {
-        private final String path;
-        private final String klass;
-
-        public NoResultsFoundForNodeDuringPostProcess(String path, String klass) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.klass = klass;
-        }
-
-        public NoResultsFoundForNodeDuringPostProcess(String path, Class<?> klass) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.klass = klass.getSimpleName();
-        }
-
-        @Override
-        public String description() {
-            return "Unable to find node matching path: " + path + ", for class: " + klass + " during post process";
         }
     }
 
@@ -1200,25 +1111,6 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Errors navigating to node while running node transform path: " + path + " with: " + property;
-        }
-    }
-
-    /**
-     * Node Post Processing scanned missing tokens.
-     */
-    public static class NodePostProcessingNoNodeFound extends ValidationError {
-        private final String path;
-        private final String property;
-
-        public NodePostProcessingNoNodeFound(String path, String property) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.property = property;
-        }
-
-        @Override
-        public String description() {
-            return "No results navigating to node while running node transform path: " + path + " with: " + property;
         }
     }
 

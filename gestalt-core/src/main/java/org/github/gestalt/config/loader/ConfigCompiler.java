@@ -3,7 +3,7 @@ package org.github.gestalt.config.loader;
 import org.github.gestalt.config.entity.ConfigValue;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.parser.ConfigParser;
@@ -40,12 +40,12 @@ public final class ConfigCompiler {
      * @param sourceName name of the source.
      * @param configs    the configuration to parse.
      * @return the ValidateOf of the config node with the results or errors.
-     * @throws ConfigurationException on any exceptions.
+     * @throws GestaltConfigurationException on any exceptions.
      */
     public static ValidateOf<ConfigNode> analyze(SentenceLexer lexer,
                                                  ConfigParser parser,
                                                  String sourceName,
-                                                 List<Pair<String, String>> configs) throws ConfigurationException {
+                                                 List<Pair<String, String>> configs) throws GestaltConfigurationException {
 
         return analyze(false, lexer, parser, sourceName, configs);
     }
@@ -61,13 +61,13 @@ public final class ConfigCompiler {
      * @param sourceName            name of the source.
      * @param configs               the configuration to parse.
      * @return the ValidateOf of the config node with the results or errors.
-     * @throws ConfigurationException on any exceptions.
+     * @throws GestaltConfigurationException on any exceptions.
      */
     public static ValidateOf<ConfigNode> analyze(boolean treatErrorsAsWarnings,
                                                  SentenceLexer lexer,
                                                  ConfigParser parser,
                                                  String sourceName,
-                                                 List<Pair<String, String>> configs) throws ConfigurationException {
+                                                 List<Pair<String, String>> configs) throws GestaltConfigurationException {
         List<Pair<ValidateOf<List<Token>>, String>> validatedTokens = configs.stream()
             .map(prop -> new Pair<>(lexer.scan(prop.getFirst()), prop.getSecond()))
             .collect(Collectors.toList());
@@ -86,7 +86,7 @@ public final class ConfigCompiler {
                 .collect(Collectors.toList());
 
             if (!treatErrorsAsWarnings && validationErrors.containsKey(ValidationLevel.ERROR)) {
-                throw new ConfigurationException("Exception loading config source " + sourceName, errorMessage);
+                throw new GestaltConfigurationException("Exception loading config source " + sourceName, errorMessage);
             } else {
                 String errors = errorMessage.stream()
                     .map(error ->

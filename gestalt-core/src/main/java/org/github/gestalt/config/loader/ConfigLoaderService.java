@@ -1,6 +1,6 @@
 package org.github.gestalt.config.loader;
 
-import org.github.gestalt.config.exceptions.ConfigurationException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public interface ConfigLoaderService {
      *
      * @param format format we want to load.
      * @return the config loader matching the format.
-     * @throws ConfigurationException if there are no matching config loaders for the format.
+     * @throws GestaltConfigurationException if there are no matching config loaders for the format.
      */
-    ConfigLoader getLoader(String format) throws ConfigurationException;
+    ConfigLoader getLoader(String format) throws GestaltConfigurationException;
 }

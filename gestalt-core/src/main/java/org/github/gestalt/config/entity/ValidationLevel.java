@@ -6,6 +6,9 @@ package org.github.gestalt.config.entity;
  * @author Colin Redmond
  */
 public enum ValidationLevel {
-    ERROR,
-    WARN
+    FATAL,  // An unrecoverable error
+    ERROR,  // An error but recoverable
+    WARN,   // Recoverable warning
+    INFO,   //
+    DEBUG   //
 }

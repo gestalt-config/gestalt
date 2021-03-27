@@ -2,6 +2,7 @@ package org.github.gestalt.config.kotlin
 
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
+import java.util.*
 import kotlin.reflect.typeOf
 
 /**
@@ -15,10 +16,3 @@ inline fun <reified T> Gestalt.getConfig(path: String): T = this.getConfig(path,
  */
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T> Gestalt.getConfig(path: String, default: T): T = this.getConfig(path, default, KTypeCapture.of<T>(typeOf<T>())) as T
-
-/**
- * reified function to get a config with a default, that automatically gets the generic type.
- */
-@OptIn(ExperimentalStdlibApi::class)
-inline fun <reified T> Gestalt.getConfigOptional(path: String, default: T): T =
-    this.getConfigOptional(path, KTypeCapture.of<T>(typeOf<T>())) as T
