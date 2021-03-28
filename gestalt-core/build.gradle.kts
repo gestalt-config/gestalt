@@ -6,5 +6,5 @@ plugins {
 }
 
 dependencies {
-
+    testImplementation(org.github.gestalt.config.Application.Logging.slf4jSimple)
 }

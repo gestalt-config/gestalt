@@ -24,6 +24,8 @@ object Application {
 
     object Logging {
         const val slf4japi = "org.slf4j:slf4j-api:${Versions.slf4j}"
+        const val slf4jSimple = "org.slf4j:slf4j-simple:${Versions.slf4j}"
+
     }
 
     object Kotlin {
