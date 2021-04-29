@@ -2,7 +2,7 @@ import org.github.gestalt.config.Application
 
 /*
  * Apply the java Plugin to add support for Java.
- * Adds a set of common dependancies all modules need.
+ * Adds a set of common dependencies all modules need.
  */
 
 plugins {

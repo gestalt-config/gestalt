@@ -12,10 +12,10 @@ object Application {
 
         const val kotlinVersion = "1.4.32"
 
-        const val jackson = "2.12.2"
+        const val jackson = "2.12.3"
 
         const val hocon = "1.4.1"
-        const val aws = "2.16.25"
+        const val aws = "2.16.50"
         const val jgit = "5.11.0.202103091610-r"
 
         const val eddsa = "0.3.0"
@@ -62,10 +62,10 @@ object Test {
     private object Versions {
         const val junit5 = "5.7.1"
         const val assertJ = "3.19.0"
-        const val mockito = "3.8.0"
+        const val mockito = "3.9.0"
         const val mockk = "1.11.0"
         const val kotlinTestAssertions = "4.4.3"
-        const val awsMock = "2.1.28"
+        const val awsMock = "2.1.29"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
@@ -82,10 +82,12 @@ object Test {
 
 object Plugins {
     object Versions {
-        const val errorprone = "2.5.1"
+        const val errorprone = "2.6.0"
+        const val errorpronejavac = "9+181-r4173-1"
         const val detekt = "1.16.0"
     }
 
     const val errorProne = "com.google.errorprone:error_prone_core:${Versions.errorprone}"
+    const val errorProneJavac = "com.google.errorprone:javac:${Versions.errorpronejavac}"
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-formatting:${org.github.gestalt.config.Plugins.Versions.detekt}"
 }
