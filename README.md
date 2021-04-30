@@ -4,7 +4,8 @@ A simple but powerful interface allows you to navigate to a path within your con
 
 # Features
 - **Automatic decoding based on type:** support decoding into most classes, lists, sets or primitive types.
-- **Supports Multiple formats:** Load your configurations from Environment Variables, Property files, an in memory map or more.   
+- **Java Records:** Full support for Java Records. Will construct the Java record from the configuration using the Records Canonical Constructor 
+- **Supports Multiple formats:** Load your configurations from Environment Variables, Property files, an in memory map or more.
 - **Read sub-sections of your config:** Navigate to a path within your configurations and load a sub section.
 - **Kotlin interface:** Full support for Kotlin with an easy to use kotlin-esk interface that makes it easy to integrate into any kotlin project.   
 - **Merge Multiple Sources:** Merge multiple config sources together by layering on your configurations.
@@ -303,6 +304,7 @@ To register your own default ConfigLoaders, add it to a file in META-INF\service
 | Object | Decodes a java Bean style class, although it will work with any java class.  Will fail if the constructor is private. Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors which you can disable using treatMissingValuesAsErrors = true. Decodes member classes and lists as well. |
 | Path | |
 | Pattern | |
+| Record | Decodes a Java record. Will construct the record even if there are extra values, it will ignore all extra values. |
 | Set | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node  |
 | Short | Short or short |
 | String | |
