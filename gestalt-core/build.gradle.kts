@@ -5,7 +5,6 @@ plugins {
     id("gestalt.java-publish-conventions")
 }
 
-
 tasks.compileTestJava {
     sourceCompatibility = JavaVersion.VERSION_16.toString()
     targetCompatibility = JavaVersion.VERSION_16.toString()

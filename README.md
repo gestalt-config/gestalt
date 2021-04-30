@@ -304,7 +304,7 @@ To register your own default ConfigLoaders, add it to a file in META-INF\service
 | Object | Decodes a java Bean style class, although it will work with any java class.  Will fail if the constructor is private. Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors which you can disable using treatMissingValuesAsErrors = true. Decodes member classes and lists as well. |
 | Path | |
 | Pattern | |
-| Record | Decodes a Java record. Will construct the record even if there are extra values, it will ignore all extra values. |
+| Record | Decodes a Java record. All members of the record must have a value or construction will fail.So unlike the Object decoder it will not have the option to default to null or provide defaults. Will construct the record even if there are extra values, it will ignore all extra values. |
 | Set | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node  |
 | Short | Short or short |
 | String | |
