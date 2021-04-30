@@ -12,9 +12,9 @@ import static java.lang.invoke.MethodType.methodType;
  * Large parts of this code is borrowed from
  * https://github.com/FrauBoes/record-s11n-util/blob/main/src/invoke/InvokeUtils.java
  *
- * <p> Utility methods for record serialization, using MethodHandles.
+ * <p>Utility methods for record serialization, using MethodHandles.
  */
-final public class RecordUtils {
+public final class RecordUtils {
 
     private static final MethodHandle MH_IS_RECORD;
     private static final MethodHandle MH_GET_RECORD_COMPONENTS;
@@ -63,6 +63,10 @@ final public class RecordUtils {
 
     /**
      * Returns true if, and only if, the given class is a record class.
+     *
+     * @param type class type
+     *
+     * @return if this class is a record
      */
     public static boolean isRecord(Class<?> type) {
         try {
@@ -77,6 +81,12 @@ final public class RecordUtils {
      * class. The order is imposed by the given comparator. If the given
      * comparator is null, the order is that of the record components in the
      * record attribute of the class file.
+     *
+     * @param <T> This is the type of the record
+     * @param type class type
+     * @param comparator how to sort the records
+     *
+     * @return the record components
      */
     public static <T> RecComponent[] recordComponents(Class<T> type,
                                                       Comparator<RecComponent> comparator) {
@@ -89,7 +99,9 @@ final public class RecordUtils {
                     (String) MH_GET_NAME.invokeExact(comp),
                     (Class<?>) MH_GET_TYPE.invokeExact(comp), i);
             }
-            if (comparator != null) Arrays.sort(recordComponents, comparator);
+            if (comparator != null) {
+                Arrays.sort(recordComponents, comparator);
+            }
             return recordComponents;
         } catch (Throwable t) {
             throw new RuntimeException("Could not retrieve record components (" + type.getName() + ")");
@@ -98,6 +110,11 @@ final public class RecordUtils {
 
     /**
      * Retrieves the value of the record component for the given record object.
+     *
+     * @param recordObject record object to get its values
+     * @param recordComponent components or records
+     *
+     * @return record components
      */
     public static Object componentValue(Object recordObject,
                                         RecComponent recordComponent) {
@@ -111,9 +128,17 @@ final public class RecordUtils {
         }
     }
 
+
     /**
      * Invokes the canonical constructor of a record class with the
      * given argument values.
+     *
+     * @param <T> This is the type of the record
+     * @param recordType type of record
+     * @param recordComponents record components
+     * @param args objects used to create the  record
+     *
+     * @return the record created
      */
     public static <T> T invokeCanonicalConstructor(Class<T> recordType,
                                                    RecComponent[] recordComponents,

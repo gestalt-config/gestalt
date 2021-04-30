@@ -4,9 +4,9 @@ package org.github.gestalt.config.utils;
 /**
  * A record component, which has a name, a type and an index.
  *
- * <p> (If running on Java 14+, this should be a record class ;) )
+ * <p>(If running on Java 14+, this should be a record class ;) )
  *
- * <p> The latter is the index of the record components in the class file's
+ * <p>The latter is the index of the record components in the class file's
  * record attribute, required to invoke the record's canonical constructor .
  */
 public class RecComponent {
