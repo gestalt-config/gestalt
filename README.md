@@ -375,7 +375,7 @@ Provided TransformerPostProcessor
 | localDateFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
 
 # Example code
-For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test)
+For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test) or for Java 16 + samples [gestalt-sample-java-latest](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample-java-latest/src/test)
 
 # Architectural details
 This section is more for those wishing to know more about how Gestalt works, or how to add their own functionality. If you only wish to get configuration from Gestalt As Is, then feel free to skip it. 

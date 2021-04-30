@@ -10,6 +10,11 @@ repositories {
     mavenCentral()
 }
 
+tasks.compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_16.toString()
+    targetCompatibility = JavaVersion.VERSION_16.toString()
+}
+
 dependencies {
     val gestaltVersion = "0.8.0"
     testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")

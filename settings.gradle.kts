@@ -1,6 +1,6 @@
 rootProject.name = "gestalt"
 include("gestalt-core", "gestalt-hocon", "gestalt-json", "gestalt-git", "gestalt-kotlin", "gestalt-s3",
-    "gestalt-sample", "gestalt-yaml")
+    "gestalt-sample", "gestalt-sample-java-latest", "gestalt-yaml")
 
 pluginManagement {
     repositories {

@@ -16,12 +16,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Large parts of this code is borrowed from
- * https://github.com/FrauBoes/record-s11n-util/blob/main/src/invoke/InvokeUtils.java
  *
- * @param <T> the type of record
  */
-public class RecordDecoder<T> implements Decoder<T> {
+public class RecordDecoder implements Decoder<Object> {
 
     @Override
     public Priority priority() {
@@ -39,7 +36,7 @@ public class RecordDecoder<T> implements Decoder<T> {
     }
 
     @Override
-    public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         if (!(node instanceof MapNode)) {
             return ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
         }
@@ -83,6 +80,6 @@ public class RecordDecoder<T> implements Decoder<T> {
             return ValidateOf.inValid(errors);
         }
 
-        return ValidateOf.valid((T) RecordUtils.invokeCanonicalConstructor(klass, recordComponents, values));
+        return ValidateOf.valid(RecordUtils.invokeCanonicalConstructor(klass, recordComponents, values));
     }
 }
