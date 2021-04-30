@@ -28,6 +28,11 @@ tasks.test {
     finalizedBy("jacocoTestReport")
 }
 
+tasks.compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_16.toString()
+    targetCompatibility = JavaVersion.VERSION_16.toString()
+}
+
 //setup Jacoco
 apply(plugin = "jacoco")
 tasks.withType<JacocoReport> {

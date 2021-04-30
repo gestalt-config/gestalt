@@ -3,20 +3,15 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.node.ConfigNodeManager;
-import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.reflect.TypeCapture;
-import org.github.gestalt.config.test.classes.DBInfo;
-import org.github.gestalt.config.test.classes.DBInfoExtended;
-import org.github.gestalt.config.test.classes.DBInfoGeneric;
+import org.github.gestalt.config.test.classes.*;
+import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class RecordDecoderTest {
 
@@ -28,7 +23,7 @@ class RecordDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
         registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new FloatDecoder()), configNodeService, lexer);
+            new ObjectDecoder(), new FloatDecoder(), new RecordDecoder()), configNodeService, lexer);
     }
 
     @Test
@@ -62,5 +57,128 @@ class RecordDecoderTest {
         }));
         Assertions.assertFalse(decoder.matches(new TypeCapture<DBInfoGeneric<String>>() {
         }));
+    }
+
+    @Test
+    void decode() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("id", new LeafNode("52"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        Person results = (Person) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(52, results.id());
+    }
+
+    @Test
+    void decodeDifferentOrder() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("id", new LeafNode("52"));
+        configs.put("name", new LeafNode("tim"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        Person results = (Person) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(52, results.id());
+    }
+
+    @Test
+    void decodePerson2() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("id", new LeafNode("52"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person2.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        Person2 results = (Person2) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(52, results.id());
+    }
+
+    @Test
+    void decodePersonExtraValues() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("id", new LeafNode("52"));
+        configs.put("address", new LeafNode("home"));
+        configs.put("phone", new LeafNode("12345"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        Person results = (Person) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(52, results.id());
+    }
+
+    @Test
+    void decodePersonMissingValues() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        //configs.put("id", new LeafNode("52"));
+        configs.put("address", new LeafNode("home"));
+        configs.put("phone", new LeafNode("12345"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
+            "during navigating to next node", validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodePersonWrongValues() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("id", new LeafNode("dog"));
+        configs.put("address", new LeafNode("home"));
+        configs.put("phone", new LeafNode("12345"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals("Unable to parse a number on Path: user.admin.id, from node: LeafNode{value='dog'} " +
+            "attempting to decode Integer", validate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Class, during record decoding",
+            validate.getErrors().get(1).description());
+    }
+
+    @Test
+    void decodePersonWrongNode() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new LeafNode("12345"), TypeCapture.of(Person.class), registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Expected a leaf on path: user.admin, received node type, received: LeafNode{value='12345'} " +
+            "attempting to decode Record", validate.getErrors().get(0).description());
     }
 }

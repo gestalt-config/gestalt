@@ -20,7 +20,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType<JavaCompile> {
+tasks.compileJava {
     options.compilerArgs.addAll(arrayOf("--release", "8"))
 }
 

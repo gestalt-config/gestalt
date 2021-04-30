@@ -72,7 +72,7 @@ public final class RecordUtils {
         try {
             return MH_IS_RECORD != null && (boolean) MH_IS_RECORD.invokeExact(type);
         } catch (Throwable t) {
-            throw new RuntimeException("Could not determine type (" + type + ")");
+            throw new RuntimeException("Could not determine type (" + type + ")", t);
         }
     }
 
@@ -104,7 +104,7 @@ public final class RecordUtils {
             }
             return recordComponents;
         } catch (Throwable t) {
-            throw new RuntimeException("Could not retrieve record components (" + type.getName() + ")");
+            throw new RuntimeException("Could not retrieve record components (" + type.getName() + ")", t);
         }
     }
 
@@ -124,7 +124,7 @@ public final class RecordUtils {
                 methodType(recordComponent.type()));
             return (Object) MH_get.invoke(recordObject);
         } catch (Throwable t) {
-            throw new RuntimeException("Could not retrieve record components (" + recordObject.getClass().getName() + ")");
+            throw new RuntimeException("Could not retrieve record components (" + recordObject.getClass().getName() + ")", t);
         }
     }
 
@@ -152,7 +152,7 @@ public final class RecordUtils {
                     .asType(methodType(Object.class, paramTypes));
             return (T) MH_canonicalConstructor.invokeWithArguments(args);
         } catch (Throwable t) {
-            throw new RuntimeException("Could not construct type (" + recordType.getName() + ")");
+            throw new RuntimeException("Could not construct type (" + recordType.getName() + ")", t);
         }
     }
 }

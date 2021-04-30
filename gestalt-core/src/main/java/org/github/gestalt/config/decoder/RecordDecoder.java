@@ -47,7 +47,7 @@ public class RecordDecoder<T> implements Decoder<T> {
         List<ValidationError> errors = new ArrayList<>();
         Class<?> klass = type.getRawType();
 
-        final RecComponent[] recordComponents = RecordUtils.recordComponents(klass, Comparator.comparing(RecComponent::name));
+        final RecComponent[] recordComponents = RecordUtils.recordComponents(klass, Comparator.comparing(RecComponent::index));
         final Object[] values = new Object[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
             final RecComponent rc = recordComponents[i];
