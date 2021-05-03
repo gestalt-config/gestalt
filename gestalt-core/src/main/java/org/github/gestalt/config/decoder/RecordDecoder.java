@@ -16,7 +16,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * Decoder support for Java Records.
  *
+ * @author Colin Redmond
  */
 public class RecordDecoder implements Decoder<Object> {
 
