@@ -50,7 +50,7 @@ public class RecordDecoder implements Decoder<Object> {
             final RecComponent rc = recordComponents[i];
 
             String name = rc.name();
-            Type fieldClass = rc.type();
+            Type fieldClass = rc.typeGeneric();
             String nextPath = PathUtil.pathForKey(path, name);
 
             ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);

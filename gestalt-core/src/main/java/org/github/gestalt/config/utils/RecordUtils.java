@@ -3,6 +3,7 @@ package org.github.gestalt.config.utils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -20,6 +21,7 @@ public final class RecordUtils {
     private static final MethodHandle MH_GET_RECORD_COMPONENTS;
     private static final MethodHandle MH_GET_NAME;
     private static final MethodHandle MH_GET_TYPE;
+    private static final MethodHandle MH_GET_GENERIC_TYPE;
     private static final MethodHandles.Lookup LOOKUP;
 
     static {
@@ -27,6 +29,7 @@ public final class RecordUtils {
         MethodHandle MH_getRecordComponents;
         MethodHandle MH_getName;
         MethodHandle MH_getType;
+        MethodHandle MH_getGenericType;
         LOOKUP = MethodHandles.lookup();
 
         try {
@@ -41,12 +44,15 @@ public final class RecordUtils {
                 .asType(methodType(String.class, Object.class));
             MH_getType = LOOKUP.findVirtual(c, "getType", methodType(Class.class))
                 .asType(methodType(Class.class, Object.class));
+            MH_getGenericType = LOOKUP.findVirtual(c, "getGenericType", methodType(Type.class))
+                .asType(methodType(Type.class, Object.class));
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             // pre-Java-14
             MH_isRecord = null;
             MH_getRecordComponents = null;
             MH_getName = null;
             MH_getType = null;
+            MH_getGenericType = null;
         } catch (IllegalAccessException unexpected) {
             throw new AssertionError(unexpected);
         }
@@ -55,6 +61,7 @@ public final class RecordUtils {
         MH_GET_RECORD_COMPONENTS = MH_getRecordComponents;
         MH_GET_NAME = MH_getName;
         MH_GET_TYPE = MH_getType;
+        MH_GET_GENERIC_TYPE = MH_getGenericType;
     }
 
     private RecordUtils() {
@@ -65,7 +72,6 @@ public final class RecordUtils {
      * Returns true if, and only if, the given class is a record class.
      *
      * @param type class type
-     *
      * @return if this class is a record
      */
     public static boolean isRecord(Class<?> type) {
@@ -82,10 +88,9 @@ public final class RecordUtils {
      * comparator is null, the order is that of the record components in the
      * record attribute of the class file.
      *
-     * @param <T> This is the type of the record
-     * @param type class type
+     * @param <T>        This is the type of the record
+     * @param type       class type
      * @param comparator how to sort the records
-     *
      * @return the record components
      */
     public static <T> RecComponent[] recordComponents(Class<T> type,
@@ -97,6 +102,7 @@ public final class RecordUtils {
                 final Object comp = rawComponents[i];
                 recordComponents[i] = new RecComponent(
                     (String) MH_GET_NAME.invokeExact(comp),
+                    (Type) MH_GET_GENERIC_TYPE.invokeExact(comp),
                     (Class<?>) MH_GET_TYPE.invokeExact(comp), i);
             }
             if (comparator != null) {
@@ -133,11 +139,10 @@ public final class RecordUtils {
      * Invokes the canonical constructor of a record class with the
      * given argument values.
      *
-     * @param <T> This is the type of the record
-     * @param recordType type of record
+     * @param <T>              This is the type of the record
+     * @param recordType       type of record
      * @param recordComponents record components
-     * @param args objects used to create the  record
-     *
+     * @param args             objects used to create the  record
      * @return the record created
      */
     public static <T> T invokeCanonicalConstructor(Class<T> recordType,

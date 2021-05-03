@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class RecordUtilsTest {
 
     @Test
@@ -25,10 +23,9 @@ class RecordUtilsTest {
         Assertions.assertEquals(2, recComponents.length);
         Assertions.assertEquals(1, recComponents[0].index());
         Assertions.assertEquals("id", recComponents[0].name());
-        Assertions.assertEquals(Integer.class, recComponents[0].type());
+        Assertions.assertEquals(Integer.class, recComponents[0].typeGeneric());
         Assertions.assertEquals(0, recComponents[1].index());
         Assertions.assertEquals("name", recComponents[1].name());
-        Assertions.assertEquals(String.class, recComponents[1].type());
     }
 
     @Test
@@ -39,14 +36,15 @@ class RecordUtilsTest {
         Object value = RecordUtils.componentValue(new Person("Tim", 52), recComponents[0]);
         Assertions.assertTrue(value instanceof Integer);
         Assertions.assertEquals(52, (Integer) value);
+        Assertions.assertEquals(String.class, recComponents[1].typeGeneric());
     }
 
     @Test
     void invokeCanonicalConstructor() {
         RecComponent[] recComponents = new RecComponent[2];
 
-        recComponents[0] = new RecComponent("name", String.class, 0);
-        recComponents[1] = new RecComponent("id", Integer.class, 1);
+        recComponents[0] = new RecComponent("name", String.class, String.class, 0);
+        recComponents[1] = new RecComponent("id", Integer.class, Integer.class, 1);
 
         Object[] values = new Object[2];
         values[0] = "tim";

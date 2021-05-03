@@ -1,6 +1,8 @@
 package org.github.gestalt.config.utils;
 
 
+import java.lang.reflect.Type;
+
 /**
  * A record component, which has a name, a type and an index.
  *
@@ -11,12 +13,14 @@ package org.github.gestalt.config.utils;
  */
 public class RecComponent {
     private final String name;
-    private final Class<?> type;
+    private final Type type;
+    private final Class<?> klass;
     private final int index;
 
-    public RecComponent(String name, Class<?> type, int index) {
+    public RecComponent(String name, Type type, Class<?> klass, int index) {
         this.name = name;
         this.type = type;
+        this.klass = klass;
         this.index = index;
     }
 
@@ -24,11 +28,15 @@ public class RecComponent {
         return name;
     }
 
-    public Class<?> type() {
+    public Type typeGeneric() {
         return type;
     }
 
     public int index() {
         return index;
+    }
+
+    public Class<?> type() {
+        return klass;
     }
 }
