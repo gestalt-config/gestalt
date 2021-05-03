@@ -301,7 +301,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private <T> boolean checkErrorsShouldFail(ValidateOf<T> results) {
         if (results.hasErrors()) {
-            return results.getErrors().stream().noneMatch(this::ignoreError);
+            return results.getErrors().stream().noneMatch(this::ignoreError) || !results.hasResults();
         } else {
             return false;
         }
