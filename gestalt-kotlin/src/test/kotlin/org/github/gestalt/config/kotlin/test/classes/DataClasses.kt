@@ -17,4 +17,3 @@ data class DBInfoNoDefaultOptional(
     var uri: String = "mysql:URI",
     var password: String? = null
 )
-

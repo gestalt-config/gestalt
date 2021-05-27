@@ -3,7 +3,7 @@
  */
 
 plugins {
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.10"
     // Support convention plugins written in Kotlin. Convention plugins are build scripts in 'src/main' that automatically become available as plugins in the main build.
     `kotlin-dsl`
 }
@@ -22,9 +22,9 @@ dependencies {
     implementation("net.ltgt.gradle:gradle-errorprone-plugin:2.0.1")
     implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.4.30")
-    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.16.0")
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.17.1")
 }
 
 

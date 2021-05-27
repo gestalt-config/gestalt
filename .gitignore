@@ -10,3 +10,4 @@ build
 ## ignore the out directory
 **/out
 
+/cloc.exe

@@ -98,7 +98,7 @@ internal class KTypeCaptureTest {
         val type = kTypeCaptureOf<Holder<Int>>()
         assertTrue(type.hasParameter())
 
-        //assertEquals(java.lang.Integer::class, type.firstParameterType.type)
+        // assertEquals(java.lang.Integer::class, type.firstParameterType.type)
         assertEquals(
             "org.github.gestalt.config.kotlin.reflect.KTypeCaptureTest\$Holder<java.lang.Integer>",
             type.name
@@ -116,7 +116,7 @@ internal class KTypeCaptureTest {
         val type: KTypeCapture<Holder<Int>> = kTypeCaptureOf<Holder<Int>>()
         assertTrue(type.hasParameter())
 
-        //assertEquals(java.lang.Integer::class, type.firstParameterType.type)
+        // assertEquals(java.lang.Integer::class, type.firstParameterType.type)
         assertEquals(
             "org.github.gestalt.config.kotlin.reflect.KTypeCaptureTest\$Holder<java.lang.Integer>",
             type.name
@@ -150,7 +150,7 @@ internal class KTypeCaptureTest {
         val type = kTypeCaptureOf<InheritedClass>()
         assertFalse(type.hasParameter())
 
-        //assertEquals(java.lang.Integer::class, type.firstParameterType.type)
+        // assertEquals(java.lang.Integer::class, type.firstParameterType.type)
         assertEquals("org.github.gestalt.config.kotlin.reflect.KTypeCaptureTest\$InheritedClass", type.name)
         assertFalse(type.isAssignableFrom(BaseClass::class))
         assertTrue(type.isAssignableFrom(InheritedClass::class))
@@ -209,5 +209,4 @@ internal class KTypeCaptureTest {
     class InheritedClass : BaseClass() {
         var data2: Int = 100
     }
-
 }
