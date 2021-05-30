@@ -53,9 +53,9 @@ public class PathLexer extends SentenceLexer {
      *
      * @param delimiter a regex to split the path on.
      * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
-     * name = name of the element
-     * array = if this element is an array
-     * index = the index for the array
+     *     name = name of the element
+     *     array = if this element is an array
+     *     index = the index for the array
      */
     public PathLexer(String delimiter, String pathPatternRegex) {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
