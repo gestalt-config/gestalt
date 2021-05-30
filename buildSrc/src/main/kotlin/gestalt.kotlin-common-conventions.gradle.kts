@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.dokka.gradle.DokkaTask
-import java.net.URL
 
 plugins {
     kotlin("jvm")
@@ -10,7 +8,7 @@ plugins {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-        languageVersion = "1.4"
+        languageVersion = "1.5"
     }
 }
 
@@ -27,7 +25,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     // Will apply the plugin to all dokka tasks
-    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
+    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
 }
 
 tasks.dokkaJavadoc.configure {
