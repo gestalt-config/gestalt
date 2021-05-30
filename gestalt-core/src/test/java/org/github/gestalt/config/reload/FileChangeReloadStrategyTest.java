@@ -39,13 +39,13 @@ class FileChangeReloadStrategyTest {
         }
 
         Assertions.assertTrue(listener.count >= 1);
-        int previousCount = listener.count;
         strategy.removeListener(listener);
 
         Files.write(path, "user=userC".getBytes(UTF_8));
 
         Thread.sleep(100);
 
+        int previousCount = listener.count;
         Assertions.assertEquals(previousCount, listener.count);
     }
 
@@ -78,13 +78,13 @@ class FileChangeReloadStrategyTest {
 
         Assertions.assertTrue(listener.count >= 1);
 
-        int previousCount = listener.count;
         strategy.removeListener(listener);
 
         Files.write(path, "user=userC".getBytes(UTF_8));
 
         Thread.sleep(100);
 
+        int previousCount = listener.count;
         Assertions.assertEquals(previousCount, listener.count);
     }
 
@@ -127,12 +127,13 @@ class FileChangeReloadStrategyTest {
         }
 
         Assertions.assertTrue(listener.count >= 1);
-        int previousCount = listener.count;
+
         strategy.removeListener(listener);
         // change the ..data link like Kubernetes does
         Files.delete(dataLn);
         Files.createSymbolicLink(folder.resolve("..data"), folder.relativize(numbered1));
 
+        int previousCount = listener.count;
         Thread.sleep(100);
 
         Assertions.assertEquals(previousCount, listener.count);

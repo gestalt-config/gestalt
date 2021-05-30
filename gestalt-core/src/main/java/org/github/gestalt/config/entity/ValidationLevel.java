@@ -6,7 +6,16 @@ package org.github.gestalt.config.entity;
  * @author Colin Redmond
  */
 public enum ValidationLevel {
+    /**
+     * Error validation level.
+     */
     ERROR,
+    /**
+     * Warning validation level.
+     */
     WARN,
+    /**
+     * debug validation level.
+     */
     DEBUG
 }

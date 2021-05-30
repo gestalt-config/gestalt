@@ -26,10 +26,19 @@ public class PropertyLoader implements ConfigLoader {
     private final ConfigParser parser;
     private final SentenceLexer lexer;
 
+    /**
+     * Construct a default property loader using the default path lexer for "." separated paths.
+     */
     public PropertyLoader() {
         this(new PathLexer("\\."), new MapConfigParser());
     }
 
+    /**
+     * Construct a property loader providing a lexer and a config parser.
+     *
+     * @param lexer SentenceLexer to create tokens for the path.
+     * @param parser Parser for the property files
+     */
     public PropertyLoader(SentenceLexer lexer, ConfigParser parser) {
         this.lexer = lexer;
         this.parser = parser;

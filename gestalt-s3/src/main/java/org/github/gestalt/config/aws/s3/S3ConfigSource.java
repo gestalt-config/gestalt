@@ -27,6 +27,14 @@ public class S3ConfigSource implements ConfigSource {
     private final String bucketName;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * Constructor for S3ConfigSource.
+     *
+     * @param s3 S3 client
+     * @param bucketName name of the S3 bucket
+     * @param keyName name of the S3 key
+     * @throws GestaltException any exceptions thrown
+     */
     public S3ConfigSource(S3Client s3, String bucketName, String keyName) throws GestaltException {
         if (s3 == null) {
             throw new GestaltException("S3 client can not be null");
@@ -83,6 +91,12 @@ public class S3ConfigSource implements ConfigSource {
         return format(keyName);
     }
 
+    /**
+     * Finds the extension of a file to get the file format.
+     *
+     * @param fileName the name of the file
+     * @return the extension of the file
+     */
     protected String format(String fileName) {
         int index = fileName.lastIndexOf('.');
         if (index > 0) {

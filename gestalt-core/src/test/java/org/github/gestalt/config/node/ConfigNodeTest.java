@@ -76,31 +76,31 @@ class ConfigNodeTest {
 
     @Test
     void testEquals() {
-        ArrayNode arrayNode = new ArrayNode(Collections.singletonList(new LeafNode("a")));
-        ArrayNode arrayNodeSame = new ArrayNode(Collections.singletonList(new LeafNode("a")));
-        ArrayNode arrayNodeDiff = new ArrayNode(Collections.singletonList(new LeafNode("not same")));
-
-
         Map<String, ConfigNode> mapNode = new HashMap<>();
         mapNode.put("test", new LeafNode("leaf"));
-        MapNode objectNode = new MapNode(mapNode);
+
         Map<String, ConfigNode> mapNodeSame = new HashMap<>();
         mapNodeSame.put("test", new LeafNode("leaf"));
-        MapNode objectNodeSame = new MapNode(mapNodeSame);
+
         Map<String, ConfigNode> mapNodeDiff = new HashMap<>();
         mapNodeDiff.put("not same", new LeafNode("not same"));
         MapNode objectNodeDif = new MapNode(mapNodeDiff);
-
 
         LeafNode leaf = new LeafNode("leaf");
         LeafNode leafSame = new LeafNode("leaf");
         LeafNode leafDiff = new LeafNode("not same");
 
+        ArrayNode arrayNode = new ArrayNode(Collections.singletonList(new LeafNode("a")));
+        ArrayNode arrayNodeSame = new ArrayNode(Collections.singletonList(new LeafNode("a")));
+        ArrayNode arrayNodeDiff = new ArrayNode(Collections.singletonList(new LeafNode("not same")));
+
+        MapNode objectNode = new MapNode(mapNode);
         Assertions.assertEquals(arrayNode, arrayNode);
         Assertions.assertEquals(arrayNode, arrayNodeSame);
         Assertions.assertNotEquals(arrayNode, arrayNodeDiff);
         Assertions.assertNotEquals(arrayNode, objectNode);
 
+        MapNode objectNodeSame = new MapNode(mapNodeSame);
         Assertions.assertEquals(objectNode, objectNode);
         Assertions.assertEquals(objectNode, objectNodeSame);
         Assertions.assertNotEquals(objectNode, objectNodeDif);

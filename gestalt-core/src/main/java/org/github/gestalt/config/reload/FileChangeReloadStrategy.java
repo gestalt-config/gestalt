@@ -46,7 +46,7 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
     /**
      * constructor.
      *
-     * @param source   the source to watch for reload
+     * @param source the source to watch for reload
      * @param executor ExecutorService to get thread from.
      * @throws GestaltConfigurationException if this is not a file source or other errors.
      */

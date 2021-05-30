@@ -10,6 +10,11 @@ import java.util.Objects;
 public class ConfigValue {
     private final String value;
 
+    /**
+     * Constructor to hold a config value.
+     *
+     * @param value to hld hor the config
+     */
     public ConfigValue(String value) {
         this.value = Objects.requireNonNull(value, "value can not be null");
     }

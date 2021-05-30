@@ -29,10 +29,18 @@ public class HoconLoader implements ConfigLoader {
 
     private ConfigParseOptions configParseOptions = ConfigParseOptions.defaults();
 
+    /**
+     * Default constructor for HoconLoader that uses the default ConfigParseOptions.
+     */
     public HoconLoader() {
 
     }
 
+    /**
+     * Constructor for HoconLoader that accepts a ConfigParseOptions.
+     *
+     * @param configParseOptions options for the Hocon parsing
+     */
     public HoconLoader(ConfigParseOptions configParseOptions) {
         this.configParseOptions = configParseOptions;
     }

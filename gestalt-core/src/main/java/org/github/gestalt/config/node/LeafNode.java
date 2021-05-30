@@ -11,6 +11,11 @@ import java.util.Optional;
 public class LeafNode implements ConfigNode {
     private final String value;
 
+    /**
+     * Construct a leaf node that holds a single value.
+     *
+     * @param value string value for current leaf node
+     */
     public LeafNode(String value) {
         this.value = value;
     }

@@ -19,8 +19,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testAddNode() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -34,7 +32,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -52,8 +50,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeNodes() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -67,7 +63,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -106,8 +102,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeArrayOfNodes() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         Map<String, ConfigNode> redisNode1 = new HashMap<>();
         redisNode1.put("uri", new LeafNode("redis1"));
         redisNode1.put("port", new LeafNode("1111"));
@@ -129,7 +123,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -179,8 +173,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeArrayOfNodesMissingIndex() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         Map<String, ConfigNode> redisNode1 = new HashMap<>();
         redisNode1.put("uri", new LeafNode("redis1"));
         redisNode1.put("port", new LeafNode("1111"));
@@ -202,7 +194,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -260,8 +252,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeArrayBadNodes() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         Map<String, ConfigNode> redisNode1 = new HashMap<>();
         redisNode1.put("uri", new LeafNode("redis1"));
         redisNode1.put("port", new LeafNode(null));
@@ -283,7 +273,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -292,8 +282,8 @@ class ConfigNodeManagerTest {
         Assertions.assertEquals(2, validateOfResults.getErrors().size());
 
         assertThat(validateOfResults.getErrors())
-            .anyMatch(it -> it.description().equals("Leaf nodes are empty for path: admin[0].port"))
-            .anyMatch(it -> it.description().equals("Missing array index: 2 for path: admin"));
+            .anyMatch(it -> "Leaf nodes are empty for path: admin[0].port".equals(it.description()))
+            .anyMatch(it -> "Missing array index: 2 for path: admin".equals(it.description()));
 
         Map<String, ConfigNode> redisNode1a = new HashMap<>();
         redisNode1a.put("uri", new LeafNode("redis1a"));
@@ -337,9 +327,9 @@ class ConfigNodeManagerTest {
         Assertions.assertEquals(2, validateOfResults2.getErrors().size());
 
         assertThat(validateOfResults2.getErrors())
-            .anyMatch(it -> it.description().equals("Leaf nodes are empty for path: admin[0].port"))
-            .anyMatch(it -> it.description().equals("Unable to find node matching path: admin[0], for class: MapNode, " +
-                "during merging maps"));
+            .anyMatch(it -> "Leaf nodes are empty for path: admin[0].port".equals(it.description()))
+            .anyMatch(it -> "Unable to find node matching path: admin[0], for class: MapNode, during merging maps"
+                .equals(it.description()));
     }
 
     @Test
@@ -355,8 +345,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMerge3Nodes() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -370,7 +358,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -431,8 +419,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeMismatchedNodes() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -446,7 +432,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -481,8 +467,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeEmptyLeaf() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -496,7 +480,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -537,8 +521,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMerge2EmptyLeaves() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -552,7 +534,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -593,14 +575,12 @@ class ConfigNodeManagerTest {
 
         Assertions.assertEquals(2, validateOfResults2.getErrors().size());
         assertThat(validateOfResults2.getErrors())
-            .anyMatch(it -> it.description().equals("Unable to find node matching path: db, for class: MapNode, during merging maps"))
-            .anyMatch(it -> it.description().equals("Leaf nodes are empty for path: db.name"));
+            .anyMatch(it -> "Unable to find node matching path: db, for class: MapNode, during merging maps".equals(it.description()))
+            .anyMatch(it -> "Leaf nodes are empty for path: db.name".equals(it.description()));
     }
 
     @Test
     public void testMergeEmptyLeafNode() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -614,7 +594,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -657,8 +637,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMerge2EmptyLeavesNodes() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -672,7 +650,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -714,14 +692,12 @@ class ConfigNodeManagerTest {
 
         Assertions.assertEquals(2, validateOfResults2.getErrors().size());
         assertThat(validateOfResults2.getErrors())
-            .anyMatch(it -> it.description().equals("Empty node value provided for path: db.name"))
-            .anyMatch(it -> it.description().equals("Empty node value provided for path: db.autoCommit"));
+            .anyMatch(it -> "Empty node value provided for path: db.name".equals(it.description()))
+            .anyMatch(it -> "Empty node value provided for path: db.autoCommit".equals(it.description()));
     }
 
     @Test
     public void testMergeEmptyKey() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -735,7 +711,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -777,8 +753,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMerge2EmptyKey() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -793,7 +767,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -837,9 +811,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeEmptyArray() throws GestaltException {
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode(null);
         arrayNode[1] = new LeafNode("Steve");
@@ -853,7 +824,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -899,8 +870,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToNode() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -914,7 +883,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -944,8 +913,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToInvalidArrayIndex() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -959,7 +926,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -980,8 +947,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToInvalidMapNode() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -995,7 +960,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1016,8 +981,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToMismatchedNodeMap() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1031,7 +994,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1052,8 +1015,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToMismatchedNodeArray() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1067,7 +1028,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1088,8 +1049,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToInvalidToken() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1103,7 +1062,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1124,8 +1083,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToNullToken() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1139,7 +1096,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1160,8 +1117,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToNullTokenValue() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1175,7 +1130,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1196,8 +1151,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToNullLeafToken() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1211,7 +1164,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1241,8 +1194,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testNavigateToNullArrayToken() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1256,7 +1207,7 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
         Assertions.assertTrue(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1290,8 +1241,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testReloadNode() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1307,6 +1256,7 @@ class ConfigNodeManagerTest {
 
         UUID id = UUID.randomUUID();
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, id));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1347,8 +1297,6 @@ class ConfigNodeManagerTest {
 
     @Test
     public void testMergeNodesReload() throws GestaltException {
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -1363,8 +1311,8 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         UUID id = UUID.randomUUID();
-        UUID id2 = UUID.randomUUID();
 
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, id));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -1383,6 +1331,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
+        UUID id2 = UUID.randomUUID();
         ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, id2));
         Assertions.assertFalse(validateOfResults2.hasErrors());
         Assertions.assertTrue(validateOfResults2.hasResults());

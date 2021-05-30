@@ -15,10 +15,21 @@ import java.util.List;
  */
 public class ConfigReloadStrategy {
 
+    /**
+     * The listeners for the Config Reload.
+     */
     protected final List<ConfigReloadListener> listeners = new ArrayList<>();
 
+    /**
+     * The source we are listening for a reload.
+     */
     protected final ConfigSource source;
 
+    /**
+     * Protected constructor for the ConfigReloadStrategy. So end users cant create this class, only inherit it.
+     *
+     * @param source source we are listening for a reload
+     */
     protected ConfigReloadStrategy(ConfigSource source) {
         this.source = source;
     }

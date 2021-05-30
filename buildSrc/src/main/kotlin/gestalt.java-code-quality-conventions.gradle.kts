@@ -1,5 +1,4 @@
 import net.ltgt.gradle.errorprone.errorprone
-import org.github.gestalt.config.Plugins
 
 /**
  * Apply to all modules to include multiple code quality plugins to your module.
@@ -19,13 +18,13 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 checkstyle {
-    toolVersion = "8.36.2"
+    toolVersion = "8.42"
     configFile = file(rootDir.path + "/config/checkstyle/google_checks.xml")
     isIgnoreFailures = true
 }
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.21.0"
+    toolVersion = "6.34.0"
     ruleSets = listOf(rootDir.path + "/config/pmd/custom_ruleset.xml")
 }

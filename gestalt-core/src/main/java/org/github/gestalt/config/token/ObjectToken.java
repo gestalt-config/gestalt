@@ -10,10 +10,20 @@ import java.util.Objects;
 public class ObjectToken extends Token {
     private final String name;
 
+    /**
+     * Create an Object Token with a name.
+     *
+     * @param name name of the object
+     */
     public ObjectToken(String name) {
         this.name = name;
     }
 
+    /**
+     * Get the name of the Object Token.
+     *
+     * @return the name of the Object Token
+     */
     public String getName() {
         return name;
     }

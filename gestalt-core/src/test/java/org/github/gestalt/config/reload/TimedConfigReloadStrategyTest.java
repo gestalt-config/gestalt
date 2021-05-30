@@ -90,7 +90,7 @@ class TimedConfigReloadStrategyTest {
 
         @Override
         public void reload(ConfigSource source) throws GestaltException {
-            throw new GestaltException("exception");
+            throw new GestaltException("test exception for time config reload strategy");
         }
     }
 }

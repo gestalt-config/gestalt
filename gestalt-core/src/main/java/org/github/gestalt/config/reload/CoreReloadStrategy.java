@@ -9,8 +9,14 @@ import java.util.List;
  * @author Colin Redmond
  */
 public class CoreReloadStrategy {
+    /**
+     * Listeners for the core reload.
+     */
     protected final List<CoreReloadListener> listeners = new ArrayList<>();
 
+    /**
+     * Default constructor for CoreReloadStrategy.
+     */
     public CoreReloadStrategy() {
     }
 

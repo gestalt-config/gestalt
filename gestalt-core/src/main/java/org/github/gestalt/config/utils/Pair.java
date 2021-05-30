@@ -13,6 +13,12 @@ public class Pair<A, B> {
     private final A first;
     private final B second;
 
+    /**
+     * Create a pair of values.
+     *
+     * @param first first of pair
+     * @param second second of pair
+     */
     public Pair(A first, B second) {
         this.first = first;
         this.second = second;

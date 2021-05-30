@@ -13,14 +13,13 @@ repositories {
     gradlePluginPortal()
 
     mavenCentral()
-    maven(url="https://dl.bintray.com/kotlin/dokka")
+    maven(url = "https://dl.bintray.com/kotlin/dokka")
 }
 
 dependencies {
-    implementation("com.github.ben-manes:gradle-versions-plugin:0.38.0")
+    implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
     implementation("com.palantir.gradle.gitversion:gradle-git-version:0.12.3")
     implementation("net.ltgt.gradle:gradle-errorprone-plugin:2.0.1")
-    implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.4.30")

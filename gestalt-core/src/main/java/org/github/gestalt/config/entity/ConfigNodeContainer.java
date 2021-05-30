@@ -14,6 +14,12 @@ public class ConfigNodeContainer {
     private final ConfigNode configNode;
     private final UUID id;
 
+    /**
+     * Constructor to hold a ConfigNode and a id.
+     *
+     * @param configNode node to hold
+     * @param id unique id of the node
+     */
     public ConfigNodeContainer(ConfigNode configNode, UUID id) {
         this.configNode = configNode;
         this.id = id;

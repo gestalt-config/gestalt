@@ -2,7 +2,6 @@ package org.github.gestalt.config.kotlin
 
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
-import java.util.*
 import kotlin.reflect.typeOf
 
 /**

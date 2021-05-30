@@ -1,7 +1,5 @@
 package org.github.gestalt.config
 
-import org.github.gestalt.config.Test.Versions
-
 /**
  * define all dependencies for the project here to keep consistent.
  */

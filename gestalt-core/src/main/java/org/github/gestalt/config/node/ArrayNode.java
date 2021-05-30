@@ -13,6 +13,11 @@ import java.util.Optional;
 public class ArrayNode implements ConfigNode {
     private final List<ConfigNode> values;
 
+    /**
+     * Construct an Array node by providing a list of nodes.
+     *
+     * @param values list of nodes
+     */
     public ArrayNode(List<ConfigNode> values) {
         if (values != null) {
             this.values = values;

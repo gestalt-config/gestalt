@@ -26,14 +26,30 @@ public class EnvironmentVarsLoader implements ConfigLoader {
     private final SentenceLexer lexer;
     private boolean treatErrorsAsWarnings;
 
+    /**
+     * Construct a default Environment Variables Loader using the default path lexer for "_" separated paths.
+     * treatErrorsAsWarnings is false as well.
+     */
     public EnvironmentVarsLoader() {
         this(false, new PathLexer("_"), new MapConfigParser(false));
     }
 
+    /**
+     * Construct a default Environment Variables Loader using the default path lexer for "_" separated paths.
+     *
+     * @param treatErrorsAsWarnings if we should treat warnings as errors.
+     */
     public EnvironmentVarsLoader(boolean treatErrorsAsWarnings) {
         this(treatErrorsAsWarnings, new PathLexer("_"), new MapConfigParser(treatErrorsAsWarnings));
     }
 
+    /**
+     * Constructor for Environment Variables Loader.
+     *
+     * @param treatErrorsAsWarnings if we should treat warnings as errors.
+     * @param lexer how to create the tokens for the variables.
+     * @param parser parser for Environment Variables
+     */
     public EnvironmentVarsLoader(boolean treatErrorsAsWarnings, SentenceLexer lexer, ConfigParser parser) {
         this.lexer = lexer;
         this.parser = parser;

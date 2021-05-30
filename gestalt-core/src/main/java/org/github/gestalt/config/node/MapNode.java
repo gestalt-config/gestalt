@@ -14,6 +14,11 @@ public class MapNode implements ConfigNode {
 
     private final Map<String, ConfigNode> mapNode;
 
+    /**
+     * Construct the MapNode by providing a map for the current tree.
+     *
+     * @param mapNode map for the current tree
+     */
     public MapNode(Map<String, ConfigNode> mapNode) {
         if (mapNode != null) {
             this.mapNode = mapNode;
@@ -51,6 +56,11 @@ public class MapNode implements ConfigNode {
         return mapNode.size();
     }
 
+    /**
+     * Get the map node.
+     *
+     * @return Get the map node
+     */
     public Map<String, ConfigNode> getMapNode() {
         return mapNode;
     }

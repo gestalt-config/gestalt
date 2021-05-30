@@ -19,7 +19,7 @@ public final class CollectionUtils {
      * Returns a distinct list based on the value Extractor.
      *
      * @param valueExtractor function to extract the value we are looking for distinct.
-     * @param <T>            the type of the collection
+     * @param <T> the type of the collection
      * @return the list of districts
      */
     public static <T> Predicate<T> distinctBy(Function<? super T, Object> valueExtractor) {

@@ -19,6 +19,9 @@ public class ConfigLoaderRegistry implements ConfigLoaderService {
 
     private List<ConfigLoader> configLoaders = new ArrayList<>();
 
+    /**
+     * Default constructor for the ConfigLoaderRegistry.
+     */
     public ConfigLoaderRegistry() {
     }
 

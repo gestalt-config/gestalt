@@ -31,7 +31,6 @@ public interface ConfigNodeService {
      * The post processors are run in order of priority, with the next post processor getting the results from the previous.
      * The post processor returns a node that is then used to replace the current node.
      *
-     *
      * @param postProcessors list of post processors to apply.
      * @return newly processed node
      * @throws GestaltException any exceptions
@@ -51,7 +50,7 @@ public interface ConfigNodeService {
     /**
      * navigate to a node for a path from the root.
      *
-     * @param path   to navigate to
+     * @param path to navigate to
      * @param tokens list of tokens to navigate to.
      * @return ValidateOf node or any errors.
      */
@@ -62,8 +61,8 @@ public interface ConfigNodeService {
      * If an ArrayToken and the config node is an ArrayNode it will return the next node by index.
      * If a ObjectToken and the config node is a MapNode it will return the next node by key.
      *
-     * @param path        to here for logging.
-     * @param token       token for the next node
+     * @param path to here for logging.
+     * @param token token for the next node
      * @param currentNode current node we want to navigate from
      * @return ValidateOf node or any errors.
      */

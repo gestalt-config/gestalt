@@ -32,8 +32,6 @@ class GestaltBuilderTest {
 
     @Test
     public void build() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
         configs.put("db.port", "3306");
@@ -56,6 +54,7 @@ class GestaltBuilderTest {
 
         CoreReloadListener coreReloadListener = new CoreReloadListener();
 
+        GestaltBuilder builder = new GestaltBuilder();
         builder = builder.setDecoderService(new DecoderRegistry(Arrays.asList(new StringDecoder(), new DoubleDecoder()),
             configNodeManager, lexer))
             .setDecoders(decoders)
@@ -74,7 +73,7 @@ class GestaltBuilderTest {
             .addPostProcessors(Collections.singletonList(
                 new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .setPostProcessors(Collections.singletonList(
-            new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))));
+                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))));
 
         Gestalt gestalt = builder.build();
         gestalt.loadConfigs();
@@ -83,8 +82,6 @@ class GestaltBuilderTest {
 
     @Test
     public void buildDefault() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
         configs.put("db.port", "3306");
@@ -101,6 +98,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
+        GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(sources)
             .build();
@@ -111,8 +109,6 @@ class GestaltBuilderTest {
 
     @Test
     public void buildTreatErrorsAsWarnings() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
         configs.put("db.port", "3306");
@@ -128,6 +124,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
+        GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(sources)
             .setEnvVarsTreatErrorsAsWarnings(true)
@@ -153,8 +150,6 @@ class GestaltBuilderTest {
 
     @Test
     public void buildDefaultWithBuilder() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
         configs.put("db.port", "3306");
@@ -171,6 +166,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
+        GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(sources)
             .addDefaultDecoders()
@@ -183,8 +179,6 @@ class GestaltBuilderTest {
 
     @Test
     public void buildDefaultWithCacheFalse() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         ConfigNodeManager configNodeService = Mockito.mock(ConfigNodeManager.class);
 
         Mockito.when(configNodeService.navigateToNode(any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
@@ -205,6 +199,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
+        GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .setConfigNodeService(configNodeService)
             .addSources(sources)
@@ -221,8 +216,6 @@ class GestaltBuilderTest {
 
     @Test
     public void buildDefaultWithCacheTrue() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         ConfigNodeManager configNodeService = Mockito.mock(ConfigNodeManager.class);
 
         Mockito.when(configNodeService.navigateToNode(any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
@@ -243,6 +236,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
+        GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .setConfigNodeService(configNodeService)
             .addSources(sources)
@@ -259,8 +253,6 @@ class GestaltBuilderTest {
 
     @Test
     public void buildDuplicates() throws GestaltException {
-        GestaltBuilder builder = new GestaltBuilder();
-
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
         configs.put("db.port", "3306");
@@ -281,6 +273,7 @@ class GestaltBuilderTest {
 
         List<ConfigLoader> configLoaders = new ArrayList<>(Collections.singletonList(new MapConfigLoader()));
 
+        GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .setDecoders(decoders)
             .addDecoders(decoders)

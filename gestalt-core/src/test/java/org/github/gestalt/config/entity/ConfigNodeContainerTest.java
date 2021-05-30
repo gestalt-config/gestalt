@@ -73,11 +73,6 @@ class ConfigNodeContainerTest {
         Map<String, ConfigNode> root1Node = new HashMap<>();
         root1Node.put("db", new MapNode(dbNode));
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
-        ConfigNode root1 = new MapNode(root1Node);
-
-        UUID id = UUID.randomUUID();
-
-        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, id);
 
         ConfigNode[] arrayNode2 = new ConfigNode[2];
         arrayNode2[0] = new LeafNode("John");
@@ -92,8 +87,11 @@ class ConfigNodeContainerTest {
         root2Node.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(root2Node);
 
+        UUID id = UUID.randomUUID();
         UUID id2 = UUID.randomUUID();
 
+        ConfigNode root1 = new MapNode(root1Node);
+        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, id);
         ConfigNodeContainer cfgNode2 = new ConfigNodeContainer(root2, id2);
         ConfigNodeContainer cfgNode3 = new ConfigNodeContainer(root2, id);
 
@@ -123,6 +121,6 @@ class ConfigNodeContainerTest {
         UUID id = UUID.fromString("9d4e9197-5898-45e6-9056-a4a29d2c2a64");
 
         ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, id);
-        Assertions.assertEquals(- 928228650, cfgNode.hashCode());
+        Assertions.assertEquals(-928228650, cfgNode.hashCode());
     }
 }

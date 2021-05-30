@@ -1,7 +1,6 @@
 package org.github.gestalt.config.git;
 
 
-
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -18,7 +17,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,13 +34,13 @@ public class GitConfigSource implements ConfigSource {
     private Git clonedRepo;
 
     /**
-     * @param repoURI            the URI to the git repo
+     * @param repoURI the URI to the git repo
      * @param localRepoDirectory the local directory you want to save the git repo to.
-     * @param configFilePath     the path to the config file in the git repo
-     * @param branch             the branch you want to pull from git
-     * @param credentials        If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
-     * @param sshSessionFactory  If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     *                           The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     * @param configFilePath the path to the config file in the git repo
+     * @param branch the branch you want to pull from git
+     * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
+     * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
+     * The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @throws GestaltException if there is a badly configured git repo
      */
     public GitConfigSource(String repoURI, Path localRepoDirectory, String configFilePath, String branch, CredentialsProvider credentials,
@@ -150,6 +148,12 @@ public class GitConfigSource implements ConfigSource {
         return format(configFilePath);
     }
 
+    /**
+     * Finds the extension of a file to get the file format
+     *
+     * @param fileName the name of the file
+     * @return the extension of the file
+     */
     protected String format(String fileName) {
         int index = fileName.lastIndexOf('.');
         if (index > 0) {

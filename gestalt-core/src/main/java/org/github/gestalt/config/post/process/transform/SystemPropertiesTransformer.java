@@ -10,9 +10,6 @@ import org.github.gestalt.config.utils.ValidateOf;
  * @author Colin Redmond
  */
 public class SystemPropertiesTransformer implements Transformer {
-    public SystemPropertiesTransformer() {
-    }
-
     @Override
     public String name() {
         return "sys";

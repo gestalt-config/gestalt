@@ -20,6 +20,13 @@ public class StringConfigSource implements ConfigSource {
     private final String format;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * Create a Configuration from a provided string. Must alos provide the format.
+     *
+     * @param config config as a string.
+     * @param format format for the string.
+     * @throws GestaltException any exception
+     */
     public StringConfigSource(String config, String format) throws GestaltException {
         this.config = config;
         if (config == null) {

@@ -45,10 +45,24 @@ public final class PathUtil {
         return pathBuilder.toString();
     }
 
+    /**
+     * used to generate a path wit the next key in the format path.key .
+     *
+     * @param path current path
+     * @param key current key
+     * @return path for key
+     */
     public static String pathForKey(String path, String key) {
         return path == null || path.isEmpty() ? key : path + "." + key;
     }
 
+    /**
+     * used to generate a path wit the next index in the format path[index] .
+     *
+     * @param path current path
+     * @param index current index
+     * @return path for index
+     */
     public static String pathForIndex(String path, int index) {
         return path == null || path.isEmpty() ? "[" + index + "]" : path + "[" + index + "]";
     }

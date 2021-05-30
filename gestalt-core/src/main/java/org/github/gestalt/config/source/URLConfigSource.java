@@ -21,6 +21,12 @@ public class URLConfigSource implements ConfigSource {
     private final URL source;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * Create a URLConfigSource to load a config from a URL.
+     *
+     * @param sourceURL source URL
+     * @throws GestaltException any exceptions
+     */
     public URLConfigSource(String sourceURL) throws GestaltException {
         this.sourceURL = sourceURL;
         if (this.sourceURL == null) {
@@ -69,6 +75,12 @@ public class URLConfigSource implements ConfigSource {
         return format(this.sourceURL);
     }
 
+    /**
+     * Finds the extension of a file to get the file format at a URL.
+     *
+     * @param url the name of the file at a url
+     * @return the extension of the file
+     */
     protected String format(String url) {
         int index = url.lastIndexOf('.');
         if (index > 0) {

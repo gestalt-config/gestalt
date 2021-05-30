@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
  */
 public class MapConfigSource implements ConfigSource {
 
+    /**
+     * Format for the MapConfigSource.
+     */
     public static final String MAP_CONFIG = "mapConfig";
     private final Map<String, String> customConfig;
     private final UUID id = UUID.randomUUID();

@@ -2,19 +2,39 @@ package org.github.gestalt.config.token;
 
 import java.util.Objects;
 
+/**
+ * A Token for a Tag.
+ * Not currently used.
+ */
 public class TagToken extends Token {
     private final String tag;
     private final String value;
 
+    /**
+     * constructor.
+     *
+     * @param tag tag name
+     * @param value tag value
+     */
     public TagToken(String tag, String value) {
         this.tag = tag;
         this.value = value;
     }
 
+    /**
+     * Get the tag name.
+     *
+     * @return tag name
+     */
     public String getTag() {
         return tag;
     }
 
+    /**
+     * Get Tag value.
+     *
+     * @return Tag Value
+     */
     public String getValue() {
         return value;
     }

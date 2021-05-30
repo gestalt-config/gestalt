@@ -25,5 +25,5 @@ tasks.compileJava {
 }
 
 dependencies {
-    implementation(org.github.gestalt.config.Application.Logging.slf4japi)
+    implementation(Application.Logging.slf4japi)
 }

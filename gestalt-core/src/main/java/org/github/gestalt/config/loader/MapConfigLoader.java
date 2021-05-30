@@ -23,10 +23,19 @@ public class MapConfigLoader implements ConfigLoader {
     private final ConfigParser parser;
     private final SentenceLexer lexer;
 
+    /**
+     * Construct a default Map Config loader using the default path lexer for "." separated paths.
+     */
     public MapConfigLoader() {
         this(new PathLexer("\\."), new MapConfigParser());
     }
 
+    /**
+     * Construct a Map Config loader providing a lexer and a config parser.
+     *
+     * @param lexer SentenceLexer to create tokens for the path.
+     * @param parser Parser for the Map Config files
+     */
     public MapConfigLoader(SentenceLexer lexer, ConfigParser parser) {
         this.lexer = lexer;
         this.parser = parser;

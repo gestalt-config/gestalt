@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
  */
 public class SystemPropertiesConfigSource implements ConfigSource {
 
+    /**
+     * Format for the SystemPropertiesConfigSource.
+     */
     public static final String SYSTEM_PROPERTIES = "systemProperties";
     private final UUID id = UUID.randomUUID();
 

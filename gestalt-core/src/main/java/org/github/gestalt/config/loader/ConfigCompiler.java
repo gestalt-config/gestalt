@@ -35,10 +35,10 @@ public final class ConfigCompiler {
      * Then validates the tokens for any errors.
      * If everything is ok it will send the tokens to the parser.
      *
-     * @param lexer      the SentenceLexer used to tokenize the configs.
-     * @param parser     ConfigParser to parse the tokens into a config node.
+     * @param lexer the SentenceLexer used to tokenize the configs.
+     * @param parser ConfigParser to parse the tokens into a config node.
      * @param sourceName name of the source.
-     * @param configs    the configuration to parse.
+     * @param configs the configuration to parse.
      * @return the ValidateOf of the config node with the results or errors.
      * @throws GestaltConfigurationException on any exceptions.
      */
@@ -56,10 +56,10 @@ public final class ConfigCompiler {
      * If everything is ok it will send the tokens to the parser.
      *
      * @param treatErrorsAsWarnings if we want to treat errors as warnings.
-     * @param lexer                 the SentenceLexer used to tokenize the configs.
-     * @param parser                ConfigParser to parse the tokens into a config node.
-     * @param sourceName            name of the source.
-     * @param configs               the configuration to parse.
+     * @param lexer the SentenceLexer used to tokenize the configs.
+     * @param parser ConfigParser to parse the tokens into a config node.
+     * @param sourceName name of the source.
+     * @param configs the configuration to parse.
      * @return the ValidateOf of the config node with the results or errors.
      * @throws GestaltConfigurationException on any exceptions.
      */

@@ -22,7 +22,7 @@ println("Is Clean Tag: ${details.isCleanTag}")
 println("version: ${details.version}")
 
 allprojects {
-    version = if(details.isCleanTag) {
+    version = if (details.isCleanTag) {
         details.lastTag
     } else {
         details.gitHash

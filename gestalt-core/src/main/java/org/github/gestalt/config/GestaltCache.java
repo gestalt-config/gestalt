@@ -19,6 +19,11 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Pair<String, TypeCapture<?>>, Object> cache = new ConcurrentHashMap<>();
 
+    /**
+     * Constructor for the GestaltCache that accepts a delegate.
+     *
+     * @param delegate real Gestalt to call for configs to cache.
+     */
     public GestaltCache(Gestalt delegate) {
         this.delegate = delegate;
     }

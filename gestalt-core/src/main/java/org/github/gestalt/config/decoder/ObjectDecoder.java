@@ -26,6 +26,9 @@ public class ObjectDecoder implements Decoder<Object> {
 
     private final Set<Class<?>> ignoreTypes;
 
+    /**
+     * constructor for the ObjectDecoder.
+     */
     public ObjectDecoder() {
         ignoreTypes = getIgnoreTypes();
     }
