@@ -25,10 +25,22 @@ public class FileConfigSource implements ConfigSource {
     private final Path path;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * Constructor for a File Config Source.
+     *
+     * @param file where to load the File with the configuration
+     * @throws GestaltException any exceptions.
+     */
     public FileConfigSource(File file) throws GestaltException {
         this(Objects.requireNonNull(file, "file can not be null").toPath());
     }
 
+    /**
+     * Constructor for a File Config Source.
+     *
+     * @param path where to load the File with the configuration
+     * @throws GestaltException any exceptions.
+     */
     public FileConfigSource(Path path) throws GestaltException {
         this.path = validatePath(path);
     }
@@ -47,6 +59,11 @@ public class FileConfigSource implements ConfigSource {
         return path;
     }
 
+    /**
+     * The path to the file.
+     *
+     * @return path to the file
+     */
     public Path getPath() {
         return path;
     }
@@ -80,6 +97,12 @@ public class FileConfigSource implements ConfigSource {
         return format(this.path);
     }
 
+    /**
+     * Finds the extension of a file to get the file format.
+     *
+     * @param path the name of the file
+     * @return the extension of the file
+     */
     protected String format(Path path) {
         String fileName = path.getFileName().toString();
         int index = fileName.lastIndexOf('.');

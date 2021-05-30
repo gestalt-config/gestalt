@@ -18,9 +18,15 @@ import java.util.stream.Collectors;
  */
 public class EnvironmentConfigSource implements ConfigSource {
 
+    /**
+     * Format for the EnvironmentConfigSource.
+     */
     public static final String ENV_VARS = "envVars";
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * Default constructor for EnvironmentConfigSource.
+     */
     public EnvironmentConfigSource() {
     }
 

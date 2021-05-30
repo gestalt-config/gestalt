@@ -44,10 +44,6 @@ class PropertyLoaderTest {
         ConfigParser parser = Mockito.mock(ConfigParser.class);
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
-        //setup the argument captor
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
-
         // setup the input stream, instead of loading from a file.
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test = value\ndb.name = redis".getBytes(UTF_8));
 
@@ -72,7 +68,10 @@ class PropertyLoaderTest {
         ValidateOf<ConfigNode> validateOfResults = propsLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
-        ConfigNode result = validateOfResults.results();
+
+        //setup the argument captor
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
@@ -90,6 +89,7 @@ class PropertyLoaderTest {
         Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(1).getFirst().get(1)).getName());
         Assertions.assertEquals("redis", argument.getValue().get(1).getSecond().getValue());
 
+        ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
     }
@@ -149,10 +149,6 @@ class PropertyLoaderTest {
         ConfigParser parser = Mockito.mock(ConfigParser.class);
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
-        //setup the argument captor
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
-
         // setup the input stream, instead of loading from a file.
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test = value\ndb.name = redis".getBytes(UTF_8));
 
@@ -177,7 +173,10 @@ class PropertyLoaderTest {
         ValidateOf<ConfigNode> validateOfResults = propsLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
-        ConfigNode result = validateOfResults.results();
+
+        //setup the argument captor
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
@@ -191,6 +190,7 @@ class PropertyLoaderTest {
         Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(0).getFirst().get(1)).getName());
         Assertions.assertEquals("redis", argument.getValue().get(0).getSecond().getValue());
 
+        ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
     }

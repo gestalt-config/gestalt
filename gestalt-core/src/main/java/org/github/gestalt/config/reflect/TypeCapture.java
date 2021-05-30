@@ -15,8 +15,19 @@ import java.util.stream.Collectors;
  * @author Colin Redmond
  */
 public class TypeCapture<T> {
+    /**
+     * Raw type for this TypeCapture.
+     */
     protected Class<?> rawType;
+
+    /**
+     * type for this TypeCapture.
+     */
     protected Type type;
+
+    /**
+     * hashcode for this TypeCapture.
+     */
     protected int hashCode;
 
     /**
@@ -29,14 +40,22 @@ public class TypeCapture<T> {
         this.hashCode = type.hashCode();
     }
 
-
+    /**
+     * Create a TypeCapture using a generic type, this will suffer from type erasure, so only use if for non generic classes.
+     *
+     * @param klass class to capture
+     */
     protected TypeCapture(Class<T> klass) {
         this.type = klass;
         this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
     }
 
-
+    /**
+     * Create a TypeCapture using a Type.
+     *
+     * @param klass java Type
+     */
     protected TypeCapture(Type klass) {
         this.type = klass;
         this.rawType = buildRawType(type);
@@ -48,7 +67,7 @@ public class TypeCapture<T> {
      * This should not be used with classes that have generic type parameters.
      *
      * @param klass to get type of.
-     * @param <T>   type of capture
+     * @param <T> type of capture
      * @return the TypeCapture
      */
     public static <T> TypeCapture<T> of(Class<T> klass) {   // NOPMD
@@ -60,7 +79,7 @@ public class TypeCapture<T> {
      * This should not be used with classes that have generic type parameters.
      *
      * @param klass type to capture.
-     * @param <T>   type of capture
+     * @param <T> type of capture
      * @return the TypeCapture
      */
     public static <T> TypeCapture<T> of(Type klass) {       // NOPMD
@@ -165,6 +184,30 @@ public class TypeCapture<T> {
         return rawType.isAssignableFrom(buildRawType(classType));
     }
 
+    /**
+     * If this type is a array.
+     *
+     * @return If this type is a array
+     */
+    public boolean isArray() {
+        return getRawType().isArray();
+    }
+
+    /**
+     * If this type is an Enum.
+     *
+     * @return If this type is an Enum
+     */
+    public boolean isEnum() {
+        return getRawType().isEnum();
+    }
+
+    /**
+     * Get the Super class for a type.
+     *
+     * @param subclass class we are looking for the super class of
+     * @return Super class for a type
+     */
     protected Type getSuperclassTypeParameter(Class<?> subclass) {
         Type superclass = subclass.getGenericSuperclass();
         if (superclass instanceof Class) {
@@ -174,8 +217,13 @@ public class TypeCapture<T> {
         return parameterized.getActualTypeArguments()[0];
     }
 
-    // Lifted from Guice TypeLiteral
-    // https://github.com/google/guice/blob/master/core/src/com/google/inject/TypeLiteral.java
+    /**
+     * Lifted from Guice TypeLiteral.
+     * https://github.com/google/guice/blob/master/core/src/com/google/inject/TypeLiteral.java
+     *
+     * @param type java type
+     * @return class of the raw type
+     */
     protected Class<?> buildRawType(Type type) {
         if (type instanceof Class<?>) {
             // type is a normal class.
@@ -219,13 +267,5 @@ public class TypeCapture<T> {
     @Override
     public int hashCode() {
         return Objects.hash(rawType, type, hashCode);
-    }
-
-    public boolean isArray() {
-        return getRawType().isArray();
-    }
-
-    public boolean isEnum() {
-        return getRawType().isEnum();
     }
 }

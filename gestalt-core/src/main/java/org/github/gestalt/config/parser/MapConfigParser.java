@@ -31,6 +31,9 @@ public class MapConfigParser implements ConfigParser {
 
     private boolean treatErrorsAsWarnings = false;
 
+    /**
+     * Default constructor for the MapConfigParser.
+     */
     public MapConfigParser() {
     }
 
@@ -45,6 +48,11 @@ public class MapConfigParser implements ConfigParser {
         this.treatErrorsAsWarnings = treatErrorsAsWarnings;
     }
 
+    /**
+     * if we should treat warnings as errors.
+     *
+     * @param treatErrorsAsWarnings if we should treat warnings as errors.
+     */
     public void setTreatErrorsAsWarnings(boolean treatErrorsAsWarnings) {
         this.treatErrorsAsWarnings = treatErrorsAsWarnings;
     }
@@ -60,7 +68,7 @@ public class MapConfigParser implements ConfigParser {
      * Use the children leaf to build the config tree
      *
      * @param tokens group of tokens that represent an object Array or Map config node
-     * @param index  the depth of the currant group of config lists we are looking at.
+     * @param index the depth of the currant group of config lists we are looking at.
      * @return the ConfigNode root for the configurations at this point.
      */
     protected ValidateOf<ConfigNode> buildConfigTree(List<Pair<List<Token>, ConfigValue>> tokens, int index) {
@@ -191,8 +199,8 @@ public class MapConfigParser implements ConfigParser {
     /**
      * Return a list of errors for any array tokens that have an index less than 0.
      *
-     * @param tokens      array tokens to validate
-     * @param index       the index or depth in the tree we are analyzing.
+     * @param tokens array tokens to validate
+     * @param index the index or depth in the tree we are analyzing.
      * @param currentPath the current path.
      * @return list of errors for any array tokens that have an index less than 0
      */

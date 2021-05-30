@@ -26,10 +26,18 @@ public class YamlLoader implements ConfigLoader {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor for YamlLoader that accepts a ObjectMapper.
+     *
+     * @param objectMapper for loading yaml config, it should have a YAMLFactory registered to it.
+     */
     public YamlLoader(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Default constructor for YamlLoader that creates a new ObjectMapper with a YAMLFactory registered to it.
+     */
     public YamlLoader() {
         objectMapper = new ObjectMapper(new YAMLFactory());
         objectMapper.findAndRegisterModules();

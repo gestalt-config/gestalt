@@ -11,7 +11,6 @@ import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.reflect.typeOf
 
 class GestaltKotlinSample {

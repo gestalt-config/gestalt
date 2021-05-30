@@ -28,13 +28,20 @@ public class TransformerPostProcessor implements PostProcessor {
 
     private final Map<String, Transformer> transformers;
 
-    // by default use the service loader to
+    /**
+     * By default use the service loader to load all Transformer classes.
+     */
     public TransformerPostProcessor() {
         this.transformers = new HashMap<>();
         ServiceLoader<Transformer> loader = ServiceLoader.load(Transformer.class);
         loader.forEach(it -> transformers.put(it.name(), it));
     }
 
+    /**
+     * Creates a TransformerPostProcessor with a list of transformers.
+     *
+     * @param transformers list of transformers to use
+     */
     public TransformerPostProcessor(List<Transformer> transformers) {
         if (transformers == null) {
             this.transformers = Collections.emptyMap();
@@ -43,6 +50,11 @@ public class TransformerPostProcessor implements PostProcessor {
         }
     }
 
+    /**
+     * add transformer  to the post processor.
+     *
+     * @param transformers list of transformers to add
+     */
     public void addTransformers(List<Transformer> transformers) {
         if (transformers != null) {
             transformers.forEach(it -> this.transformers.put(it.name(), it));

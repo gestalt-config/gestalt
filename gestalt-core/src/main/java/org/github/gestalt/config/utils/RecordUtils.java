@@ -88,8 +88,8 @@ public final class RecordUtils {
      * comparator is null, the order is that of the record components in the
      * record attribute of the class file.
      *
-     * @param <T>        This is the type of the record
-     * @param type       class type
+     * @param <T> This is the type of the record
+     * @param type class type
      * @param comparator how to sort the records
      * @return the record components
      */
@@ -119,7 +119,6 @@ public final class RecordUtils {
      *
      * @param recordObject record object to get its values
      * @param recordComponent components or records
-     *
      * @return record components
      */
     public static Object componentValue(Object recordObject,
@@ -139,10 +138,10 @@ public final class RecordUtils {
      * Invokes the canonical constructor of a record class with the
      * given argument values.
      *
-     * @param <T>              This is the type of the record
-     * @param recordType       type of record
+     * @param <T> This is the type of the record
+     * @param recordType type of record
      * @param recordComponents record components
-     * @param args             objects used to create the  record
+     * @param args objects used to create the  record
      * @return the record created
      */
     public static <T> T invokeCanonicalConstructor(Class<T> recordType,

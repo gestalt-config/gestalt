@@ -39,10 +39,10 @@ class SystemPropertiesConfigSourceTest {
 
         List<Pair<String, String>> list = configSource.loadList();
 
-        Optional<Pair<String, String>> version = list.stream().filter(it -> it.getFirst().equals("java.specification.version")).findFirst();
+        Optional<Pair<String, String>> version = list.stream().filter(it -> "java.specification.version".equals(it.getFirst())).findFirst();
 
         Assertions.assertEquals("java.specification.version", version.get().getFirst());
-        Assertions.assertTrue(version.get().getSecond().equals("11") || version.get().getSecond().equals("16"));
+        Assertions.assertTrue("11".equals(version.get().getSecond()) || "16".equals(version.get().getSecond()));
     }
 
     @Test

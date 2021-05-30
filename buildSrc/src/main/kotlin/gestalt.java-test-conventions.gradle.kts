@@ -1,3 +1,4 @@
+import gradle.kotlin.dsl.accessors._80de9d5281757603f6c16258a2305598.jacoco
 import org.github.gestalt.config.Test
 
 /*
@@ -11,14 +12,14 @@ plugins {
 
 dependencies {
     // Use JUnit Jupiter API for testing.
-    testImplementation(org.github.gestalt.config.Test.junitAPI)
+    testImplementation(Test.junitAPI)
 
     // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly(org.github.gestalt.config.Test.junitEngine)
+    testRuntimeOnly(Test.junitEngine)
 
-    testImplementation(org.github.gestalt.config.Test.assertJ)
+    testImplementation(Test.assertJ)
 
-    testImplementation(org.github.gestalt.config.Test.mockito)
+    testImplementation(Test.mockito)
 }
 
 tasks.test {
@@ -30,6 +31,9 @@ tasks.test {
 
 //setup Jacoco
 apply(plugin = "jacoco")
+jacoco {
+    toolVersion = "0.8.7"
+}
 tasks.withType<JacocoReport> {
     reports {
         xml.isEnabled = true

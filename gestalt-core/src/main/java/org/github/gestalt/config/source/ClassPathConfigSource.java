@@ -17,6 +17,12 @@ public class ClassPathConfigSource implements ConfigSource {
     private final String resource;
     private final UUID id = UUID.randomUUID();
 
+    /**
+     * Default constructor for the ClassPathConfigSource.
+     *
+     * @param resource name of the resource to load from the class path.
+     * @throws GestaltException any exceptions
+     */
     public ClassPathConfigSource(String resource) throws GestaltException {
         this.resource = resource;
         if (resource == null) {
@@ -53,6 +59,12 @@ public class ClassPathConfigSource implements ConfigSource {
         return format(resource);
     }
 
+    /**
+     * Finds the extension of a file to get the file format.
+     *
+     * @param fileName the name of the file
+     * @return the extension of the file
+     */
     protected String format(String fileName) {
         int index = fileName.lastIndexOf('.');
         if (index > 0) {

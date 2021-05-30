@@ -5,7 +5,7 @@ import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import java.util.List;
 
 /**
- * Maintains all config loaders.
+ * Maintains all config loaders. Provides methods for registering and searching for config loaders
  *
  * @author Colin Redmond
  */

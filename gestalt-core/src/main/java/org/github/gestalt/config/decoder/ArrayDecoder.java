@@ -58,6 +58,15 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
         return results;
     }
 
+    /**
+     * Decode an array values.
+     *
+     * @param path Current path we are decoding
+     * @param node current node we are decoding
+     * @param klass class to decode into
+     * @param decoderService decoder service use to recursively decode nodes
+     * @return ValidateOf array built from the config node
+     */
     @SuppressWarnings("unchecked")
     protected ValidateOf<T[]> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
         List<ValidationError> errors = new ArrayList<>();

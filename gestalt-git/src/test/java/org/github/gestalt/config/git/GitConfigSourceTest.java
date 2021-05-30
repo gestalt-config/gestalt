@@ -17,7 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 
-// cicd isnt setup to run this test. 
+// cicd isn't setup to run this test.
 @Disabled
 class GitConfigSourceTest {
 

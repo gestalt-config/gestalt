@@ -318,7 +318,7 @@ class MapConfigParserTest {
             new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
             new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
             new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(- 1)), new ConfigValue("host2"))
+            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(-1)), new ConfigValue("host2"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0);

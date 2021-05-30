@@ -14,10 +14,18 @@ import java.util.Map;
 public class CustomMapTransformer implements Transformer {
     private final Map<String, String> replacementVars;
 
+    /**
+     * Default CustomMapTransformer that will not replace any values as it will have an empty map.
+     */
     public CustomMapTransformer() {
         this.replacementVars = new HashMap<>();
     }
 
+    /**
+     * CustomMapTransformer that will replace any values in the map while processing.
+     *
+     * @param replacementVars values to replace
+     */
     public CustomMapTransformer(Map<String, String> replacementVars) {
         this.replacementVars = replacementVars;
     }

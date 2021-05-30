@@ -6,6 +6,9 @@ import org.github.gestalt.config.exceptions.GestaltException;
 
 import java.nio.file.Path;
 
+/**
+ * Builder that allows you to construct a GitConfigSource
+ */
 public class GitConfigSourceBuilder {
     private String repoURI;
     private Path localRepoDirectory;
@@ -63,7 +66,7 @@ public class GitConfigSourceBuilder {
      * setup the ssh session factory
      *
      * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     *                          The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     * The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @return the builder
      */
     public GitConfigSourceBuilder setSshSessionFactory(SshSessionFactory sshSessionFactory) {

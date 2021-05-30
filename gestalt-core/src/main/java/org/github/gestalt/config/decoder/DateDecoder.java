@@ -21,10 +21,18 @@ public class DateDecoder extends LeafDecoder<Date> {
 
     private final DateTimeFormatter formatter;
 
+    /**
+     * Default date decoder using ISO_DATE_TIME.
+     */
     public DateDecoder() {
         this.formatter = DateTimeFormatter.ISO_DATE_TIME;
     }
 
+    /**
+     * Date decode that takes a formatter.
+     *
+     * @param formatter DateTimeFormatter pattern
+     */
     public DateDecoder(String formatter) {
         if (formatter != null && !formatter.isEmpty()) {
             this.formatter = DateTimeFormatter.ofPattern(formatter);

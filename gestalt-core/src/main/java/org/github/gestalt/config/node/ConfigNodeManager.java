@@ -23,6 +23,9 @@ public class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
     private ConfigNode root;
 
+    /**
+     * Default constructor for the ConfigNodeManager.
+     */
     public ConfigNodeManager() {
     }
 

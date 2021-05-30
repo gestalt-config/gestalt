@@ -30,7 +30,7 @@ public final class ValidateOf<T> {
      * Create a ValidateOf with a valid result.
      *
      * @param answer valid results
-     * @param <T>    type of ValidateOf
+     * @param <T> type of ValidateOf
      * @return ValidateOf
      */
     public static <T> ValidateOf<T> valid(T answer) {
@@ -41,7 +41,7 @@ public final class ValidateOf<T> {
      * Create a ValidateOf with errors.
      *
      * @param errors list of ValidationError
-     * @param <T>    type of ValidateOf
+     * @param <T> type of ValidateOf
      * @return ValidateOf
      */
     public static <T> ValidateOf<T> inValid(List<ValidationError> errors) {
@@ -52,7 +52,7 @@ public final class ValidateOf<T> {
      * Create a ValidateOf with a error.
      *
      * @param errors list of ValidationError
-     * @param <T>    type of ValidateOf
+     * @param <T> type of ValidateOf
      * @return ValidateOf
      */
     public static <T> ValidateOf<T> inValid(ValidationError errors) {
@@ -64,7 +64,7 @@ public final class ValidateOf<T> {
      *
      * @param answer valid results
      * @param errors list of ValidationError
-     * @param <T>    type of ValidateOf
+     * @param <T> type of ValidateOf
      * @return ValidateOf
      */
     public static <T> ValidateOf<T> validateOf(T answer, List<ValidationError> errors) {

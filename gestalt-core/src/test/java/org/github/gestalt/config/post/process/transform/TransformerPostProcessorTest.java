@@ -19,7 +19,7 @@ class TransformerPostProcessorTest {
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        TransformerPostProcessor  transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:test}");
         ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
@@ -35,7 +35,7 @@ class TransformerPostProcessorTest {
         customMap.put("place", "world");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        TransformerPostProcessor  transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place}!");
         ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -53,7 +53,7 @@ class TransformerPostProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        TransformerPostProcessor  transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place} it is ${map:weather} today");
         ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -69,7 +69,7 @@ class TransformerPostProcessorTest {
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        TransformerPostProcessor  transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:noValue}");
         ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
@@ -86,7 +86,7 @@ class TransformerPostProcessorTest {
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        TransformerPostProcessor  transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${noTransform:value}");
         ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 

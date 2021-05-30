@@ -35,9 +35,9 @@ public class DecoderRegistry implements DecoderService {
     /**
      * Constructor to build Decoder Registry.
      *
-     * @param decoders          list of all supported decoders
+     * @param decoders list of all supported decoders
      * @param configNodeService config node service that holds the config nodes.
-     * @param lexer             sentence lexer to decode
+     * @param lexer sentence lexer to decode
      * @throws GestaltConfigurationException any configuration exceptions for empty parameters.
      */
     public DecoderRegistry(List<Decoder<?>> decoders, ConfigNodeService configNodeService, SentenceLexer lexer)
@@ -74,6 +74,13 @@ public class DecoderRegistry implements DecoderService {
         this.decoders = decoders;
     }
 
+    /**
+     * get a decode for a specific class.
+     *
+     * @param klass TypeCapture class to search for a decoder
+     * @param <T> the generic type of the class
+     * @return a list of decoders that match the class
+     */
     @SuppressWarnings("rawtypes")
     protected <T> List<Decoder> getDecoderForClass(TypeCapture<T> klass) {
         return decoders

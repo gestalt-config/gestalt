@@ -25,10 +25,18 @@ public class JsonLoader implements ConfigLoader {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor for JsonLoader that accepts a ObjectMapper.
+     *
+     * @param objectMapper for loading json config
+     */
     public JsonLoader(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Default constructor for JsonLoader that creates a new ObjectMapper.
+     */
     public JsonLoader() {
         objectMapper = new ObjectMapper();
     }

@@ -47,6 +47,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final List<ValidationError> loadErrors = new ArrayList<>();
 
+    /**
+     * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
+     *
+     * @param configLoaderService configLoaderService to hold all config loaders
+     * @param sources sources we wish to load the configs from. We load the sources in the order they are provided.
+     *     Overriding older values with new one where needed
+     * @param decoderService decoderService to hold all decoders
+     * @param sentenceLexer sentenceLexer to parse the configuration paths when doing searches.
+     * @param gestaltConfig configuration for the Gestalt
+     * @param configNodeService configNodeService core functionality to manage nodes
+     * @param reloadStrategy reloadStrategy holds all reload listeners
+     * @param postProcessor postProcessor list of post processors
+     */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSource> sources, DecoderService decoderService,
                        SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService,
                        CoreReloadStrategy reloadStrategy, List<PostProcessor> postProcessor) {

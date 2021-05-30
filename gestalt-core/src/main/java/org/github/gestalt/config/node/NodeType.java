@@ -6,8 +6,17 @@ package org.github.gestalt.config.node;
  * @author Colin Redmond
  */
 public enum NodeType {
+    /**
+     * Array node type.
+     */
     ARRAY("array"),
+    /**
+     * Map node type.
+     */
     MAP("map"),
+    /**
+     * Leaf node type.
+     */
     LEAF("leaf");
 
     private final String type;
@@ -16,6 +25,11 @@ public enum NodeType {
         this.type = type;
     }
 
+    /**
+     * Get the type of this node.
+     *
+     * @return Get the type of this node
+     */
     public String getType() {
         return type;
     }

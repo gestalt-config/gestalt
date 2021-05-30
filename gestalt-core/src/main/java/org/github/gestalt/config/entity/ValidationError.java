@@ -14,16 +14,36 @@ import java.util.List;
 public abstract class ValidationError {
     private ValidationLevel level;
 
+    /**
+     * Protected constructor so end users cant create a Validation error only inherit from it.
+     *
+     * @param level error level
+     */
     protected ValidationError(ValidationLevel level) {
         this.level = level;
     }
 
+    /**
+     * Get the description of the error.
+     *
+     * @return description of the error
+     */
     public abstract String description();
 
+    /**
+     * Get the ValidationLevel of this error.
+     *
+     * @return ValidationLevel of this error
+     */
     public ValidationLevel level() {
         return level;
     }
 
+    /**
+     * Set the ValidationLevel for this error.
+     *
+     * @param level ValidationLevel
+     */
     public void setLevel(ValidationLevel level) {
         this.level = level;
     }
@@ -943,6 +963,9 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * No Key found for the transform.
+     */
     public static class NoKeyFoundForTransform extends ValidationError {
         private final String path;
         private final String transformName;

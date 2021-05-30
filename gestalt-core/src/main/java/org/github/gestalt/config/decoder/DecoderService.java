@@ -29,10 +29,10 @@ public interface DecoderService {
     /**
      * Decode a node and return the ValidateOf with the results.
      *
-     * @param path       Current path we are decoding, used for logging
+     * @param path Current path we are decoding, used for logging
      * @param configNode the current node we are decoding
-     * @param klass      the TypeCapture of the node we are decoding
-     * @param <T>        The generic type of the node we are decoding.
+     * @param klass the TypeCapture of the node we are decoding
+     * @param <T> The generic type of the node we are decoding.
      * @return ValidateOf the code we are decoding.
      */
     <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass);
@@ -47,7 +47,7 @@ public interface DecoderService {
     /**
      * Gets the next node from a config node, in a path for a string.
      *
-     * @param path       Current path we are decoding, used for logging
+     * @param path Current path we are decoding, used for logging
      * @param nextString path of the next node
      * @param configNode current config node
      * @return the next config node.
@@ -57,8 +57,8 @@ public interface DecoderService {
     /**
      * Gets the next node from a config node, in a path for a int index.
      *
-     * @param path       Current path we are decoding, used for logging
-     * @param nextIndex  path of the next node
+     * @param path Current path we are decoding, used for logging
+     * @param nextIndex path of the next node
      * @param configNode current config node
      * @return the next config node.
      */

@@ -11,10 +11,21 @@ import java.util.List;
  * @author Colin Redmond
  */
 public class GestaltConfigurationException extends GestaltException {
+    /**
+     * Create a GestaltConfigurationException with a message and a list of ValidationError.
+     *
+     * @param message message for the error
+     * @param errors list of ValidationErrors
+     */
     public GestaltConfigurationException(String message, List<ValidationError> errors) {
         super(ErrorsUtil.buildErrorMessage(message, errors));
     }
 
+    /**
+     * Create a GestaltConfigurationException with a message.
+     *
+     * @param message message for the error
+     */
     public GestaltConfigurationException(String message) {
         super(message);
     }

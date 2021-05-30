@@ -47,9 +47,9 @@ public interface Decoder<T> {
     /**
      * Decode the current node. If the current node is a class or list we may need to decode sub nodes.
      *
-     * @param path           the current path
-     * @param node           the current node we are decoding.
-     * @param type           the type of object we are decoding.
+     * @param path the current path
+     * @param node the current node we are decoding.
+     * @param type the type of object we are decoding.
      * @param decoderService decoder Service used to decode members if needed. Such as class fields.
      * @return ValidateOf the current node with details of either success or failures.
      */

@@ -36,16 +36,6 @@ class MapConfigLoaderTest {
 
     @Test
     void loadSourceMockDependenciesAllOk() throws GestaltException {
-
-        // setup the mocks
-        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
-        ConfigParser parser = Mockito.mock(ConfigParser.class);
-        ConfigSource source = Mockito.mock(ConfigSource.class);
-
-        //setup the argument captor
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
-
         // setup the input data, instead of loading from a file.
         List<Pair<String, String>> data = new ArrayList<>();
         data.add(new Pair<>("test", "value"));
@@ -53,6 +43,11 @@ class MapConfigLoaderTest {
 
         // create the result expected
         ConfigNode node = new LeafNode("test");
+
+        // setup the mocks
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+        ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
         Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
@@ -72,7 +67,11 @@ class MapConfigLoaderTest {
         ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
-        ConfigNode result = validateOfResults.results();
+
+        //setup the argument captor
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
+
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
         Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
@@ -89,18 +88,13 @@ class MapConfigLoaderTest {
         Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(1).getFirst().get(1)).getName());
         Assertions.assertEquals("redis", argument.getValue().get(1).getSecond().getValue());
 
+        ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
     }
 
     @Test
     void loadSourceMockDependenciesValidationErrors() throws GestaltException {
-
-        // setup the mocks
-        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
-        ConfigParser parser = Mockito.mock(ConfigParser.class);
-        ConfigSource source = Mockito.mock(ConfigSource.class);
-
         // setup the input data, instead of loading from a file.
         List<Pair<String, String>> data = new ArrayList<>();
         data.add(new Pair<>("test", "value"));
@@ -108,6 +102,11 @@ class MapConfigLoaderTest {
 
         // create the result expected
         ConfigNode node = new LeafNode("test");
+
+        // setup the mocks
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+        ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
         Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
@@ -144,16 +143,6 @@ class MapConfigLoaderTest {
 
     @Test
     void loadSourceMockDependenciesValidationWarn() throws GestaltException {
-
-        // setup the mocks
-        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
-        ConfigParser parser = Mockito.mock(ConfigParser.class);
-        ConfigSource source = Mockito.mock(ConfigSource.class);
-
-        //setup the argument captor
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
-
         // setup the input data, instead of loading from a file.
         List<Pair<String, String>> data = new ArrayList<>();
         data.add(new Pair<>("test", "value"));
@@ -161,6 +150,11 @@ class MapConfigLoaderTest {
 
         // create the result expected
         ConfigNode node = new LeafNode("test");
+
+        // setup the mocks
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+        ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
         Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
@@ -180,7 +174,10 @@ class MapConfigLoaderTest {
         ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
-        ConfigNode result = validateOfResults.results();
+
+        //setup the argument captor
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
@@ -194,6 +191,7 @@ class MapConfigLoaderTest {
         Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(0).getFirst().get(1)).getName());
         Assertions.assertEquals("redis", argument.getValue().get(0).getSecond().getValue());
 
+        ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
     }

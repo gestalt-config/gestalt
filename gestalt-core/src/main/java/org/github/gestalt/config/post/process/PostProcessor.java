@@ -10,6 +10,15 @@ import org.github.gestalt.config.utils.ValidateOf;
  * @author Colin Redmond
  */
 public interface PostProcessor {
+
+    /**
+     * run the post process the current node.
+     *
+     * @param path current path
+     * @param currentNode current node to post process.
+     * @return the node after running though the post processor.
+     * @throws GestaltException any exceptions
+     */
     ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) throws GestaltException;
 
     /**

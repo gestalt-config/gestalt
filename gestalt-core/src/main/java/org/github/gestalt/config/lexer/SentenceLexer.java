@@ -26,7 +26,7 @@ public abstract class SentenceLexer {
     /**
      * Takes in an elements such as abc or def[3] then converts it into a Token.
      *
-     * @param word     The First string in the method params is the word in the string we are evaluating
+     * @param word The First string in the method params is the word in the string we are evaluating
      * @param sentence second string in the method params is the path the word is in.
      * @return ValidateOf list of tokens from a word.
      */
@@ -42,6 +42,12 @@ public abstract class SentenceLexer {
         return sentence.toLowerCase();
     }
 
+    /**
+     * Scan a string a provide a list of tokens.
+     *
+     * @param sentence sentence to scan
+     * @return list of token
+     */
     public ValidateOf<List<Token>> scan(String sentence) {
 
         if (sentence == null || sentence.equals("")) {

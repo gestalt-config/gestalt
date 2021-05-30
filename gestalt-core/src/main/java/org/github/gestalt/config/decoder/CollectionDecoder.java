@@ -46,5 +46,14 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
         return results;
     }
 
+    /**
+     * Decode an array values.
+     *
+     * @param path Current path we are decoding
+     * @param node current node we are decoding
+     * @param klass class to decode into
+     * @param decoderService decoder service use to recursively decode nodes
+     * @return ValidateOf array built from the config node
+     */
     protected abstract ValidateOf<T> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService);
 }
