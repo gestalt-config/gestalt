@@ -1,5 +1,6 @@
 package org.github.gestalt.config.reflect;
 
+import org.github.gestalt.config.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ class TypeCaptureTest {
 
     @Test
     void isAssignableFromList() {
-        TypeCapture<List<String>> type = new TypeCapture<List<String>>() {
+        TypeCapture<List<String>> type = new TypeCapture<>() {
         };
         Assertions.assertTrue(type.hasParameter());
         Assertions.assertEquals("java.util.List<java.lang.String>", type.getName());
@@ -21,8 +22,19 @@ class TypeCaptureTest {
     }
 
     @Test
+    void isAssignableFromArray() {
+        TypeCapture<String[]> type = new TypeCapture<>() {
+        };
+        Assertions.assertFalse(type.hasParameter());
+        Assertions.assertEquals("java.lang.String[]", type.getName());
+        Assertions.assertFalse(type.isAssignableFrom(Integer.class));
+        Assertions.assertFalse(type.isAssignableFrom(Double.class));
+        Assertions.assertTrue(type.isArray());
+    }
+
+    @Test
     void isAssignableFromInteger() {
-        TypeCapture<Integer> type = new TypeCapture<Integer>() {
+        TypeCapture<Integer> type = new TypeCapture<>() {
         };
         Assertions.assertFalse(type.hasParameter());
         Assertions.assertNull(type.getFirstParameterType());
@@ -34,7 +46,7 @@ class TypeCaptureTest {
 
     @Test
     void isAssignableFromDate() {
-        TypeCapture<Date> type = new TypeCapture<Date>() {
+        TypeCapture<Date> type = new TypeCapture<>() {
         };
         Assertions.assertFalse(type.hasParameter());
         Assertions.assertNull(type.getFirstParameterType());
@@ -54,7 +66,7 @@ class TypeCaptureTest {
 
     @Test
     void isAssignableFromHolder() {
-        TypeCapture<Holder<Integer>> type = new TypeCapture<Holder<Integer>>() {
+        TypeCapture<Holder<Integer>> type = new TypeCapture<>() {
         };
         Assertions.assertEquals(Integer.class, type.getFirstParameterType().type);
         Assertions.assertEquals("org.github.gestalt.config.reflect.TypeCaptureTest$Holder<java.lang.Integer>",
@@ -67,12 +79,15 @@ class TypeCaptureTest {
 
     @Test
     void isAssignableFromBaseClass() {
-        TypeCapture<BaseClass> type = new TypeCapture<BaseClass>() {
+        TypeCapture<BaseClass> type = new TypeCapture<>() {
         };
         Assertions.assertFalse(type.hasParameter());
         Assertions.assertEquals("org.github.gestalt.config.reflect.TypeCaptureTest$BaseClass", type.getName());
 
         Assertions.assertNull(type.getFirstParameterType());
+        Assertions.assertNull(type.getSecondParameterType());
+        Assertions.assertNull(type.getParameterTypes());
+        Assertions.assertNull(type.getComponentType());
         Assertions.assertTrue(type.isAssignableFrom(BaseClass.class));
         Assertions.assertTrue(type.isAssignableFrom(InheritedClass.class));
         Assertions.assertFalse(type.isAssignableFrom(Integer.class));
@@ -81,7 +96,7 @@ class TypeCaptureTest {
 
     @Test
     void isAssignableFromInheritedClass() {
-        TypeCapture<InheritedClass> type = new TypeCapture<InheritedClass>() {
+        TypeCapture<InheritedClass> type = new TypeCapture<>() {
         };
         Assertions.assertFalse(type.hasParameter());
         Assertions.assertEquals("org.github.gestalt.config.reflect.TypeCaptureTest$InheritedClass", type.getName());
@@ -95,7 +110,7 @@ class TypeCaptureTest {
 
     @Test
     void isAssignableArray() {
-        TypeCapture<Integer[]> type = new TypeCapture<Integer[]>() {
+        TypeCapture<Integer[]> type = new TypeCapture<>() {
         };
         Assertions.assertNull(type.getFirstParameterType());
         Assertions.assertEquals("java.lang.Integer[]", type.getName());
@@ -142,11 +157,34 @@ class TypeCaptureTest {
         TypeCapture type = new TypeCapture<List<Object>>() {
         };
         Assertions.assertEquals(Object.class, type.getFirstParameterType().type);
+        Assertions.assertNull(type.getSecondParameterType());
         Assertions.assertTrue(type.hasParameter());
         Assertions.assertFalse(type.isAssignableFrom(Holder.class));
         Assertions.assertFalse(type.isAssignableFrom(Integer.class));
         Assertions.assertTrue(type.isAssignableFrom(List.class));
         Assertions.assertFalse(type.isAssignableFrom(Integer[].class));
+    }
+
+    @Test
+    void getParameterType() {
+        TypeCapture type = new TypeCapture<Pair<Integer, String>>() {
+        };
+
+        Assertions.assertEquals(Integer.class, type.getFirstParameterType().type);
+        Assertions.assertEquals(String.class, type.getSecondParameterType().type);
+        Assertions.assertTrue(type.hasParameter());
+    }
+
+    @Test
+    void getEquals() {
+        TypeCapture type1 = new TypeCapture<Pair<Integer, String>>() {
+        };
+        TypeCapture type2 = new TypeCapture<Object[]>() {
+        };
+
+        Assertions.assertEquals(type1, type1);
+        Assertions.assertNotEquals(type1, type2);
+        Assertions.assertNotEquals(type1, Integer.valueOf(1));
     }
 
     public static class Holder<T> {
