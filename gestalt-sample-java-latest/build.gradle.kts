@@ -16,7 +16,7 @@ tasks.compileTestJava {
 }
 
 dependencies {
-    val gestaltVersion = "0.8.1"
+    val gestaltVersion = "0.9.0"
     testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-hocon:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
