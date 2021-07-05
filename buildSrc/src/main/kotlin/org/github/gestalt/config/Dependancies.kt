@@ -6,15 +6,15 @@ package org.github.gestalt.config
 
 object Application {
     object Versions {
-        const val slf4j = "1.7.30"
+        const val slf4j = "1.7.31"
 
-        const val kotlinVersion = "1.5.10"
+        const val kotlinVersion = "1.5.20"
 
         const val jackson = "2.12.3"
 
         const val hocon = "1.4.1"
-        const val aws = "2.16.73"
-        const val jgit = "5.11.1.202105131744-r"
+        const val aws = "2.16.95"
+        const val jgit = "5.12.0.202106070339-r"
 
         const val eddsa = "0.3.0"
 
@@ -59,11 +59,11 @@ object Application {
 object Test {
     private object Versions {
         const val junit5 = "5.7.2"
-        const val assertJ = "3.19.0"
-        const val mockito = "3.10.0"
-        const val mockk = "1.11.0"
+        const val assertJ = "3.20.2"
+        const val mockito = "3.11.2"
+        const val mockk = "1.12.0"
         const val kotlinTestAssertions = "4.6.0"
-        const val awsMock = "2.1.29"
+        const val awsMock = "2.1.33"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
@@ -80,7 +80,7 @@ object Test {
 
 object Plugins {
     object Versions {
-        const val errorprone = "2.6.0"
+        const val errorprone = "2.7.1"
         const val errorpronejavac = "9+181-r4173-1"
         const val detekt = "1.17.1"
     }
