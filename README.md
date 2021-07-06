@@ -83,18 +83,15 @@ You can use the builder to construct the Gestalt library. It is possible to do t
   configs.put("db.hosts[2].password", "9012");
   configs.put("db.idleTimeout", "123");
 
-  // Load the default property files from resources. 
-  URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.properties");
-  File defaultFile = new File(defaultFileURL.getFile());
-
-  // Load the environment specific property files from resources.
+  // Load the default property files from resources.
   URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
   File devFile = new File(devFileURL.getFile());
 
-  // using the builder to layer on the configuration files. 
+  // using the builder to layer on the configuration files.
   // The later ones layer on and over write any values in the previous
-  Gestalt gestalt = new GestaltBuilder()
-    .addSource(new FileConfigSource(defaultFile))
+  GestaltBuilder builder = new GestaltBuilder();
+  Gestalt gestalt = builder
+    .addSource(new ClassPathConfigSource("/default.properties"))  // Load the default property files from resources. 
     .addSource(new FileConfigSource(devFile))
     .addSource(new MapConfigSource(configs))
     .build();
