@@ -1,4 +1,4 @@
-package org.github.gestalt.config.kotlin.koin.test
+package org.github.gestalt.config.kotlin.kodein.test
 
 class DBInfoPOJO(
     var port: Int = 0,

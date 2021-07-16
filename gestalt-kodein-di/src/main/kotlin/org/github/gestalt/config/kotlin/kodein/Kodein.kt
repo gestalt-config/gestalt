@@ -1,4 +1,4 @@
-package org.github.gestalt.config.kotlin.koin
+package org.github.gestalt.config.kotlin.kodein
 
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
