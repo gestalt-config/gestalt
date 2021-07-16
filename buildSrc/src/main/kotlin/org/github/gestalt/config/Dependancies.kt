@@ -9,6 +9,7 @@ object Application {
         const val slf4j = "1.7.31"
 
         const val kotlinVersion = "1.5.20"
+        const val kodeinDIVersion = "7.6.0"
 
         const val jackson = "2.12.3"
 
@@ -28,6 +29,7 @@ object Application {
 
     object Kotlin {
         const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
+        const val kodeinDI = "org.kodein.di:kodein-di-jvm:${Versions.kodeinDIVersion}"
     }
 
     object Json {
