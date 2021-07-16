@@ -369,7 +369,7 @@ Provided TransformerPostProcessor
 
 # Additional Modules
 
-## Gestalt Kodein
+## Gestalt Kodein dependency injection
 When you are using Kodein you can use it to inject your configurations directly into your objects.
 By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
@@ -385,7 +385,7 @@ See the [unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config
   val dbService1 = kodein.direct.instance<DBService1>()
 ```
 
-## Gestalt Koin
+## Gestalt Koin dependency injection
 When you are using Koin you can use it to inject your configurations directly into your objects.
 By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
