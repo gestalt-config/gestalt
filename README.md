@@ -373,7 +373,7 @@ Provided TransformerPostProcessor
 When you are using Kodein you can use it to inject your configurations directly into your objects.
 By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
-See the [unit tests]([unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config/kotlin/kodein/test/KodeinTest.kt)) for examples of use.
+See the [unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config/kotlin/kodein/test/KodeinTest.kt) for examples of use.
 
 ```kotlin
   val kodein = DI {
