@@ -10,6 +10,7 @@ object Application {
 
         const val kotlinVersion = "1.5.20"
         const val kodeinDIVersion = "7.6.0"
+        const val koinDIVersion = "3.1.2"
 
         const val jackson = "2.12.3"
 
@@ -30,6 +31,7 @@ object Application {
     object Kotlin {
         const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
         const val kodeinDI = "org.kodein.di:kodein-di-jvm:${Versions.kodeinDIVersion}"
+        const val koinDI = "io.insert-koin:koin-core:${Versions.koinDIVersion}"
     }
 
     object Json {

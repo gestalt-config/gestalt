@@ -1,4 +1,4 @@
-package org.github.gestalt.config.kotlin.kodein.test
+package org.github.gestalt.config.kotlin.koin.test
 
 class DBInfoPOJO(
     var port: Int = 0,
@@ -23,7 +23,6 @@ data class DBInfoNoDefaultOptional(
     var uri: String = "mysql:URI",
     var password: String? = null
 )
-
 
 class DBService1(private val dbInfo: DBInfo) {
     fun test(): Boolean = dbInfo.password.isNotBlank() && dbInfo.port != 0 && dbInfo.uri.isNotBlank()

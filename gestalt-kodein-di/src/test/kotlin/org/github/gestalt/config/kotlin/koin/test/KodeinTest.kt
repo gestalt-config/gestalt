@@ -1,9 +1,9 @@
-package org.github.gestalt.config.kotlin.kodein.test
+package org.github.gestalt.config.kotlin.koin.test
 
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
-import org.github.gestalt.config.kotlin.kodein.gestalt
-import org.github.gestalt.config.kotlin.kodein.gestaltDefault
+import org.github.gestalt.config.kotlin.koin.gestalt
+import org.github.gestalt.config.kotlin.koin.gestaltDefault
 import org.github.gestalt.config.source.ClassPathConfigSource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -120,6 +120,5 @@ internal class KodeinTest {
         }
 
         Assertions.assertThrows(DI.NotFoundException::class.java) { kodein.direct.instance<DBService2>() }
-
     }
 }
