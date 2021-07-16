@@ -260,14 +260,14 @@ In the above example we first load a file devFile then overwrite any values from
 # Config Loader
 Each config loader understands how to load a specific type of config. Often this is associated with a specific ConfigSource. For example the EnvironmentVarsLoader only loads the EnvironmentConfigSource. However, some loaders expect a format of the config, but accept it from multiple sources. For example the PropertyLoader expects the typical java property file, but it can come from any source as long as it is an input stream. It may be the system properties, local file, github, or S3.   
 
-| Config Loader | Formats supported | details |
-| ------------- | ----------------- | ------- |
-| EnvironmentVarsLoader | envVars | Loads Environment Variables from the EnvironmentConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "_". You can also enable treatErrorsAsWarnings if you are receiving errors from the environment variables, as you can not always control what is present. By treating Errors as warnings it will not fail if it finds a configuration the parser doesn't understand. Instead it will ignore the specific config. |
-| MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
-| PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". |
-| JsonLoader | json | Leverages Jackson to load json files and convert them into a ConfigNode tree. Must include package com.github.gestalt-config:gestalt-json:version. |
-| YamlLoader | yml and yaml | Leverages Jackson to load yaml files and convert them into a ConfigNode tree. Must include package com.github.gestalt-config:gestalt-yaml:version. |
-| HoconLoader | config | Leverages com.typesafe:config to load hocon files, supports substitutions. Must include package com.github.gestalt-config:gestalt-hocon:version. |
+| Config Loader | Formats supported | details | module |
+| ------------- | ----------------- | ------- | ------ |
+| EnvironmentVarsLoader | envVars | Loads Environment Variables from the EnvironmentConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "_". You can also enable treatErrorsAsWarnings if you are receiving errors from the environment variables, as you can not always control what is present. By treating Errors as warnings it will not fail if it finds a configuration the parser doesn't understand. Instead it will ignore the specific config. | core | 
+| MapConfigLoader | mapConfig | Loads a user provided Map from the MapConfigSource, it expects a list not a InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". | core | 
+| PropertyLoader | properties, props, and systemProperties  | Loads a standard property file from an InputStream. By default, it splits the paths using a "." and tokenizes arrays with a numeric index as "[0]". | core |
+| JsonLoader | json | Leverages Jackson to load json files and convert them into a ConfigNode tree.  | [`gestalt-json`](https://search.maven.org/search?q=gestalt-json) |
+| YamlLoader | yml and yaml | Leverages Jackson to load yaml files and convert them into a ConfigNode tree. | [`gestalt-yaml`](https://search.maven.org/search?q=gestalt-yaml) |
+| HoconLoader | config | Leverages com.typesafe:config to load hocon files, supports substitutions. | [`gestalt-hocon`](https://search.maven.org/search?q=gestalt-hocon) |
 
 If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Config loaders. It will configure them by passing in the GestaltConfig to applyConfig. 
 To register your own default ConfigLoaders, add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
@@ -366,6 +366,44 @@ Provided TransformerPostProcessor
 | dateDecoderFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
 | localDateTimeFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
 | localDateFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
+
+# Additional Modules
+
+## Gestalt Kodein
+When you are using Kodein you can use it to inject your configurations directly into your objects.
+By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
+
+See the [unit tests]([unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config/kotlin/kodein/test/KodeinTest.kt)) for examples of use.
+
+```kotlin
+  val kodein = DI {
+    bindInstance { gestalt!! }
+    bindSingleton { DBService1(gestalt("db")) }
+    bindSingleton { DBService2(gestaltDefault("db", DBInfoPOJO(port = 1000, password = "default"))) }
+  }
+
+  val dbService1 = kodein.direct.instance<DBService1>()
+```
+
+## Gestalt Koin
+When you are using Koin you can use it to inject your configurations directly into your objects.
+By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
+
+See the [unit tests](gestalt-koin-di/src/test/kotlin/org/github/gestalt/config/kotlin/koin/test/KoinTest.kt) for examples of use.
+
+```kotlin
+  val koinModule = module {
+    single { gestalt!! }
+    single { DBService1(gestalt("db")) }
+    single { DBService2(gestaltDefault("db", DBInfoPOJO(port = 1000, password = "default"))) }
+  }
+
+  val myApp = koinApplication {
+    modules(koinModule)
+  }
+
+  val dbService1: DBService1 = myApp.koin.get()
+```
 
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample/src/test) or for Java 16 + samples [gestalt-sample-java-latest](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample-java-latest/src/test)
