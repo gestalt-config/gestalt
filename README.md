@@ -222,21 +222,17 @@ If you want to use a different path style you can provide your own SentenceLexer
 ```
 
 # Kotlin
-Using the GestaltBuilder to create the Gestalt library you should use the addDefaultDecodersAndKotlin() extension method to ensure we add all Kotlin specific Decoders.  This method will also add the default Java decoders as well. 
-
-```kotlin
-  val gestalt = builder
-    .addSource(FileConfigSource(defaultFile))
-    .addDefaultDecodersAndKotlin()
-    .build()
-```
-
 For Kotlin Gestalt includes several extension methods that allow easier use of Gestalt by way of reified functions to better capture the generic type information. 
 Using the extension functions you don't need to specify the type if the return type has enough information to be inferred.
 ```kotlin
   val pool: HttpPool = gestalt.getConfig("http.pool")
   val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```
+| Gestalt Version | Kotlin Version |
+| --------------- | ------- | 
+| 0.9.0 to  | 1.5 |
+| 0.1.0 to 0.8.1 | 1.4 |
+
 # Config Sources
 Adding a ConfigSource to the builder is the minimum step needed to build the Gestalt Library. 
 You can add several ConfigSources to the builder and Gestalt, they will be loaded in the order they are added. Where each new source will be merged with the existing source and where applicable overwrite the values of the previous sources. 
