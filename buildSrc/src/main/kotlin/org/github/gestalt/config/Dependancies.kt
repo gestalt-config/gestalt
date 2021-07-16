@@ -8,12 +8,14 @@ object Application {
     object Versions {
         const val slf4j = "1.7.31"
 
-        const val kotlinVersion = "1.5.20"
+        const val kotlinVersion = "1.5.21"
+        const val kodeinDIVersion = "7.6.0"
+        const val koinDIVersion = "3.1.2"
 
-        const val jackson = "2.12.3"
+        const val jackson = "2.12.4"
 
         const val hocon = "1.4.1"
-        const val aws = "2.16.95"
+        const val aws = "2.16.104"
         const val jgit = "5.12.0.202106070339-r"
 
         const val eddsa = "0.3.0"
@@ -28,6 +30,8 @@ object Application {
 
     object Kotlin {
         const val kotlinReflection = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
+        const val kodeinDI = "org.kodein.di:kodein-di-jvm:${Versions.kodeinDIVersion}"
+        const val koinDI = "io.insert-koin:koin-core:${Versions.koinDIVersion}"
     }
 
     object Json {
@@ -62,8 +66,8 @@ object Test {
         const val assertJ = "3.20.2"
         const val mockito = "3.11.2"
         const val mockk = "1.12.0"
-        const val kotlinTestAssertions = "4.6.0"
-        const val awsMock = "2.1.33"
+        const val kotlinTestAssertions = "4.6.1"
+        const val awsMock = "2.1.36"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
