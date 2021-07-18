@@ -6,6 +6,7 @@ import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.getConfig
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.source.ClassPathConfigSource
 import org.github.gestalt.config.source.EnvironmentConfigSource
 import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
@@ -24,14 +25,10 @@ class GestaltKotlinSample {
             "db.idleTimeout" to "123"
         )
 
-        val defaultFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("default.properties")
-        val defaultFile: java.io.File = java.io.File(defaultFileURL.file)
-        val devFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("dev.properties")
-        val devFile: java.io.File = java.io.File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
-            .addSource(FileConfigSource(devFile))
+            .addSource(ClassPathConfigSource("/default.properties"))
+            .addSource(ClassPathConfigSource("/dev.properties"))
             .addSource(MapConfigSource(configs))
             .build()
         gestalt.loadConfigs()
@@ -45,13 +42,11 @@ class GestaltKotlinSample {
         configs["db.hosts[0].password"] = "1234"
         configs["db.hosts[1].password"] = "5678"
         configs["db.hosts[2].password"] = "9012"
-        val defaultFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("default.properties")
-        val defaultFile: java.io.File = java.io.File(defaultFileURL.file)
         val devFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("dev.properties")
         val devFile: java.io.File = java.io.File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt: Gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
+            .addSource(ClassPathConfigSource("/default.properties"))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
@@ -76,13 +71,11 @@ class GestaltKotlinSample {
         configs["db.hosts[1].password"] = "5678"
         configs["db.hosts[2].password"] = "9012"
         configs["db.idleTimeout"] = "123"
-        val defaultFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("default.properties")
-        val defaultFile: java.io.File = java.io.File(defaultFileURL.file)
         val devFileURL: java.net.URL = GestaltKotlinSample::class.java.classLoader.getResource("dev.properties")
         val devFile: java.io.File = java.io.File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
+            .addSource(ClassPathConfigSource("/default.properties"))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
             .build()
