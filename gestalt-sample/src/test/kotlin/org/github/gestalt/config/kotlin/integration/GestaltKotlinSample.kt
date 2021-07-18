@@ -4,16 +4,13 @@ import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.getConfig
-import org.github.gestalt.config.kotlin.kodein.gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.EnvironmentConfigSource
 import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.kodein.di.*
 import kotlin.reflect.typeOf
 
 class GestaltKotlinSample {
