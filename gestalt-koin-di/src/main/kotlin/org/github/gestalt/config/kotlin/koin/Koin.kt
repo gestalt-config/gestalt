@@ -10,20 +10,14 @@ import kotlin.reflect.typeOf
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T : Any> Scope.gestalt(
     path: String,
+    default: T? = null,
     qualifier: Qualifier? = null,
     noinline parameters: ParametersDefinition? = null
 ): T {
     val gestalt = this.get<Gestalt>(qualifier, parameters)
-    return gestalt.getConfig(path, KTypeCapture.of<T>(typeOf<T>())) as T
-}
-
-@OptIn(ExperimentalStdlibApi::class)
-inline fun <reified T : Any> Scope.gestaltDefault(
-    path: String,
-    default: T,
-    qualifier: Qualifier? = null,
-    noinline parameters: ParametersDefinition? = null
-): T {
-    val gestalt = this.get<Gestalt>(qualifier, parameters)
-    return gestalt.getConfig(path, default, KTypeCapture.of<T>(typeOf<T>())) as T
+    return if (default != null) {
+        gestalt.getConfig(path, default, KTypeCapture.of<T>(typeOf<T>())) as T
+    } else {
+        gestalt.getConfig(path, KTypeCapture.of<T>(typeOf<T>())) as T
+    }
 }

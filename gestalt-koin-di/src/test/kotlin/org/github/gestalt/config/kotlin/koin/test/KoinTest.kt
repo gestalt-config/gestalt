@@ -3,7 +3,7 @@ package org.github.gestalt.config.kotlin.koin.test
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.kotlin.koin.gestalt
-import org.github.gestalt.config.kotlin.koin.gestaltDefault
+import org.github.gestalt.config.kotlin.koin.gestalt
 import org.github.gestalt.config.source.ClassPathConfigSource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -26,7 +26,7 @@ internal class KoinTest {
     }
 
     @Test
-    fun testKoinDI() {
+    fun `test Koin DI`() {
 
         val koinModule = module {
             single { gestalt!! }
@@ -44,7 +44,7 @@ internal class KoinTest {
     }
 
     @Test
-    fun testKoinDIDoesntExist() {
+    fun `test Koin DI Doesnt Exist`() {
 
         val koinModule = module {
             single { gestalt!! }
@@ -62,11 +62,11 @@ internal class KoinTest {
     }
 
     @Test
-    fun testKoinDIDefault() {
+    fun `test Koin DI Default`() {
 
         val koinModule = module {
             single { gestalt!! }
-            single { DBService2(gestaltDefault("notdb", DBInfoPOJO(port = 1000, password = "default"))) }
+            single { DBService2(gestalt("notdb", DBInfoPOJO(port = 1000, password = "default"))) }
         }
 
         val myApp = koinApplication {

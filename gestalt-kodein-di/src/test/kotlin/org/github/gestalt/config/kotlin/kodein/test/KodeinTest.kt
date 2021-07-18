@@ -3,7 +3,7 @@ package org.github.gestalt.config.kotlin.kodein.test
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.kotlin.kodein.gestalt
-import org.github.gestalt.config.kotlin.kodein.gestaltDefault
+import org.github.gestalt.config.kotlin.kodein.gestalt
 import org.github.gestalt.config.source.ClassPathConfigSource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -26,7 +26,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDI() {
+    fun `test Kodein DI`() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -40,7 +40,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDIDoesntExist() {
+    fun `test Kodein DI Doesnt Exist`() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -54,12 +54,12 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDIDefault() {
+    fun `test Kodein DI Default`() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
-            bindSingleton(tag = "default") { DBService2(gestaltDefault("notdb", DBInfoPOJO(port = 1000, password = "default"))) }
-            bindSingleton(tag = "actual") { DBService2(gestaltDefault("db", DBInfoPOJO(port = 2000, password = "test"))) }
+            bindSingleton(tag = "default") { DBService2(gestalt("notdb", DBInfoPOJO(port = 1000, password = "default"))) }
+            bindSingleton(tag = "actual") { DBService2(gestalt("db", DBInfoPOJO(port = 2000, password = "test"))) }
         }
 
         val dbService1 = kodein.direct.instance<DBService2>(tag = "default")
@@ -69,12 +69,12 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDIDefaultExists() {
+    fun `test Kodein DI Default Exists`() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
-            bindSingleton(tag = "default") { DBService2(gestaltDefault("notdb", DBInfoPOJO(port = 1000, password = "default"))) }
-            bindSingleton(tag = "actual") { DBService2(gestaltDefault("db", DBInfoPOJO(port = 2000, password = "test"))) }
+            bindSingleton(tag = "default") { DBService2(gestalt("notdb", DBInfoPOJO(port = 1000, password = "default"))) }
+            bindSingleton(tag = "actual") { DBService2(gestalt("db", DBInfoPOJO(port = 2000, password = "test"))) }
         }
 
         val dbService2 = kodein.direct.instance<DBService2>(tag = "actual")
@@ -84,7 +84,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDIBy() {
+    fun `test Kodein DI By`() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -98,11 +98,11 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDIWithTag() {
+    fun `test Kodein DI With Tag`() {
 
         val kodein = DI {
             bindInstance(tag = "gestalt") { gestalt!! }
-            bindSingleton { DBService2(gestaltDefault("db", DBInfoPOJO(port = 1000, password = "default"), "gestalt")) }
+            bindSingleton { DBService2(gestalt("db", DBInfoPOJO(port = 1000, password = "default"), "gestalt")) }
         }
 
         val dbService2 = kodein.direct.instance<DBService2>()
@@ -112,11 +112,11 @@ internal class KodeinTest {
     }
 
     @Test
-    fun testKodeinDIWithWrongTag() {
+    fun `test Kodein DI With Wrong Tag`() {
 
         val kodein = DI {
             bindInstance(tag = "gestalt") { gestalt!! }
-            bindSingleton { DBService2(gestaltDefault("notdb", DBInfoPOJO(port = 1000, password = "default"), "notATag")) }
+            bindSingleton { DBService2(gestalt("notdb", DBInfoPOJO(port = 1000, password = "default"), "notATag")) }
         }
 
         Assertions.assertThrows(DI.NotFoundException::class.java) { kodein.direct.instance<DBService2>() }

@@ -371,7 +371,7 @@ Provided TransformerPostProcessor
 
 ## Gestalt Kodein dependency injection
 When you are using Kodein you can use it to inject your configurations directly into your objects.
-By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
+By using the extension method `gestalt` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
 See the [unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config/kotlin/kodein/test/KodeinTest.kt) for examples of use.
 
@@ -379,7 +379,7 @@ See the [unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config
   val kodein = DI {
     bindInstance { gestalt!! }
     bindSingleton { DBService1(gestalt("db")) }
-    bindSingleton { DBService2(gestaltDefault("db", DBInfoPOJO(port = 1000, password = "default"))) }
+    bindSingleton { DBService2(gestalt("db", DBInfoPOJO(port = 1000, password = "default"))) }
   }
 
   val dbService1 = kodein.direct.instance<DBService1>()
@@ -387,7 +387,7 @@ See the [unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config
 
 ## Gestalt Koin dependency injection
 When you are using Koin you can use it to inject your configurations directly into your objects.
-By using the extension method `gestalt` or `gestaltDefault` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
+By using the extension method `gestalt` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
 See the [unit tests](gestalt-koin-di/src/test/kotlin/org/github/gestalt/config/kotlin/koin/test/KoinTest.kt) for examples of use.
 
@@ -395,7 +395,7 @@ See the [unit tests](gestalt-koin-di/src/test/kotlin/org/github/gestalt/config/k
   val koinModule = module {
     single { gestalt!! }
     single { DBService1(gestalt("db")) }
-    single { DBService2(gestaltDefault("db", DBInfoPOJO(port = 1000, password = "default"))) }
+    single { DBService2(gestalt("db", DBInfoPOJO(port = 1000, password = "default"))) }
   }
 
   val myApp = koinApplication {
