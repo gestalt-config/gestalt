@@ -4,6 +4,8 @@ import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.getConfig
+import org.github.gestalt.config.kotlin.kodein.gestalt
+import org.github.gestalt.config.kotlin.koin.gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.ClassPathConfigSource
@@ -12,6 +14,9 @@ import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.kodein.di.*
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 import kotlin.reflect.typeOf
 
 class GestaltKotlinSample {
@@ -89,6 +94,94 @@ class GestaltKotlinSample {
         assertEquals(60000.0, pool.keepAliveTimeoutMs)
         assertEquals(25, pool.idleTimeoutSec)
         assertEquals(33.0f, pool.defaultWait)
+    }
+
+    @org.junit.jupiter.api.Test
+    @kotlin.Throws(GestaltException::class)
+    fun integrationTestKodein() {
+        val configs: MutableMap<String, String> = mutableMapOf(
+            "db.hosts[0].password" to "1234",
+            "db.hosts[1].password" to "5678",
+            "db.hosts[2].password" to "9012",
+            "db.idleTimeout" to "123"
+        )
+
+        val builder = GestaltBuilder()
+        val gestalt = builder
+            .addSource(ClassPathConfigSource("/default.properties"))
+            .addSource(ClassPathConfigSource("/dev.properties"))
+            .addSource(MapConfigSource(configs))
+            .build()
+        gestalt.loadConfigs()
+
+        val kodein = DI {
+            bindInstance { gestalt!! }
+            bindSingleton { ConnectionService(gestalt("http.pool")) }
+            bindSingleton { HostService(gestalt("DB.nohost", Host("test1", "test2", "test3"))) }
+        }
+
+        val connectionService = kodein.direct.instance<ConnectionService>()
+
+        val pool: HttpPool = connectionService.httpPool
+        assertEquals(1000, pool.maxTotal.toInt())
+        assertEquals(1000.toShort(), gestalt.getConfig("http.pool.maxTotal"))
+        assertEquals(50L, pool.maxPerRoute)
+        assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute"))
+        assertEquals(6000, pool.validateAfterInactivity)
+        assertEquals(60000.0, pool.keepAliveTimeoutMs)
+        assertEquals(25, pool.idleTimeoutSec)
+        assertEquals(33.0f, pool.defaultWait)
+
+        val hostService = kodein.direct.instance<HostService>()
+        assertEquals("test3", hostService.hostPool.password)
+        assertEquals("test2", hostService.hostPool.url)
+        assertEquals("test1", hostService.hostPool.user)
+    }
+
+    @org.junit.jupiter.api.Test
+    @kotlin.Throws(GestaltException::class)
+    fun integrationTestKoin() {
+        val configs: MutableMap<String, String> = mutableMapOf(
+            "db.hosts[0].password" to "1234",
+            "db.hosts[1].password" to "5678",
+            "db.hosts[2].password" to "9012",
+            "db.idleTimeout" to "123"
+        )
+
+        val builder = GestaltBuilder()
+        val gestalt = builder
+            .addSource(ClassPathConfigSource("/default.properties"))
+            .addSource(ClassPathConfigSource("/dev.properties"))
+            .addSource(MapConfigSource(configs))
+            .build()
+        gestalt.loadConfigs()
+
+        val koinModule = module {
+            single { gestalt!! }
+            single { ConnectionService(gestalt("http.pool")) }
+            single { HostService(gestalt("DB.nohost", Host("test1", "test2", "test3"))) }
+        }
+
+        val myApp = koinApplication {
+            modules(koinModule)
+        }
+
+        val connectionService: ConnectionService = myApp.koin.get()
+
+        val pool: HttpPool = connectionService.httpPool
+        assertEquals(1000, pool.maxTotal.toInt())
+        assertEquals(1000.toShort(), gestalt.getConfig("http.pool.maxTotal"))
+        assertEquals(50L, pool.maxPerRoute)
+        assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute"))
+        assertEquals(6000, pool.validateAfterInactivity)
+        assertEquals(60000.0, pool.keepAliveTimeoutMs)
+        assertEquals(25, pool.idleTimeoutSec)
+        assertEquals(33.0f, pool.defaultWait)
+
+        val hostService:HostService = myApp.koin.get()
+        assertEquals("test3", hostService.hostPool.password)
+        assertEquals("test2", hostService.hostPool.url)
+        assertEquals("test1", hostService.hostPool.user)
     }
 
     private fun testValidation(gestalt: Gestalt) {
@@ -173,6 +266,10 @@ class GestaltKotlinSample {
         LEVEL0, LEVEL1
     }
 
+    class ConnectionService(var httpPool: HttpPool)
+
+    class HostService(var hostPool: Host)
+
     data class HttpPool(
         var maxTotal: Short = 0,
         var maxPerRoute: Long = 0,
@@ -182,11 +279,7 @@ class GestaltKotlinSample {
         var defaultWait: Float = 33.0f
     )
 
-    class Host {
-        var user: String? = null
-        var url: String? = null
-        var password: String? = null
-    }
+    class Host(var user: String? = null, var url: String? = null, var password: String? = null)
 
     class DataBase {
         var hosts: List<Host>? = null

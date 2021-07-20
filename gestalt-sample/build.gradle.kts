@@ -19,5 +19,11 @@ dependencies {
     testImplementation("com.github.gestalt-config:gestalt-yaml:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-s3:$gestaltVersion")
 
+    testImplementation("com.github.gestalt-config:gestalt-kodein-di:$gestaltVersion")
+    implementation(org.github.gestalt.config.Application.Kotlin.kodeinDI)
+
+    testImplementation("com.github.gestalt-config:gestalt-koin-di:$gestaltVersion")
+    implementation(org.github.gestalt.config.Application.Kotlin.koinDI)
+
     testImplementation(org.github.gestalt.config.Test.awsMock)
 }
