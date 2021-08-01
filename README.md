@@ -27,10 +27,10 @@ Gradle example:
 implementation 'com.github.gestalt-config:gestalt-core:${version}'
 implementation 'com.github.gestalt-config:gestalt-kotlin:${version}'
 ```
-Or
+Or with the kotlin DSL:
 ```kotlin
-testImplementation("com.github.gestalt-config:gestalt-core:$version")
-testImplementation("com.github.gestalt-config:gestalt-kotlin:$version")
+implementation("com.github.gestalt-config:gestalt-core:$version")
+implementation("com.github.gestalt-config:gestalt-kotlin:$version")
 ```
 Maven Example:
 ```xml
