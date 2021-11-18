@@ -230,7 +230,8 @@ Using the extension functions you don't need to specify the type if the return t
 ```
 | Gestalt Version | Kotlin Version |
 | --------------- | ------- | 
-| 0.9.0 to  | 1.5 |
+| 0.10.0 + | 1.6 |
+| 0.9.0 to 0.9.3 | 1.5 |
 | 0.1.0 to 0.8.1 | 1.4 |
 
 # Config Sources

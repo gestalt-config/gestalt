@@ -174,7 +174,7 @@ class YamlLoaderTest {
             yamlLoader.loadSource(source);
             Assertions.fail("should not reach here");
         } catch (Exception e) {
-            Assertions.assertEquals("Exception loading source: String format: yml no yaml found", e.getMessage());
+            Assertions.assertEquals("Exception loading source: String format: yml", e.getMessage());
         }
     }
 }
