@@ -11,12 +11,12 @@ repositories {
 }
 
 tasks.compileTestJava {
-    sourceCompatibility = JavaVersion.VERSION_16.toString()
-    targetCompatibility = JavaVersion.VERSION_16.toString()
+    sourceCompatibility = JavaVersion.VERSION_17.toString()
+    targetCompatibility = JavaVersion.VERSION_17.toString()
 }
 
 dependencies {
-    val gestaltVersion = "0.9.3"
+    val gestaltVersion = "0.10.0"
     testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-hocon:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
