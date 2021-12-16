@@ -25,7 +25,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     // Will apply the plugin to all dokka tasks
-    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.31")
+    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.0")
 }
 
 tasks.dokkaJavadoc.configure {
