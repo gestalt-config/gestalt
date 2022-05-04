@@ -8,14 +8,14 @@ object Application {
     object Versions {
         const val slf4j = "1.7.36"
 
-        const val kotlinVersion = "1.6.20"
+        const val kotlinVersion = "1.6.21"
         const val kodeinDIVersion = "7.11.0"
         const val koinDIVersion = "3.1.6"
 
         const val jackson = "2.13.2"
 
         const val hocon = "1.4.2"
-        const val aws = "2.17.172"
+        const val aws = "2.17.183"
         const val jgit = "6.1.0.202203080745-r"
 
         const val eddsa = "0.3.0"
@@ -64,9 +64,9 @@ object Test {
     private object Versions {
         const val junit5 = "5.8.2"
         const val assertJ = "3.22.0"
-        const val mockito = "4.4.0"
+        const val mockito = "4.5.1"
         const val mockk = "1.12.3"
-        const val kotlinTestAssertions = "5.2.3"
+        const val kotlinTestAssertions = "5.3.0"
         const val awsMock = "2.4.9"
     }
 
@@ -84,7 +84,7 @@ object Test {
 
 object Plugins {
     object Versions {
-        const val errorprone = "2.12.0"
+        const val errorprone = "2.13.1"
         const val errorpronejavac = "9+181-r4173-1"
         const val detekt = "1.20.0"
     }
