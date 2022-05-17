@@ -253,7 +253,6 @@ public class GestaltSample {
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource())
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .build();
 
         gestalt.loadConfigs();
@@ -503,7 +502,6 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .addDefaultPostProcessors()
             .build();
 
@@ -544,7 +542,6 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
 
@@ -573,7 +570,6 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .build();
 
         gestalt.loadConfigs();

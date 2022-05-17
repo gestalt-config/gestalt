@@ -55,7 +55,6 @@ class GestaltKotlinSample {
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)

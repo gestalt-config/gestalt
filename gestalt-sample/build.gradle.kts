@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    val gestaltVersion = "0.10.2"
+    val gestaltVersion = "0.11.0"
     testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-hocon:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
