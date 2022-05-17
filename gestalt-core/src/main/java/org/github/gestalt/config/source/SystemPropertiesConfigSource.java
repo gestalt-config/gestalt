@@ -26,6 +26,32 @@ public class SystemPropertiesConfigSource implements ConfigSource {
     public static final String SYSTEM_PROPERTIES = "systemProperties";
     private final UUID id = UUID.randomUUID();
 
+    private final boolean failOnErrors;
+
+    /**
+     * Default constructor for SystemPropertiesConfigSource.
+     * It will treat Errors while loading as warnings since System Properties
+     * are often uncontrolled and may not follow expected conventions of this library.
+     */
+    public SystemPropertiesConfigSource() {
+        this(false);
+    }
+
+    /**
+     * constructor for SystemPropertiesConfigSource.
+     *
+     * @param failOnErrors treat Errors while loading as warnings since System Properties
+     *     are often uncontrolled and may not follow expected conventions of this library.
+     */
+    public SystemPropertiesConfigSource(boolean failOnErrors) {
+        this.failOnErrors = failOnErrors;
+    }
+
+    @Override
+    public boolean failOnErrors() {
+        return failOnErrors;
+    }
+
     @Override
     public boolean hasStream() {
         return true;
@@ -59,9 +85,9 @@ public class SystemPropertiesConfigSource implements ConfigSource {
         Properties properties = System.getProperties();
 
         return properties.entrySet()
-            .stream()
-            .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
-            .collect(Collectors.toList());
+                         .stream()
+                         .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
+                         .collect(Collectors.toList());
     }
 
     @Override

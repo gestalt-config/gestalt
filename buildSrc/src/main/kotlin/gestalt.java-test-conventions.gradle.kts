@@ -35,7 +35,7 @@ jacoco {
 }
 tasks.withType<JacocoReport> {
     reports {
-        xml.isEnabled = true
-        html.isEnabled = true
+        xml.required.set(false)
+        html.required.set(false)
     }
 }

@@ -125,7 +125,7 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
@@ -138,7 +138,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(0, noHosts.size());
 
@@ -188,7 +188,7 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        hosts = gestalt.getConfig("db.Hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        hosts = gestalt.getConfig("db.Hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
@@ -223,8 +223,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/default.properties"))
             .addSource(new ClassPathConfigSource("/dev.properties"))
             .addSource(new MapConfigSource(configs))
-            .addSource(new EnvironmentConfigSource())
-            .setEnvVarsTreatErrorsAsWarnings(true)
+            .addSource(new EnvironmentConfigSource(false))
             .build();
 
         gestalt.loadConfigs();
@@ -259,7 +258,6 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .addDefaultPostProcessors()
             .build();
 
@@ -300,7 +298,6 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
 
@@ -329,7 +326,6 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .build();
 
         gestalt.loadConfigs();
@@ -388,7 +384,7 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
@@ -401,11 +397,11 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(0, noHosts.size());
 
-        User admin = gestalt.getConfig("admin", new TypeCapture<User>() {
+        User admin = gestalt.getConfig("admin", new TypeCapture<>() {
         });
         Assertions.assertEquals(3, admin.user.length);
         Assertions.assertEquals("Peter", admin.user[0]);
@@ -414,7 +410,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(Role.LEVEL0, admin.accessRole);
         Assertions.assertTrue(admin.overrideEnabled);
 
-        User user = gestalt.getConfig("employee", new TypeCapture<User>() {
+        User user = gestalt.getConfig("employee", new TypeCapture<>() {
         });
         Assertions.assertEquals(1, user.user.length);
         Assertions.assertEquals("Janice", user.user[0]);

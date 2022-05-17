@@ -10,12 +10,12 @@ object Application {
 
         const val kotlinVersion = "1.6.21"
         const val kodeinDIVersion = "7.11.0"
-        const val koinDIVersion = "3.1.6"
+        const val koinDIVersion = "3.2.0"
 
-        const val jackson = "2.13.2"
+        const val jackson = "2.13.3"
 
         const val hocon = "1.4.2"
-        const val aws = "2.17.183"
+        const val aws = "2.17.192"
         const val jgit = "6.1.0.202203080745-r"
 
         const val eddsa = "0.3.0"
@@ -65,9 +65,9 @@ object Test {
         const val junit5 = "5.8.2"
         const val assertJ = "3.22.0"
         const val mockito = "4.5.1"
-        const val mockk = "1.12.3"
+        const val mockk = "1.12.4"
         const val kotlinTestAssertions = "5.3.0"
-        const val awsMock = "2.4.9"
+        const val awsMock = "2.4.10"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"

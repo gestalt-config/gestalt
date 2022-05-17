@@ -60,6 +60,6 @@ public class MapConfigLoader implements ConfigLoader {
             throw new GestaltException("Config source: " + source.name() + " does not have a list to load.");
         }
 
-        return ConfigCompiler.analyze(lexer, parser, source.name(), configs);
+        return ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
     }
 }

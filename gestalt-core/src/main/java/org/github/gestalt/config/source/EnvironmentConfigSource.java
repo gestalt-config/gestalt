@@ -24,10 +24,30 @@ public class EnvironmentConfigSource implements ConfigSource {
     public static final String ENV_VARS = "envVars";
     private final UUID id = UUID.randomUUID();
 
+    private final boolean failOnErrors;
+
     /**
      * Default constructor for EnvironmentConfigSource.
+     * By default, it will not fail on errors  while loading Env Vars since they
+     * are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource() {
+        this(false);
+    }
+
+    /**
+     * constructor for EnvironmentConfigSource.
+     *
+     * @param failOnErrors Do not fail on errors while loading Env Vars since they
+     *     are often uncontrolled and may not follow expected conventions of this library.
+     */
+    public EnvironmentConfigSource(boolean failOnErrors) {
+        this.failOnErrors = failOnErrors;
+    }
+
+    @Override
+    public boolean failOnErrors() {
+        return failOnErrors;
     }
 
     @Override

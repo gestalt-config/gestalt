@@ -58,9 +58,9 @@ public interface ConfigSource {
     String format();
 
     /**
-     * human readable name for logging.
+     * human-readable name for logging.
      *
-     * @return human readable name for logging.
+     * @return human-readable name for logging.
      */
     String name();
 
@@ -70,4 +70,13 @@ public interface ConfigSource {
      * @return id
      */
     UUID id();  //NOPMD
+
+    /**
+     * If the source should fail on errors.
+     *
+     * @return If the source should fail on errors
+     */
+    default boolean failOnErrors() {
+        return true;
+    }
 }

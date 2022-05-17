@@ -8,6 +8,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.Pair;
@@ -17,12 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 
 class MapConfigLoaderTest {
@@ -50,7 +47,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -74,7 +71,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
 
         // validate the parser was sent the correct arguments.
         Assertions.assertEquals(2, argument.getValue().size());
@@ -109,7 +106,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -126,19 +123,18 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        try {
-            mapConfigLoader.loadSource(source);
-            Assertions.assertTrue(true);
-        } catch (GestaltException e) {
-            assertThat(e.getMessage())
-                .contains("Exception loading config source mock")
-                .contains("level: WARN, message: empty path provided")
-                .contains("level: ERROR, message: Unable to tokenize element name for path: db.name");
-        }
+        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
+        Assertions.assertTrue(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(0).description()) ||
+            "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(0).description()));
+        Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(1).description()) ||
+            "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(1).description()));
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), eq(false));
     }
 
     @Test
@@ -157,7 +153,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
         Mockito.when(lexer.scan("db.name"))
@@ -173,7 +169,7 @@ class MapConfigLoaderTest {
         // run the code under test.
         ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
+        Assertions.assertTrue(validateOfResults.hasErrors());
 
         //setup the argument captor
         @SuppressWarnings("unchecked")
@@ -181,7 +177,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
 
         // validate the parser was sent the correct arguments.
         Assertions.assertEquals(1, argument.getValue().size());
@@ -194,6 +190,8 @@ class MapConfigLoaderTest {
         ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
     }
 
     @Test
@@ -214,14 +212,14 @@ class MapConfigLoaderTest {
         // run the code under test.
         try {
             mapConfigLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Config source: mock does not have a list to load.", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
 
     }
 
@@ -244,14 +242,30 @@ class MapConfigLoaderTest {
         // run the code under test.
         try {
             mapConfigLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("bad stream", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
     }
 
+    @Test
+    void loadSourceWithRealDependencies() throws GestaltException {
+
+        // setup the input data, instead of loading from a file.
+        Map<String, String> data = new HashMap<>();
+        data.put("test", "value");
+        data.put("db.name", "redis");
+
+        // create our class to be tested
+        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+
+        // run the code under test.
+        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        Assertions.assertTrue(validateOfResults.hasResults());
+        Assertions.assertFalse(validateOfResults.hasErrors());
+    }
 }

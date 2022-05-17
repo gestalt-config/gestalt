@@ -50,17 +50,6 @@ public class TransformerPostProcessor implements PostProcessor {
         }
     }
 
-    /**
-     * add transformer  to the post processor.
-     *
-     * @param transformers list of transformers to add
-     */
-    public void addTransformers(List<Transformer> transformers) {
-        if (transformers != null) {
-            transformers.forEach(it -> this.transformers.put(it.name(), it));
-        }
-    }
-
     @Override
     public void applyConfig(PostProcessorConfig config) {
         this.transformers.values().forEach(it -> it.applyConfig(config));

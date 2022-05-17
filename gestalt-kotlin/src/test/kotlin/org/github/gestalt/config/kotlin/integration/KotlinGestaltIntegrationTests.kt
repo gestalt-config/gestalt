@@ -125,7 +125,6 @@ class KotlinGestaltIntegrationTests {
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
-            .setEnvVarsTreatErrorsAsWarnings(true)
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig("http.pool", HttpPool::class.java)

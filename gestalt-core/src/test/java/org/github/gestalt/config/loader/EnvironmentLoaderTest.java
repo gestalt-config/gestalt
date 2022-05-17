@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 
 class EnvironmentLoaderTest {
@@ -50,7 +49,7 @@ class EnvironmentLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -61,7 +60,7 @@ class EnvironmentLoaderTest {
         Mockito.when(source.loadList()).thenReturn(data);
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
         ValidateOf<ConfigNode> validateOfResults = environmentVarsLoader.loadSource(source);
@@ -74,7 +73,7 @@ class EnvironmentLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
 
         // validate the parser was sent the correct arguments.
         Assertions.assertEquals(2, argument.getValue().size());
@@ -109,7 +108,7 @@ class EnvironmentLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -121,24 +120,88 @@ class EnvironmentLoaderTest {
         Mockito.when(source.hasList()).thenReturn(true);
         Mockito.when(source.loadList()).thenReturn(data);
         Mockito.when(source.name()).thenReturn("mock");
+        Mockito.when(source.failOnErrors()).thenReturn(true);
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+
+        // run the code under test.
+        ValidateOf<ConfigNode> validateOfResults = environmentVarsLoader.loadSource(source);
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(2, validateOfResults.getErrors().size());
+        Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(0).description()) ||
+            "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(0).description()));
+        Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(1).description()) ||
+            "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(1).description()));
+
+
+
+        // verify we get the correct number of calls and capture the parsers arguments.
+        Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(true));
+    }
+
+    @Test
+    void loadSourceMockDependenciesValidationAsWarnings() throws GestaltException {
+        // setup the input data, instead of loading from a file.
+        List<Pair<String, String>> data = new ArrayList<>();
+        data.add(new Pair<>("test", "value"));
+        data.add(new Pair<>("db.name", "redis"));
+
+        // create the result expected
+        ConfigNode node = new LeafNode("test");
+
+        // setup the mocks
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+        ConfigSource source = Mockito.mock(ConfigSource.class);
+
+        // mock the interactions with the parser and lexer
+        Mockito.when(parser.parse(anyList(), anyBoolean())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(lexer.scan("test"))
+            .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
+        Mockito.when(lexer.scan("db.name"))
+            .thenReturn(ValidateOf.inValid(
+                Arrays.asList(new ValidationError.FailedToTokenizeElement("name", "db.name"),
+                    new ValidationError.EmptyPath())));
+
+        // mock the source so we return our test data stream.
+        Mockito.when(source.hasList()).thenReturn(true);
+        Mockito.when(source.loadList()).thenReturn(data);
+        Mockito.when(source.name()).thenReturn("mock");
+        Mockito.when(source.failOnErrors()).thenReturn(false);
+
+        // create our class to be tested
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
         try {
-            environmentVarsLoader.loadSource(source);
-            Assertions.assertTrue(true);
+            ValidateOf<ConfigNode> validateOfResults = environmentVarsLoader.loadSource(source);
+
+            Assertions.assertTrue(validateOfResults.hasResults());
+            Assertions.assertTrue(validateOfResults.hasErrors());
+
+            Assertions.assertEquals(2, validateOfResults.getErrors().size());
+            Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(0).description()) ||
+                "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(0).description()));
+            Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(1).description()) ||
+                "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(1).description()));
+
+            ConfigNode result = validateOfResults.results();
+            // validate we got back the expected result. Not a of value testing this as it is only a mock.
+            Assertions.assertEquals(node, result);
+
         } catch (GestaltException e) {
-            assertThat(e.getMessage())
-                .contains("Exception loading config source mock")
-                .contains("level: WARN, message: empty path provided")
-                .contains("level: ERROR, message: Unable to tokenize element name for path: db.name");
+            Assertions.fail("should not hit this");
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), anyBoolean());
+
     }
 
     @Test
@@ -157,7 +220,7 @@ class EnvironmentLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
         Mockito.when(lexer.scan("db.name"))
@@ -168,12 +231,12 @@ class EnvironmentLoaderTest {
         Mockito.when(source.loadList()).thenReturn(data);
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
         ValidateOf<ConfigNode> validateOfResults = environmentVarsLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
+        Assertions.assertTrue(validateOfResults.hasErrors());
 
         //setup the argument captor
         @SuppressWarnings("unchecked")
@@ -181,7 +244,7 @@ class EnvironmentLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
 
         // validate the parser was sent the correct arguments.
         Assertions.assertEquals(1, argument.getValue().size());
@@ -194,6 +257,8 @@ class EnvironmentLoaderTest {
         ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
     }
 
     @Test
@@ -209,19 +274,19 @@ class EnvironmentLoaderTest {
         Mockito.when(source.name()).thenReturn("mock");
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
         try {
             environmentVarsLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Config source: mock does not have a list to load.", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
 
     }
 
@@ -239,19 +304,19 @@ class EnvironmentLoaderTest {
         Mockito.when(source.name()).thenReturn("mock");
 
         // create our class to be tested
-        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(false, lexer, parser);
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
         try {
             environmentVarsLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("bad stream", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
     }
 
 }

@@ -87,10 +87,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             ConfigLoader configLoader = configLoaderService.getLoader(source.format());
             ValidateOf<ConfigNode> newNode = configLoader.loadSource(source);
 
-            validateLoadResultsForErrors(newNode);
+            validateLoadResultsForErrors(newNode, source);
             if (newNode.hasResults()) {
                 ValidateOf<ConfigNode> mergedNode = configNodeService.addNode(new ConfigNodeContainer(newNode.results(), source.id()));
-                validateLoadResultsForErrors(mergedNode);
+                validateLoadResultsForErrors(mergedNode, source);
                 loadErrors.addAll(mergedNode.getErrors());
             } else {
                 logger.warn("Failed to load node: {} did not have any results", source.name());
@@ -123,14 +123,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
         ConfigLoader configLoader = configLoaderService.getLoader(reloadSource.format());
         ValidateOf<ConfigNode> reloadNode = configLoader.loadSource(reloadSource);
-        validateLoadResultsForErrors(reloadNode);
+        validateLoadResultsForErrors(reloadNode, reloadSource);
 
         if (!reloadNode.hasResults()) {
             throw new GestaltException("no results found reloading source " + reloadSource.name());
         }
 
         ValidateOf<ConfigNode> mergedNode = configNodeService.reloadNode(new ConfigNodeContainer(reloadNode.results(), reloadSource.id()));
-        validateLoadResultsForErrors(mergedNode);
+        validateLoadResultsForErrors(mergedNode, reloadSource);
 
         if (!mergedNode.hasResults()) {
             throw new GestaltException("no results found merging source " + reloadSource.name());
@@ -159,9 +159,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
-    private void validateLoadResultsForErrors(ValidateOf<ConfigNode> results) throws GestaltConfigurationException {
-        if ((gestaltConfig.isTreatWarningsAsErrors() && results.hasErrors()) || results.hasErrors(ValidationLevel.ERROR)) {  // NOPMD
-            throw new GestaltConfigurationException("Failed to load configs", results.getErrors());
+    private void validateLoadResultsForErrors(ValidateOf<ConfigNode> results, ConfigSource source) throws GestaltConfigurationException {
+        if ((gestaltConfig.isTreatWarningsAsErrors() && results.hasErrors()) || // NOPMD
+            (results.hasErrors(ValidationLevel.ERROR) && source.failOnErrors())) {  // NOPMD
+            throw new GestaltConfigurationException("Failed to load configs from source: " + source.name(), results.getErrors());
         }
 
         if (results.hasErrors(ValidationLevel.WARN) && logger.isWarnEnabled()) {

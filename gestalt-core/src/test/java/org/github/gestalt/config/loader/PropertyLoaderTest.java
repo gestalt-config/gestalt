@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 
 class PropertyLoaderTest {
@@ -51,7 +50,7 @@ class PropertyLoaderTest {
         ConfigNode node = new LeafNode("test");
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -75,7 +74,7 @@ class PropertyLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
 
         // validate the parser was sent the correct arguments.
         Assertions.assertEquals(2, argument.getValue().size());
@@ -109,7 +108,7 @@ class PropertyLoaderTest {
         ConfigNode node = new LeafNode("test");
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -126,19 +125,16 @@ class PropertyLoaderTest {
         PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
 
         // run the code under test.
-        try {
-            propsLoader.loadSource(source);
-            Assertions.assertTrue(true);
-        } catch (GestaltException e) {
-            assertThat(e.getMessage())
-                .contains("Exception loading config source mock")
-                .contains("level: WARN, message: empty path provided")
-                .contains("level: ERROR, message: Unable to tokenize element name for path: db.name");
-        }
+        ValidateOf<ConfigNode> validateOfResults = propsLoader.loadSource(source);
+        Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(0).description()) ||
+            "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(0).description()));
+        Assertions.assertTrue("empty path provided".equals(validateOfResults.getErrors().get(1).description()) ||
+            "Unable to tokenize element name for path: db.name".equals(validateOfResults.getErrors().get(1).description()));
+
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), eq(false));
     }
 
     @Test
@@ -156,7 +152,7 @@ class PropertyLoaderTest {
         ConfigNode node = new LeafNode("test");
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList())).thenReturn(ValidateOf.valid(node));
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
         Mockito.when(lexer.scan("db.name"))
@@ -172,7 +168,7 @@ class PropertyLoaderTest {
         // run the code under test.
         ValidateOf<ConfigNode> validateOfResults = propsLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
+        Assertions.assertTrue(validateOfResults.hasErrors());
 
         //setup the argument captor
         @SuppressWarnings("unchecked")
@@ -180,7 +176,7 @@ class PropertyLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
 
         // validate the parser was sent the correct arguments.
         Assertions.assertEquals(1, argument.getValue().size());
@@ -193,6 +189,9 @@ class PropertyLoaderTest {
         ConfigNode result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
         Assertions.assertEquals(node, result);
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
     }
 
     @Test
@@ -213,14 +212,14 @@ class PropertyLoaderTest {
         // run the code under test.
         try {
             propsLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Config source: mock does not have a stream to load.", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
 
     }
 
@@ -243,14 +242,14 @@ class PropertyLoaderTest {
         // run the code under test.
         try {
             propsLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("bad stream", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
     }
 
     @Test
@@ -272,13 +271,13 @@ class PropertyLoaderTest {
         // run the code under test.
         try {
             propsLoader.loadSource(source);
-            Assertions.assertTrue(true, "should not hit this");
+            Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Exception loading source: mock", e.getMessage());
         }
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any());
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
     }
 }
