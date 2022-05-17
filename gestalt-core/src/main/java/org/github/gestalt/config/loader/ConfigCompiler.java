@@ -3,7 +3,6 @@ package org.github.gestalt.config.loader;
 import org.github.gestalt.config.entity.ConfigValue;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.parser.ConfigParser;
@@ -13,9 +12,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,39 +32,20 @@ public final class ConfigCompiler {
      * Then validates the tokens for any errors.
      * If everything is ok it will send the tokens to the parser.
      *
+     * @param failOnErrors if we want to fail on errors or try and recover. Results can be unpredictable if it continues
      * @param lexer the SentenceLexer used to tokenize the configs.
      * @param parser ConfigParser to parse the tokens into a config node.
      * @param sourceName name of the source.
      * @param configs the configuration to parse.
      * @return the ValidateOf of the config node with the results or errors.
-     * @throws GestaltConfigurationException on any exceptions.
      */
-    public static ValidateOf<ConfigNode> analyze(SentenceLexer lexer,
-                                                 ConfigParser parser,
-                                                 String sourceName,
-                                                 List<Pair<String, String>> configs) throws GestaltConfigurationException {
-
-        return analyze(false, lexer, parser, sourceName, configs);
-    }
-
-    /**
-     * Uses the SentenceLexer to tokenize the configs.
-     * Then validates the tokens for any errors.
-     * If everything is ok it will send the tokens to the parser.
-     *
-     * @param treatErrorsAsWarnings if we want to treat errors as warnings.
-     * @param lexer the SentenceLexer used to tokenize the configs.
-     * @param parser ConfigParser to parse the tokens into a config node.
-     * @param sourceName name of the source.
-     * @param configs the configuration to parse.
-     * @return the ValidateOf of the config node with the results or errors.
-     * @throws GestaltConfigurationException on any exceptions.
-     */
-    public static ValidateOf<ConfigNode> analyze(boolean treatErrorsAsWarnings,
+    public static ValidateOf<ConfigNode> analyze(boolean failOnErrors,
                                                  SentenceLexer lexer,
                                                  ConfigParser parser,
                                                  String sourceName,
-                                                 List<Pair<String, String>> configs) throws GestaltConfigurationException {
+                                                 List<Pair<String, String>> configs) {
+        List<ValidationError> errorMessage = new ArrayList<>();
+
         List<Pair<ValidateOf<List<Token>>, String>> validatedTokens = configs.stream()
             .map(prop -> new Pair<>(lexer.scan(prop.getFirst()), prop.getSecond()))
             .collect(Collectors.toList());
@@ -80,13 +58,13 @@ public final class ConfigCompiler {
             .collect(Collectors.groupingBy(ValidationError::level));
 
         if (!validationErrors.isEmpty()) {
-            List<ValidationError> errorMessage = validationErrors.values()
+            errorMessage = validationErrors.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-            if (!treatErrorsAsWarnings && validationErrors.containsKey(ValidationLevel.ERROR)) {
-                throw new GestaltConfigurationException("Exception loading config source " + sourceName, errorMessage);
+            if (failOnErrors && validationErrors.containsKey(ValidationLevel.ERROR)) {
+                return ValidateOf.inValid(errorMessage);
             } else {
                 String errors = errorMessage.stream()
                     .map(error ->
@@ -104,6 +82,8 @@ public final class ConfigCompiler {
                 new Pair<>(validatedToken.getFirst().results(), new ConfigValue(validatedToken.getSecond())))
             .collect(Collectors.toList());
 
-        return parser.parse(validTokens);
+        ValidateOf<ConfigNode> parserResults =  parser.parse(validTokens, failOnErrors);
+        errorMessage.addAll(parserResults.getErrors());
+        return ValidateOf.validateOf(parserResults.results(), errorMessage);
     }
 }

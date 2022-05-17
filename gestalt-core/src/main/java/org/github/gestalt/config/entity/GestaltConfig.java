@@ -14,9 +14,6 @@ public class GestaltConfig {
     // Treat missing object values as errors. If false it will leave the default values or null.
     private boolean treatMissingValuesAsErrors = false;
 
-    // this setting is specific to environment vars loader, as there can often be false positive errors.
-    private boolean envVarsTreatErrorsAsWarnings = false;
-
     // Java date decoder format.
     private String dateDecoderFormat = null;
     // Java local date time decoder format.
@@ -76,24 +73,6 @@ public class GestaltConfig {
      */
     public void setTreatMissingValuesAsErrors(boolean treatMissingValuesAsErrors) {
         this.treatMissingValuesAsErrors = treatMissingValuesAsErrors;
-    }
-
-    /**
-     * this setting is specific to environment vars loader and if we should ignore Env Vars Errors.
-     *
-     * @return if we should ignore Env Vars Errors
-     */
-    public boolean isEnvVarsTreatErrorsAsWarnings() {
-        return envVarsTreatErrorsAsWarnings;
-    }
-
-    /**
-     * this setting is specific to environment vars loader and if we should ignore Env Vars Errors.
-     *
-     * @param envVarsTreatErrorsAsWarnings this setting is specific to environment vars loader and if we should ignore Env Vars Errors.
-     */
-    public void setEnvVarsTreatErrorsAsWarnings(boolean envVarsTreatErrorsAsWarnings) {
-        this.envVarsTreatErrorsAsWarnings = envVarsTreatErrorsAsWarnings;
     }
 
     /**

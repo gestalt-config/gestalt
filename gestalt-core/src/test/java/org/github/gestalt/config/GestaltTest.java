@@ -686,7 +686,7 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed to load configs\n" +
+                .hasMessage("Failed to load configs from source: mapConfig\n" +
                     " - level: ERROR, message: Duplicate array index: 1 for path: admin");
         }
     }
@@ -1164,8 +1164,9 @@ class GestaltTest {
 
         try {
             gestalt.reload(source);
+            Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
-            assertThat(e).hasMessage("Exception loading config source mapConfig\n" +
+            assertThat(e).hasMessage("Failed to load configs from source: mapConfig\n" +
                 " - level: ERROR, message: Unable to tokenize element name[a] for path: db.name[a]");
         }
 

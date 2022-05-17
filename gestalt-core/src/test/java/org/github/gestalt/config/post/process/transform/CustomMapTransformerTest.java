@@ -17,6 +17,20 @@ class CustomMapTransformerTest {
     }
 
     @Test
+    void defaultCustomTransformer() {
+        CustomMapTransformer transformer = new CustomMapTransformer();
+
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("No custom Property found for: test, on path: hello during post process",
+            validateOfResults.getErrors().get(0).description());
+    }
+
+    @Test
     void process() {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");

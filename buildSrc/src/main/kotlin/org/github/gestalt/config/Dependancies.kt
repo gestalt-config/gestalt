@@ -8,15 +8,15 @@ object Application {
     object Versions {
         const val slf4j = "1.7.36"
 
-        const val kotlinVersion = "1.6.10"
+        const val kotlinVersion = "1.6.21"
         const val kodeinDIVersion = "7.11.0"
-        const val koinDIVersion = "3.1.5"
+        const val koinDIVersion = "3.2.0"
 
-        const val jackson = "2.13.1"
+        const val jackson = "2.13.3"
 
         const val hocon = "1.4.2"
-        const val aws = "2.17.138"
-        const val jgit = "6.0.0.202111291000-r"
+        const val aws = "2.17.192"
+        const val jgit = "6.1.0.202203080745-r"
 
         const val eddsa = "0.3.0"
 
@@ -64,10 +64,10 @@ object Test {
     private object Versions {
         const val junit5 = "5.8.2"
         const val assertJ = "3.22.0"
-        const val mockito = "4.3.1"
-        const val mockk = "1.12.3"
-        const val kotlinTestAssertions = "5.1.0"
-        const val awsMock = "2.4.8"
+        const val mockito = "4.5.1"
+        const val mockk = "1.12.4"
+        const val kotlinTestAssertions = "5.3.0"
+        const val awsMock = "2.4.10"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
@@ -84,9 +84,9 @@ object Test {
 
 object Plugins {
     object Versions {
-        const val errorprone = "2.11.0"
+        const val errorprone = "2.13.1"
         const val errorpronejavac = "9+181-r4173-1"
-        const val detekt = "1.19.0"
+        const val detekt = "1.20.0"
     }
 
     const val errorProne = "com.google.errorprone:error_prone_core:${Versions.errorprone}"

@@ -65,7 +65,6 @@ public class GestaltBuilder {
     private Boolean treatWarningsAsErrors = null;
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
-    private Boolean envVarsTreatErrorsAsWarnings = null;
 
     private String dateDecoderFormat = null;
     private String localDateTimeFormat = null;
@@ -444,18 +443,6 @@ public class GestaltBuilder {
     }
 
     /**
-     * treat Environment Variables errors as Warnings. Since we can not control Env Vars as closely,
-     * we may need to ignore errors while building the node config tree.
-     *
-     * @param envVarsTreatErrorsAsWarnings treat Environment Variables errors as Warnings.
-     * @return GestaltBuilder builder
-     */
-    public GestaltBuilder setEnvVarsTreatErrorsAsWarnings(boolean envVarsTreatErrorsAsWarnings) {
-        this.envVarsTreatErrorsAsWarnings = envVarsTreatErrorsAsWarnings;
-        return this;
-    }
-
-    /**
      * Add a cache layer to gestalt.
      *
      * @param useCacheDecorator use a cache decorator.
@@ -632,12 +619,6 @@ public class GestaltBuilder {
             newConfig.setTreatMissingValuesAsErrors(treatMissingValuesAsErrors);
         } else {
             newConfig.setTreatMissingValuesAsErrors(gestaltConfig.isTreatMissingValuesAsErrors());
-        }
-
-        if (envVarsTreatErrorsAsWarnings != null) {
-            newConfig.setEnvVarsTreatErrorsAsWarnings(envVarsTreatErrorsAsWarnings);
-        } else {
-            newConfig.setEnvVarsTreatErrorsAsWarnings(gestaltConfig.isEnvVarsTreatErrorsAsWarnings());
         }
 
         if (dateDecoderFormat != null) {

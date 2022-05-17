@@ -19,7 +19,8 @@ public interface ConfigParser {
      * Takes in a tokenized config and returns a config node tree.
      *
      * @param configs configs to parse
+     * @param failOnErrors if we want to fail on errors while parsing or try and recover. Results can be unpredictable if it continues
      * @return the config node built
      */
-    ValidateOf<ConfigNode> parse(List<Pair<List<Token>, ConfigValue>> configs);
+    ValidateOf<ConfigNode> parse(List<Pair<List<Token>, ConfigValue>> configs, boolean failOnErrors);
 }

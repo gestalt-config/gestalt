@@ -26,6 +26,7 @@ public class PropertyLoader implements ConfigLoader {
     private final ConfigParser parser;
     private final SentenceLexer lexer;
 
+
     /**
      * Construct a default property loader using the default path lexer for "." separated paths.
      */
@@ -81,6 +82,6 @@ public class PropertyLoader implements ConfigLoader {
             .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
             .collect(Collectors.toList());
 
-        return ConfigCompiler.analyze(lexer, parser, source.name(), configs);
+        return ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
     }
 }
