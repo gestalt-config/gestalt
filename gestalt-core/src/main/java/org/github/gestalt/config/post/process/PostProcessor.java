@@ -1,6 +1,5 @@
 package org.github.gestalt.config.post.process;
 
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -17,9 +16,8 @@ public interface PostProcessor {
      * @param path current path
      * @param currentNode current node to post process.
      * @return the node after running though the post processor.
-     * @throws GestaltException any exceptions
      */
-    ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) throws GestaltException;
+    ValidateOf<ConfigNode> process(String path, ConfigNode currentNode);
 
     /**
      * Apply the PostProcessorConfig to the Post Processor. Needed when building via the ServiceLoader

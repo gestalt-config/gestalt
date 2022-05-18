@@ -45,7 +45,7 @@ public class StringConfigSource implements ConfigSource {
     }
 
     @Override
-    public InputStream loadStream() throws GestaltException {
+    public InputStream loadStream() {
         return new ByteArrayInputStream(config.getBytes(StandardCharsets.UTF_8));
     }
 

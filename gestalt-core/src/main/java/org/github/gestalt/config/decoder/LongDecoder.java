@@ -29,7 +29,6 @@ public class LongDecoder extends LeafDecoder<Long> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ValidateOf<Long> leafDecode(String path, ConfigNode node) {
         ValidateOf<Long> results;
 

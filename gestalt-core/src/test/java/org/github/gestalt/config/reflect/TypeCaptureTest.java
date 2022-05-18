@@ -184,7 +184,7 @@ class TypeCaptureTest {
 
         Assertions.assertEquals(type1, type1);
         Assertions.assertNotEquals(type1, type2);
-        Assertions.assertNotEquals(type1, Integer.valueOf(1));
+        Assertions.assertNotEquals(type1, 1);
     }
 
     public static class Holder<T> {

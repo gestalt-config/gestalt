@@ -5,6 +5,7 @@ import org.github.gestalt.config.entity.ValidationLevel;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -19,11 +20,7 @@ public final class ValidateOf<T> {
 
     private ValidateOf(T results, List<ValidationError> errors) {
         this.results = results;
-        if (errors != null) {
-            this.errors = errors;
-        } else {
-            this.errors = Collections.emptyList();
-        }
+        this.errors = Objects.requireNonNullElse(errors, Collections.emptyList());
     }
 
     /**

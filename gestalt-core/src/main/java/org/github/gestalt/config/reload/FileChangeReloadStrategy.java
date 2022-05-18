@@ -126,7 +126,7 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
                         break;
                     }
                 } catch (IOException | GestaltException e) {
-                    logger.error("Ignoring exception while watching for file " + path.toString() + ", message: " + e.getMessage(), e);
+                    logger.error("Ignoring exception while watching for file " + path + ", message: " + e.getMessage(), e);
                 }
             }
         } catch (InterruptedException e) {

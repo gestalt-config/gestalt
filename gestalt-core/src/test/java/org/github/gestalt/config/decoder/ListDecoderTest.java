@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 class ListDecoderTest {
-    DoubleDecoder doubleDecoder = new DoubleDecoder();
-    StringDecoder stringDecoder = new StringDecoder();
-    ListDecoder listDecoder = new ListDecoder();
+    final DoubleDecoder doubleDecoder = new DoubleDecoder();
+    final StringDecoder stringDecoder = new StringDecoder();
+    final ListDecoder listDecoder = new ListDecoder();
 
     ConfigNodeService configNodeService;
     DecoderService decoderService;

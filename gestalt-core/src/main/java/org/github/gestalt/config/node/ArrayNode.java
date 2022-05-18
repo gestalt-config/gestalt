@@ -19,11 +19,7 @@ public class ArrayNode implements ConfigNode {
      * @param values list of nodes
      */
     public ArrayNode(List<ConfigNode> values) {
-        if (values != null) {
-            this.values = values;
-        } else {
-            this.values = Collections.emptyList();
-        }
+        this.values = Objects.requireNonNullElse(values, Collections.emptyList());
     }
 
     @Override

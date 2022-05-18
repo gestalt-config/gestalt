@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 class FileChangeReloadStrategyTest {
 
     @Test
@@ -20,7 +18,7 @@ class FileChangeReloadStrategyTest {
         Path path;
         path = Files.createTempFile("gestalt", "test.properties");
         path.toFile().deleteOnExit();
-        Files.write(path, "user=userA".getBytes(UTF_8));
+        Files.writeString(path, "user=userA");
 
         FileConfigSource source = new FileConfigSource(path);
         ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
@@ -28,7 +26,7 @@ class FileChangeReloadStrategyTest {
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
 
-        Files.write(path, "user=userB".getBytes(UTF_8));
+        Files.writeString(path, "user=userB");
 
         for (int i = 0; i < 5; i++) {
             if (listener.count > 1) {
@@ -41,7 +39,7 @@ class FileChangeReloadStrategyTest {
         Assertions.assertTrue(listener.count >= 1);
         strategy.removeListener(listener);
 
-        Files.write(path, "user=userC".getBytes(UTF_8));
+        Files.writeString(path, "user=userC");
 
         Thread.sleep(100);
 
@@ -57,7 +55,7 @@ class FileChangeReloadStrategyTest {
         folder.toFile().mkdirs();
         folder.toFile().deleteOnExit();
 
-        Files.write(path, "user=userA".getBytes(UTF_8));
+        Files.writeString(path, "user=userA");
 
         FileConfigSource source = new FileConfigSource(path);
         ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
@@ -66,7 +64,7 @@ class FileChangeReloadStrategyTest {
         strategy.registerListener(listener);
 
         Thread.sleep(100);
-        Files.write(path, "user=userB".getBytes(UTF_8));
+        Files.writeString(path, "user=userB");
 
         for (int i = 0; i < 5; i++) {
             if (listener.count > 1) {
@@ -80,7 +78,7 @@ class FileChangeReloadStrategyTest {
 
         strategy.removeListener(listener);
 
-        Files.write(path, "user=userC".getBytes(UTF_8));
+        Files.writeString(path, "user=userC");
 
         Thread.sleep(100);
 
@@ -102,10 +100,10 @@ class FileChangeReloadStrategyTest {
         Path dataLn = Files.createSymbolicLink(folder.resolve("..data"), folder.relativize(numbered1));
 
         Path file1 = numbered1.resolve("reloadedfile.properties");
-        Files.write(file1, "user=userA".getBytes(UTF_8));
+        Files.writeString(file1, "user=userA");
 
         Path file2 = numbered2.resolve("reloadedfile.properties");
-        Files.write(file2, "user=userB".getBytes(UTF_8));
+        Files.writeString(file2, "user=userB");
 
         Path configFileLn = Files.createSymbolicLink(folder.resolve("reloadedfile.properties"),
             folder.relativize(dataLn).resolve("reloadedfile.properties"));

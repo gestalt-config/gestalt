@@ -95,7 +95,7 @@ class S3ConfigSourceTest {
         Assertions.assertEquals(source, source);
         Assertions.assertNotEquals(source, source2);
         Assertions.assertNotEquals(source, null);
-        Assertions.assertNotEquals(source, Long.valueOf(1));
+        Assertions.assertNotEquals(source, 1L);
     }
 
     @Test

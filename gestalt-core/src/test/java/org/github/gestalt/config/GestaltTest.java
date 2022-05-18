@@ -1313,7 +1313,6 @@ class GestaltTest {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         protected ValidateOf<String> leafDecode(String path, ConfigNode node) {
             return ValidateOf.inValid(new ValidationError.ArrayInvalidIndex(1, "should not happen"));
         }

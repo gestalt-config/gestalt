@@ -16,7 +16,7 @@ import java.util.*;
 class RecordDecoderTest {
 
     ConfigNodeService configNodeService;
-    SentenceLexer lexer = new PathLexer();
+    final SentenceLexer lexer = new PathLexer();
     DecoderRegistry registry;
 
     @BeforeEach

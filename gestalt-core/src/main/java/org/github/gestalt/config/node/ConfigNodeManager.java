@@ -156,6 +156,10 @@ public class ConfigNodeManager implements ConfigNodeService {
         ConfigNode newRoot = null;
         List<ValidationError> errors = new ArrayList<>();
 
+        if(reloadNode == null) {
+            throw new GestaltException("Null value provided for Node to be reloaded");
+        }
+
         int index = 0;
         for (ConfigNodeContainer nodePair : configNodes) {
 
@@ -208,7 +212,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         List<ValidationError> errors = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            if (!node.getIndex(i).isPresent()) {
+            if (node.getIndex(i).isEmpty()) {
                 errors.add(new ValidationError.ArrayMissingIndex(i, path));
             } else {
                 String nextPath = PathUtil.pathForIndex(path, i);
@@ -239,7 +243,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         List<ValidationError> errors = new ArrayList<>();
         if (node == null) {
             errors.add(new ValidationError.LeafNodesIsNull(path));
-        } else if (!node.getValue().isPresent()) {
+        } else if (node.getValue().isEmpty()) {
             errors.add(new ValidationError.LeafNodesHaveNoValues(path));
         }
 

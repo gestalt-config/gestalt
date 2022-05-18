@@ -75,7 +75,7 @@ public class GestaltBuilder {
      *
      * @return GestaltBuilder builder
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes"})
     public GestaltBuilder addDefaultDecoders() {
         List<Decoder<?>> decodersSet = new ArrayList<>();
         ServiceLoader<Decoder> loader = ServiceLoader.load(Decoder.class);
@@ -603,23 +603,11 @@ public class GestaltBuilder {
     private GestaltConfig rebuildConfig() {
         GestaltConfig newConfig = new GestaltConfig();
 
-        if (treatWarningsAsErrors != null) {
-            newConfig.setTreatWarningsAsErrors(treatWarningsAsErrors);
-        } else {
-            newConfig.setTreatWarningsAsErrors(gestaltConfig.isTreatWarningsAsErrors());
-        }
+        newConfig.setTreatWarningsAsErrors(Objects.requireNonNullElseGet(treatWarningsAsErrors, () -> gestaltConfig.isTreatWarningsAsErrors()));
 
-        if (treatMissingArrayIndexAsError != null) {
-            newConfig.setTreatMissingArrayIndexAsError(treatMissingArrayIndexAsError);
-        } else {
-            newConfig.setTreatMissingArrayIndexAsError(gestaltConfig.isTreatMissingArrayIndexAsError());
-        }
+        newConfig.setTreatMissingArrayIndexAsError(Objects.requireNonNullElseGet(treatMissingArrayIndexAsError, () -> gestaltConfig.isTreatMissingArrayIndexAsError()));
 
-        if (treatMissingValuesAsErrors != null) {
-            newConfig.setTreatMissingValuesAsErrors(treatMissingValuesAsErrors);
-        } else {
-            newConfig.setTreatMissingValuesAsErrors(gestaltConfig.isTreatMissingValuesAsErrors());
-        }
+        newConfig.setTreatMissingValuesAsErrors(Objects.requireNonNullElseGet(treatMissingValuesAsErrors, () -> gestaltConfig.isTreatMissingValuesAsErrors()));
 
         if (dateDecoderFormat != null) {
             newConfig.setDateDecoderFormat(dateDecoderFormat);

@@ -14,7 +14,7 @@ import org.koin.dsl.module
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class KoinTest {
-    var gestalt: Gestalt? = null
+    private var gestalt: Gestalt? = null
 
     @BeforeAll
     fun setup() {

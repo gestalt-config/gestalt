@@ -7,7 +7,6 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 import kotlin.reflect.typeOf
 
-@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T : Any> Scope.gestalt(
     path: String,
     default: T? = null,

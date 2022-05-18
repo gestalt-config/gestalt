@@ -1,7 +1,6 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
@@ -17,7 +16,7 @@ import java.util.*;
 class ObjectDecoderTest {
 
     ConfigNodeService configNodeService;
-    SentenceLexer lexer = new PathLexer();
+    final SentenceLexer lexer = new PathLexer();
     DecoderRegistry registry;
 
     @BeforeEach
@@ -61,7 +60,7 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
