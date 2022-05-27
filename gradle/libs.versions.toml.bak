@@ -1,0 +1,47 @@
+[versions]
+kotlinVersion = "1.6.21"
+kodeinDIVersion = "7.11.0"
+koinDIVersion = "3.2.0"
+
+jackson = "2.13.3"
+
+hocon = "1.4.2"
+aws = "2.17.192"
+jgit = "6.1.0.202203080745-r"
+
+eddsa = "0.3.0"
+
+[libraries]
+slf4j-api  = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-Simple  = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+kotlin-Reflection  = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinVersion" }
+kodein-DI  = { module = "org.kodein.di:kodein-di-jvm", version.ref = "kodeinDIVersion" }
+koin-DI  = { module = "io.insert-koin:koin-core", version.ref = "koinDIVersion" }
+
+jackson-core  = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind  = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-dataformat-yaml  = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+
+jackson-java8  = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-jsr310  = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+
+hocon  = { module = "com.typesafe:config", version.ref = "hocon" }
+
+awsS3  = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+
+jgit  = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+jgit-apache-SSH  = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }
+eddsa  = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
+
+[bundles]
+jackson = ["jacksonCore", "gjacksonDataBind", "jacksonJava8", "jacksonJsr310"]
+
+[plugins]
+errorprone = "2.13.1"
+errorpronejavac = "9+181-r4173-1"
+detekt = "1.20.0"
+
+errorProne  = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
+errorProneJavac  = { module = "com.google.errorprone:javac", version.ref = "errorpronejavac" }
+detekt  = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }

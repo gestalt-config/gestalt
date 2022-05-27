@@ -603,11 +603,14 @@ public class GestaltBuilder {
     private GestaltConfig rebuildConfig() {
         GestaltConfig newConfig = new GestaltConfig();
 
-        newConfig.setTreatWarningsAsErrors(Objects.requireNonNullElseGet(treatWarningsAsErrors, () -> gestaltConfig.isTreatWarningsAsErrors()));
+        newConfig.setTreatWarningsAsErrors(Objects.requireNonNullElseGet(treatWarningsAsErrors,
+            () -> gestaltConfig.isTreatWarningsAsErrors()));
 
-        newConfig.setTreatMissingArrayIndexAsError(Objects.requireNonNullElseGet(treatMissingArrayIndexAsError, () -> gestaltConfig.isTreatMissingArrayIndexAsError()));
+        newConfig.setTreatMissingArrayIndexAsError(Objects.requireNonNullElseGet(treatMissingArrayIndexAsError,
+            () -> gestaltConfig.isTreatMissingArrayIndexAsError()));
 
-        newConfig.setTreatMissingValuesAsErrors(Objects.requireNonNullElseGet(treatMissingValuesAsErrors, () -> gestaltConfig.isTreatMissingValuesAsErrors()));
+        newConfig.setTreatMissingValuesAsErrors(Objects.requireNonNullElseGet(treatMissingValuesAsErrors,
+            () -> gestaltConfig.isTreatMissingValuesAsErrors()));
 
         if (dateDecoderFormat != null) {
             newConfig.setDateDecoderFormat(dateDecoderFormat);

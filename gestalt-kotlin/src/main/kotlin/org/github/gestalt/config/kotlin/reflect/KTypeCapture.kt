@@ -27,5 +27,4 @@ class KTypeCapture<T> private constructor(val kType: KType) : TypeCapture<Any>(k
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T> kTypeCaptureOf() = KTypeCapture.of<T>(typeOf<T>())

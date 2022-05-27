@@ -6,7 +6,6 @@ import org.kodein.di.DirectDIAware
 import org.kodein.di.instance
 import kotlin.reflect.typeOf
 
-@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T : Any> DirectDIAware.gestalt(
     path: String,
     default: T? = null,

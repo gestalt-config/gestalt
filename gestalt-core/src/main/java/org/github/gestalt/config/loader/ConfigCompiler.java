@@ -9,8 +9,6 @@ import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,9 +19,6 @@ import java.util.stream.Collectors;
  * @author Colin Redmond
  */
 public final class ConfigCompiler {
-
-    private static final Logger logger = LoggerFactory.getLogger(ConfigCompiler.class.getName());
-
     private ConfigCompiler() {
     }
 
@@ -65,11 +60,6 @@ public final class ConfigCompiler {
 
             if (failOnErrors && validationErrors.containsKey(ValidationLevel.ERROR)) {
                 return ValidateOf.inValid(errorMessage);
-            } else {
-                String errors = errorMessage.stream()
-                    .map(error ->
-                        "level: " + error.level() + ", message: " + error.description()).collect(Collectors.joining("\n - "));
-                logger.warn("Warnings loading config source: {} errors: {}", sourceName, errors);
             }
         }
 

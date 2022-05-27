@@ -156,7 +156,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         ConfigNode newRoot = null;
         List<ValidationError> errors = new ArrayList<>();
 
-        if(reloadNode == null) {
+        if (reloadNode == null) {
             throw new GestaltException("Null value provided for Node to be reloaded");
         }
 
