@@ -10,3 +10,11 @@ dependencies {
     implementation(project(":gestalt-kotlin"))
     implementation(org.github.gestalt.config.Application.Kotlin.kodeinDI)
 }
+
+tasks.jar {
+    manifest {
+        attributes("Automatic-Module-Name" to "org.github.gestalt.config.kotlin.kodein")
+    }
+}
+
+

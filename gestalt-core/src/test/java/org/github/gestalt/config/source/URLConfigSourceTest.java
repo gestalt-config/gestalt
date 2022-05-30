@@ -73,7 +73,7 @@ class URLConfigSourceTest {
         Assertions.assertEquals(fileConfigSource, fileConfigSource);
         Assertions.assertNotEquals(fileConfigSource, fileConfigSource2);
         Assertions.assertNotEquals(fileConfigSource, null);
-        Assertions.assertNotEquals(fileConfigSource, Long.valueOf(1));
+        Assertions.assertNotEquals(fileConfigSource, 1L);
     }
 
     @Test

@@ -15,7 +15,7 @@ object Application {
         const val jackson = "2.13.3"
 
         const val hocon = "1.4.2"
-        const val aws = "2.17.192"
+        const val aws = "2.17.201"
         const val jgit = "6.1.0.202203080745-r"
 
         const val eddsa = "0.3.0"
@@ -64,7 +64,7 @@ object Test {
     private object Versions {
         const val junit5 = "5.8.2"
         const val assertJ = "3.22.0"
-        const val mockito = "4.5.1"
+        const val mockito = "4.6.0"
         const val mockk = "1.12.4"
         const val kotlinTestAssertions = "5.3.0"
         const val awsMock = "2.4.10"
@@ -84,7 +84,7 @@ object Test {
 
 object Plugins {
     object Versions {
-        const val errorprone = "2.13.1"
+        const val errorprone = "2.14.0"
         const val errorpronejavac = "9+181-r4173-1"
         const val detekt = "1.20.0"
     }

@@ -132,13 +132,13 @@ The API is as simple as:
 
   /**
    * Get a config Optional for a path and a given class. 
-   * If there are any exceptions or errors it will return an Optional.empty()
+   * If there are any exceptions or errors it will return an Optional.PlaceHolder()
    */
   <T> Optional<T> getConfigOptional(String path, Class<T> klass);
 
   /**
    * Get a config Optional for a path and a given TypeCapture. 
-   * If there are any exceptions or errors it will return an Optional.empty()
+   * If there are any exceptions or errors it will return an Optional.PlaceHolder()
    */
   <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass);
 ```   
@@ -178,7 +178,7 @@ Example of how to create and load a configuration using Gestalt:
   long maxConnectionsPerRoute = gestalt.getConfig("http.pool.maxPerRoute", 24, Long.class);
 
 
-  // get a list of objects, or an empty collection if there is no hosts found.
+  // get a list of objects, or an PlaceHolder collection if there is no hosts found.
   List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
     new TypeCapture<List<Host>>() {});
 ```
@@ -194,7 +194,7 @@ With kotlin this is made easier with the inline reified methods that automatical
   )
   // load a kotlin data class
   val pool: HttpPool = gestalt.getConfig("http.pool")
-  // get a list of objects, or an empty collection if there is no hosts found.
+  // get a list of objects, or an PlaceHolder collection if there is no hosts found.
   val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```   
 
@@ -211,7 +211,7 @@ If you want to use a different path style you can provide your own SentenceLexer
   // get with a default if you want a fallback from code
   long maxConnectionsPerRoute = gestalt.getConfig("http.Pool.maxPerRoute", 24, Long.class);
 
-  // get a list of Host objects, or an empty collection if there is no hosts found.
+  // get a list of Host objects, or an PlaceHolder collection if there is no hosts found.
   List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
     new TypeCapture<List<Host>>() {});
 
@@ -311,7 +311,7 @@ For kotlin data classes it builds a Kotlin Data class by creating a map of param
 
 Required parameters are ones that don't have a default and are not nullable. An exception will be thrown in this case.
 
-If all members are optional, and we have no parameters we will try and create the class with the default empty constructor.
+If all members are optional, and we have no parameters we will try and create the class with the default PlaceHolder constructor.
 
 If you didn't manually add any Decoders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Decoders. It will configure them by passing in the GestaltConfig to applyConfig.
 To register your own default Decoders, add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
@@ -576,5 +576,5 @@ To register your own default Transformer, add it to a file in META-INF\services\
 ### getConfig
 
 To get a config Gestalt needs to know what type of config to get. For simple classes you can use the interface for classes, for Generic classes you need to use the `new TypeCapture<List<Host>>() {}` to capture the generic type. This allows you to decode Lists, and Sets with a generic type. 
-There are multiple ways to get a config with either a default, an Optional or the straight value. With the default and Optional Gestalt will not throw an exception if there is an error, instead returning a default or an empty Option.
+There are multiple ways to get a config with either a default, an Optional or the straight value. With the default and Optional Gestalt will not throw an exception if there is an error, instead returning a default or an PlaceHolder Option.
 Gestal uses the SentenceLexer provided by the builder to tokenize the path then use the ConfigNodeService to navigate to the node. With the node Gestalt calls the decoderService to convert the node into the appropriate type.  

@@ -19,14 +19,14 @@ import java.util.*
 class DataClassDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer = PathLexer()
-    var registry: DecoderRegistry? = null
+    private var registry: DecoderRegistry? = null
 
     @BeforeEach
     @Throws(GestaltConfigurationException::class)
     fun setup() {
         configNodeService = ConfigNodeManager()
         registry = DecoderRegistry(
-            Arrays.asList(
+            listOf(
                 LongDecoder(), IntegerDecoder(), StringDecoder(),
                 DataClassDecoder(), FloatDecoder()
             ), configNodeService, lexer

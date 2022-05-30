@@ -78,7 +78,7 @@ class SystemPropertiesConfigSourceTest {
         Assertions.assertEquals(configSource, configSource);
         Assertions.assertNotEquals(configSource, mapConfigSource2);
         Assertions.assertNotEquals(configSource, null);
-        Assertions.assertNotEquals(configSource, Long.valueOf(1));
+        Assertions.assertNotEquals(configSource, 1L);
     }
 
     @Test

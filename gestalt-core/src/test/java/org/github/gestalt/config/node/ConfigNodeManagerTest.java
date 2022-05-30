@@ -1414,7 +1414,7 @@ class ConfigNodeManagerTest {
     }
 
     @Test
-    public void testPostProcessorNullProcessors() throws GestaltException {
+    public void testPostProcessorNullProcessors() {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         GestaltException e = Assertions.assertThrows(GestaltException.class, () -> configNodeManager.postProcess(null));
@@ -1546,7 +1546,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
 
-        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1585,7 +1585,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, UUID.randomUUID()));
 
-        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
+        ValidateOf<ConfigNode> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1664,7 +1664,7 @@ class ConfigNodeManagerTest {
         public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
                 return ValidateOf.validateOf(currentNode,
-                    Arrays.asList(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
+                    List.of(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
             }
             return ValidateOf.valid(currentNode);
         }

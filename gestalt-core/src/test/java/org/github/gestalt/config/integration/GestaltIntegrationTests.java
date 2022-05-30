@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class GestaltIntegrationTests {
 
     @Test
@@ -154,7 +152,7 @@ public class GestaltIntegrationTests {
             "admin.overrideEnabled=true\n";
 
         // Update the config file so we cause a reload to happen.
-        Files.write(devFile.toPath(), config.getBytes(UTF_8));
+        Files.writeString(devFile.toPath(), config);
 
         // Reloads sometimes take a little bit of time, so wait till the update has been triggered.
         for (int i = 0; i < 10; i++) {

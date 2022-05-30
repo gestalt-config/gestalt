@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    val gestaltVersion = "0.11.0"
+    val gestaltVersion = "0.12.0"
     testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-hocon:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
@@ -26,4 +26,10 @@ dependencies {
     implementation(org.github.gestalt.config.Application.Kotlin.koinDI)
 
     testImplementation(org.github.gestalt.config.Test.awsMock)
+}
+
+tasks.jar {
+    manifest {
+        attributes("Automatic-Module-Name" to "org.github.gestalt.config.integration")
+    }
 }

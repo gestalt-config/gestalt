@@ -57,7 +57,7 @@ public class TransformerPostProcessor implements PostProcessor {
 
     @Override
     public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
-        if (!(currentNode instanceof LeafNode) || !currentNode.getValue().isPresent()) {
+        if (!(currentNode instanceof LeafNode) || currentNode.getValue().isEmpty()) {
             return ValidateOf.valid(currentNode);
         }
 

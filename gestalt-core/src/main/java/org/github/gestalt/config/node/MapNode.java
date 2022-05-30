@@ -20,11 +20,7 @@ public class MapNode implements ConfigNode {
      * @param mapNode map for the current tree
      */
     public MapNode(Map<String, ConfigNode> mapNode) {
-        if (mapNode != null) {
-            this.mapNode = mapNode;
-        } else {
-            this.mapNode = Collections.emptyMap();
-        }
+        this.mapNode = Objects.requireNonNullElse(mapNode, Collections.emptyMap());
     }
 
     @Override

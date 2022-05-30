@@ -73,7 +73,7 @@ class MapConfigSourceTest {
         Assertions.assertEquals(mapConfigSource, mapConfigSource);
         Assertions.assertNotEquals(mapConfigSource, mapConfigSource2);
         Assertions.assertNotEquals(mapConfigSource, null);
-        Assertions.assertNotEquals(mapConfigSource, Long.valueOf(1));
+        Assertions.assertNotEquals(mapConfigSource, 1L);
     }
 
     @Test

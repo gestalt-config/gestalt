@@ -18,9 +18,9 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SetDecoderTest {
-    DoubleDecoder doubleDecoder = new DoubleDecoder();
-    StringDecoder stringDecoder = new StringDecoder();
-    ListDecoder listDecoder = new ListDecoder();
+    final DoubleDecoder doubleDecoder = new DoubleDecoder();
+    final StringDecoder stringDecoder = new StringDecoder();
+    final ListDecoder listDecoder = new ListDecoder();
 
     ConfigNodeService configNodeService;
     DecoderRegistry decoderService;

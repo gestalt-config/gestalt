@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class EnvironmentConfigSourceTest {
 
     @Test
-    void testDefaultTransformsLoad() throws GestaltException {
+    void testDefaultTransformsLoad() {
         EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
 
         Assertions.assertTrue(envConfig.hasList());
@@ -44,7 +44,7 @@ class EnvironmentConfigSourceTest {
         Assertions.assertEquals(envConfig, envConfig);
         Assertions.assertNotEquals(envConfig, envConfig2);
         Assertions.assertNotEquals(envConfig, null);
-        Assertions.assertNotEquals(envConfig, Long.valueOf(1));
+        Assertions.assertNotEquals(envConfig, 1L);
     }
 
     @Test

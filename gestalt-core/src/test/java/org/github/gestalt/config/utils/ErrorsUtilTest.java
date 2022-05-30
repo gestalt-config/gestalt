@@ -4,15 +4,15 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 
 class ErrorsUtilTest {
 
     @Test
     void testBuildErrorMessage() {
-        String error = ErrorsUtil.buildErrorMessage("my errors: ", Arrays.asList(new ValidationError.ArrayInvalidIndex(1, "db.hosts")));
+        String error = ErrorsUtil.buildErrorMessage("my errors: ", List.of(new ValidationError.ArrayInvalidIndex(1, "db.hosts")));
 
         Assertions.assertEquals("my errors: \n" +
             " - level: ERROR, message: Invalid array index: 1 for path: db.hosts", error);

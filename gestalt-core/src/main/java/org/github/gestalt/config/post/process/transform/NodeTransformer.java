@@ -68,7 +68,7 @@ public class NodeTransformer implements Transformer {
             return ValidateOf.inValid(errors);
         }
 
-        if (!node.getValue().isPresent()) {
+        if (node.getValue().isEmpty()) {
             errors.add(new ValidationError.NodePostProcessingNodeLeafHasNoValue(path, key));
             return ValidateOf.inValid(errors);
         }

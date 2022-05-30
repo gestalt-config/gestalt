@@ -14,7 +14,7 @@ import org.kodein.di.*
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class KodeinTest {
 
-    var gestalt: Gestalt? = null
+    private var gestalt: Gestalt? = null
 
     @BeforeAll
     fun setup() {

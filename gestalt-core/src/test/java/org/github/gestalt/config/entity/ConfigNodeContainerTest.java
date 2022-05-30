@@ -99,7 +99,7 @@ class ConfigNodeContainerTest {
         Assertions.assertEquals(cfgNode, cfgNode3);
         Assertions.assertNotEquals(cfgNode, cfgNode2);
         Assertions.assertNotEquals(cfgNode, null);
-        Assertions.assertNotEquals(cfgNode, Integer.valueOf(3));
+        Assertions.assertNotEquals(cfgNode, 3);
     }
 
     @Test

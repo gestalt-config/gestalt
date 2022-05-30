@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
 
 // cicd isn't setup to run this test.
 @Disabled
@@ -114,7 +113,7 @@ class GitConfigSourceTest {
         SshdSessionFactoryBuilder sshdBuilder = new SshdSessionFactoryBuilder()
             .setKeyPasswordProvider((cp) -> new KeyPasswordProvider() {
                 @Override
-                public char[] getPassphrase(URIish uri, int attempt) throws IOException {
+                public char[] getPassphrase(URIish uri, int attempt)  {
                     return password.toCharArray();
                 }
 
@@ -124,7 +123,7 @@ class GitConfigSourceTest {
                 }
 
                 @Override
-                public boolean keyLoaded(URIish uri, int attempt, Exception error) throws IOException, GeneralSecurityException {
+                public boolean keyLoaded(URIish uri, int attempt, Exception error) {
                     return true;
                 }
             })

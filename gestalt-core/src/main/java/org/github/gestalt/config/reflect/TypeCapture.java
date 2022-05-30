@@ -18,17 +18,17 @@ public class TypeCapture<T> {
     /**
      * Raw type for this TypeCapture.
      */
-    protected Class<?> rawType;
+    protected final Class<?> rawType;
 
     /**
      * type for this TypeCapture.
      */
-    protected Type type;
+    protected final Type type;
 
     /**
      * hashcode for this TypeCapture.
      */
-    protected int hashCode;
+    protected final int hashCode;
 
     /**
      * The default constructor is used in the form new TypeCapture&#60;List&#60;String&#62;&#62;() { };

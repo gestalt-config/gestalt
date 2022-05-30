@@ -75,7 +75,7 @@ class ClassPathConfigSourceTest {
         Assertions.assertEquals(classPathConfigSource, classPathConfigSource);
         Assertions.assertNotEquals(classPathConfigSource, classPathConfigSource2);
         Assertions.assertNotEquals(classPathConfigSource, null);
-        Assertions.assertNotEquals(classPathConfigSource, Long.valueOf(1));
+        Assertions.assertNotEquals(classPathConfigSource, 1L);
     }
 
     @Test

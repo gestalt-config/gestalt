@@ -11,7 +11,7 @@ import java.util.Optional;
 
 class GestaltCacheTest {
 
-    Gestalt mockGestalt = Mockito.mock(Gestalt.class);
+    final Gestalt mockGestalt = Mockito.mock(Gestalt.class);
 
     @BeforeEach
     void setUp() {
