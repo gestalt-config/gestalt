@@ -12,7 +12,9 @@ A simple but powerful interface allows you to navigate to a path within your con
 - **Flexible and configurable:** Library is a collection of lego pieces with well-defined interfaces, so you can add to or modify any part of it. 
 - **Easy to use builder:** Easy to use builder can get you running quick, or be used to customize any part of the library.
 - **Receive all errors up front:** When there is an error with your config, you will receive multiple errors in a friendly log. So you can fix multiple errors at once instead of one at a time waiting for the next error. 
-- **Modular support for features** Only include what you need into your build, so if you dont need the Kotlin module, dont include it. 
+- **Modular support for features** Only include what you need into your build, so if you dont need the Kotlin module, dont include it.
+- **Java 11 minimum** Requires Java 11 as a minimum version. 
+- **Java Modules** Java 9 modules supported with proper exports.  
 
 # Getting Started
 1. Add the Bintray repository:
