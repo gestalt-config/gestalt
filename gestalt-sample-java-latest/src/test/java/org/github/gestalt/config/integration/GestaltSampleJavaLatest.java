@@ -134,15 +134,15 @@ public class GestaltSampleJavaLatest {
         LEVEL0, LEVEL1
     }
 
-    public static record HttpPool(short maxTotal, long maxPerRoute, int validateAfterInactivity, double keepAliveTimeoutMs,
+    public record HttpPool(short maxTotal, long maxPerRoute, int validateAfterInactivity, double keepAliveTimeoutMs,
                                   int idleTimeoutSec, float defaultWait) {
     }
 
 
-    public static record Host(String user, String url, String password) {
+    public record Host(String user, String url, String password) {
     }
 
-    public static record DataBase(List<Host> hosts, int connectionTimeout, Integer idleTimeout, float maxLifetime, Boolean isEnabled) {
+    public record DataBase(List<Host> hosts, int connectionTimeout, Integer idleTimeout, float maxLifetime, Boolean isEnabled) {
     }
 
     public static class User {

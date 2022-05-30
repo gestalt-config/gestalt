@@ -28,10 +28,6 @@ dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.21")
 }
 
-tasks.assemble {
-    dependsOn(tasks.dokkaJavadoc)
-}
-
 tasks.dokkaJavadoc.configure {
     outputDirectory.set(buildDir.resolve("dokka"))
 }
