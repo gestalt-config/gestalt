@@ -33,8 +33,12 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
         } else if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {
                 String value = node.getValue().get();
-                String[] array = value.split(",");
-                List<ConfigNode> leafNodes = Arrays.stream(array).map(String::trim).map(LeafNode::new).collect(Collectors.toList());
+                String[] array = value.split("(?<!\\\\),");
+                List<ConfigNode> leafNodes = Arrays.stream(array)
+                                                   .map(String::trim)
+                                                   .map(it -> it.replace("\\,", ","))
+                                                   .map(LeafNode::new)
+                                                   .collect(Collectors.toList());
 
                 results = arrayDecode(path, new ArrayNode(leafNodes), type, decoderService);
             } else {

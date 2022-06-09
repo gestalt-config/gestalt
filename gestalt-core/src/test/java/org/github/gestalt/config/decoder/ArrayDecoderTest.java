@@ -262,4 +262,22 @@ class ArrayDecoderTest {
                 "attempting to decode Array",
             values.getErrors().get(0).description());
     }
+
+    @Test
+    void arrayDecodeLeafWithEscapeComma() {
+        ArrayDecoder<String> decoder = new ArrayDecoder<>();
+
+        ValidateOf<String[]> values = decoder.decode("db.hosts", new LeafNode("a,b,c\\,d"), TypeCapture.of(String[].class),
+            decoderService);
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        String[] results = values.results();
+
+        Assertions.assertEquals(3, results.length);
+        Assertions.assertEquals("a", results[0]);
+        Assertions.assertEquals("b", results[1]);
+        Assertions.assertEquals("c,d", results[2]);
+    }
 }
