@@ -230,11 +230,12 @@ Using the extension functions you don't need to specify the type if the return t
   val pool: HttpPool = gestalt.getConfig("http.pool")
   val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
 ```
-| Gestalt Version | Kotlin Version |
-| --------------- | ------- | 
-| 0.10.0 + | 1.6 |
-| 0.9.0 to 0.9.3 | 1.5 |
-| 0.1.0 to 0.8.1 | 1.4 |
+| Gestalt Version  | Kotlin Version |
+|------------------|----------------| 
+| 0.13.0 +         | 1.7            |
+| 0.10.0 to 0.12.0 | 1.6            |
+| 0.9.0 to 0.9.3   | 1.5            |
+| 0.1.0 to 0.8.1   | 1.4            |
 
 # Config Sources
 Adding a ConfigSource to the builder is the minimum step needed to build the Gestalt Library. 
