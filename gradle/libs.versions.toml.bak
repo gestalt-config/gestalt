@@ -1,5 +1,5 @@
 [versions]
-kotlinVersion = "1.6.21"
+kotlinVersion = "1.7.10"
 kodeinDIVersion = "7.11.0"
 koinDIVersion = "3.2.0"
 
