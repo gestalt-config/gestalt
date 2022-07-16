@@ -2,6 +2,7 @@ package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.utils.SystemWrapper;
 
 import java.io.InputStream;
 import java.util.List;
@@ -26,6 +27,10 @@ public class EnvironmentConfigSource implements ConfigSource {
 
     private final boolean failOnErrors;
 
+    private final String prefix;
+
+    private final boolean removePrefix;
+
     /**
      * Default constructor for EnvironmentConfigSource.
      * By default, it will not fail on errors  while loading Env Vars since they
@@ -39,10 +44,34 @@ public class EnvironmentConfigSource implements ConfigSource {
      * constructor for EnvironmentConfigSource.
      *
      * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     *     are often uncontrolled and may not follow expected conventions of this library.
+     * are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource(boolean failOnErrors) {
         this.failOnErrors = failOnErrors;
+        this.prefix = "";
+        this.removePrefix = false;
+    }
+
+    /**
+     * Specify if you want to only parse the Environment variables that have a prefix.
+     * By default it will remove the prefix from the output.
+     *
+     * @param prefix only use the Environment variables that have a prefix.
+     */
+    public EnvironmentConfigSource(String prefix) {
+        this(prefix, true);
+    }
+
+    /**
+     * Specify if you want to only parse the Environment variables that have a prefix.
+     *
+     * @param prefix only use the Environment variables that have a prefix.
+     * @param removePrefix If you should remove the prefix from the output
+     */
+    public EnvironmentConfigSource(String prefix, boolean removePrefix) {
+        this.failOnErrors = true;
+        this.prefix = prefix;
+        this.removePrefix = removePrefix;
     }
 
     @Override
@@ -72,10 +101,24 @@ public class EnvironmentConfigSource implements ConfigSource {
      */
     @Override
     public List<Pair<String, String>> loadList() {
-        return System.getenv().entrySet()
-            .stream()
-            .map(envVar -> new Pair<>(envVar.getKey(), envVar.getValue()))
-            .collect(Collectors.toList());
+        return SystemWrapper.getEnvVars().entrySet()
+                            .stream()
+                            .filter(envVar -> envVar.getKey().startsWith(prefix))
+                            .map(envVar -> {
+                                String key = envVar.getKey();
+                                if (removePrefix) {
+                                    key = key.substring(prefix.length());
+
+                                    //if the next character is a _ or . remove that as well
+                                    if(key.startsWith("_") || key.startsWith(".")) {
+                                        key = key.substring(1);
+                                    }
+                                }
+
+                                return new Pair<>(key, envVar.getValue());
+
+                            })
+                            .collect(Collectors.toList());
     }
 
     @Override

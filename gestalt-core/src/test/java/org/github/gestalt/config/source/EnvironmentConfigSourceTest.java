@@ -1,8 +1,17 @@
 package org.github.gestalt.config.source;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.utils.SystemWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import java.util.Map;
+
+import static org.mockito.Mockito.mockStatic;
 
 
 class EnvironmentConfigSourceTest {
@@ -52,5 +61,79 @@ class EnvironmentConfigSourceTest {
         EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
         Assertions.assertTrue(envConfig.hashCode() != 0);
     }
+
+    @Test
+    void testIgnorePrefix() {
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
+                "prefix_key3", "value3", "prefix_key4", "value4");
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
+
+            EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
+            var results = envConfig.loadList();
+
+            var resultKeys = results.stream().map(Pair::getFirst).toList();
+            var resultValues = results.stream().map(Pair::getSecond).toList();
+
+            assertThat(resultKeys).contains("key1", "key2", "prefix_key3", "prefix_key4");
+            assertThat(resultValues).contains("value1", "value2", "value3", "value4");
+        }
+    }
+
+    @Test
+    void testHasPrefix() {
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
+                "prefix_key3", "value3", "prefix_key4", "value4");
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
+
+            EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
+            var results = envConfig.loadList();
+
+            var resultKeys = results.stream().map(Pair::getFirst).toList();
+            var resultValues = results.stream().map(Pair::getSecond).toList();
+
+            assertThat(resultKeys).contains("key3", "key4");
+            assertThat(resultValues).contains("value3", "value4");
+        }
+    }
+
+    @Test
+    void testHasPrefixKeepPrefix() {
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
+                "prefix_key3", "value3", "prefix_key4", "value4");
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
+
+            EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix", false);
+            var results = envConfig.loadList();
+
+            var resultKeys = results.stream().map(Pair::getFirst).toList();
+            var resultValues = results.stream().map(Pair::getSecond).toList();
+
+            assertThat(resultKeys).contains("prefix_key3", "prefix_key4");
+            assertThat(resultValues).contains("value3", "value4");
+        }
+    }
+
+    @Test
+    void testHasPrefixKeepPrefix2() {
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
+                "prefix.key3", "value3", "prefix.key4", "value4");
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
+
+            EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
+            var results = envConfig.loadList();
+
+            var resultKeys = results.stream().map(Pair::getFirst).toList();
+            var resultValues = results.stream().map(Pair::getSecond).toList();
+
+            assertThat(resultKeys).contains("key3", "key4");
+            assertThat(resultValues).contains("value3", "value4");
+        }
+    }
 }
+
+
 
