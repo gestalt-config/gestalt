@@ -18,6 +18,9 @@ A simple but powerful interface allows you to navigate to a path within your con
 
 # Getting Started
 1. Add the Bintray repository:
+
+Versions 0.1.0 through version 0.11.0 require Java 8. Versions 0.12.0 plus require Java 11. 
+
 ```kotlin
 repositories {
     mavenCentral()
