@@ -362,6 +362,32 @@ public class GestaltSample {
     }
 
     @Test
+    public void integrationTestToml() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        URL defaultFileURL = GestaltSample.class.getClassLoader().getResource("default.conf");
+        File defaultFile = new File(defaultFileURL.getFile());
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.toml");
+        File devFile = new File(devFileURL.getFile());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new FileConfigSource(defaultFile))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
     public void integrationS3Test() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");

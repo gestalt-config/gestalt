@@ -16,6 +16,7 @@ dependencies {
     testImplementation("com.github.gestalt-config:gestalt-hocon:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-json:$gestaltVersion")
+    testImplementation("com.github.gestalt-config:gestalt-toml:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-yaml:$gestaltVersion")
     testImplementation("com.github.gestalt-config:gestalt-s3:$gestaltVersion")
 
