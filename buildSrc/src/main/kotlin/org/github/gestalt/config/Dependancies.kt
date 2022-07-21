@@ -9,13 +9,13 @@ object Application {
         const val slf4j = "1.7.36"
 
         const val kotlinVersion = "1.7.10"
-        const val kodeinDIVersion = "7.13.1"
+        const val kodeinDIVersion = "7.14.0"
         const val koinDIVersion = "3.2.0"
 
         const val jackson = "2.13.3"
 
         const val hocon = "1.4.2"
-        const val aws = "2.17.233"
+        const val aws = "2.17.236"
         const val jgit = "6.2.0.202206071550-r"
 
         const val eddsa = "0.3.0"
@@ -38,6 +38,7 @@ object Application {
         const val jacksonCore = "com.fasterxml.jackson.core:jackson-core:${Versions.jackson}"
         const val jacksonDataBind = "com.fasterxml.jackson.core:jackson-databind:${Versions.jackson}"
         const val jacksonDataformatYaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${Versions.jackson}"
+        const val jacksonDataformatToml = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:${Versions.jackson}"
 
         const val jacksonJava8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${Versions.jackson}"
         const val jacksonJsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson}"
@@ -86,10 +87,11 @@ object Plugins {
     object Versions {
         const val errorprone = "2.14.0"
         const val errorpronejavac = "9+181-r4173-1"
-        const val detekt = "1.20.0"
+        const val detekt = "1.21.0"
     }
 
     const val errorProne = "com.google.errorprone:error_prone_core:${Versions.errorprone}"
     const val errorProneJavac = "com.google.errorprone:javac:${Versions.errorpronejavac}"
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-formatting:${org.github.gestalt.config.Plugins.Versions.detekt}"
 }
+
