@@ -562,7 +562,7 @@ When you write your own applyConfig method, each node of the config tree will be
 You can re-write any intermediate node or only modify the leaf nodes as TransformerPostProcessor does.
 To register your own default PostProcessor, add it to a file in META-INF\services\org.github.gestalt.config.post.process.PostProcessor and add the full path to your PostProcessor.
 
-The TransformerPostProcessor is a specific type of PostProcessor that allows you to replace strings in a leaf node that match ${source:key} into a config value. where the source is the name of a Transformer registered with the TransformerPostProcessor, such as in the above PostProcessor section with envMap, sys, and map. The key is a string lookup into the source.
+The TransformerPostProcessor is a specific type of PostProcessor that allows you to replace strings in a leaf node that match ${transformer:key} into a config value. where the transformer is the name of a Transformer registered with the TransformerPostProcessor, such as in the above PostProcessor section with envMap, sys, and map. The key is a string lookup into the transformer.
 To implement your own Transformer you need to implement the Transformer class. 
 
 ```java
@@ -590,6 +590,7 @@ public interface Transformer {
 
 To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
 
+the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}.
 
 ### getConfig
 
