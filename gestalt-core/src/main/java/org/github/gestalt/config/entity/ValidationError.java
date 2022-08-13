@@ -943,9 +943,6 @@ public abstract class ValidationError {
         }
     }
 
-    /**
-     * No matching transform found for name.
-     */
     public static class NoMatchingTransformFound extends ValidationError {
         private final String path;
         private final String transformName;
@@ -959,6 +956,25 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Unable to find matching transform for " + path + " with transform: " + transformName +
+                ". make sure you registered all expected transforms";
+        }
+    }
+
+    /**
+     * No matching transform found for name.
+     */
+    public static class NoMatchingDefaultTransformFound extends ValidationError {
+        private final String path;
+
+
+        public NoMatchingDefaultTransformFound(String path) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to find matching transform for " + path + " with the default transformers " +
                 ". make sure you registered all expected transforms";
         }
     }

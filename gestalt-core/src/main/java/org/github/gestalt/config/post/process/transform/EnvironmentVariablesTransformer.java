@@ -1,5 +1,6 @@
 package org.github.gestalt.config.post.process.transform;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -9,6 +10,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  *
  * @author Colin Redmond
  */
+@ConfigPriority(100)
 public class EnvironmentVariablesTransformer implements Transformer {
     @Override
     public String name() {

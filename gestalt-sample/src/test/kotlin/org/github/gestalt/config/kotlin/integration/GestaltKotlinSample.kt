@@ -20,7 +20,7 @@ import org.koin.dsl.module
 import kotlin.reflect.typeOf
 
 class GestaltKotlinSample {
-    @org.junit.jupiter.api.Test
+    @Test
     @kotlin.Throws(GestaltException::class)
     fun integrationTest() {
         val configs: MutableMap<String, String> = mutableMapOf(
@@ -40,7 +40,7 @@ class GestaltKotlinSample {
         testValidation(gestalt)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     @kotlin.Throws(GestaltException::class)
     fun integrationTestEnvVars() {
         val configs: MutableMap<String, String> = HashMap<String, String>()
@@ -95,7 +95,7 @@ class GestaltKotlinSample {
         assertEquals(33.0f, pool.defaultWait)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     @kotlin.Throws(GestaltException::class)
     fun integrationTestKodein() {
         val configs: MutableMap<String, String> = mutableMapOf(
@@ -137,7 +137,7 @@ class GestaltKotlinSample {
         assertEquals("test1", hostService.hostPool.user)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     @kotlin.Throws(GestaltException::class)
     fun integrationTestKoin() {
         val configs: MutableMap<String, String> = mutableMapOf(

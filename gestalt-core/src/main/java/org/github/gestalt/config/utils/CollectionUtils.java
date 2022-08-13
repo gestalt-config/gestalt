@@ -1,9 +1,13 @@
 package org.github.gestalt.config.utils;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for collections.
@@ -25,5 +29,33 @@ public final class CollectionUtils {
     public static <T> Predicate<T> distinctBy(Function<? super T, Object> valueExtractor) {
         Map<Object, Boolean> distinctMap = new ConcurrentHashMap<>();
         return t -> distinctMap.putIfAbsent(valueExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    /**
+     * Sorts the list based on the annotation ConfigPriority.
+     * if the object is missing the annotation it will not be included.
+     * @param configPriorityList
+     * @param ascending
+     * @return
+     * @param <T>
+     */
+    public static <T> List<T> buildOrderedConfigPriorities(List<T> configPriorityList, boolean ascending) {
+        return configPriorityList.stream()
+                                 .filter(it -> it.getClass().isAnnotationPresent(ConfigPriority.class))
+                                 .sorted((t1, t2) -> {
+                                     ConfigPriority cp1 = t1.getClass().getAnnotation(ConfigPriority.class);
+                                     int cp1Value = 0;
+                                     if (cp1 != null) { // shouldn't be null as we check there is an annotation, but just in case
+                                         cp1Value = cp1.value();
+                                     }
+
+                                     ConfigPriority cp2 = t2.getClass().getAnnotation(ConfigPriority.class);
+                                     int cp2Value = 0;
+                                     if (cp2 != null) { // shouldn't be null as we check there is an annotation, but just in case
+                                         cp2Value = cp2.value();
+                                     }
+
+                                     return ascending? cp1Value - cp2Value: cp2Value - cp1Value;
+                                 }).collect(Collectors.toList());
     }
 }
