@@ -44,7 +44,7 @@ public class EnvironmentConfigSource implements ConfigSource {
      * constructor for EnvironmentConfigSource.
      *
      * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     * are often uncontrolled and may not follow expected conventions of this library.
+     *     are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource(boolean failOnErrors) {
         this.failOnErrors = failOnErrors;
@@ -110,7 +110,7 @@ public class EnvironmentConfigSource implements ConfigSource {
                                     key = key.substring(prefix.length());
 
                                     //if the next character is a _ or . remove that as well
-                                    if(key.startsWith("_") || key.startsWith(".")) {
+                                    if (key.startsWith("_") || key.startsWith(".")) {
                                         key = key.substring(1);
                                     }
                                 }

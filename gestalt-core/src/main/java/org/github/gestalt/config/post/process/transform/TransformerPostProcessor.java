@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfigPriorities;
+
 /**
  * A Post Processor used to replace leaf values that have the format ${transform:key} with a new value.
  * The transform represents the source of the data, such as envVar for Environment Variables.
@@ -21,20 +23,33 @@ import java.util.stream.Collectors;
  * <p>So you could have a leaf value "hello ${envVar:USER_NAME} you are level ${envVar:USER_LEVEL}!" where USER_NAME=john and USER_LEVEL=6,
  * will get transformed into "hello john you are level 6!"
  *
+ * <p>You do not need to specify the transform name, so it will search for the value in all default transformers based on priority.
+ * It will then return the first value found.
+ * So in the above example you can also use "hello ${USER_NAME} you are level ${USER_LEVEL}!" and it will find the values in the Env Vars.
+ *
  * @author Colin Redmond
  */
 public class TransformerPostProcessor implements PostProcessor {
-    private static final Pattern pattern = Pattern.compile("\\$\\{(?<transform>\\w+):(?<key>\\S+)}");
+    private static final Pattern pattern = Pattern.compile(
+        "\\$\\{((?<transform>\\w+):)?(?<key>[\\w ,_.+=;:\"'`~!@#$%^&*()\\[\\]<>]+)}"
+    );
 
     private final Map<String, Transformer> transformers;
+    private final List<Transformer> orderedDefaultTransformers;
 
     /**
-     * By default use the service loader to load all Transformer classes.
+     * By default, use the service loader to load all Transformer classes.
      */
     public TransformerPostProcessor() {
-        this.transformers = new HashMap<>();
+        transformers = new HashMap<>();
+        List<Transformer> transformersList = new ArrayList<>();
         ServiceLoader<Transformer> loader = ServiceLoader.load(Transformer.class);
-        loader.forEach(it -> transformers.put(it.name(), it));
+        loader.forEach(it -> {
+            transformers.put(it.name(), it);
+            transformersList.add(it);
+        });
+
+        this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformersList, false);
     }
 
     /**
@@ -45,10 +60,13 @@ public class TransformerPostProcessor implements PostProcessor {
     public TransformerPostProcessor(List<Transformer> transformers) {
         if (transformers == null) {
             this.transformers = Collections.emptyMap();
+            this.orderedDefaultTransformers = List.of();
         } else {
             this.transformers = transformers.stream().collect(Collectors.toMap(Transformer::name, Function.identity()));
+            this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformers, false);
         }
     }
+
 
     @Override
     public void applyConfig(PostProcessorConfig config) {
@@ -71,17 +89,36 @@ public class TransformerPostProcessor implements PostProcessor {
             int startOfMatch = matcher.start();
             int endOfMatch = matcher.end();
 
-            if (transformers.containsKey(transformName)) {
-                ValidateOf<String> value = transformers.get(transformName).process(path, key);
-                if (value.hasResults()) {
-                    newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
-                    lastIndex = endOfMatch;
+            // if we have a named transform look it up in the map.
+            if (transformName != null) {
+                if (transformers.containsKey(transformName)) {
+                    ValidateOf<String> value = transformers.get(transformName).process(path, key);
+                    if (value.hasResults()) {
+                        newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
+                        lastIndex = endOfMatch;
 
+                    } else {
+                        return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                    }
                 } else {
-                    return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                    return ValidateOf.inValid(new ValidationError.NoMatchingTransformFound(path, transformName));
                 }
             } else {
-                return ValidateOf.inValid(new ValidationError.NoMatchingTransformFound(path, transformName));
+                boolean foundTransformer = false;
+                // if the transform isn't named look for it in priority order.
+                for (Transformer transform : orderedDefaultTransformers) {
+                    ValidateOf<String> value = transform.process(path, key);
+                    if (value.hasResults()) {
+                        newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
+                        lastIndex = endOfMatch;
+                        foundTransformer = true;
+                        break;
+                    }
+                }
+
+                if (!foundTransformer) {
+                    return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path));
+                }
             }
         }
         // add any text at the end of the sentence

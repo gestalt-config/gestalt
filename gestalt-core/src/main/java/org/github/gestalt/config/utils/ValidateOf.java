@@ -64,6 +64,18 @@ public final class ValidateOf<T> {
      * @param <T> type of ValidateOf
      * @return ValidateOf
      */
+    public static <T> ValidateOf<T> validateOf(T answer, ValidationError errors) {
+        return new ValidateOf<>(answer, List.of(errors));
+    }
+
+    /**
+     * Create a ValidateOf with a results and an error.
+     *
+     * @param answer valid results
+     * @param errors list of ValidationError
+     * @param <T> type of ValidateOf
+     * @return ValidateOf
+     */
     public static <T> ValidateOf<T> validateOf(T answer, List<ValidationError> errors) {
         return new ValidateOf<>(answer, errors);
     }

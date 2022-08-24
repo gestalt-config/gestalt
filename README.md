@@ -346,23 +346,69 @@ Post processors are run after the config tree has been compiled.
 They can be used to modify the config tree in any way. 
 The main Post Processor is the TransformerPostProcessor which allows for string replacement for a config. 
 For example if we have a properties file with a Database connection you don't want to save your usernames and passwords in the properties files. Instead, you want to inject the username and passwords as Environment Variables.
-You can use multiple string replacements within a single string. 
+You can use multiple string replacements within a single string.
+Specify a key in the format ${key} and it will check all the Transformer annotated with a @ConfigPriority in descending order and will return the first matching value. Or if you want to control which transformer to check specify by name using the format ${transformer:key}
+The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER, db.user or db_user will not match. 
 
+```properties
+db.user=${DB_USER}
+db.password=${DB_IDLETIMEOUT}
+db.uri=jdbc:mysql://${DB_HOST}:${DB_PORT}/${environment}
+```
+
+Specifying the transformer
 ```properties
 db.user=${envVar:DB_USER}
 db.password=${envVar:DB_IDLETIMEOUT}
-db.uri=jdbc:mysql://${envVar:DB_HOST}:${envVar:DB_PORT}/${envVar:DB_DEFAULT}
+db.uri=jdbc:mysql://${envVar:DB_HOST}:${envVar:DB_PORT}/${sys:environment}
 ```
 
-Provided TransformerPostProcessor
 
-| keyword | source |
-| ------- | ------|
-| envVar | Environment Variables |
-| sys | Java System Properties |
-| map | A custom map provided to the constructor |
-| node | map to another leaf node in the configuration tree |
 
+## Provided TransformerPostProcessor
+
+| keyword | priority | source                                             |
+| ------- |----------|----------------------------------------------------|
+| envVar | 100      | Environment Variables                              |
+| sys | 200      | Java System Properties                             |
+| map | 400      | A custom map provided to the constructor           |
+| node | 300         | map to another leaf node in the configuration tree |
+| random | n/a  | provides a random value |
+
+## random post processor
+To inject a random variable during post-processing you can use the format ${random:type(origin, bound)}
+The random value is generated while loading the config, so you will always get the same random value when asking gestalt. 
+
+```properties
+db.userId=dbUser-${random:int(5, 25)}
+app.uuid=${random:uuid}
+```
+
+
+#### Random Options supported: 
+
+| data type | format                | notes                                                |
+|-----------|-----------------------|------------------------------------------------------|
+| byte      | byte                  | a random byte of data base 64 encoded                |
+| byte      | byte(length)          | random bytes of provided length base 64 encoded      |
+| int       | int                   | a random int of all possible int values              |
+| int       | int(max)              | a random int from 0 to the max value provided        |
+| int       | int(origin, bound)    | a random int between origin and bound                |
+| long      | long                  | a random long of all possible long values            |
+| long      | long(max)             | a random long from 0 to the max value provided       |
+| long      | long(origin, bound)   | a random long between origin and bound               |
+| float     | float                 | a random float between 0 and 1                       |
+| float     | float(max)            | a random float from 0 to the max value provided      |
+| float     | float(origin, bound)  | a random float between origin and bound              |
+| double    | double                | a random double of all possible long values          |
+| double    | double(max)           | a random double from 0 to the max value provided     |
+| double    | double(origin, bound) | a random double between origin and bound             |
+| boolean   | boolean               | a random boolean                                     |
+| string    | string                | a random string of characters a-z of length 1        |
+| string    | string(length)        | a random string of characters a-z of length provided |
+| char      | char                  | a random char of characters a-z                      |
+| uuid      | uuid                  | a random uuid                                        |
+* Note: The formats in the table would need to be embedded inside of ${random:format} so byte(length) would be ${random:byte(10)}
 # Gestalt configuration
 
 | Configuration | default | Details |
@@ -551,7 +597,7 @@ When you write your own applyConfig method, each node of the config tree will be
 You can re-write any intermediate node or only modify the leaf nodes as TransformerPostProcessor does.
 To register your own default PostProcessor, add it to a file in META-INF\services\org.github.gestalt.config.post.process.PostProcessor and add the full path to your PostProcessor.
 
-The TransformerPostProcessor is a specific type of PostProcessor that allows you to replace strings in a leaf node that match ${source:key} into a config value. where the source is the name of a Transformer registered with the TransformerPostProcessor, such as in the above PostProcessor section with envMap, sys, and map. The key is a string lookup into the source.
+The TransformerPostProcessor is a specific type of PostProcessor that allows you to replace strings in a leaf node that match ${transformer:key} into a config value. where the transformer is the name of a Transformer registered with the TransformerPostProcessor, such as in the above PostProcessor section with envMap, sys, and map. The key is a string lookup into the transformer.
 To implement your own Transformer you need to implement the Transformer class. 
 
 ```java
@@ -579,6 +625,7 @@ public interface Transformer {
 
 To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
 
+the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}.
 
 ### getConfig
 

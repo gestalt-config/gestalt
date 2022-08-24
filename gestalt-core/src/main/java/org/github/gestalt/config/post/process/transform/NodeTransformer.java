@@ -1,5 +1,6 @@
 package org.github.gestalt.config.post.process.transform;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
@@ -16,6 +17,7 @@ import java.util.List;
  *
  * @author Colin Redmond
  */
+@ConfigPriority(300)
 public class NodeTransformer implements Transformer {
     private PostProcessorConfig config;
 
