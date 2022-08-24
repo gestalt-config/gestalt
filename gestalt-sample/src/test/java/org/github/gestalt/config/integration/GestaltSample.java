@@ -5,6 +5,7 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.post.process.transform.RandomTransformer;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -25,10 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -568,7 +566,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
-            .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
+            .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
             .build();
 
         gestalt.loadConfigs();
@@ -580,6 +578,9 @@ public class GestaltSample {
         Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
         Assertions.assertEquals(443, booking.getService().getPort());
         Assertions.assertEquals("booking", booking.getService().getPath());
+        Assertions.assertNotNull(gestalt.getConfig("appUUID", UUID.class));
+        Assertions.assertTrue(gestalt.getConfig("appId", Integer.class) == 20 ||
+            gestalt.getConfig("appId", Integer.class) == 21);
     }
 
     @Test

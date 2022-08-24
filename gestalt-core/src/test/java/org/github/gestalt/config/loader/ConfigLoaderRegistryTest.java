@@ -27,10 +27,6 @@ class ConfigLoaderRegistryTest {
 
     @Test
     void testAddLoader() throws GestaltConfigurationException {
-        ConfigLoader loader = Mockito.mock(ConfigLoader.class);
-        Mockito.when(loader.accepts("test")).thenReturn(true);
-        Mockito.when(loader.accepts("noMatch")).thenReturn(false);
-
         ConfigLoader loader2 = Mockito.mock(ConfigLoader.class);
         Mockito.when(loader2.accepts("test2")).thenReturn(true);
         Mockito.when(loader2.accepts("noMatch")).thenReturn(false);

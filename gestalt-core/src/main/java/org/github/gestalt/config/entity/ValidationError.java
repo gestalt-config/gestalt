@@ -1078,6 +1078,141 @@ public abstract class ValidationError {
     }
 
     /**
+     * Invalid number of parameters provided to random expression during post processing.
+     */
+    public static class InvalidNumberOfParametersForRandomExpression extends ValidationError {
+        private final String path;
+        private final String key;
+
+        private final String type;
+        private final int expected;
+
+        public InvalidNumberOfParametersForRandomExpression(String path, String key, String type, int expected) {
+            super(ValidationLevel.WARN);
+            this.path = path;
+            this.key = key;
+            this.type = type;
+
+            this.expected = expected;
+        }
+
+        @Override
+        public String description() {
+            return "Invalid number of parameters for type : " + type + ", from key: " + key + ", on path: " + path +
+                " during post process. Expected " + expected + " parameters";
+        }
+    }
+
+    /**
+     * Invalid number of parameters provided to random expression during post processing.
+     */
+    public static class InvalidNumberOfParametersForRandomExpressionError extends ValidationError {
+        private final String path;
+        private final String key;
+
+        private final String type;
+        private final int expected;
+
+        public InvalidNumberOfParametersForRandomExpressionError(String path, String key, String type, int expected) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.key = key;
+            this.type = type;
+
+            this.expected = expected;
+        }
+
+        @Override
+        public String description() {
+            return "Invalid number of parameters for type : " + type + ", from key: " + key + ", on path: " + path +
+                " during post process. Must have " + expected + " parameters";
+        }
+    }
+
+    /**
+     * Unknown Random Expression during post processing.
+     */
+    public static class UnknownRandomExpression extends ValidationError {
+        private final String path;
+        private final String key;
+
+        public UnknownRandomExpression(String path, String key) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.key = key;
+        }
+
+        @Override
+        public String description() {
+            return "unknown random expression: " + key + ", on path: " + path + " during post process";
+        }
+    }
+
+    /**
+     * unable to parse random expression during post processing.
+     */
+    public static class UnableToParseRandomParameter extends ValidationError {
+        private final String path;
+        private final String key;
+        private final String type;
+        private final String p1;
+        private final String p2;
+
+        public UnableToParseRandomParameter(String path, String key, String type, String p1, String p2) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.key = key;
+            this.type = type;
+            this.p1 = p1;
+            this.p2 = p2;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to parse random parameter: " + key + ", on path: " + path + " during post process, " +
+                "with parameters: " + p1 + ", " + p2 + " of type: " + type;
+        }
+    }
+
+    /**
+     * unable to parse random expression during post processing.
+     */
+    public static class UnableToParseRandomExpression extends ValidationError {
+        private final String path;
+        private final String key;
+
+        public UnableToParseRandomExpression(String path, String key) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.key = key;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to parse random expression: " + key + ", on path: " + path + " during post process";
+        }
+    }
+
+    /**
+     * Unsupported random expression during post process.
+     */
+    public static class UnsupportedRandomPostProcess extends ValidationError {
+        private final String path;
+        private final String key;
+
+        public UnsupportedRandomPostProcess(String path, String key) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.key = key;
+        }
+
+        @Override
+        public String description() {
+            return "Unsupported random post processor: " + key + ", on path: " + path + " during post process";
+        }
+    }
+
+    /**
      * No Configuration found for Node Post Processing.
      */
     public static class NodePostProcessingConfigMissing extends ValidationError {

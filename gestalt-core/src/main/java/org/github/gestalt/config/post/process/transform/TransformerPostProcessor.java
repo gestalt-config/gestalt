@@ -30,7 +30,9 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  * @author Colin Redmond
  */
 public class TransformerPostProcessor implements PostProcessor {
-    private static final Pattern pattern = Pattern.compile("\\$\\{((?<transform>\\w+):)?(?<key>\\S+)}");
+    private static final Pattern pattern = Pattern.compile(
+        "\\$\\{((?<transform>\\w+):)?(?<key>[\\w ,_.+=;:\"'`~!@#$%^&*()\\[\\]<>]+)}"
+    );
 
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
@@ -89,7 +91,7 @@ public class TransformerPostProcessor implements PostProcessor {
 
             // if we have a named transform look it up in the map.
             if (transformName != null) {
-                if(transformers.containsKey(transformName)) {
+                if (transformers.containsKey(transformName)) {
                     ValidateOf<String> value = transformers.get(transformName).process(path, key);
                     if (value.hasResults()) {
                         newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
@@ -104,7 +106,7 @@ public class TransformerPostProcessor implements PostProcessor {
             } else {
                 boolean foundTransformer = false;
                 // if the transform isn't named look for it in priority order.
-                for(Transformer transform: orderedDefaultTransformers) {
+                for (Transformer transform : orderedDefaultTransformers) {
                     ValidateOf<String> value = transform.process(path, key);
                     if (value.hasResults()) {
                         newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
@@ -114,7 +116,7 @@ public class TransformerPostProcessor implements PostProcessor {
                     }
                 }
 
-                if(!foundTransformer) {
+                if (!foundTransformer) {
                     return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path));
                 }
             }

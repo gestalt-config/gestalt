@@ -38,7 +38,7 @@ eddsa  = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 jackson = ["jacksonCore", "gjacksonDataBind", "jacksonJava8", "jacksonJsr310"]
 
 [plugins]
-errorprone = "2.14.0"
+errorprone = "2.15.0"
 errorpronejavac = "9+181-r4173-1"
 detekt = "1.21.0"
 

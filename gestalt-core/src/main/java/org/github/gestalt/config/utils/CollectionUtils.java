@@ -34,10 +34,11 @@ public final class CollectionUtils {
     /**
      * Sorts the list based on the annotation ConfigPriority.
      * if the object is missing the annotation it will not be included.
-     * @param configPriorityList
-     * @param ascending
-     * @return
-     * @param <T>
+     *
+     * @param configPriorityList list of config priorities
+     * @param ascending if we should sort ascending
+     * @param <T> generic type
+     * @return list of ordered ConfigPriority based on value, if value is missing it will be omitted
      */
     public static <T> List<T> buildOrderedConfigPriorities(List<T> configPriorityList, boolean ascending) {
         return configPriorityList.stream()
@@ -55,7 +56,7 @@ public final class CollectionUtils {
                                          cp2Value = cp2.value();
                                      }
 
-                                     return ascending? cp1Value - cp2Value: cp2Value - cp1Value;
+                                     return ascending ? cp1Value - cp2Value : cp2Value - cp1Value;
                                  }).collect(Collectors.toList());
     }
 }
