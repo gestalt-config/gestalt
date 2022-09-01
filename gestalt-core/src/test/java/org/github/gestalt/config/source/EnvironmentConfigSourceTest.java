@@ -3,6 +3,7 @@ package org.github.gestalt.config.source;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.SystemWrapper;
 import org.junit.jupiter.api.Assertions;
@@ -132,6 +133,12 @@ class EnvironmentConfigSourceTest {
             assertThat(resultKeys).contains("key3", "key4");
             assertThat(resultValues).contains("value3", "value4");
         }
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        EnvironmentConfigSource envConfig = new EnvironmentConfigSource("", false, false, Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), envConfig.getTags());
     }
 }
 

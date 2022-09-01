@@ -10,7 +10,10 @@ import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,9 +44,10 @@ public final class ConfigCompiler {
                                                  List<Pair<String, String>> configs) {
         List<ValidationError> errorMessage = new ArrayList<>();
 
-        List<Pair<ValidateOf<List<Token>>, String>> validatedTokens = configs.stream()
-            .map(prop -> new Pair<>(lexer.scan(prop.getFirst()), prop.getSecond()))
-            .collect(Collectors.toList());
+        List<Pair<ValidateOf<List<Token>>, String>> validatedTokens =
+            configs.stream()
+                   .map(prop -> new Pair<>(lexer.scan(prop.getFirst()), prop.getSecond()))
+                   .collect(Collectors.toList());
 
         Map<ValidationLevel, List<ValidationError>> validationErrors = validatedTokens
             .stream()
@@ -54,9 +58,9 @@ public final class ConfigCompiler {
 
         if (!validationErrors.isEmpty()) {
             errorMessage = validationErrors.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                                           .stream()
+                                           .flatMap(Collection::stream)
+                                           .collect(Collectors.toList());
 
             if (failOnErrors && validationErrors.containsKey(ValidationLevel.ERROR)) {
                 return ValidateOf.inValid(errorMessage);
@@ -72,7 +76,7 @@ public final class ConfigCompiler {
                 new Pair<>(validatedToken.getFirst().results(), new ConfigValue(validatedToken.getSecond())))
             .collect(Collectors.toList());
 
-        ValidateOf<ConfigNode> parserResults =  parser.parse(validTokens, failOnErrors);
+        ValidateOf<ConfigNode> parserResults = parser.parse(validTokens, failOnErrors);
         errorMessage.addAll(parserResults.getErrors());
         return ValidateOf.validateOf(parserResults.results(), errorMessage);
     }

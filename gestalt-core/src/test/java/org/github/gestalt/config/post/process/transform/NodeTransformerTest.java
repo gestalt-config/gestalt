@@ -7,6 +7,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -43,7 +44,7 @@ class NodeTransformerTest {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
-        Mockito.when(configNodeService.navigateToNode("hello", tokens))
+        Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
             .thenReturn(ValidateOf.valid(new LeafNode("new value")));
 
         NodeTransformer transformer = new NodeTransformer();
@@ -111,7 +112,7 @@ class NodeTransformerTest {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
-        Mockito.when(configNodeService.navigateToNode("hello", tokens))
+        Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
             .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", MapNode.class, "post processing")));
 
         NodeTransformer transformer = new NodeTransformer();
@@ -134,7 +135,7 @@ class NodeTransformerTest {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
-        Mockito.when(configNodeService.navigateToNode("hello", tokens))
+        Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
             .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
 
         NodeTransformer transformer = new NodeTransformer();
@@ -155,7 +156,7 @@ class NodeTransformerTest {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
-        Mockito.when(configNodeService.navigateToNode("hello", tokens))
+        Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
             .thenReturn(ValidateOf.valid(new MapNode(new HashMap<>())));
 
         NodeTransformer transformer = new NodeTransformer();
@@ -175,7 +176,7 @@ class NodeTransformerTest {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
-        Mockito.when(configNodeService.navigateToNode("hello", tokens))
+        Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
             .thenReturn(ValidateOf.valid(new LeafNode(null)));
 
         NodeTransformer transformer = new NodeTransformer();

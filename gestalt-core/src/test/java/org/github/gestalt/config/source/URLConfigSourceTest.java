@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -80,5 +81,11 @@ class URLConfigSourceTest {
     void hash() throws GestaltException {
         URLConfigSource fileConfigSource = new URLConfigSource(testURL);
         Assertions.assertTrue(fileConfigSource.hashCode() != 0);
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        URLConfigSource fileConfigSource = new URLConfigSource(testURL, Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), fileConfigSource.getTags());
     }
 }

@@ -113,7 +113,7 @@ public class ObjectDecoder implements Decoder<Object> {
         } catch (NoSuchMethodException e) {
             return ValidateOf.inValid(new ValidationError.NoDefaultConstructor(path, klass.getName()));
         } catch (SecurityException | InstantiationException | IllegalAccessException |
-            IllegalArgumentException | InvocationTargetException e) {
+                 IllegalArgumentException | InvocationTargetException e) {
             return ValidateOf.inValid(new ValidationError.ConstructorNotPublic(path, klass.getName()));
         }
     }

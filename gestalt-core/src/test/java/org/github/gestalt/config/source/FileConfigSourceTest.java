@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -137,5 +138,13 @@ class FileConfigSourceTest {
         File testFile = new File(testFileURL.getFile());
         FileConfigSource fileConfigSource = new FileConfigSource(testFile.toPath());
         Assertions.assertTrue(fileConfigSource.hashCode() != 0);
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        URL testFileURL = FileConfigSourceTest.class.getClassLoader().getResource("test");
+        File testFile = new File(testFileURL.getFile());
+        FileConfigSource fileConfigSource = new FileConfigSource(testFile.toPath(), Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), fileConfigSource.getTags());
     }
 }

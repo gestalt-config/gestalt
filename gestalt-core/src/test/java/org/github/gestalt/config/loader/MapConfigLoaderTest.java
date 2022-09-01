@@ -1,5 +1,6 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ConfigValue;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -9,6 +10,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.Pair;
@@ -61,7 +63,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
 
@@ -85,9 +87,72 @@ class MapConfigLoaderTest {
         Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(1).getFirst().get(1)).getName());
         Assertions.assertEquals("redis", argument.getValue().get(1).getSecond().getValue());
 
-        ConfigNode result = validateOfResults.results();
+        List<ConfigNodeContainer> result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
-        Assertions.assertEquals(node, result);
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(node, result.get(0).getConfigNode());
+    }
+
+    @Test
+    void loadSourceMockDependenciesAllOkTags() throws GestaltException {
+        // setup the input data, instead of loading from a file.
+        List<Pair<String, String>> data = new ArrayList<>();
+        data.add(new Pair<>("test", "value"));
+        data.add(new Pair<>("db.name", "redis"));
+
+        // create the result expected
+        ConfigNode node = new LeafNode("test");
+
+        // setup the mocks
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+        ConfigSource source = Mockito.mock(ConfigSource.class);
+
+        // mock the interactions with the parser and lexer
+        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(ValidateOf.valid(node));
+        Mockito.when(lexer.scan("test"))
+               .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
+        Mockito.when(lexer.scan("db.name"))
+               .thenReturn(ValidateOf.valid(Arrays.asList(new ObjectToken("db"), new ObjectToken("name"))));
+
+        // mock the source so we return our test data stream.
+        Mockito.when(source.hasList()).thenReturn(true);
+        Mockito.when(source.loadList()).thenReturn(data);
+        Mockito.when(source.getTags()).thenReturn(Tags.of("toy", "ball"));
+
+        // create our class to be tested
+        MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
+
+        // run the code under test.
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(source);
+        Assertions.assertTrue(validateOfResults.hasResults());
+        Assertions.assertFalse(validateOfResults.hasErrors());
+
+        //setup the argument captor
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Pair<List<Token>, ConfigValue>>> argument = ArgumentCaptor.forClass(List.class);
+
+        // verify we get the correct number of calls and capture the parsers arguments.
+        Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
+        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
+
+        // validate the parser was sent the correct arguments.
+        Assertions.assertEquals(2, argument.getValue().size());
+
+        Assertions.assertEquals(1, argument.getValue().get(0).getFirst().size());
+        Assertions.assertEquals("test", ((ObjectToken) argument.getValue().get(0).getFirst().get(0)).getName());
+        Assertions.assertEquals("value", argument.getValue().get(0).getSecond().getValue());
+
+        Assertions.assertEquals(2, argument.getValue().get(1).getFirst().size());
+        Assertions.assertEquals("db", ((ObjectToken) argument.getValue().get(1).getFirst().get(0)).getName());
+        Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(1).getFirst().get(1)).getName());
+        Assertions.assertEquals("redis", argument.getValue().get(1).getSecond().getValue());
+
+        List<ConfigNodeContainer> result = validateOfResults.results();
+        // validate we got back the expected result. Not a of value testing this as it is only a mock.
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(node, result.get(0).getConfigNode());
+        Assertions.assertEquals(Tags.of("toy", "ball"), result.get(0).getTags());
     }
 
     @Test
@@ -123,7 +188,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
 
@@ -167,7 +232,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(source);
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
 
@@ -187,9 +252,10 @@ class MapConfigLoaderTest {
         Assertions.assertEquals("name", ((ObjectToken) argument.getValue().get(0).getFirst().get(1)).getName());
         Assertions.assertEquals("redis", argument.getValue().get(0).getSecond().getValue());
 
-        ConfigNode result = validateOfResults.results();
+        List<ConfigNodeContainer> result = validateOfResults.results();
         // validate we got back the expected result. Not a of value testing this as it is only a mock.
-        Assertions.assertEquals(node, result);
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(node, result.get(0).getConfigNode());
         Assertions.assertEquals(1, validateOfResults.getErrors().size());
         Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
     }
@@ -264,7 +330,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
     }

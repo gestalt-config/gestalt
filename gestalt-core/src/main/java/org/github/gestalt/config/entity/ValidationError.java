@@ -1270,6 +1270,24 @@ public abstract class ValidationError {
     }
 
     /**
+     * Node Post Processing has not generated any results.
+     */
+    public static class NodePostProcessingNoResults extends ValidationError {
+
+        /**
+         * Protected constructor so end users cant create a Validation error only inherit from it.
+         */
+        public NodePostProcessingNoResults() {
+            super(ValidationLevel.ERROR);
+        }
+
+        @Override
+        public String description() {
+            return "No results generated from post processor ";
+        }
+    }
+
+    /**
      * Node Post Processing scanned missing tokens.
      */
     public static class NodePostProcessingErrorsNavigatingToNode extends ValidationError {

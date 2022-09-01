@@ -3,6 +3,7 @@ package org.github.gestalt.config.aws.s3;
 
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -27,6 +28,8 @@ public class S3ConfigSource implements ConfigSource {
     private final String bucketName;
     private final UUID id = UUID.randomUUID();
 
+    private final Tags tags;
+
     /**
      * Constructor for S3ConfigSource.
      *
@@ -36,6 +39,19 @@ public class S3ConfigSource implements ConfigSource {
      * @throws GestaltException any exceptions thrown
      */
     public S3ConfigSource(S3Client s3, String bucketName, String keyName) throws GestaltException {
+        this(s3, bucketName, keyName, Tags.of());
+    }
+
+    /**
+     * Constructor for S3ConfigSource.
+     *
+     * @param s3 S3 client
+     * @param bucketName name of the S3 bucket
+     * @param keyName name of the S3 key
+     * @param tags tags associated with the source
+     * @throws GestaltException any exceptions thrown
+     */
+    public S3ConfigSource(S3Client s3, String bucketName, String keyName, Tags tags) throws GestaltException {
         if (s3 == null) {
             throw new GestaltException("S3 client can not be null");
         }
@@ -51,6 +67,7 @@ public class S3ConfigSource implements ConfigSource {
         this.s3 = s3;
         this.keyName = keyName;
         this.bucketName = bucketName;
+        this.tags = tags;
     }
 
     @Override
@@ -114,6 +131,11 @@ public class S3ConfigSource implements ConfigSource {
     @Override
     public UUID id() {  //NOPMD
         return id;
+    }
+
+    @Override
+    public Tags getTags() {
+        return tags;
     }
 
     @Override

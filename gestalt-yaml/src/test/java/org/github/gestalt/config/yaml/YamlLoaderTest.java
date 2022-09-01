@@ -2,12 +2,15 @@ package org.github.gestalt.config.yaml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 class YamlLoaderTest {
 
@@ -40,21 +43,23 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<ConfigNode> result = yamlLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals("Ford", result.results().getKey("cars").get().getIndex(0).get().getKey("name")
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
             .get().getValue().get());
-        Assertions.assertEquals("Fiesta", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Focus", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Mustang", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(2).get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(3).isPresent());
     }
 
@@ -73,21 +78,23 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<ConfigNode> result = yamlLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals("Ford", result.results().getKey("cars").get().getIndex(0).get().getKey("name")
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
             .get().getValue().get());
-        Assertions.assertEquals("Fiesta", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Focus", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Mustang", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(2).get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(3).isPresent());
     }
 
@@ -106,21 +113,23 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader(new ObjectMapper(new YAMLFactory()));
 
-        ValidateOf<ConfigNode> result = yamlLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals("Ford", result.results().getKey("cars").get().getIndex(0).get().getKey("name")
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
             .get().getValue().get());
-        Assertions.assertEquals("Fiesta", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Focus", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Mustang", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(2).get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(3).isPresent());
     }
 
@@ -132,15 +141,17 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<ConfigNode> result = yamlLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
-        Assertions.assertTrue(result.hasErrors());
-        Assertions.assertEquals("Unable to find node matching path: age", result.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: age", result.getErrors().get(1).description());
+        Assertions.assertTrue(resultContainer.hasErrors());
+        Assertions.assertEquals("Unable to find node matching path: age", resultContainer.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: age", resultContainer.getErrors().get(1).description());
 
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("age").isPresent());
+
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertFalse(result.getKey("age").isPresent());
     }
 
     @Test
@@ -152,15 +163,17 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<ConfigNode> result = yamlLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
-        Assertions.assertTrue(result.hasErrors());
-        Assertions.assertEquals("Unable to find node matching path: cars", result.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: cars", result.getErrors().get(1).description());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").isPresent());
+        Assertions.assertTrue(resultContainer.hasErrors());
+        Assertions.assertEquals("Unable to find node matching path: cars", resultContainer.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: cars", resultContainer.getErrors().get(1).description());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").isPresent());
     }
 
     @Test

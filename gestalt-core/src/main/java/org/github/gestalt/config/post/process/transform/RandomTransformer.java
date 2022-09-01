@@ -19,6 +19,9 @@ public class RandomTransformer implements Transformer {
         "^(?<type>[A-Za-z]+)(\\((?<p1>[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)),?(?<p2>[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))?\\))?$");
     private final Random random;
 
+    /**
+     * Create a new RandomTransformer with a random seed.
+     */
     public RandomTransformer() {
         random = new Random();
     }

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.InputStream;
@@ -70,6 +71,14 @@ public interface ConfigSource {
      * @return id
      */
     UUID id();  //NOPMD
+
+
+    /**
+     * A source can have a set of tags that apply to all nodes in the source.
+     *
+     * @return tags assigned to the source
+     */
+    Tags getTags();
 
     /**
      * If the source should fail on errors.

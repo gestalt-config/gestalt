@@ -260,7 +260,7 @@ class GestaltTest {
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
-            ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
+            ValidateOf.validateOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
 
         GestaltException e = Assertions.assertThrows(GestaltException.class, gestalt::postProcessConfigs);
         Assertions.assertEquals("Failed post processing config nodes with errors \n" +
@@ -290,7 +290,7 @@ class GestaltTest {
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
-            ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
+            ValidateOf.validateOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
 
         gestalt.postProcessConfigs();
     }

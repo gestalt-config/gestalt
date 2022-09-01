@@ -34,6 +34,6 @@ public final class ErrorsUtil {
      */
     public static String buildErrorMessage(List<ValidationError> errors) {
         return errors.stream()
-            .map(error -> "level: " + error.level() + ", message: " + error.description()).collect(Collectors.joining("\n - "));
+                     .map(error -> "level: " + error.level() + ", message: " + error.description()).collect(Collectors.joining("\n - "));
     }
 }

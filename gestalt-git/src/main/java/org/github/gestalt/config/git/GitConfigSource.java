@@ -9,6 +9,7 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.File;
@@ -33,6 +34,8 @@ public class GitConfigSource implements ConfigSource {
     private final String configFilePath;
     private Git clonedRepo;
 
+    private final Tags tags;
+
     /**
      * @param repoURI the URI to the git repo
      * @param localRepoDirectory the local directory you want to save the git repo to.
@@ -40,11 +43,27 @@ public class GitConfigSource implements ConfigSource {
      * @param branch the branch you want to pull from git
      * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
      * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     * The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     *   The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @throws GestaltException if there is a badly configured git repo
      */
     public GitConfigSource(String repoURI, Path localRepoDirectory, String configFilePath, String branch, CredentialsProvider credentials,
                            SshSessionFactory sshSessionFactory) throws GestaltException {
+        this(repoURI, localRepoDirectory, configFilePath, branch, credentials, sshSessionFactory, Tags.of());
+    }
+
+    /**
+     * @param repoURI the URI to the git repo
+     * @param localRepoDirectory the local directory you want to save the git repo to.
+     * @param configFilePath the path to the config file in the git repo
+     * @param branch the branch you want to pull from git
+     * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
+     * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
+     *   The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     * @param tags tags associated with the source
+     * @throws GestaltException if there is a badly configured git repo
+     */
+    public GitConfigSource(String repoURI, Path localRepoDirectory, String configFilePath, String branch, CredentialsProvider credentials,
+                           SshSessionFactory sshSessionFactory, Tags tags) throws GestaltException {
         if (repoURI == null) {
             throw new GestaltException("Must provide a git repo URI");
         }
@@ -57,6 +76,7 @@ public class GitConfigSource implements ConfigSource {
 
         this.localRepoDirectory = localRepoDirectory;
         this.configFilePath = configFilePath;
+        this.tags = tags;
 
         initializeGitRepo(repoURI, localRepoDirectory, branch, credentials, sshSessionFactory);
     }
@@ -171,6 +191,11 @@ public class GitConfigSource implements ConfigSource {
     @Override
     public UUID id() {  //NOPMD
         return id;
+    }
+
+    @Override
+    public Tags getTags() {
+        return tags;
     }
 
     @Override

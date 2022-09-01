@@ -3,6 +3,7 @@ package org.github.gestalt.config.git;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 
 import java.nio.file.Path;
 
@@ -16,6 +17,8 @@ public class GitConfigSourceBuilder {
     private String branch;
     private CredentialsProvider credentials;
     private SshSessionFactory SshSessionFactory;
+
+    private Tags tags;
 
     /**
      * @param repoURI the URI to the git repo. Depending on your authentication method it can be either https or git or sshd
@@ -71,6 +74,15 @@ public class GitConfigSourceBuilder {
      */
     public GitConfigSourceBuilder setSshSessionFactory(SshSessionFactory sshSessionFactory) {
         this.SshSessionFactory = sshSessionFactory;
+        return this;
+    }
+
+    /**
+     * @param tags associated with the source
+     * @return the builder
+     */
+    public GitConfigSourceBuilder setTags(Tags tags) {
+        this.tags = tags;
         return this;
     }
 

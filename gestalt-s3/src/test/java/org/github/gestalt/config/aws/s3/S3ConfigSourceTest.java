@@ -2,6 +2,7 @@ package org.github.gestalt.config.aws.s3;
 
 import com.adobe.testing.s3mock.junit5.S3MockExtension;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -102,5 +103,11 @@ class S3ConfigSourceTest {
     void hash() throws GestaltException {
         S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, UPLOAD_FILE_NAME);
         Assertions.assertTrue(source.hashCode() != 0);
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, UPLOAD_FILE_NAME, Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), source.getTags());
     }
 }

@@ -1,12 +1,16 @@
 package org.github.gestalt.config.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.StringConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 class JsonLoaderTest {
 
@@ -38,22 +42,60 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals("Ford", result.results().getKey("cars").get().getIndex(0).get().getKey("name")
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
             .get().getValue().get());
-        Assertions.assertEquals("Fiesta", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Focus", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Mustang", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(2).get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(3).isPresent());
+    }
+
+    void loadSourceWithTags() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("{\n" +
+            "  \"name\":\"Steve\",\n" +
+            "  \"age\":42,\n" +
+            "  \"cars\": [\n" +
+            "    { \"name\":\"Ford\", \"models\":[ \"Fiesta\", \"Focus\", \"Mustang\" ] },\n" +
+            "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
+            "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
+            "  ]\n" +
+            " } ", "json");
+
+        JsonLoader jsonLoader = new JsonLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+                                              .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+                                                .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+                                               .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+                                                 .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+                                     .get().getIndex(3).isPresent());
     }
 
     @Test
@@ -71,21 +113,23 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals("Ford", result.results().getKey("cars").get().getIndex(0).get().getKey("name")
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
             .get().getValue().get());
-        Assertions.assertEquals("Fiesta", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Focus", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Mustang", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(2).get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(3).isPresent());
     }
 
@@ -104,21 +148,22 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader(new ObjectMapper());
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals("Ford", result.results().getKey("cars").get().getIndex(0).get().getKey("name")
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
             .get().getValue().get());
-        Assertions.assertEquals("Fiesta", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Focus", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Mustang", result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(2).get().getValue().get());
-        Assertions.assertFalse(result.results().getKey("cars").get().getIndex(0).get().getKey("models")
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
             .get().getIndex(3).isPresent());
     }
 
@@ -132,12 +177,14 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("", result.results().getKey("age").get().getValue().get());
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("", result.getKey("age").get().getValue().get());
     }
 
     @Test
@@ -151,13 +198,15 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals(0, result.results().getKey("cars").get().size());
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(0, result.getKey("cars").get().size());
     }
 
     @Test
@@ -171,13 +220,15 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<ConfigNode> result = jsonLoader.loadSource(source);
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
-        Assertions.assertFalse(result.hasErrors());
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertEquals("Steve", result.results().getKey("name").get().getValue().get());
-        Assertions.assertEquals("42", result.results().getKey("age").get().getValue().get());
-        Assertions.assertEquals(0, result.results().getKey("cars").get().size());
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(0, result.getKey("cars").get().size());
     }
 
     @Test

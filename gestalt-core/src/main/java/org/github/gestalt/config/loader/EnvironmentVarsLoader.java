@@ -1,5 +1,7 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -11,6 +13,7 @@ import org.github.gestalt.config.source.EnvironmentConfigSource;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +56,7 @@ public class EnvironmentVarsLoader implements ConfigLoader {
     }
 
     @Override
-    public ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException {
+    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
         List<Pair<String, String>> configs;
         if (source.hasList()) {
             configs = source.loadList();
@@ -61,6 +64,16 @@ public class EnvironmentVarsLoader implements ConfigLoader {
             throw new GestaltException("Config source: " + source.name() + " does not have a list to load.");
         }
 
-        return ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
+        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
+
+        List<ValidationError> errors = new ArrayList<>();
+        if (loadedNode.hasErrors()) {
+            errors.addAll(loadedNode.getErrors());
+        }
+        if (!loadedNode.hasResults()) {
+            return ValidateOf.inValid(errors);
+        }
+
+        return ValidateOf.validateOf(List.of(new ConfigNodeContainer(loadedNode.results(), source)), errors);
     }
 }

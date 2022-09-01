@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class URLConfigSource implements ConfigSource {
     private final URL source;
     private final UUID id = UUID.randomUUID();
 
+    private final Tags tags;
+
     /**
      * Create a URLConfigSource to load a config from a URL.
      *
@@ -28,6 +31,17 @@ public class URLConfigSource implements ConfigSource {
      * @throws GestaltException any exceptions
      */
     public URLConfigSource(String sourceURL) throws GestaltException {
+        this(sourceURL, Tags.of());
+    }
+
+    /**
+     * Create a URLConfigSource to load a config from a URL.
+     *
+     * @param sourceURL source URL
+     * @param tags tags associated with the source
+     * @throws GestaltException any exceptions
+     */
+    public URLConfigSource(String sourceURL, Tags tags) throws GestaltException {
         this.sourceURL = sourceURL;
         if (this.sourceURL == null) {
             throw new GestaltException("The url string provided was null");
@@ -38,6 +52,7 @@ public class URLConfigSource implements ConfigSource {
         } catch (MalformedURLException e) {
             throw new GestaltException("Exception creating URL " + sourceURL + ", with error: " + e.getMessage(), e);
         }
+        this.tags = tags;
     }
 
     @Override
@@ -96,6 +111,11 @@ public class URLConfigSource implements ConfigSource {
     }
 
     @Override
+    public Tags getTags() {
+        return tags;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -111,4 +131,5 @@ public class URLConfigSource implements ConfigSource {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

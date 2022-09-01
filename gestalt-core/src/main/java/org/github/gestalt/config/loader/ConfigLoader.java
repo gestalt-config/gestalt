@@ -1,10 +1,12 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
+
+import java.util.List;
 
 /**
  * Interface for a config loader.
@@ -48,5 +50,5 @@ public interface ConfigLoader {
      * @return the validated config node.
      * @throws GestaltException any exceptions
      */
-    ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
+    ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException;
 }
