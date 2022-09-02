@@ -270,18 +270,28 @@ public class ConfigNodeManager implements ConfigNodeService {
     }
 
     public ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags) {
+        ValidateOf<ConfigNode> results;
         // first check with the tags provided.
-        ValidateOf<ConfigNode> results = navigateToNodeInternal(path, tokens, tags);
+        ValidateOf<ConfigNode> resultsForTags = navigateToNodeInternal(path, tokens, tags);
 
-        // if we didnt find any results for the current set of tags
-        // and the tags are not the default empty tags: Tags.of()
-        // then try the default root node.
-        // otherwise return the current results.
-        if(!results.hasResults() && !Tags.of().equals(tags)) {
-            return navigateToNodeInternal(path, tokens, tags);
+        // if the current set of tags are the default empty tags: Tags.of()
+        // then return the current resultsForTags.
+        // otherwise try the default root node, then merge the results.
+        if (Tags.of().equals(tags)) {
+            results = resultsForTags;
         } else {
-            return results;
+            ValidateOf<ConfigNode> resultsForDefault = navigateToNodeInternal(path, tokens, Tags.of());
+
+            if (!resultsForTags.hasResults()) {
+                results = resultsForDefault;
+            } else if (!resultsForDefault.hasResults()) {
+                results = resultsForTags;
+            } else {
+                results = MergeNodes.mergeNodes(path, resultsForDefault.results(), resultsForTags.results());
+            }
         }
+
+        return results;
     }
 
     private ValidateOf<ConfigNode> navigateToNodeInternal(String path, List<Token> tokens, Tags tags) {

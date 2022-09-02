@@ -20,6 +20,13 @@ public final class MergeNodes {
 
     }
 
+    /**
+     * Merge two nodes and return the results of the merge. The values in node1 will be overridden by the values in node2
+     * @param path the path of the nodes we are merging.
+     * @param node1 the base node, its properties will be overridden by the node2
+     * @param node2 the node to override the values of.
+     * @return the merged nodes.
+     */
     public static ValidateOf<ConfigNode> mergeNodes(String path, ConfigNode node1, ConfigNode node2) {
         if (node1.getClass() != node2.getClass()) {
             return ValidateOf.inValid(

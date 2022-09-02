@@ -1195,13 +1195,15 @@ class ConfigNodeManagerTest {
         configNode = navigateValidate.results();
         Assertions.assertEquals("New Name", configNode.getValue().get());
 
-        navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of("toy", "car"));
+        tokens = Arrays.asList(new ObjectToken("db"), new ObjectToken("poolSize"));
+        navigateValidate = configNodeManager.navigateToNode("db.poolSize", tokens, Tags.of("toy", "car"));
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
         Assertions.assertEquals(1, navigateValidate.getErrors().size());
-        Assertions.assertEquals("Null Nodes on path: db.name", navigateValidate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: db.poolSize, for class: ObjectToken, during navigating to next node",
+            navigateValidate.getErrors().get(0).description());
 
         tokens = Arrays.asList(new ObjectToken("admin"), new ArrayToken(0));
         navigateValidate = configNodeManager.navigateToNode("admin[0]", tokens, Tags.of());

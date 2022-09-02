@@ -40,6 +40,17 @@ public class FileConfigSource implements ConfigSource {
     /**
      * Constructor for a File Config Source.
      *
+     * @param file where to load the File with the configuration
+     * @param tags tags associated with the source
+     * @throws GestaltException any exceptions.
+     */
+    public FileConfigSource(File file, Tags tags) throws GestaltException {
+        this(Objects.requireNonNull(file, "file can not be null").toPath(), tags);
+    }
+
+    /**
+     * Constructor for a File Config Source.
+     *
      * @param path where to load the File with the configuration
      * @throws GestaltException any exceptions.
      */
