@@ -140,7 +140,7 @@ class PathLexerTest {
 
     @Test
     public void testEvaluatorBadWord() {
-        PathLexer pathLexer = new PathLexer();
+        PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$");
 
         ValidateOf<List<Token>> validate = pathLexer.evaluator("$%#@%", "the.$%#@%.brown.fox");
 
@@ -154,7 +154,7 @@ class PathLexerTest {
     @Test
     public void testEvaluatorNoName() {
         // we can only test a bad name if we provide a bad regex, otherwise it wont match.
-        PathLexer pathLexer = new PathLexer("\\.", "((?<name>\\w?)(?<array>\\[(?<index>\\d*)])?)$");
+        PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "((?<name>\\w?)(?<array>\\[(?<index>\\d*)])?)$");
 
         ValidateOf<List<Token>> validate = pathLexer.evaluator("[0]", "the.quick[0].brown.fox");
 
@@ -168,7 +168,7 @@ class PathLexerTest {
     @Test
     public void testEvaluatorBadArrayIndex() {
         // we can only test a bad array index if we provide a bad regex.
-        PathLexer pathLexer = new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\w*)])?)$");
+        PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\w*)])?)$");
 
         ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[a]", "the.quick[a].brown.fox");
 
@@ -183,7 +183,7 @@ class PathLexerTest {
     @Test
     public void testEvaluatorBadArrayIndexMissing() {
         // we can only test a bad array index if we provide a bad regex.
-        PathLexer pathLexer = new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\w*)])?)$");
+        PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\w*)])?)$");
 
         ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[]", "the.quick[].brown.fox");
 
@@ -274,7 +274,7 @@ class PathLexerTest {
 
     @Test
     public void testInvalidSentence() {
-        PathLexer pathLexer = new PathLexer();
+        PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$");
 
         ValidateOf<List<Token>> validate = pathLexer.scan("the.@#*&");
 

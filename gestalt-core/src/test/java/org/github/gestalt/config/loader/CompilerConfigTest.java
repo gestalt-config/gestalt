@@ -2,6 +2,8 @@ package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +49,8 @@ class CompilerConfigTest {
         data.put("db.name", "redis");
 
         // create our class to be tested
-        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+        MapConfigLoader mapConfigLoader
+            = new MapConfigLoader(new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
         ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
@@ -90,7 +93,8 @@ class CompilerConfigTest {
         data.put("db.name", "redis");
 
         // create our class to be tested
-        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+        MapConfigLoader mapConfigLoader
+            = new MapConfigLoader(new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
         ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));
