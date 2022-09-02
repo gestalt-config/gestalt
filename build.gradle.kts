@@ -8,5 +8,5 @@ plugins {
 
 allprojects {
     group = "com.github.gestalt-config"
-    version = "0.15.0-rc-1"
+    version = "0.15.0-rc-2"
 }

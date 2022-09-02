@@ -25,8 +25,10 @@ public class PathLexer extends SentenceLexer {
 
     /**
      * default pattern to represent a path.
+     * Should allow most characters, even the delimiter. Although the string will be split with the delimiter so will not be seen
      */
-    public static final String DEFAULT_EVALUATOR = "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$";
+    public static final String DEFAULT_EVALUATOR = "^((?<name>[\\w .,+=\\-;:\"'`~!@#$%^&*()\\<>]+)(?<array>\\[(?<index>\\d*)])?)$";
+    public static final String DELIMITER = "\\.";
     private final Pattern pathPattern;
     private final String delimiter;
 
@@ -35,7 +37,7 @@ public class PathLexer extends SentenceLexer {
      */
     public PathLexer() {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
-        this.delimiter = "\\.";
+        this.delimiter = DELIMITER;
     }
 
     /**

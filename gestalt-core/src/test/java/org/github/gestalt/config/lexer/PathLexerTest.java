@@ -125,6 +125,20 @@ class PathLexerTest {
     }
 
     @Test
+    public void testEvaluatorNegativeArrayIndex() {
+        PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>-\\d*)])?)$");
+
+        ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[-2]", "the.quick[-2].brown.fox");
+
+        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(validate.hasResults());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Array index can not be negative: -2 provided provided for element: quick[-2] " +
+            "for path: the.quick[-2].brown.fox", validate.getErrors().get(0).description());
+    }
+
+    @Test
     public void testEvaluatorBadWord() {
         PathLexer pathLexer = new PathLexer();
 

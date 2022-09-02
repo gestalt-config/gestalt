@@ -136,7 +136,9 @@ class GestaltTest {
         Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
         }, Tags.of("toys", "ball")));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class), Tags.of("toys", "ball")));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class),
+            Tags.of("toys", "ball")));
+
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
         }, Tags.of("toys", "ball")));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), Tags.of("toys", "ball")));
@@ -184,7 +186,8 @@ class GestaltTest {
         Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
         }, Tags.of("toys", "ball")));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class), Tags.of("toys", "ball")));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class),
+            Tags.of("toys", "ball")));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
         }, Tags.of("toys", "ball")));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), Tags.of("toys", "ball")));
@@ -322,7 +325,8 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer("\\.");
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2, Tags.of("toy", "ball")), new MapConfigSource(configs3)),
+            Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2, Tags.of("toy", "ball")),
+                new MapConfigSource(configs3)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());

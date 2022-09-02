@@ -17,8 +17,9 @@ public class Triple<A, B, C> {
     /**
      * Create a pair of values.
      *
-     * @param first first of pair
-     * @param second second of pair
+     * @param first first of Triple
+     * @param second second of Triple
+     * @param third third of a Triple
      */
     public Triple(A first, B second, C third) {
         this.first = first;
@@ -27,23 +28,28 @@ public class Triple<A, B, C> {
     }
 
     /**
-     * Get the first of the pair.
+     * Get the first of the Triple.
      *
-     * @return first of the pair
+     * @return first of the Triple
      */
     public A getFirst() {
         return first;
     }
 
     /**
-     * Get the second of the pair.
+     * Get the second of the Triple.
      *
-     * @return second of the pair
+     * @return second of the Triple
      */
     public B getSecond() {
         return second;
     }
 
+    /**
+     * Get the third of the Triple.
+     *
+     * @return third of the Triple
+     */
     public C getThird() {
         return third;
     }

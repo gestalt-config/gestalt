@@ -151,7 +151,8 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
+        ValidateOf<ConfigNode> validateOfResults =
+            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
         Assertions.assertFalse(validateOfResults.hasErrors());
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertNotNull(validateOfResults.results());
@@ -169,7 +170,8 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
+        ValidateOf<ConfigNode> validateOfResults2 =
+            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
         Assertions.assertFalse(validateOfResults2.hasErrors());
         Assertions.assertTrue(validateOfResults2.hasResults());
         Assertions.assertNotNull(validateOfResults2.results());
