@@ -323,6 +323,50 @@ If all members are optional, and we have no parameters we will try and create th
 If you didn't manually add any Decoders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Decoders. It will configure them by passing in the GestaltConfig to applyConfig.
 To register your own default Decoders, add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
 
+# Tags
+When adding a config source you are able to apply zero or more Tags to the source. Those tags are then applied to all configuration within that source. Tags are optional and can be omitted.  
+When retrieving the config it will first search for an exact match to the tags, if provided, then search for the configs with no tags. It will then merge the results. 
+If you provide 2 tags in the source, when retrieving the configuration you must provide those two exact tags.
+
+```java
+  // head.shot.multiplier = 1.3
+  // max.online.players = 32
+  ClassPathConfigSource pveConfig = new ClassPathConfigSource("/test.properties", Tags.of("mode", "pve"));
+
+  // head.shot.multiplier = 1.5
+  ClassPathConfigSource pvpConfig = new ClassPathConfigSource("/test.properties", Tags.of("mode", "pvp"));
+
+  // head.shot.multiplier = 1.0
+  // gut.shot.multiplier = 1.0
+  ClassPathConfigSource defaultConfig = new ClassPathConfigSource("/test.properties", Tags.of()); // Tags.of() can be omitted
+  
+  Gestalt gestalt = builder
+  .addSource(pveConfig)
+  .addSource(pvpConfig)
+  .addSource(defaultConfig)
+  .build();
+  
+  // retrieving "head.shot.multiplier" values change depending on the tag. 
+  float pvpHeadShot = gestalt.getConfig("head.shot.multiplier", Float.class, Tags.of("mode", "pve"));  // 1.3
+  float pveHeadShot = gestalt.getConfig("head.shot.multiplier", Float.class, Tags.of("mode", "pvp"));  // 1.5
+  float coopHeadShot = gestalt.getConfig("head.shot.multiplier", Float.class, Tags.of("mode", "coop"));  // 1.0 fall back to default
+  float defaultHeadShot = gestalt.getConfig("head.shot.multiplier", Float.class);  // 1.0
+
+  // Gut shot is only defined in the default, so it will always return the default. 
+  float pvpGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class, Tags.of("mode", "pve"));  // 1.0
+  float pveGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class, Tags.of("mode", "pvp"));  // 1.0
+  float coopGutSoot = gestalt.getConfig("gut.shot.multiplier", Float.class, Tags.of("mode", "coop"));  // 1.0
+  float defaultGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class);  // 1.0
+
+  // Max online players is only defined in the pvp, so it will only return with the pvp tags. 
+  float pvpGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class, Tags.of("mode", "pve"));  // 32
+  float pveGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class, Tags.of("mode", "pvp"));  // not found
+  float coopGutSoot = gestalt.getConfig("gut.shot.multiplier", Float.class, Tags.of("mode", "coop"));  // not found
+  float defaultGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class);  // not found
+```
+
+* Note: The post processor string replacement doesn't accept tags, so it will always replace the configs with the tag-less ones.  
+
 # Reload Strategies
 When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config. 
 Once Gestalt has reloaded the config it will send out its own Gestalt Core Reload event. you can add a listener to the builder to get a notification when a Gestalt Core Reload has completed. The Gestalt Cache uses this to clear the cache when a Config Source has changed.  
