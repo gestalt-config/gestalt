@@ -9,6 +9,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -417,6 +418,59 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("active", gestalt.getConfig("serviceMode", TypeCapture.of(String.class)));
         Assertions.assertEquals('a', gestalt.getConfig("serviceMode", TypeCapture.of(Character.class)));
+    }
+
+    @Test
+    public void integrationTestTags() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        String fileURL = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-core/src/test/resources/default.properties";
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new URLConfigSource(fileURL))
+            .addSource(new ClassPathConfigSource("/dev.properties", Tags.of("toy", "ball")))
+            .addSource(new MapConfigSource(configs))
+            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .build();
+
+        gestalt.loadConfigs();
+
+        HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
+
+        Assertions.assertEquals(100, pool.maxTotal);
+        Assertions.assertEquals((short) 100, gestalt.getConfig("http.pool.maxTotal", Short.class));
+        Assertions.assertEquals(10L, pool.maxPerRoute);
+        Assertions.assertEquals(10L, gestalt.getConfig("http.pool.maxPerRoute", Long.class));
+        Assertions.assertEquals(6000, pool.validateAfterInactivity);
+        Assertions.assertEquals(60000D, pool.keepAliveTimeoutMs);
+        Assertions.assertEquals(25, pool.idleTimeoutSec);
+        Assertions.assertEquals(33.0F, pool.defaultWait);
+
+        HttpPool poolTags = gestalt.getConfig("http.pool", HttpPool.class, Tags.of("toy", "ball"));
+
+        Assertions.assertEquals(1000, poolTags.maxTotal);
+        Assertions.assertEquals((short) 1000, gestalt.getConfig("http.pool.maxTotal", Short.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals(50L, poolTags.maxPerRoute);
+        Assertions.assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute", Long.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals(6000, poolTags.validateAfterInactivity);
+        Assertions.assertEquals(60000D, poolTags.keepAliveTimeoutMs);
+        Assertions.assertEquals(25, poolTags.idleTimeoutSec);
+        Assertions.assertEquals(33.0F, poolTags.defaultWait);
+
+        HttpPool poolTags2 = gestalt.getConfig("http.pool", HttpPool.class, Tags.of("toy", "car"));
+
+        Assertions.assertEquals(100, poolTags2.maxTotal);
+        Assertions.assertEquals((short) 100, gestalt.getConfig("http.pool.maxTotal", Short.class, Tags.of("toy", "car")));
+        Assertions.assertEquals(10L, poolTags2.maxPerRoute);
+        Assertions.assertEquals(10L, gestalt.getConfig("http.pool.maxPerRoute", Long.class, Tags.of("toy", "car")));
+        Assertions.assertEquals(6000, poolTags2.validateAfterInactivity);
+        Assertions.assertEquals(60000D, poolTags2.keepAliveTimeoutMs);
+        Assertions.assertEquals(25, poolTags2.idleTimeoutSec);
+        Assertions.assertEquals(33.0F, poolTags2.defaultWait);
     }
 
     public enum Role {

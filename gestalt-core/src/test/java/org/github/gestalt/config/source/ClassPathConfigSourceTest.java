@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -82,5 +83,11 @@ class ClassPathConfigSourceTest {
     void hash() throws GestaltException {
         ClassPathConfigSource classPathConfigSource = new ClassPathConfigSource("/test.properties");
         Assertions.assertTrue(classPathConfigSource.hashCode() != 0);
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        ClassPathConfigSource classPathConfigSource = new ClassPathConfigSource("/test.properties", Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), classPathConfigSource.getTags());
     }
 }

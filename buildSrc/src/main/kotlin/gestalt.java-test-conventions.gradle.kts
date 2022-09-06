@@ -21,21 +21,20 @@ dependencies {
     testImplementation(Test.mockito)
 }
 
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
 tasks.test {
     // Use junit platform for unit tests
     systemProperty("junit.jupiter.execution.parallel.enabled", "true")
     useJUnitPlatform()
-    finalizedBy("jacocoTestReport")
+    finalizedBy(tasks.jacocoTestReport)
 }
 
-//setup Jacoco
-apply(plugin = "jacoco")
-jacoco {
-    toolVersion = "0.8.7"
-}
-tasks.withType<JacocoReport> {
+tasks.jacocoTestReport {
     reports {
         xml.required.set(false)
-        html.required.set(false)
+        html.required.set(true)
     }
 }

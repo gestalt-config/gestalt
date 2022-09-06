@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +29,8 @@ public class SystemPropertiesConfigSource implements ConfigSource {
 
     private final boolean failOnErrors;
 
+    private final Tags tags;
+
     /**
      * Default constructor for SystemPropertiesConfigSource.
      * It will treat Errors while loading as warnings since System Properties
@@ -44,7 +47,28 @@ public class SystemPropertiesConfigSource implements ConfigSource {
      *     are often uncontrolled and may not follow expected conventions of this library.
      */
     public SystemPropertiesConfigSource(boolean failOnErrors) {
+        this(failOnErrors, Tags.of());
+    }
+
+    /**
+     * constructor for SystemPropertiesConfigSource.
+     *
+     * @param tags tags associated with the source
+     */
+    public SystemPropertiesConfigSource(Tags tags) {
+        this(false, tags);
+    }
+
+    /**
+     * constructor for SystemPropertiesConfigSource.
+     *
+     * @param failOnErrors treat Errors while loading as warnings since System Properties
+     * are often uncontrolled and may not follow expected conventions of this library.
+     * @param tags tags associated with the source
+     */
+    public SystemPropertiesConfigSource(boolean failOnErrors, Tags tags) {
         this.failOnErrors = failOnErrors;
+        this.tags = tags;
     }
 
     @Override
@@ -106,6 +130,11 @@ public class SystemPropertiesConfigSource implements ConfigSource {
     }
 
     @Override
+    public Tags getTags() {
+        return tags;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -121,4 +150,5 @@ public class SystemPropertiesConfigSource implements ConfigSource {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

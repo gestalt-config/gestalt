@@ -20,6 +20,7 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -75,6 +76,133 @@ class GestaltTest {
 
         Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testTagsNotInSource() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class, Tags.of("toys", "ball")));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class, Tags.of("toys", "ball")));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }, Tags.of("toys", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class),
+            Tags.of("toys", "ball")));
+
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }, Tags.of("toys", "ball")));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), Tags.of("toys", "ball")));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+
+    }
+
+    @Test
+    public void testTagsInSource() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs, Tags.of("toys", "ball"))),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class, Tags.of("toys", "ball")));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class, Tags.of("toys", "ball")));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class, Tags.of("toys", "ball")));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
+        }, Tags.of("toys", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class),
+            Tags.of("toys", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        }, Tags.of("toys", "ball")));
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), Tags.of("toys", "ball")));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
+
+        Assertions.assertThrows(GestaltException.class, () ->
+            gestalt.getConfig("db.name", String.class));
+        Assertions.assertThrows(GestaltException.class, () ->
+            gestalt.getConfig("db.port", String.class));
+        Assertions.assertThrows(GestaltException.class, () ->
+            gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertThrows(GestaltException.class, () ->
+            gestalt.getConfig("db.port", Long.class));
     }
 
     @Test
@@ -175,6 +303,57 @@ class GestaltTest {
     }
 
     @Test
+    public void testMerge3SourcesTags() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "players");
+        configs2.put("db.password", "123abc");
+        configs2.put("db.url", "mysql.io");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.name", "users");
+        configs3.put("db.timeout", "5000");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer("\\.");
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2, Tags.of("toy", "ball")),
+                new MapConfigSource(configs3)),
+            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("users", gestalt.getConfigOptional("db.name", String.class).get());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class).isEmpty());
+        Assertions.assertEquals("3306", gestalt.getConfigOptional("db.port", String.class).get());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.url", String.class).isEmpty());
+        Assertions.assertEquals("5000", gestalt.getConfigOptional("db.timeout", String.class).get());
+        Assertions.assertEquals("5000", gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).get());
+
+        Assertions.assertEquals("players", gestalt.getConfig("db.name", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("123abc", gestalt.getConfig("db.password", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("mysql.io", gestalt.getConfig("db.url", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", TypeCapture.of(String.class), Tags.of("toy", "ball")));
+
+        Assertions.assertEquals("users", gestalt.getConfigOptional("db.name", String.class, Tags.of("toy", "car")).get());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class, Tags.of("toy", "car")).isEmpty());
+    }
+
+    @Test
     public void testPostProcessor() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
@@ -260,7 +439,7 @@ class GestaltTest {
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
-            ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
+            ValidateOf.validateOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
 
         GestaltException e = Assertions.assertThrows(GestaltException.class, gestalt::postProcessConfigs);
         Assertions.assertEquals("Failed post processing config nodes with errors \n" +
@@ -290,7 +469,7 @@ class GestaltTest {
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
-            ValidateOf.validateOf(new LeafNode("test"), Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
+            ValidateOf.validateOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
 
         gestalt.postProcessConfigs();
     }

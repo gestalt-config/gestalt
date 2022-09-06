@@ -4,6 +4,7 @@ import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -14,6 +15,9 @@ import org.github.gestalt.config.utils.ValidateOf;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.github.gestalt.config.utils.ValidateOf.validateOf;
+
+
 /**
  * Holds and manages config nodes.
  *
@@ -21,7 +25,8 @@ import java.util.stream.Collectors;
  */
 public class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
-    private ConfigNode root;
+    // We store the node roots by tags. The default will be an empty Tags.
+    private final Map<Tags, ConfigNode> roots = new HashMap<>();
 
     /**
      * Default constructor for the ConfigNodeManager.
@@ -38,45 +43,60 @@ public class ConfigNodeManager implements ConfigNodeService {
 
         configNodes.add(newNode);
 
-        if (root == null) {
-            root = newNode.getConfigNode();
+        // If the root is empty or the root doesn't contain the tags, add it to the root without merging with existing node.
+        if (roots.isEmpty() || !roots.containsKey(newNode.getTags())) {
+            roots.put(newNode.getTags(), newNode.getConfigNode());
         } else {
-            ValidateOf<ConfigNode> mergedNode = mergeNodes("", root, newNode.getConfigNode());
+            // If there is already a config node in the root, merge the nodes together then save them.
+            ConfigNode rootForTokens = roots.get(newNode.getTags());
+            ValidateOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", rootForTokens, newNode.getConfigNode());
 
             if (mergedNode.hasResults()) {
-                root = mergedNode.results();
+                roots.put(newNode.getTags(), mergedNode.results());
             }
 
             errors.addAll(mergedNode.getErrors());
         }
 
-        errors.addAll(validateNode(root));
+        errors.addAll(validateNode(roots.get(newNode.getTags())));
         errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
 
-        return ValidateOf.validateOf(root, errors);
+        return validateOf(roots.get(newNode.getTags()), errors);
     }
 
     @Override
-    public ValidateOf<ConfigNode> postProcess(List<PostProcessor> postProcessors) throws GestaltException {
+    public ValidateOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException {
         if (postProcessors == null) {
             throw new GestaltException("No postProcessors provided");
         }
 
         if (postProcessors.isEmpty()) {
-            return ValidateOf.valid(root);
+            return ValidateOf.valid(true);
         }
 
-        ValidateOf<ConfigNode> results = postProcess("", root, postProcessors);
+        boolean ppSuccessful = true;
+        List<ValidationError> errors = new ArrayList<>();
 
-        // If we have results we want to update the root to the new post processed config tree.
-        if (results.hasResults()) {
-            root = results.results();
+        for (Map.Entry<Tags, ConfigNode> entry : roots.entrySet()) {
+            Tags tags = entry.getKey();
+            ConfigNode root = entry.getValue();
+            ValidateOf<ConfigNode> results = postProcess("", root, postProcessors);
+
+            // If we have results we want to update the root to the new post processed config tree.
+            if (results.hasResults()) {
+                roots.put(tags, results.results());
+            } else {
+                ppSuccessful = false;
+                errors.add(new ValidationError.NodePostProcessingNoResults());
+            }
+            errors.addAll(results.getErrors());
         }
 
-        return results;
+
+        return validateOf(ppSuccessful, errors);
     }
 
-    private ValidateOf<ConfigNode> postProcess(String path, ConfigNode node, List<PostProcessor> postProcessors) throws GestaltException {
+    private ValidateOf<ConfigNode> postProcess(String path, ConfigNode node, List<PostProcessor> postProcessors) {
         ConfigNode currentNode = node;
         List<ValidationError> errors = new ArrayList<>();
 
@@ -100,14 +120,13 @@ public class ConfigNodeManager implements ConfigNodeService {
         } else if (currentNode instanceof MapNode) {
             return postProcessMap(path, (MapNode) currentNode, postProcessors);
         } else if (currentNode instanceof LeafNode) {
-            return ValidateOf.validateOf(currentNode, errors);
+            return validateOf(currentNode, errors);
         } else {
             return ValidateOf.inValid(new ValidationError.UnknownNodeTypePostProcess(path, node.getClass().getName()));
         }
     }
 
-    private ValidateOf<ConfigNode> postProcessArray(String path, ArrayNode node, List<PostProcessor> postProcessors)
-        throws GestaltException {
+    private ValidateOf<ConfigNode> postProcessArray(String path, ArrayNode node, List<PostProcessor> postProcessors) {
         int size = node.size();
         List<ValidationError> errors = new ArrayList<>();
         ConfigNode[] processedNode = new ConfigNode[size];
@@ -127,10 +146,10 @@ public class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return ValidateOf.validateOf(new ArrayNode(Arrays.asList(processedNode)), errors);
+        return validateOf(new ArrayNode(Arrays.asList(processedNode)), errors);
     }
 
-    private ValidateOf<ConfigNode> postProcessMap(String path, MapNode node, List<PostProcessor> postProcessors) throws GestaltException {
+    private ValidateOf<ConfigNode> postProcessMap(String path, MapNode node, List<PostProcessor> postProcessors) {
         Map<String, ConfigNode> processedNode = new HashMap<>();
         List<ValidationError> errors = new ArrayList<>();
 
@@ -147,7 +166,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return ValidateOf.validateOf(new MapNode(processedNode), errors);
+        return validateOf(new MapNode(processedNode), errors);
     }
 
 
@@ -164,7 +183,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         for (ConfigNodeContainer nodePair : configNodes) {
 
             ConfigNode currentNode = nodePair.getConfigNode();
-            if (nodePair.getId().equals(reloadNode.getId())) {
+            if (nodePair.getSource().equals(reloadNode.getSource())) {
                 configNodes.set(index, reloadNode);
                 currentNode = reloadNode.getConfigNode();
             }
@@ -172,7 +191,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             if (newRoot == null) {
                 newRoot = currentNode;
             } else {
-                ValidateOf<ConfigNode> mergedNode = mergeNodes("", newRoot, currentNode);
+                ValidateOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", newRoot, currentNode);
 
                 errors.addAll(mergedNode.getErrors());
                 if (mergedNode.hasResults()) {
@@ -187,8 +206,8 @@ public class ConfigNodeManager implements ConfigNodeService {
         errors.addAll(validateNode(newRoot));
         errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
 
-        root = newRoot;
-        return ValidateOf.validateOf(root, errors);
+        roots.put(reloadNode.getTags(), newRoot);
+        return validateOf(newRoot, errors);
     }
 
     private List<ValidationError> validateNode(ConfigNode node) {
@@ -250,118 +269,33 @@ public class ConfigNodeManager implements ConfigNodeService {
         return errors;
     }
 
-    private ValidateOf<ConfigNode> mergeNodes(String path, ConfigNode node1, ConfigNode node2) {
-        if (node1.getClass() != node2.getClass()) {
-            return ValidateOf.inValid(
-                new ValidationError.UnableToMergeDifferentNodes(node1.getClass(), node2.getClass()));
+    public ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags) {
+        ValidateOf<ConfigNode> results;
+        // first check with the tags provided.
+        ValidateOf<ConfigNode> resultsForTags = navigateToNodeInternal(path, tokens, tags);
+
+        // if the current set of tags are the default empty tags: Tags.of()
+        // then return the current resultsForTags.
+        // otherwise try the default root node, then merge the results.
+        if (Tags.of().equals(tags)) {
+            results = resultsForTags;
         } else {
-            if (node1 instanceof ArrayNode) {
-                return mergeArrayNodes(path, (ArrayNode) node1, (ArrayNode) node2);
-            } else if (node1 instanceof MapNode) {
-                return mergeMapNodes(path, (MapNode) node1, (MapNode) node2);
-            } else if (node1 instanceof LeafNode) {
-                return mergeLeafNodes(path, (LeafNode) node1, (LeafNode) node2);
+            ValidateOf<ConfigNode> resultsForDefault = navigateToNodeInternal(path, tokens, Tags.of());
+
+            if (!resultsForTags.hasResults()) {
+                results = resultsForDefault;
+            } else if (!resultsForDefault.hasResults()) {
+                results = resultsForTags;
             } else {
-                return ValidateOf.inValid(new ValidationError.UnknownNodeType(path, node1.getClass().getName()));
-            }
-        }
-    }
-
-    private ValidateOf<ConfigNode> mergeArrayNodes(String path, ArrayNode arrayNode1, ArrayNode arrayNode2) {
-        // get the maximum array size of both the nodes.
-        int maxSize = Math.max(arrayNode1.size(), arrayNode2.size());
-        ConfigNode[] values = new ConfigNode[maxSize];
-        List<ValidationError> errors = new ArrayList<>();
-
-        // loop though the array to the max size.
-        // for each index check if exists in both, then merge the nodes.
-        // if it only exists in one or the other, add which ever it exists in.
-        // if it exists in neither add a validation error.
-        for (int i = 0; i < maxSize; i++) {
-            Optional<ConfigNode> array1AtIndex = arrayNode1.getIndex(i);
-            Optional<ConfigNode> array2AtIndex = arrayNode2.getIndex(i);
-            if (array1AtIndex.isPresent() && array2AtIndex.isPresent()) {
-                String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<ConfigNode> result = mergeNodes(nextPath, array1AtIndex.get(), array2AtIndex.get());
-
-                // if there are errors, add them to the error list abd do not add the merge results
-                errors.addAll(result.getErrors());
-                if (result.hasResults()) {
-                    values[i] = result.results();
-                } else {
-                    errors.add(new ValidationError.NoResultsFoundForNode(path, ArrayNode.class, "merging arrays"));
-                }
-            } else if (array1AtIndex.isPresent()) {
-                values[i] = array1AtIndex.get();
-            } else if (array2AtIndex.isPresent()) {
-                values[i] = array2AtIndex.get();
-            } else {
-                errors.add(new ValidationError.ArrayMissingIndex(i, path));
+                results = MergeNodes.mergeNodes(path, resultsForDefault.results(), resultsForTags.results());
             }
         }
 
-        ArrayNode results = new ArrayNode(Arrays.asList(values));
-        return ValidateOf.validateOf(results, errors);
+        return results;
     }
 
-    private ValidateOf<ConfigNode> mergeMapNodes(String path, MapNode mapNode1, MapNode mapNode2) {
-        Map<String, ConfigNode> mergedNode = new HashMap<>();
-        List<ValidationError> errors = new ArrayList<>();
-
-        // First we check all the nodes in mapNode1.
-        // If the node also exists in mapNode2, it exists in both. So we need to merge them.
-        // if it only exists in mapNode1 then we can add it to the merged Node, as it is not in mapNode2.
-        for (Map.Entry<String, ConfigNode> entry : mapNode1.getMapNode().entrySet()) {
-            String key = entry.getKey();
-            if (key == null) {
-                errors.add(new ValidationError.EmptyNodeNameProvided(path));
-            } else if (entry.getValue() == null) {
-                errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
-            } else if (mapNode2.getKey(key).isPresent()) {
-                String nextPath = PathUtil.pathForKey(path, key);
-                ValidateOf<ConfigNode> result = mergeNodes(nextPath, mapNode1.getKey(key).get(), mapNode2.getKey(key).get());
-
-                // if there are errors, add them to the error list abd do not add the merge results
-                errors.addAll(result.getErrors());
-                if (result.hasResults()) {
-                    mergedNode.putIfAbsent(key, result.results());
-                } else {
-                    errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "merging maps"));
-                }
-            } else {
-                mergedNode.putIfAbsent(key, entry.getValue());
-            }
-        }
-
-        // Do a pass on mapNode2 and add any nodes that were not a intersection with mapNode1.
-        // this is simply adding all nodes in mapNode2 using putIfAbsent, so they will only be added if they were missing.
-        for (Map.Entry<String, ConfigNode> entry : mapNode2.getMapNode().entrySet()) {
-            String key = entry.getKey();
-            if (key == null) {
-                errors.add(new ValidationError.EmptyNodeNameProvided(path));
-            } else if (entry.getValue() == null) {
-                errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
-            } else {
-                mergedNode.putIfAbsent(entry.getKey(), entry.getValue());
-            }
-        }
-
-        return ValidateOf.validateOf(new MapNode(mergedNode), errors);
-    }
-
-    private ValidateOf<ConfigNode> mergeLeafNodes(String path, LeafNode node1, LeafNode node2) {
-        if (node2.getValue().isPresent()) {
-            return ValidateOf.valid(node2);
-        } else if (node1.getValue().isPresent()) {
-            return ValidateOf.valid(node1);
-        } else {
-            return ValidateOf.inValid(new ValidationError.LeafNodesHaveNoValues(path));
-        }
-    }
-
-    @Override
-    public ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens) {
-        ConfigNode currentNode = root;
+    private ValidateOf<ConfigNode> navigateToNodeInternal(String path, List<Token> tokens, Tags tags) {
+        ConfigNode currentNode = roots.get(tags);
         List<ValidationError> errors = new ArrayList<>();
 
         for (Token token : tokens) {
@@ -379,7 +313,7 @@ public class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return ValidateOf.validateOf(currentNode, errors);
+        return validateOf(currentNode, errors);
     }
 
     @Override

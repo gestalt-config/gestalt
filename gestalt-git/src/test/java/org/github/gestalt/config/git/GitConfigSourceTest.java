@@ -7,6 +7,7 @@ import org.eclipse.jgit.transport.sshd.KeyPasswordProvider;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
 import org.eclipse.jgit.util.FS;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -275,5 +276,21 @@ class GitConfigSourceTest {
         GitConfigSource source = builder.build();
 
         Assertions.assertTrue(source.hashCode() != 0);
+    }
+
+    @Test
+    void testTags() throws IOException, GestaltException {
+
+        Path configDirectory = Files.createTempDirectory("gitConfigTest");
+        configDirectory.toFile().deleteOnExit();
+
+        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+            .setRepoURI("https://github.com/gestalt-config/gestalt.git")
+            .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
+            .setLocalRepoDirectory(configDirectory)
+            .setTags(Tags.of("toy", "ball"));
+        GitConfigSource source = builder.build();
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), source.getTags());
     }
 }

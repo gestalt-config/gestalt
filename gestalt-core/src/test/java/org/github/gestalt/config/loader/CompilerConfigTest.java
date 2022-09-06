@@ -1,13 +1,16 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class CompilerConfigTest {
@@ -24,13 +27,17 @@ class CompilerConfigTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
 
-        Assertions.assertEquals(2, validateOfResults.results().size());
-        Assertions.assertEquals("value", validateOfResults.results().getKey("test").get().getValue().get());
-        Assertions.assertEquals("redis", validateOfResults.results().getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals(1, validateOfResults.results().size());
+        Assertions.assertEquals(2, validateOfResults.results().get(0).getConfigNode().size());
+
+        Assertions.assertEquals("value",
+            validateOfResults.results().get(0).getConfigNode().getKey("test").get().getValue().get());
+        Assertions.assertEquals("redis",
+            validateOfResults.results().get(0).getConfigNode().getKey("db").get().getKey("name").get().getValue().get());
     }
 
     @Test
@@ -42,10 +49,11 @@ class CompilerConfigTest {
         data.put("db.name", "redis");
 
         // create our class to be tested
-        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+        MapConfigLoader mapConfigLoader
+            = new MapConfigLoader(new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -85,10 +93,11 @@ class CompilerConfigTest {
         data.put("db.name", "redis");
 
         // create our class to be tested
-        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+        MapConfigLoader mapConfigLoader
+            = new MapConfigLoader(new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -98,8 +107,9 @@ class CompilerConfigTest {
             validateOfResults.getErrors().get(0).description());
 
         Assertions.assertEquals(1, validateOfResults.results().size());
-        Assertions.assertFalse(validateOfResults.results().getKey("test").isPresent());
-        Assertions.assertEquals("redis", validateOfResults.results().getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertFalse(validateOfResults.results().get(0).getConfigNode().getKey("test").isPresent());
+        Assertions.assertEquals("redis", validateOfResults.results().get(0).getConfigNode().getKey("db").get().getKey("name")
+                                                          .get().getValue().get());
 
     }
 
@@ -116,7 +126,7 @@ class CompilerConfigTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
         // run the code under test.
-        ValidateOf<ConfigNode> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());

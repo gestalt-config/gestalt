@@ -64,14 +64,14 @@ public abstract class SentenceLexer {
             .collect(Collectors.toList());
 
         List<Token> tokens = tokenWithValidations.stream().filter(ValidateOf::hasResults)
-            .map(ValidateOf::results)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+                                                 .map(ValidateOf::results)
+                                                 .flatMap(List::stream)
+                                                 .collect(Collectors.toList());
 
         List<ValidationError> validations = tokenWithValidations.stream().filter(ValidateOf::hasErrors)
-            .map(ValidateOf::getErrors)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+                                                                .map(ValidateOf::getErrors)
+                                                                .flatMap(List::stream)
+                                                                .collect(Collectors.toList());
 
         return ValidateOf.validateOf(tokens, validations);
     }

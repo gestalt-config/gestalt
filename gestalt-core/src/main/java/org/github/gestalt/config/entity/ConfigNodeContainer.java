@@ -1,9 +1,10 @@
 package org.github.gestalt.config.entity;
 
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.tag.Tags;
 
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Holds a config node and the UUID related to the source.
@@ -12,17 +13,17 @@ import java.util.UUID;
  */
 public class ConfigNodeContainer {
     private final ConfigNode configNode;
-    private final UUID id;
+    private final ConfigSource source;
 
     /**
      * Constructor to hold a ConfigNode and a id.
      *
      * @param configNode node to hold
-     * @param id unique id of the node
+     * @param source the source of the configs
      */
-    public ConfigNodeContainer(ConfigNode configNode, UUID id) {
+    public ConfigNodeContainer(ConfigNode configNode, ConfigSource source) {
         this.configNode = configNode;
-        this.id = id;
+        this.source = source;
     }
 
     /**
@@ -39,8 +40,27 @@ public class ConfigNodeContainer {
      *
      * @return unique ID for the config node related to the source
      */
-    public UUID getId() {
-        return id;
+    public ConfigSource getSource() {
+        return source;
+    }
+
+    /**
+     * Get all tags associated with a node.
+     *
+     * @return Tags
+     */
+    public Tags getTags() {
+        return source.getTags();
+    }
+
+    /**
+     * returns true if the tokens for the Config Node match the input.
+     *
+     * @param match tokens to match
+     * @return true if the tokens for the Config Node match the input
+     */
+    public boolean matchesTokens(Tags match) {
+        return source.getTags().equals(match);
     }
 
     @Override
@@ -52,11 +72,11 @@ public class ConfigNodeContainer {
             return false;
         }
         ConfigNodeContainer that = (ConfigNodeContainer) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(configNode, that.configNode) && Objects.equals(source, that.source);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(configNode, source);
     }
 }

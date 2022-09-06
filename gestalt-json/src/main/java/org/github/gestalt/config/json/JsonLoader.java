@@ -2,6 +2,7 @@ package org.github.gestalt.config.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.loader.ConfigLoader;
@@ -61,7 +62,7 @@ public class JsonLoader implements ConfigLoader {
      * @throws GestaltException any errors.
      */
     @Override
-    public ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException {
+    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
 
         if (source.hasStream()) {
             try {
@@ -70,7 +71,14 @@ public class JsonLoader implements ConfigLoader {
                     throw new GestaltException("Exception loading source: " + source.name() + " no yaml found");
                 }
 
-                return buildConfigTree("", jsonNode);
+                ValidateOf<ConfigNode> node = buildConfigTree("", jsonNode);
+
+                if (node.hasResults()) {
+                    return ValidateOf.validateOf(
+                        List.of(new ConfigNodeContainer(node.results(), source)), node.getErrors());
+                } else {
+                    return ValidateOf.inValid(node.getErrors());
+                }
             } catch (IOException | NullPointerException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }

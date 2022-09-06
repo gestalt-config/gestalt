@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class FileConfigSource implements ConfigSource {
 
     private final Path path;
     private final UUID id = UUID.randomUUID();
+    private final Tags tags;
 
     /**
      * Constructor for a File Config Source.
@@ -32,7 +34,18 @@ public class FileConfigSource implements ConfigSource {
      * @throws GestaltException any exceptions.
      */
     public FileConfigSource(File file) throws GestaltException {
-        this(Objects.requireNonNull(file, "file can not be null").toPath());
+        this(Objects.requireNonNull(file, "file can not be null").toPath(), Tags.of());
+    }
+
+    /**
+     * Constructor for a File Config Source.
+     *
+     * @param file where to load the File with the configuration
+     * @param tags tags associated with the source
+     * @throws GestaltException any exceptions.
+     */
+    public FileConfigSource(File file, Tags tags) throws GestaltException {
+        this(Objects.requireNonNull(file, "file can not be null").toPath(), tags);
     }
 
     /**
@@ -42,7 +55,19 @@ public class FileConfigSource implements ConfigSource {
      * @throws GestaltException any exceptions.
      */
     public FileConfigSource(Path path) throws GestaltException {
+        this(path, Tags.of());
+    }
+
+    /**
+     * Constructor for a File Config Source.
+     *
+     * @param path where to load the File with the configuration
+     * @param tags tags associated with the source
+     * @throws GestaltException any exceptions.
+     */
+    public FileConfigSource(Path path, Tags tags) throws GestaltException {
         this.path = validatePath(path);
+        this.tags = tags;
     }
 
     private Path validatePath(Path path) throws GestaltException {
@@ -123,6 +148,10 @@ public class FileConfigSource implements ConfigSource {
         return id;
     }
 
+    @Override
+    public Tags getTags() {
+        return tags;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -140,4 +169,5 @@ public class FileConfigSource implements ConfigSource {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

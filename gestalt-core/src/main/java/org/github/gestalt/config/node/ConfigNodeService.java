@@ -3,6 +3,7 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -32,10 +33,10 @@ public interface ConfigNodeService {
      * The post processor returns a node that is then used to replace the current node.
      *
      * @param postProcessors list of post processors to apply.
-     * @return newly processed node
+     * @return if the post process has completed successfully
      * @throws GestaltException any exceptions
      */
-    ValidateOf<ConfigNode> postProcess(List<PostProcessor> postProcessors) throws GestaltException;
+    ValidateOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException;
 
     /**
      * Reload a node, if there are more than one node it will merge it into the config tree in the same order as the existing node.
@@ -52,9 +53,10 @@ public interface ConfigNodeService {
      *
      * @param path to navigate to
      * @param tokens list of tokens to navigate to.
+     * @param tags list of tags to match
      * @return ValidateOf node or any errors.
      */
-    ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens);
+    ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags);
 
     /**
      * From a given node navigate to the next node.

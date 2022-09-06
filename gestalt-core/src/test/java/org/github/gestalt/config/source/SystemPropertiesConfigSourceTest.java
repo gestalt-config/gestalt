@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -85,5 +86,11 @@ class SystemPropertiesConfigSourceTest {
     void testHashCode() {
         SystemPropertiesConfigSource configSource = new SystemPropertiesConfigSource();
         Assertions.assertTrue(configSource.hashCode() != 0);
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        SystemPropertiesConfigSource configSource = new SystemPropertiesConfigSource(Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), configSource.getTags());
     }
 }

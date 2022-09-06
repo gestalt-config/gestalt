@@ -17,16 +17,14 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
@@ -85,13 +83,15 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
         for (ConfigSource source : sources) {
             ConfigLoader configLoader = configLoaderService.getLoader(source.format());
-            ValidateOf<ConfigNode> newNode = configLoader.loadSource(source);
+            ValidateOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(source);
 
             validateLoadResultsForErrors(newNode, source);
             if (newNode.hasResults()) {
-                ValidateOf<ConfigNode> mergedNode = configNodeService.addNode(new ConfigNodeContainer(newNode.results(), source.id()));
-                validateLoadResultsForErrors(mergedNode, source);
-                loadErrors.addAll(mergedNode.getErrors());
+                for (ConfigNodeContainer node : newNode.results()) {
+                    ValidateOf<ConfigNode> mergedNode = configNodeService.addNode(node);
+                    validateLoadResultsForErrors(mergedNode, source);
+                    loadErrors.addAll(mergedNode.getErrors());
+                }
             } else {
                 logger.warn("Failed to load node: {} did not have any results", source.name());
             }
@@ -122,27 +122,29 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         ConfigLoader configLoader = configLoaderService.getLoader(reloadSource.format());
-        ValidateOf<ConfigNode> reloadNode = configLoader.loadSource(reloadSource);
-        validateLoadResultsForErrors(reloadNode, reloadSource);
+        ValidateOf<List<ConfigNodeContainer>> reloadNodes = configLoader.loadSource(reloadSource);
+        validateLoadResultsForErrors(reloadNodes, reloadSource);
 
-        if (!reloadNode.hasResults()) {
+        if (!reloadNodes.hasResults()) {
             throw new GestaltException("no results found reloading source " + reloadSource.name());
         }
 
-        ValidateOf<ConfigNode> mergedNode = configNodeService.reloadNode(new ConfigNodeContainer(reloadNode.results(), reloadSource.id()));
-        validateLoadResultsForErrors(mergedNode, reloadSource);
+        for (ConfigNodeContainer reloadNode : reloadNodes.results()) {
+            ValidateOf<ConfigNode> mergedNode = configNodeService.reloadNode(reloadNode);
+            validateLoadResultsForErrors(mergedNode, reloadSource);
 
-        if (!mergedNode.hasResults()) {
-            throw new GestaltException("no results found merging source " + reloadSource.name());
+            if (!mergedNode.hasResults()) {
+                throw new GestaltException("no results found merging source " + reloadSource.name());
+            }
+
+            postProcessConfigs();
         }
-
-        postProcessConfigs();
 
         coreReloadStrategy.reload();
     }
 
     void postProcessConfigs() throws GestaltException {
-        ValidateOf<ConfigNode> results = configNodeService.postProcess(postProcessors);
+        ValidateOf<Boolean> results = configNodeService.postProcess(postProcessors);
 
         if (checkErrorsShouldFail(results)) {
             throw new GestaltException("Failed post processing config nodes with errors ",
@@ -157,9 +159,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         if (!results.hasResults()) {
             throw new GestaltException("no results found post processing the config nodes");
         }
+
+        if (!results.results()) {
+            throw new GestaltException("Post processing failed");
+        }
     }
 
-    private void validateLoadResultsForErrors(ValidateOf<ConfigNode> results, ConfigSource source) throws GestaltConfigurationException {
+    private void validateLoadResultsForErrors(ValidateOf<?> results, ConfigSource source)
+        throws GestaltConfigurationException {
         if ((gestaltConfig.isTreatWarningsAsErrors() && results.hasErrors()) || // NOPMD
             (results.hasErrors(ValidationLevel.ERROR) && source.failOnErrors())) {  // NOPMD
             throw new GestaltConfigurationException("Failed to load configs from source: " + source.name(), results.getErrors());
@@ -177,16 +184,34 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     @Override
     public <T> T getConfig(String path, Class<T> klass) throws GestaltException {
+        Objects.requireNonNull(klass);
+
         return getConfig(path, TypeCapture.of(klass));
     }
 
     @Override
+    public <T> T getConfig(String path, Class<T> klass, Tags tags) throws GestaltException {
+        Objects.requireNonNull(klass);
+
+        return getConfig(path, TypeCapture.of(klass), tags);
+    }
+
+    @Override
     public <T> T getConfig(String path, TypeCapture<T> klass) throws GestaltException {
+        return getConfig(path, klass, Tags.of());
+    }
+
+    @Override
+    public <T> T getConfig(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(path);
         if (tokens.hasErrors()) {
             throw new GestaltException("Unable to parse path: " + path, tokens.getErrors());
         } else {
-            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
+            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass, tags);
 
             if (checkErrorsShouldFail(results)) {
                 throw new GestaltException("Failed getting config path: " + path + ", for class: " + klass.getName(),
@@ -207,11 +232,31 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     @Override
     public <T> T getConfig(String path, T defaultVal, Class<T> klass) {
+        Objects.requireNonNull(klass);
+
         return getConfig(path, defaultVal, TypeCapture.of(klass));
     }
 
     @Override
+    public <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags) {
+        Objects.requireNonNull(klass);
+
+        return getConfig(path, defaultVal, TypeCapture.of(klass), tags);
+
+    }
+
+    @Override
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
+        return getConfig(path, defaultVal, klass, Tags.of());
+    }
+
+    @Override
+    public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(defaultVal);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(path);
         if (tokens.hasErrors()) {
             if (logger.isWarnEnabled()) {
@@ -221,7 +266,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
             return defaultVal;
         } else {
-            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
+            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass, tags);
 
             if (checkErrorsShouldFail(results)) {
                 if (logger.isWarnEnabled()) {
@@ -254,11 +299,31 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     @Override
     public <T> Optional<T> getConfigOptional(String path, Class<T> klass) {
+        Objects.requireNonNull(klass);
+
         return getConfigOptional(path, TypeCapture.of(klass));
     }
 
     @Override
+    public <T> Optional<T> getConfigOptional(String path, Class<T> klass, Tags tags) {
+        Objects.requireNonNull(klass);
+
+        return getConfigOptional(path, TypeCapture.of(klass), tags);
+    }
+
+    @Override
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
+        Objects.requireNonNull(klass);
+
+        return getConfigOptional(path, klass, Tags.of());
+    }
+
+    @Override
+    public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(path);
         if (tokens.hasErrors()) {
             if (logger.isWarnEnabled()) {
@@ -269,7 +334,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
             return Optional.empty();
         } else {
-            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass);
+            ValidateOf<T> results = getConfigInternal(path, tokens.results(), klass, tags);
 
             if (checkErrorsShouldFail(results)) {
                 if (logger.isWarnEnabled()) {
@@ -300,8 +365,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return Optional.empty();
     }
 
-    private <T> ValidateOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass) {
-        ValidateOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens);
+    private <T> ValidateOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
+        ValidateOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
         if (node.hasErrors()) {
             return ValidateOf.inValid(node.getErrors());
         } else if (node.hasResults()) {

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,5 +81,11 @@ class MapConfigSourceTest {
     void hash() {
         MapConfigSource mapConfigSource = new MapConfigSource(configs);
         Assertions.assertTrue(mapConfigSource.hashCode() != 0);
+    }
+
+    @Test
+    void tags() throws GestaltException {
+        MapConfigSource mapConfigSource = new MapConfigSource(configs, Tags.of("toy", "ball"));
+        Assertions.assertEquals(Tags.of("toy", "ball"), mapConfigSource.getTags());
     }
 }

@@ -247,23 +247,6 @@ public abstract class ValidationError {
     }
 
     /**
-     * Unknown tokens provided while building a config node.
-     */
-    public static class UnknownTokensInPath extends ValidationError {
-        private final String path;
-
-        public UnknownTokensInPath(String path) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-        }
-
-        @Override
-        public String description() {
-            return "Unknown token found for path: " + path + " while building a config node";
-        }
-    }
-
-    /**
      * For a specific path there are multiple token types. This can happen when a node is an array and an object
      */
     public static class MultipleTokenTypes extends ValidationError {
@@ -463,7 +446,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Expected a map on path: " + path + ", received inavalid types: " + types.toString();
+            return "Expected a map on path: " + path + ", received invalid types: " + types.toString();
         }
     }
 
@@ -1130,25 +1113,6 @@ public abstract class ValidationError {
     }
 
     /**
-     * Unknown Random Expression during post processing.
-     */
-    public static class UnknownRandomExpression extends ValidationError {
-        private final String path;
-        private final String key;
-
-        public UnknownRandomExpression(String path, String key) {
-            super(ValidationLevel.ERROR);
-            this.path = path;
-            this.key = key;
-        }
-
-        @Override
-        public String description() {
-            return "unknown random expression: " + key + ", on path: " + path + " during post process";
-        }
-    }
-
-    /**
      * unable to parse random expression during post processing.
      */
     public static class UnableToParseRandomParameter extends ValidationError {
@@ -1266,6 +1230,24 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "No results generating tokens while running node transform path: " + path + " with: " + property;
+        }
+    }
+
+    /**
+     * Node Post Processing has not generated any results.
+     */
+    public static class NodePostProcessingNoResults extends ValidationError {
+
+        /**
+         * Protected constructor so end users cant create a Validation error only inherit from it.
+         */
+        public NodePostProcessingNoResults() {
+            super(ValidationLevel.ERROR);
+        }
+
+        @Override
+        public String description() {
+            return "No results generated from post processor ";
         }
     }
 

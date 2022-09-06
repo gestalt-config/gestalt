@@ -7,6 +7,7 @@ import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.EnvironmentConfigSource
 import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
+import org.github.gestalt.config.tag.Tags
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -106,6 +107,43 @@ class KotlinGestaltIntegrationTests {
                 )
             )
         )
+    }
+
+    @Test
+    @Throws(GestaltException::class)
+    fun integrationTestTags() {
+
+        val defaultFileURL = KotlinGestaltIntegrationTests::class.java.classLoader.getResource("default.properties")
+        val defaultFile = File(defaultFileURL.file)
+        val devFileURL = KotlinGestaltIntegrationTests::class.java.classLoader.getResource("dev.properties")
+        val devFile = File(devFileURL.file)
+        val builder = GestaltBuilder()
+        val gestalt = builder
+            .addSource(FileConfigSource(defaultFile))
+            .addSource(FileConfigSource(devFile, Tags.of("env", "dev")))
+            .build()
+        gestalt.loadConfigs()
+        val pool = gestalt.getConfig<HttpPool>("http.pool")
+        Assertions.assertEquals(100, pool.maxTotal.toInt())
+        Assertions.assertEquals(100.toShort(), gestalt.getConfig("http.pool.maxTotal"))
+        Assertions.assertEquals(10L, pool.maxPerRoute)
+        Assertions.assertEquals(10L, gestalt.getConfig("http.pool.maxPerRoute"))
+        Assertions.assertEquals(6000, pool.validateAfterInactivity)
+        Assertions.assertEquals(60000.0, pool.keepAliveTimeoutMs)
+        Assertions.assertEquals(25, pool.idleTimeoutSec)
+        Assertions.assertEquals(33.0f, pool.defaultWait)
+
+        val devEnv = Tags.of("env", "dev")
+        val poolTags = gestalt.getConfig<HttpPool>("http.pool",devEnv)
+        Assertions.assertEquals(1000, poolTags.maxTotal.toInt())
+        Assertions.assertEquals(1000, poolTags.maxTotal.toInt())
+        Assertions.assertEquals(1000.toShort(), gestalt.getConfig("http.pool.maxTotal", devEnv))
+        Assertions.assertEquals(50L, poolTags.maxPerRoute)
+        Assertions.assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute", devEnv))
+        Assertions.assertEquals(6000, poolTags.validateAfterInactivity)
+        Assertions.assertEquals(60000.0, poolTags.keepAliveTimeoutMs)
+        Assertions.assertEquals(25, poolTags.idleTimeoutSec)
+        Assertions.assertEquals(33.0f, poolTags.defaultWait)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -19,6 +20,7 @@ public class StringConfigSource implements ConfigSource {
     private final String config;
     private final String format;
     private final UUID id = UUID.randomUUID();
+    private final Tags tags;
 
     /**
      * Create a Configuration from a provided string. Must alos provide the format.
@@ -28,6 +30,19 @@ public class StringConfigSource implements ConfigSource {
      * @throws GestaltException any exception
      */
     public StringConfigSource(String config, String format) throws GestaltException {
+        this(config, format, Tags.of());
+    }
+
+
+    /**
+     * Create a Configuration from a provided string. Must alos provide the format.
+     *
+     * @param config config as a string.
+     * @param format format for the string.
+     * @param tags tags associated with this source
+     * @throws GestaltException any exception
+     */
+    public StringConfigSource(String config, String format, Tags tags) throws GestaltException {
         this.config = config;
         if (config == null) {
             throw new GestaltException("The string provided was null");
@@ -37,6 +52,7 @@ public class StringConfigSource implements ConfigSource {
         if (format == null) {
             throw new GestaltException("The string format provided was null");
         }
+        this.tags = tags;
     }
 
     @Override
@@ -73,6 +89,11 @@ public class StringConfigSource implements ConfigSource {
     @Override
     public UUID id() {  //NOPMD
         return id;
+    }
+
+    @Override
+    public Tags getTags() {
+        return tags;
     }
 
     @Override

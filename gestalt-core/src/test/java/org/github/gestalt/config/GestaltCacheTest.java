@@ -2,6 +2,7 @@ package org.github.gestalt.config;
 
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class GestaltCacheTest {
     @Test
     void getConfig() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class))).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", Integer.class);
         Integer port2 = cache.getConfig("db.port", Integer.class);
@@ -39,13 +40,13 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port2);
         Assertions.assertEquals(100, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
 
     @Test
     void getConfig2() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class))).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", TypeCapture.of(Integer.class));
         Integer port2 = cache.getConfig("db.port", TypeCapture.of(Integer.class));
@@ -55,13 +56,34 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port2);
         Assertions.assertEquals(100, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class), Tags.of());
+    }
+
+    @Test
+    void getConfigTags() throws GestaltException {
+        GestaltCache cache = new GestaltCache(mockGestalt);
+        Tags tags = Tags.of("toys", "ball");
+        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), tags)).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(500);
+
+        Integer port = cache.getConfig("db.port", TypeCapture.of(Integer.class), tags);
+        Integer port2 = cache.getConfig("db.port", TypeCapture.of(Integer.class), tags);
+        Integer port3 = cache.getConfig("db.port", 200, TypeCapture.of(Integer.class), tags);
+        Integer port4 = cache.getConfig("db.port", TypeCapture.of(Integer.class));
+
+        Assertions.assertEquals(100, port);
+        Assertions.assertEquals(100, port2);
+        Assertions.assertEquals(100, port3);
+        Assertions.assertEquals(500, port4);
+
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class), tags);
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
 
     @Test
     void getConfigDefault() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class))).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of())).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", 200, Integer.class);
         Integer port2 = cache.getConfig("db.port", 200, Integer.class);
@@ -71,13 +93,13 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port2);
         Assertions.assertEquals(100, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of());
     }
 
     @Test
     void getConfig2Default() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class))).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of())).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", 200, TypeCapture.of(Integer.class));
         Integer port2 = cache.getConfig("db.port", 200, TypeCapture.of(Integer.class));
@@ -87,13 +109,35 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port2);
         Assertions.assertEquals(100, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of());
+    }
+
+
+    @Test
+    void getConfigDefaultTags() throws GestaltException {
+        GestaltCache cache = new GestaltCache(mockGestalt);
+        Tags tags = Tags.of("toys", "ball");
+        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class), tags)).thenReturn(100);
+        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of())).thenReturn(500);
+
+        Integer port = cache.getConfig("db.port", 200, Integer.class, tags);
+        Integer port2 = cache.getConfig("db.port", 200, Integer.class, tags);
+        Integer port3 = cache.getConfig("db.port", Integer.class, tags);
+        Integer port4 = cache.getConfig("db.port", 200, Integer.class);
+
+        Assertions.assertEquals(100, port);
+        Assertions.assertEquals(100, port2);
+        Assertions.assertEquals(100, port3);
+        Assertions.assertEquals(500, port4);
+
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of());
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class), tags);
     }
 
     @Test
     void getConfigOptional() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class))).thenReturn(Optional.of(100));
+        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(100));
 
         Optional<Integer> port = cache.getConfigOptional("db.port", Integer.class);
         Optional<Integer> port2 = cache.getConfigOptional("db.port", Integer.class);
@@ -103,13 +147,14 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port2.get());
         Assertions.assertEquals(100, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfigOptional("db.port", TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
 
     @Test
     void getConfig2Optional() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class))).thenReturn(Optional.of(100));
+        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
+               .thenReturn(Optional.of(100));
 
         Optional<Integer> port = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
         Optional<Integer> port2 = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
@@ -119,14 +164,14 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port2.get());
         Assertions.assertEquals(100, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfigOptional("db.port", TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
 
     @Test
     void getConfig3Optional() {
         GestaltCache cache = new GestaltCache(mockGestalt);
-        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class))).thenReturn(Optional.empty());
-        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class))).thenReturn(200);
+        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.empty());
+        Mockito.when(mockGestalt.getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of())).thenReturn(200);
 
         Optional<Integer> port = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
         Optional<Integer> port2 = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
@@ -136,7 +181,28 @@ class GestaltCacheTest {
         Assertions.assertEquals(Optional.empty(), port2);
         Assertions.assertEquals(200, port3);
 
-        Mockito.verify(mockGestalt, Mockito.times(2)).getConfigOptional("db.port", TypeCapture.of(Integer.class));
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class));
+        Mockito.verify(mockGestalt, Mockito.times(2)).getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of());
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", 200, TypeCapture.of(Integer.class), Tags.of());
+    }
+
+    @Test
+    void getConfigOptionalTags() throws GestaltException {
+        GestaltCache cache = new GestaltCache(mockGestalt);
+        Tags tags = Tags.of("toys", "ball");
+        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), tags)).thenReturn(Optional.of(100));
+        Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(500));
+
+        Optional<Integer> port = cache.getConfigOptional("db.port", Integer.class, tags);
+        Optional<Integer> port2 = cache.getConfigOptional("db.port", Integer.class, tags);
+        Integer port3 = cache.getConfig("db.port", Integer.class, tags);
+        Optional<Integer> port4 = cache.getConfigOptional("db.port", Integer.class);
+
+        Assertions.assertEquals(100, port.get());
+        Assertions.assertEquals(100, port2.get());
+        Assertions.assertEquals(100, port3);
+        Assertions.assertEquals(500, port4.get());
+
+        Mockito.verify(mockGestalt, Mockito.times(1)).getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
 }
+

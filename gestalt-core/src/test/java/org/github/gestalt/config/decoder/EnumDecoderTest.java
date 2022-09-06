@@ -78,4 +78,19 @@ class EnumDecoderTest {
                 "could not be created with value pink for Path: db.port",
             validate.getErrors().get(0).description());
     }
+
+    @Test
+    void leafDecodeNotAnEnum() throws GestaltException {
+
+        EnumDecoder decoder = new EnumDecoder();
+
+        ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("pink"), TypeCapture.of(String.class),
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Exception on Path: db.port, decoding enum: java.lang.String " +
+                "could not be created with value pink exception was: java.lang.String.name()",
+            validate.getErrors().get(0).description());
+    }
 }

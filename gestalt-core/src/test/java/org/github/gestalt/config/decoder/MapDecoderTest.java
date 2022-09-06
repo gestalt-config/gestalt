@@ -174,4 +174,26 @@ class MapDecoderTest {
             validate.getErrors().get(0).description());
     }
 
+    @Test
+    void decodeWrongType() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("300"));
+        configs.put("password", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<List<String>>() {
+            },
+            registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Expected a map on path: db.host, received " +
+                "invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
+            validate.getErrors().get(0).description());
+    }
+
 }

@@ -50,36 +50,36 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
                 List<ValidationError> errors = new ArrayList<>();
 
                 Map<?, ?> map = mapNode.getMapNode().entrySet().stream()
-                    .map(it -> {
-                        String key = it.getKey();
-                        if (key == null) {
-                            errors.add(new ValidationError.DecodersMapKeyNull(path));
-                            return null;
-                        }
+                                       .map(it -> {
+                                           String key = it.getKey();
+                                           if (key == null) {
+                                               errors.add(new ValidationError.DecodersMapKeyNull(path));
+                                               return null;
+                                           }
 
-                        String nextPath = PathUtil.pathForKey(path, key);
-                        ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key),
-                            (TypeCapture<Object>) keyType);
-                        ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(),
-                            (TypeCapture<Object>) valueType);
+                                           String nextPath = PathUtil.pathForKey(path, key);
+                                           ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key),
+                                               (TypeCapture<Object>) keyType);
+                                           ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(),
+                                               (TypeCapture<Object>) valueType);
 
-                        errors.addAll(keyValidate.getErrors());
-                        errors.addAll(valueValidate.getErrors());
+                                           errors.addAll(keyValidate.getErrors());
+                                           errors.addAll(valueValidate.getErrors());
 
-                        if (!keyValidate.hasResults()) {
-                            errors.add(new ValidationError.DecodersMapKeyNull(nextPath));
-                        }
-                        if (!valueValidate.hasResults()) {
-                            errors.add(new ValidationError.DecodersMapValueNull(nextPath));
-                        }
+                                           if (!keyValidate.hasResults()) {
+                                               errors.add(new ValidationError.DecodersMapKeyNull(nextPath));
+                                           }
+                                           if (!valueValidate.hasResults()) {
+                                               errors.add(new ValidationError.DecodersMapValueNull(nextPath));
+                                           }
 
-                        if (keyValidate.hasResults()) {
-                            return new Pair<>(keyValidate.results(), valueValidate.results());
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(HashMap::new, (m, v) -> m.put(v.getFirst(), v.getSecond()), HashMap::putAll);
+                                           if (keyValidate.hasResults()) {
+                                               return new Pair<>(keyValidate.results(), valueValidate.results());
+                                           }
+                                           return null;
+                                       })
+                                       .filter(Objects::nonNull)
+                                       .collect(HashMap::new, (m, v) -> m.put(v.getFirst(), v.getSecond()), HashMap::putAll);
 
 
                 return ValidateOf.validateOf(map, errors);

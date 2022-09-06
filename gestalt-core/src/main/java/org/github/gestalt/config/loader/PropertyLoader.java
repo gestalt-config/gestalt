@@ -1,5 +1,7 @@
 package org.github.gestalt.config.loader;
 
+import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -12,6 +14,7 @@ import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -65,7 +68,7 @@ public class PropertyLoader implements ConfigLoader {
      * @throws GestaltException any errors.
      */
     @Override
-    public ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException {
+    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
         Properties properties = new Properties();
         if (source.hasStream()) {
             try {
@@ -78,10 +81,20 @@ public class PropertyLoader implements ConfigLoader {
         }
 
         List<Pair<String, String>> configs = properties.entrySet()
-            .stream()
-            .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
-            .collect(Collectors.toList());
+                                                       .stream()
+                                                       .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
+                                                       .collect(Collectors.toList());
 
-        return ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
+        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
+
+        List<ValidationError> errors = new ArrayList<>();
+        if (loadedNode.hasErrors()) {
+            errors.addAll(loadedNode.getErrors());
+        }
+        if (!loadedNode.hasResults()) {
+            return ValidateOf.inValid(errors);
+        }
+
+        return ValidateOf.validateOf(List.of(new ConfigNodeContainer(loadedNode.results(), source)), errors);
     }
 }

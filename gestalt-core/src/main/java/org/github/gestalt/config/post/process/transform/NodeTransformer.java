@@ -6,6 +6,7 @@ import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -51,7 +52,9 @@ public class NodeTransformer implements Transformer {
             return ValidateOf.inValid(errors);
         }
 
-        ValidateOf<ConfigNode> validateOfConfigNode = config.getConfigNodeService().navigateToNode(path, validateOfTokens.results());
+        // TODO figure out how to support tags in the NodeTransformer. maybe ${node:my.path[tagKey,tagValue]}
+        ValidateOf<ConfigNode> validateOfConfigNode = config.getConfigNodeService()
+                                                            .navigateToNode(path, validateOfTokens.results(), Tags.of());
 
         errors.addAll(validateOfConfigNode.getErrors());
         if (validateOfConfigNode.hasErrors(ValidationLevel.ERROR)) {

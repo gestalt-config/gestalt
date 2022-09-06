@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.InputStream;
@@ -28,13 +29,26 @@ public class MapConfigSource implements ConfigSource {
     private final Map<String, String> customConfig;
     private final UUID id = UUID.randomUUID();
 
+    private final Tags tags;
+
     /**
      * takes a map of configs.
      *
      * @param customConfig map of configs.
      */
     public MapConfigSource(Map<String, String> customConfig) {
+        this(customConfig, Tags.of());
+    }
+
+    /**
+     * takes a map of configs.
+     *
+     * @param customConfig map of configs.
+     * @param tags tags associated with the source
+     */
+    public MapConfigSource(Map<String, String> customConfig, Tags tags) {
         this.customConfig = customConfig;
+        this.tags = tags;
     }
 
 
@@ -61,9 +75,9 @@ public class MapConfigSource implements ConfigSource {
     @Override
     public List<Pair<String, String>> loadList() {
         return customConfig.entrySet()
-            .stream()
-            .map(envVar -> new Pair<>(envVar.getKey(), envVar.getValue()))
-            .collect(Collectors.toList());
+                           .stream()
+                           .map(envVar -> new Pair<>(envVar.getKey(), envVar.getValue()))
+                           .collect(Collectors.toList());
     }
 
     @Override
@@ -79,6 +93,11 @@ public class MapConfigSource implements ConfigSource {
     @Override
     public UUID id() {  //NOPMD
         return id;
+    }
+
+    @Override
+    public Tags getTags() {
+        return tags;
     }
 
     @Override

@@ -46,6 +46,7 @@ public class TypeCapture<T> {
      * @param klass class to capture
      */
     protected TypeCapture(Class<T> klass) {
+        Objects.requireNonNull(klass);
         this.type = klass;
         this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
@@ -57,6 +58,7 @@ public class TypeCapture<T> {
      * @param klass java Type
      */
     protected TypeCapture(Type klass) {
+        Objects.requireNonNull(klass);
         this.type = klass;
         this.rawType = buildRawType(type);
         this.hashCode = type.hashCode();
@@ -134,8 +136,8 @@ public class TypeCapture<T> {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
             return Arrays.stream(parameterized.getActualTypeArguments())
-                .map(TypeCapture::of)
-                .collect(Collectors.toList());
+                         .map(TypeCapture::of)
+                         .collect(Collectors.toList());
         } else {
             return null;
         }
@@ -267,5 +269,13 @@ public class TypeCapture<T> {
     @Override
     public int hashCode() {
         return Objects.hash(rawType, type, hashCode);
+    }
+
+    @Override
+    public String toString() {
+        return "TypeCapture{" +
+            "rawType=" + rawType +
+            ", type=" + type +
+            '}';
     }
 }

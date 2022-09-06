@@ -180,7 +180,7 @@ class GestaltBuilderTest {
     public void buildDefaultWithCacheFalse() throws GestaltException {
         ConfigNodeManager configNodeService = Mockito.mock(ConfigNodeManager.class);
 
-        Mockito.when(configNodeService.navigateToNode(any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
+        Mockito.when(configNodeService.navigateToNode(any(), any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
 
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -210,14 +210,14 @@ class GestaltBuilderTest {
         Assertions.assertEquals("value", gestalt.getConfig("db.password", String.class));
         Assertions.assertEquals("value", gestalt.getConfig("db.password", String.class));
 
-        Mockito.verify(configNodeService, Mockito.times(2)).navigateToNode(any(), any());
+        Mockito.verify(configNodeService, Mockito.times(2)).navigateToNode(any(), any(), any());
     }
 
     @Test
     public void buildDefaultWithCacheTrue() throws GestaltException {
         ConfigNodeManager configNodeService = Mockito.mock(ConfigNodeManager.class);
 
-        Mockito.when(configNodeService.navigateToNode(any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
+        Mockito.when(configNodeService.navigateToNode(any(), any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
 
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -247,7 +247,7 @@ class GestaltBuilderTest {
         Assertions.assertEquals("value", gestalt.getConfig("db.password", String.class));
         Assertions.assertEquals("value", gestalt.getConfig("db.password", String.class));
 
-        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNode(any(), any());
+        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNode(any(), any(), any());
     }
 
     @Test

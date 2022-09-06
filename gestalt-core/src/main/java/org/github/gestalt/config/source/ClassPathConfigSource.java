@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class ClassPathConfigSource implements ConfigSource {
     private final String resource;
     private final UUID id = UUID.randomUUID();
+    private final Tags tags;
 
     /**
      * Default constructor for the ClassPathConfigSource.
@@ -24,10 +26,22 @@ public class ClassPathConfigSource implements ConfigSource {
      * @throws GestaltException any exceptions
      */
     public ClassPathConfigSource(String resource) throws GestaltException {
+        this(resource, Tags.of());
+    }
+
+    /**
+     * Default constructor for the ClassPathConfigSource.
+     *
+     * @param resource name of the resource to load from the class path.
+     * @param tags tags associated with the source
+     * @throws GestaltException any exceptions
+     */
+    public ClassPathConfigSource(String resource, Tags tags) throws GestaltException {
         this.resource = resource;
         if (resource == null) {
             throw new GestaltException("Class path resource cannot be null");
         }
+        this.tags = tags;
     }
 
     @Override
@@ -82,6 +96,11 @@ public class ClassPathConfigSource implements ConfigSource {
     @Override
     public UUID id() {  //NOPMD
         return id;
+    }
+
+    @Override
+    public Tags getTags() {
+        return tags;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.SystemWrapper;
 
@@ -31,13 +32,15 @@ public class EnvironmentConfigSource implements ConfigSource {
 
     private final boolean removePrefix;
 
+    private final Tags tags;
+
     /**
      * Default constructor for EnvironmentConfigSource.
      * By default, it will not fail on errors  while loading Env Vars since they
      * are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource() {
-        this(false);
+        this("", false, false, Tags.of());
     }
 
     /**
@@ -47,9 +50,18 @@ public class EnvironmentConfigSource implements ConfigSource {
      *     are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource(boolean failOnErrors) {
-        this.failOnErrors = failOnErrors;
-        this.prefix = "";
-        this.removePrefix = false;
+        this("", false, failOnErrors, Tags.of());
+    }
+
+    /**
+     * Specify if you want to only parse the Environment variables that have a prefix.
+     * By default it will remove the prefix from the output.
+     *
+     * @param prefix only use the Environment variables that have a prefix.
+     * @param removePrefix if we should remove the prefix
+     */
+    public EnvironmentConfigSource(String prefix, boolean removePrefix) {
+        this(prefix, removePrefix, false, Tags.of());
     }
 
     /**
@@ -59,7 +71,7 @@ public class EnvironmentConfigSource implements ConfigSource {
      * @param prefix only use the Environment variables that have a prefix.
      */
     public EnvironmentConfigSource(String prefix) {
-        this(prefix, true);
+        this(prefix, true, false, Tags.of());
     }
 
     /**
@@ -67,11 +79,15 @@ public class EnvironmentConfigSource implements ConfigSource {
      *
      * @param prefix only use the Environment variables that have a prefix.
      * @param removePrefix If you should remove the prefix from the output
+     * @param failOnErrors Do not fail on errors while loading Env Vars since they
+     *     are often uncontrolled and may not follow expected conventions of this library.
+     * @param tags set of tags associated with this source.
      */
-    public EnvironmentConfigSource(String prefix, boolean removePrefix) {
-        this.failOnErrors = true;
+    public EnvironmentConfigSource(String prefix, boolean removePrefix, boolean failOnErrors, Tags tags) {
+        this.failOnErrors = failOnErrors;
         this.prefix = prefix;
         this.removePrefix = removePrefix;
+        this.tags = tags;
     }
 
     @Override
@@ -134,6 +150,11 @@ public class EnvironmentConfigSource implements ConfigSource {
     @Override
     public UUID id() {  //NOPMD
         return id;
+    }
+
+    @Override
+    public Tags getTags() {
+        return tags;
     }
 
     @Override
