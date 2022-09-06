@@ -192,7 +192,7 @@ class MapDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Expected a map on path: db.host, received " +
-                "invalid types: [org.github.gestalt.config.reflect.TypeCapture@2a0cf4bc]",
+                "invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
             validate.getErrors().get(0).description());
     }
 

@@ -196,6 +196,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return getConfig(path, TypeCapture.of(klass), tags);
     }
 
+    @Override
     public <T> T getConfig(String path, TypeCapture<T> klass) throws GestaltException {
         return getConfig(path, klass, Tags.of());
     }
@@ -236,12 +237,15 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return getConfig(path, defaultVal, TypeCapture.of(klass));
     }
 
+    @Override
     public <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags) {
         Objects.requireNonNull(klass);
 
         return getConfig(path, defaultVal, TypeCapture.of(klass), tags);
+
     }
 
+    @Override
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
         return getConfig(path, defaultVal, klass, Tags.of());
     }
@@ -307,6 +311,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return getConfigOptional(path, TypeCapture.of(klass), tags);
     }
 
+    @Override
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
         Objects.requireNonNull(klass);
 

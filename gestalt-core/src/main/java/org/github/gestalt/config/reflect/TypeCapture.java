@@ -270,4 +270,12 @@ public class TypeCapture<T> {
     public int hashCode() {
         return Objects.hash(rawType, type, hashCode);
     }
+
+    @Override
+    public String toString() {
+        return "TypeCapture{" +
+            "rawType=" + rawType +
+            ", type=" + type +
+            '}';
+    }
 }

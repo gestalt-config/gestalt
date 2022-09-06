@@ -72,6 +72,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         return getConfig(path, defaultVal, typeCapture);
     }
 
+    @Override
     public <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags) {
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
         return getConfig(path, defaultVal, typeCapture, tags);
@@ -97,11 +98,13 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         return getConfigOptional(path, typeCapture);
     }
 
+    @Override
     public <T> Optional<T> getConfigOptional(String path, Class<T> klass, Tags tags) {
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
         return getConfigOptional(path, typeCapture, tags);
     }
 
+    @Override
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
         return getConfigOptional(path, klass, Tags.of());
     }
