@@ -20,6 +20,7 @@ org.github.gestalt.config.decoder.MapDecoder
 org.github.gestalt.config.decoder.ObjectDecoder
 org.github.gestalt.config.decoder.PathDecoder
 org.github.gestalt.config.decoder.PatternDecoder
+org.github.gestalt.config.decoder.ProxyDecoder
 org.github.gestalt.config.decoder.RecordDecoder
 org.github.gestalt.config.decoder.SetDecoder
 org.github.gestalt.config.decoder.ShortDecoder
