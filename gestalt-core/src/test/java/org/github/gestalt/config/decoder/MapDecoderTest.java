@@ -169,8 +169,7 @@ class MapDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a leaf on path: db.host, received node type, received: LeafNode{value='mysql.com'} " +
-                "attempting to decode Map",
+        Assertions.assertEquals("Expected a map node on path: db.host, received a : LEAF",
             validate.getErrors().get(0).description());
     }
 
@@ -191,8 +190,8 @@ class MapDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a map on path: db.host, received " +
-                "invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
+        Assertions.assertEquals("Expected a map on path: db.host, received a : MAP, " +
+                "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
             validate.getErrors().get(0).description());
     }
 

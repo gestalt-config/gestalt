@@ -205,6 +205,15 @@ public class TypeCapture<T> {
     }
 
     /**
+     * If this type is an interface
+     *
+     * @return If this type is an interface
+     */
+    public boolean isInterface() {
+        return getRawType().isInterface();
+    }
+
+    /**
      * Get the Super class for a type.
      *
      * @param subclass class we are looking for the super class of

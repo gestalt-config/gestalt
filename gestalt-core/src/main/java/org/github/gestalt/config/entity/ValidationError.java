@@ -1,6 +1,7 @@
 package org.github.gestalt.config.entity;
 
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.Token;
 
@@ -438,15 +439,29 @@ public abstract class ValidationError {
         private final String path;
         private final List<TypeCapture<?>> types;
 
-        public DecodingExpectedMapNodeType(String path, List<TypeCapture<?>> types) {
+        private final NodeType nodeType;
+
+        public DecodingExpectedMapNodeType(String path, List<TypeCapture<?>> types, NodeType nodeType) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.types = types;
+            this.nodeType = nodeType;
+        }
+
+        public DecodingExpectedMapNodeType(String path, NodeType nodeType) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.types = null;
+            this.nodeType = nodeType;
         }
 
         @Override
         public String description() {
-            return "Expected a map on path: " + path + ", received invalid types: " + types.toString();
+            if (types == null) {
+                return "Expected a map node on path: " + path + ", received a : " + nodeType;
+            } else {
+                return "Expected a map on path: " + path + ", received a : " + nodeType + ", received invalid types: " + types;
+            }
         }
     }
 

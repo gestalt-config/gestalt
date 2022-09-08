@@ -258,8 +258,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a leaf on path: db.host, received node type, received: LeafNode{value='mysql.com'} " +
-                "attempting to decode Object",
+        Assertions.assertEquals("Expected a map node on path: db.host, received a : LEAF",
             validate.getErrors().get(0).description());
     }
 

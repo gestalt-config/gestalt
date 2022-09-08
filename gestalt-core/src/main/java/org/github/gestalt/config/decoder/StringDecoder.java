@@ -23,7 +23,7 @@ public class StringDecoder extends LeafDecoder<String> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(String.class);
+        return String.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

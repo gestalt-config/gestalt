@@ -25,7 +25,7 @@ public class DoubleDecoder extends LeafDecoder<Double> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Double.class) || klass.isAssignableFrom(double.class);
+        return Double.class.isAssignableFrom(klass.getRawType()) || double.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

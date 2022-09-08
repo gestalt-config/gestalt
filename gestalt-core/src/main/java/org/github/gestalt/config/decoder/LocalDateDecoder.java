@@ -51,7 +51,7 @@ public class LocalDateDecoder extends LeafDecoder<LocalDate> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(LocalDate.class);
+        return LocalDate.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

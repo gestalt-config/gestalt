@@ -27,7 +27,7 @@ public class CharDecoder extends LeafDecoder<Character> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Character.class) || klass.isAssignableFrom(char.class);
+        return Character.class.isAssignableFrom(klass.getRawType()) || char.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

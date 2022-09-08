@@ -25,7 +25,7 @@ public class IntegerDecoder extends LeafDecoder<Integer> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Integer.class) || klass.isAssignableFrom(int.class);
+        return Integer.class.isAssignableFrom(klass.getRawType()) || int.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override
