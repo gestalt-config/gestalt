@@ -383,6 +383,33 @@ public class GestaltIntegrationTests {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
+        List<IHost> ihosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
+        });
+        Assertions.assertEquals(3, ihosts.size());
+        Assertions.assertEquals("credmond", ihosts.get(0).getUser());
+        Assertions.assertEquals("1234", ihosts.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", ihosts.get(0).getUrl());
+        Assertions.assertEquals("credmond", ihosts.get(1).getUser());
+        Assertions.assertEquals("5678", ihosts.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", ihosts.get(1).getUrl());
+        Assertions.assertEquals("credmond", ihosts.get(2).getUser());
+        Assertions.assertEquals("9012", ihosts.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", ihosts.get(2).getUrl());
+
+        List<IHostDefault> ihostsDefault = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
+        });
+        Assertions.assertEquals(3, ihostsDefault.size());
+        Assertions.assertEquals("credmond", ihostsDefault.get(0).getUser());
+        Assertions.assertEquals("1234", ihostsDefault.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", ihostsDefault.get(0).getUrl());
+        Assertions.assertEquals("credmond", ihostsDefault.get(1).getUser());
+        Assertions.assertEquals("5678", ihostsDefault.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", ihostsDefault.get(1).getUrl());
+        Assertions.assertEquals("credmond", ihostsDefault.get(2).getUser());
+        Assertions.assertEquals("9012", ihostsDefault.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", ihostsDefault.get(2).getUrl());
+        Assertions.assertEquals(10, ihostsDefault.get(2).getPort());
+
         List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
@@ -500,7 +527,28 @@ public class GestaltIntegrationTests {
         }
     }
 
-    public static class Host {
+    public interface IHostDefault {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        default int getPort() {
+            return 10;
+        }
+    }
+
+
+    public interface IHost {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+    }
+
+    public static class Host implements IHost {
         private String user;
         private String url;
         private String password;

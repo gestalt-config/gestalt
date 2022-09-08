@@ -46,7 +46,7 @@ public class ObjectDecoder implements Decoder<Object> {
     @Override
     public boolean matches(TypeCapture<?> klass) {
         return !klass.getRawType().isPrimitive() && !klass.isArray() && !klass.isEnum() &&
-            !klass.hasParameter() && !ignoreTypes.contains(klass.getRawType());
+            !klass.hasParameter() && !klass.isInterface() && !ignoreTypes.contains(klass.getRawType());
     }
 
     private Set<Class<?>> getIgnoreTypes() {
