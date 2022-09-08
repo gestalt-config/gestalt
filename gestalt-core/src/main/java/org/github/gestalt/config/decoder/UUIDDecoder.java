@@ -26,7 +26,7 @@ public class UUIDDecoder extends LeafDecoder<UUID> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(UUID.class);
+        return UUID.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

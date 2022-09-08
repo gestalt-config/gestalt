@@ -27,7 +27,7 @@ public class InstantDecoder extends LeafDecoder<Instant> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Instant.class);
+        return Instant.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

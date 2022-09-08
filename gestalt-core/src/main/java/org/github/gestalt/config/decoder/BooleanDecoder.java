@@ -23,7 +23,7 @@ public class BooleanDecoder extends LeafDecoder<Boolean> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Boolean.class) || klass.isAssignableFrom(boolean.class);
+        return Boolean.class.isAssignableFrom(klass.getRawType()) || boolean.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

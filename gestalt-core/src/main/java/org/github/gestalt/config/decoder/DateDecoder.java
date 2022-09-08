@@ -53,7 +53,7 @@ public class DateDecoder extends LeafDecoder<Date> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Date.class);
+        return Date.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

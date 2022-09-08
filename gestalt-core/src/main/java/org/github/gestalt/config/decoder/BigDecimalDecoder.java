@@ -27,7 +27,7 @@ public class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(BigDecimal.class);
+        return BigDecimal.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

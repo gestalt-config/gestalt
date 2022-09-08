@@ -25,7 +25,7 @@ public class LongDecoder extends LeafDecoder<Long> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class);
+        return Long.class.isAssignableFrom(klass.getRawType()) || long.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

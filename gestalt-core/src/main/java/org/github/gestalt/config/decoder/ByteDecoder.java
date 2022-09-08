@@ -26,7 +26,7 @@ public class ByteDecoder extends LeafDecoder<Byte> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Byte.class) || klass.isAssignableFrom(byte.class);
+        return Byte.class.isAssignableFrom(klass.getRawType()) || byte.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

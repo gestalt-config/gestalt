@@ -30,7 +30,7 @@ public class SetDecoder extends CollectionDecoder<Set<?>> {
 
     @Override
     public boolean matches(TypeCapture<?> type) {
-        return type.isAssignableFrom(Set.class) && type.hasParameter();
+        return Set.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 
     @Override

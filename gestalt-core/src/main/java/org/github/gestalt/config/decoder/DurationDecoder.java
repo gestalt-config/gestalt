@@ -27,7 +27,7 @@ public class DurationDecoder extends LeafDecoder<Duration> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Duration.class);
+        return Duration.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

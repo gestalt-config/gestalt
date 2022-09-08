@@ -26,7 +26,7 @@ public class PathDecoder extends LeafDecoder<Path> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Path.class);
+        return Path.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

@@ -22,8 +22,8 @@ public class ListDecoder extends CollectionDecoder<List<?>> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> type) {
-        return type.isAssignableFrom(List.class) && type.hasParameter();
+    public boolean matches(TypeCapture<?> klass) {
+        return List.class.isAssignableFrom(klass.getRawType()) && klass.hasParameter();
     }
 
     @Override

@@ -25,7 +25,7 @@ public class ShortDecoder extends LeafDecoder<Short> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Short.class) || klass.isAssignableFrom(short.class);
+        return Short.class.isAssignableFrom(klass.getRawType()) || short.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

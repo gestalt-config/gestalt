@@ -58,7 +58,8 @@ public class ObjectDecoder implements Decoder<Object> {
     @Override
     public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         if (!(node instanceof MapNode)) {
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
+            List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
+            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node.getNodeType()));
         }
 
         Class<?> klass = type.getRawType();

@@ -31,7 +31,7 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
 
     @Override
     public boolean matches(TypeCapture<?> type) {
-        return type.isAssignableFrom(Map.class) && type.hasParameter();
+        return Map.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
 
             if (genericInterfaces == null || genericInterfaces.size() != 2) {
-                results = ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces));
+                results = ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node.getNodeType()));
             } else {
                 TypeCapture<?> keyType = genericInterfaces.get(0);
                 TypeCapture<?> valueType = genericInterfaces.get(1);
@@ -85,7 +85,7 @@ public class MapDecoder implements Decoder<Map<?, ?>> {
                 return ValidateOf.validateOf(map, errors);
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
+            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, node.getNodeType()));
         }
         return results;
     }

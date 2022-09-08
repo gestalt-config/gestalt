@@ -277,7 +277,7 @@ class DecoderRegistryTest {
 
         @Override
         public boolean matches(TypeCapture<?> klass) {
-            return klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class);
+            return Long.class.isAssignableFrom(klass.getRawType()) || long.class.isAssignableFrom(klass.getRawType());
         }
 
 
@@ -301,7 +301,7 @@ class DecoderRegistryTest {
 
         @Override
         public boolean matches(TypeCapture<?> klass) {
-            return klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class);
+            return Long.class.isAssignableFrom(klass.getRawType()) || long.class.isAssignableFrom(klass.getRawType());
         }
 
 

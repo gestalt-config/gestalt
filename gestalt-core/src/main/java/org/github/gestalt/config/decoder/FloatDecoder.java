@@ -25,7 +25,7 @@ public class FloatDecoder extends LeafDecoder<Float> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(Float.class) || klass.isAssignableFrom(float.class);
+        return Float.class.isAssignableFrom(klass.getRawType()) || float.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

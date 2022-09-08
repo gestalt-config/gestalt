@@ -27,7 +27,7 @@ public class FileDecoder extends LeafDecoder<File> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isAssignableFrom(File.class);
+        return File.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override
