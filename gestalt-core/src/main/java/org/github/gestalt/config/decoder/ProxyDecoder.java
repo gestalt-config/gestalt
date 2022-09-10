@@ -1,9 +1,10 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.PathUtil;
@@ -81,17 +82,37 @@ public class ProxyDecoder implements Decoder<Object> {
             String methodName = method.getName();
             Type returnType = method.getReturnType();
 
-            String name = getConfigName(methodName, returnType);
+            String name;
+
+            // if we have an annotation, use that for the path instead of the name.
+            Config configAnnotation = method.getAnnotation(Config.class);
+            if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
+                name = configAnnotation.path();
+            } else {
+                name = getConfigName(methodName, returnType);
+            }
 
             String nextPath = PathUtil.pathForKey(path, name);
 
             ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
 
-            errors.addAll(configNode.getErrors(ValidationLevel.WARN));
-            if (configNode.hasErrors(ValidationLevel.ERROR)) {
-                errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
-            } else if (!configNode.hasResults()) {
-                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, returnType.getTypeName(), "proxy decoding"));
+            errors.addAll(configNode.getErrors());
+            if (!configNode.hasResults()) {
+
+                // if we have no value, check the config annotation for a default.
+                if (configAnnotation != null && configAnnotation.defaultVal() != null &&
+                    !configAnnotation.defaultVal().isEmpty()) {
+                    ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
+                        TypeCapture.of(returnType));
+
+                    if (defaultValidateOf.hasErrors()) {
+                        errors.addAll(defaultValidateOf.getErrors());
+                    }
+
+                    if (defaultValidateOf.hasResults()) {
+                        methodResults.put(methodName, defaultValidateOf.results());
+                    }
+                }
             } else {
                 ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                     TypeCapture.of(returnType));
@@ -99,9 +120,7 @@ public class ProxyDecoder implements Decoder<Object> {
                     errors.addAll(fieldValidateOf.getErrors());
                 }
 
-                if (!fieldValidateOf.hasResults()) {
-                    errors.add(new ValidationError.NoResultsFoundForNode(nextPath, returnType.getTypeName(), "proxy decoding"));
-                } else {
+                if (fieldValidateOf.hasResults()) {
                     methodResults.put(methodName, fieldValidateOf.results());
                 }
             }

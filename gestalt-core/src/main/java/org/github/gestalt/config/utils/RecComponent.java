@@ -1,6 +1,8 @@
 package org.github.gestalt.config.utils;
 
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -16,6 +18,8 @@ public class RecComponent {
     private final Type type;
     private final Class<?> klass;
     private final int index;
+    private final Annotation[] annotations;
+    private final Method accessor;
 
     /**
      * Create a Record component.
@@ -25,11 +29,13 @@ public class RecComponent {
      * @param klass class of the Record component
      * @param index index of the Record component
      */
-    public RecComponent(String name, Type type, Class<?> klass, int index) {
+    public RecComponent(String name, Type type, Class<?> klass, Annotation[] annotations, Method accessor, int index) {
         this.name = name;
         this.type = type;
         this.klass = klass;
         this.index = index;
+        this.annotations = annotations;
+        this.accessor = accessor;
     }
 
     /**
@@ -66,5 +72,23 @@ public class RecComponent {
      */
     public Class<?> type() {
         return klass;
+    }
+
+    /**
+     * Returns annotations that are directly present on this element.
+     *
+     * @return Returns annotations that are directly present on this element.
+     */
+    public Annotation[] getDeclaredAnnotations() {
+        return annotations;
+    }
+
+    /**
+     * Returns a Method that represents the accessor for this record component.
+     *
+     * @return Returns a Method that represents the accessor for this record component.
+     */
+    public Method getAccessor() {
+        return accessor;
     }
 }

@@ -691,7 +691,28 @@ public class GestaltSample {
         }
     }
 
-    public static class Host {
+    public interface IHostDefault {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        default int getPort() {
+            return 10;
+        }
+    }
+
+
+    public interface IHost {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+    }
+
+    public static class Host implements IHost {
         private String user;
         private String url;
         private String password;
@@ -699,14 +720,17 @@ public class GestaltSample {
         public Host() {
         }
 
+        @Override
         public String getUser() {
             return user;
         }
 
+        @Override
         public String getUrl() {
             return url;
         }
 
+        @Override
         public String getPassword() {
             return password;
         }

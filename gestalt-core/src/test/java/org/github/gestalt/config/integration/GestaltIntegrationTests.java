@@ -500,7 +500,16 @@ public class GestaltIntegrationTests {
         }
     }
 
-    public static class Host {
+    public interface iHost {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+    }
+
+
+    public static class Host implements iHost {
         private String user;
         private String url;
         private String password;
@@ -508,14 +517,17 @@ public class GestaltIntegrationTests {
         public Host() {
         }
 
+        @Override
         public String getUser() {
             return user;
         }
 
+        @Override
         public String getUrl() {
             return url;
         }
 
+        @Override
         public String getPassword() {
             return password;
         }

@@ -10,7 +10,6 @@ import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.*;
 
 class RecordDecoderTest {
@@ -180,5 +179,61 @@ class RecordDecoderTest {
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Expected a leaf on path: user.admin, received node type, received: LeafNode{value='12345'} " +
             "attempting to decode Record", validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeAnnotations() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("identity", new LeafNode("52"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        PersonAnnotations results = (PersonAnnotations) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(52, results.id());
+    }
+
+    @Test
+    void decodeAnnotationsDefault() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
+            "during navigating to next node", validate.getErrors().get(0).description());
+
+        PersonAnnotations results = (PersonAnnotations) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(1234, results.id());
+    }
+
+    @Test
+    void decodeAnnotationsBadDefault() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+
+        ValidateOf<Object> validate =
+            decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class), registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
+            "during navigating to next node", validate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to parse a number on Path: user.admin.identity, from node: LeafNode{value='abc'} " +
+            "attempting to decode Integer", validate.getErrors().get(1).description());
     }
 }

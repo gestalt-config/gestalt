@@ -291,4 +291,76 @@ class ObjectDecoderTest {
         Assertions.assertEquals(1000, results.idleTimeoutSec);
         Assertions.assertEquals(33.0F, results.defaultWait);
     }
+
+    @Test
+    void decodeWithAnnotation() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        DBInfoAnnotations results = (DBInfoAnnotations) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeWithAnnotationDefault() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
+                "during navigating to next node",
+            validate.getErrors().get(0).description());
+
+        DBInfoAnnotations results = (DBInfoAnnotations) validate.results();
+        Assertions.assertEquals(1234, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeWithAnnotationWrongDefault() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoBadAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
+                "during navigating to next node",
+            validate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
+                "attempting to decode Integer",
+            validate.getErrors().get(1).description());
+
+        DBInfoBadAnnotations results = (DBInfoBadAnnotations) validate.results();
+        Assertions.assertEquals(0, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
 }
