@@ -109,7 +109,7 @@ You can use the builder to construct the Gestalt library. It is possible to do t
 Using the simple API you can load sub sections of your configurations with a wide variety of classes. 
 For simple classes you can pass in the type of the class with `getConfig("db.port", Integer.class)` or for classes with generic types we need to use a special TypeCapture wrapper that captures the generic type at runtime, so we can construct complex classes with generic types such as List<String> `new TypeCapture<List<String>>() {}` 
    
-The API is as simple as:
+The API to retrieve configurations:
 ```java
   /**
    * Get a config for a path and a given class. 
@@ -147,6 +147,10 @@ The API is as simple as:
    */
   <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass);
 ```   
+The API also supports tagged versions, where providing a tag will retrieve configs that match the tags or the default of no tags. 
+```java
+ <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags);
+```
 
 Example of how to create and load a configuration using Gestalt:
 ```java
@@ -281,35 +285,36 @@ If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it w
 To register your own default ConfigLoaders, add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader 
 
 # Decoders
-| Type | details |
-| ---- | ------- |
-| Array | Java primitive array type with any generic class, Can decode simple types from a single comma separated value, or from an array node |
-| BigDecimal | |
-| BigInteger| |
-| Boolean | Boolean and boolean |
-| Byte | Byte and byte |
-| Char | Char and char |
-| Date | takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME |
-| Double | Double and double |
-| Duration | |
-| Enum | |
-| File | |
-| Float | Float and float |
-| Instant | |
-| Integer | Integer and int |
-| List | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node |
-| LocalDate | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_LOCAL_DATE |
-| LocalDateTime | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME |
-| Long | Long or long |
-| Map | A map, Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int. The value can be any type we can decode. |
-| Object | Decodes a java Bean style class, although it will work with any java class.  Will fail if the constructor is private. Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors which you can disable using treatMissingValuesAsErrors = true. Decodes member classes and lists as well. |
-| Path | |
-| Pattern | |
-| Record | Decodes a Java record. All members of the record must have a value or construction will fail.So unlike the Object decoder it will not have the option to default to null or provide defaults. Will construct the record even if there are extra values, it will ignore all extra values. |
-| Set | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node  |
-| Short | Short or short |
-| String | |
-| UUID | |
+| Type              | details                                                                                                                                                                                                                                                                                                                                                      |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Array             | Java primitive array type with any generic class, Can decode simple types from a single comma separated value, or from an array node                                                                                                                                                                                                                         |
+| BigDecimal        |                                                                                                                                                                                                                                                                                                                                                              |
+| BigInteger        |                                                                                                                                                                                                                                                                                                                                                              |
+| Boolean           | Boolean and boolean                                                                                                                                                                                                                                                                                                                                          |
+| Byte              | Byte and byte                                                                                                                                                                                                                                                                                                                                                |
+| Char              | Char and char                                                                                                                                                                                                                                                                                                                                                |
+| Date              | takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME                                                                                                                                                                                                                                                                 |
+| Double            | Double and double                                                                                                                                                                                                                                                                                                                                            |
+| Duration          |                                                                                                                                                                                                                                                                                                                                                              |
+| Enum              |                                                                                                                                                                                                                                                                                                                                                              |
+| File              |                                                                                                                                                                                                                                                                                                                                                              |
+| Float             | Float and float                                                                                                                                                                                                                                                                                                                                              |
+| Instant           |                                                                                                                                                                                                                                                                                                                                                              |
+| Integer           | Integer and int                                                                                                                                                                                                                                                                                                                                              |
+| List              | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node                                                                                                                                                                                                                                       |
+| LocalDate         | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_LOCAL_DATE                                                                                                                                                                                                                                                                |
+| LocalDateTime     | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME                                                                                                                                                                                                                                                                 |
+| Long              | Long or long                                                                                                                                                                                                                                                                                                                                                 |
+| Map               | A map, Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int. The value can be any type we can decode.                                                                                                                                                                                                  |
+| Object            | Decodes a java Bean style class, although it will work with any java class.  Will fail if the constructor is private. Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors which you can disable using treatMissingValuesAsErrors = true. Decodes member classes and lists as well. |
+| Path              |                                                                                                                                                                                                                                                                                                                                                              |
+| Pattern           |                                                                                                                                                                                                                                                                                                                                                              |
+| Proxy (interface) | Will create a proxy for an interface that will return the config value based on the java bean method name. So a method "getCar()" would match a config named "car". If a config is missing it will call the default method if provided.                                                                                                                      |
+| Record            | Decodes a Java record. All members of the record must have a value or construction will fail.So unlike the Object decoder it will not have the option to default to null or provide defaults. Will construct the record even if there are extra values, it will ignore all extra values.                                                                     |
+| Set               | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node                                                                                                                                                                                                                                       |
+| Short             | Short or short                                                                                                                                                                                                                                                                                                                                               |
+| String            |                                                                                                                                                                                                                                                                                                                                                              |
+| UUID              |                                                                                                                                                                                                                                                                                                                                                              |
 
 For Kotlin, it has the following decoders. The decoders are only selected when calling from the Kotlin Gestalt extension function, or when using KTypeCapture. Otherwise, will match the Java Boolean
 Kotlin decoders: Boolean, Byte, Char, Data, Double, Duration, Float, Integer, Long, Short, String
@@ -322,6 +327,24 @@ If all members are optional, and we have no parameters we will try and create th
 
 If you didn't manually add any Decoders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Decoders. It will configure them by passing in the GestaltConfig to applyConfig.
 To register your own default Decoders, add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
+
+# Annotations
+When decoding a Java Bean style class, a record, an interface or a Kotlin Data Class you can provide a custom annotation to override the path for the configuration as well as provide a default. 
+```java
+public class DBInfo {
+    @Config(path = "channel.port", defaultVal = "1234")
+    private int port;
+
+  DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
+}
+```
+
+The path provided in the annotation is used to find the configuration from the base path provided in the call to Gestalt getConfig.
+
+So if the base path from gestalt.getConfig is "db.connection" and the annotation is "channel.port" the path the configuration will look for is "db.connection.channel.port"
+
+The default accepts a string type and will be decoded into the property type using the gestalt decoders. For example if the property is an Integer and the default is "100" the integer value will be 100.
+
 
 # Tags
 When adding a config source you are able to apply zero or more Tags to the source. Those tags are then applied to all configuration within that source. Tags are optional and can be omitted.  

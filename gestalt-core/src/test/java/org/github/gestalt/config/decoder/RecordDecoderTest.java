@@ -236,4 +236,21 @@ class RecordDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: user.admin.identity, from node: LeafNode{value='abc'} " +
             "attempting to decode Integer", validate.getErrors().get(1).description());
     }
+
+    @Test
+    void decodeAnnotationsLong() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("identity", new MapNode(Map.of("user", new LeafNode("52"))));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonAnnotationsLong.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        PersonAnnotationsLong results = (PersonAnnotationsLong) validate.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(52, results.id());
+    }
 }

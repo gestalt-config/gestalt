@@ -120,14 +120,14 @@ public class DecoderRegistry implements DecoderService {
         }
 
         List<Token> nextTokens = listValidateOf.results();
-        return configNodeService.navigateToNextNode(path, nextTokens.get(0), configNode);
+        return configNodeService.navigateToNextNode(path, nextTokens, configNode);
     }
 
     @Override
     public ValidateOf<ConfigNode> getNextNode(String path, int nextIndex, ConfigNode configNode) {
         Token nextToken = new ArrayToken(nextIndex);
 
-        return configNodeService.navigateToNextNode(path, nextToken, configNode);
+        return configNodeService.navigateToNextNode(path, List.of(nextToken), configNode);
 
     }
 }

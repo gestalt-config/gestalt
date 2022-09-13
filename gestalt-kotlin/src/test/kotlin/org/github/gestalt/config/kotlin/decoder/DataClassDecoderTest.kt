@@ -4,9 +4,7 @@ import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.exceptions.GestaltConfigurationException
 import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
-import org.github.gestalt.config.kotlin.test.classes.DBInfo
-import org.github.gestalt.config.kotlin.test.classes.DBInfoNoDefault
-import org.github.gestalt.config.kotlin.test.classes.DBInfoNoDefaultOptional
+import org.github.gestalt.config.kotlin.test.classes.*
 import org.github.gestalt.config.lexer.PathLexer
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.*
@@ -96,6 +94,22 @@ class DataClassDecoderTest {
         Assertions.assertEquals(100, results.port)
         Assertions.assertEquals("password", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
+    }
+
+    @Test
+    fun `decode Missing Required`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["port"] = LeafNode("100")
+        configs["uri"] = LeafNode("mysql.com")
+
+        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoRequired>(), registry!!)
+        Assertions.assertFalse(validate.hasResults())
+        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertEquals(
+            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
+            validate.errors[0].description()
+        )
     }
 
     @Test
@@ -206,6 +220,64 @@ class DataClassDecoderTest {
 
         val results: DBInfo = validate.results() as DBInfo
         Assertions.assertEquals(0, results.port)
+        Assertions.assertEquals("pass", results.password)
+        Assertions.assertEquals("mysql.com", results.uri)
+    }
+
+    @Test
+    fun `decode with annotations`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["channel"] = LeafNode("100")
+        configs["uri"] = LeafNode("mysql.com")
+        configs["password"] = LeafNode("pass")
+
+        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoAnnotation>(), registry!!)
+        Assertions.assertTrue(validate.hasResults())
+        Assertions.assertFalse(validate.hasErrors())
+
+        val results: DBInfoAnnotation = validate.results() as DBInfoAnnotation
+        Assertions.assertEquals(100, results.port)
+        Assertions.assertEquals("pass", results.password)
+        Assertions.assertEquals("mysql.com", results.uri)
+    }
+
+    @Test
+    fun `decode with annotations default`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["uri"] = LeafNode("mysql.com")
+        configs["password"] = LeafNode("pass")
+
+        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoAnnotation>(), registry!!)
+        Assertions.assertTrue(validate.hasResults())
+        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertEquals(1, validate.errors.size)
+        Assertions.assertEquals(
+            "Unable to find node matching path: db.host.channel, for class: ObjectToken, during navigating to next node",
+            validate.errors[0].description()
+        )
+
+        val results: DBInfoAnnotation = validate.results() as DBInfoAnnotation
+        Assertions.assertEquals(1234, results.port)
+        Assertions.assertEquals("pass", results.password)
+        Assertions.assertEquals("mysql.com", results.uri)
+    }
+
+    @Test
+    fun `decode with annotations long path`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["channel"] = MapNode(mapOf("port" to LeafNode("100")))
+        configs["uri"] = LeafNode("mysql.com")
+        configs["password"] = LeafNode("pass")
+
+        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoAnnotationLong>(), registry!!)
+        Assertions.assertTrue(validate.hasResults())
+        Assertions.assertFalse(validate.hasErrors())
+
+        val results: DBInfoAnnotationLong = validate.results() as DBInfoAnnotationLong
+        Assertions.assertEquals(100, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
     }

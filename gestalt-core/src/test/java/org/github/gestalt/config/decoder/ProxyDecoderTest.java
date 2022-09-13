@@ -317,5 +317,24 @@ class ProxyDecoderTest {
                 e.getUndeclaredThrowable().getMessage());
         }
     }
+
+    @Test
+    void decodeAnnotationsLong() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new MapNode(Map.of("port", new LeafNode("100"))));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotationsLong.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        IDBInfoAnnotationsLong results = (IDBInfoAnnotationsLong) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
 }
 

@@ -500,7 +500,7 @@ public class GestaltIntegrationTests {
         }
     }
 
-    public interface iHost {
+    public interface IHost {
         String getUser();
 
         String getUrl();
@@ -509,7 +509,7 @@ public class GestaltIntegrationTests {
     }
 
 
-    public static class Host implements iHost {
+    public static class Host implements IHost {
         private String user;
         private String url;
         private String password;

@@ -312,6 +312,25 @@ class ObjectDecoderTest {
     }
 
     @Test
+    void decodeWithAnnotationLongPath() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new MapNode(Map.of("port", new LeafNode("100"))));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotationsLong.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        DBInfoAnnotationsLong results = (DBInfoAnnotationsLong) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
     void decodeWithAnnotationDefault() {
         ObjectDecoder decoder = new ObjectDecoder();
 
