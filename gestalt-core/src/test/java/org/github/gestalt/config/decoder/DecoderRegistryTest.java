@@ -125,7 +125,7 @@ class DecoderRegistryTest {
 
         Token nextToken = new ObjectToken("run");
         Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", nextToken, leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
 
 
         ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
@@ -135,7 +135,7 @@ class DecoderRegistryTest {
         Assertions.assertEquals(leaf, test.results());
 
         Mockito.verify(lexer, Mockito.times(1)).scan(any());
-        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(), any());
+        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(List.class), any());
     }
 
     @Test
@@ -214,7 +214,7 @@ class DecoderRegistryTest {
         Assertions.assertEquals("Unable to tokenize element run for path: test.run", test.getErrors().get(0).description());
 
         Mockito.verify(lexer, Mockito.times(1)).scan(any());
-        Mockito.verify(configNodeService, Mockito.times(0)).navigateToNextNode(any(), any(), any());
+        Mockito.verify(configNodeService, Mockito.times(0)).navigateToNextNode(any(), any(Token.class), any());
     }
 
     @Test
@@ -238,7 +238,7 @@ class DecoderRegistryTest {
             test.getErrors().get(0).description());
 
         Mockito.verify(lexer, Mockito.times(1)).scan(any());
-        Mockito.verify(configNodeService, Mockito.times(0)).navigateToNextNode(any(), any(), any());
+        Mockito.verify(configNodeService, Mockito.times(0)).navigateToNextNode(any(), any(Token.class), any());
     }
 
     @Test
@@ -250,7 +250,7 @@ class DecoderRegistryTest {
 
         Token nextToken = new ArrayToken(1);
         Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", nextToken, leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
 
 
         ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", 1, leaf);
@@ -260,7 +260,7 @@ class DecoderRegistryTest {
         Assertions.assertEquals(leaf, test.results());
 
         Mockito.verify(lexer, Mockito.times(0)).scan(any());
-        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(), any());
+        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(List.class), any());
     }
 
     private static class LongDecoderCustomHigh extends LeafDecoder<Long> {

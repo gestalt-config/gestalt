@@ -1,6 +1,7 @@
 package org.github.gestalt.config.integration;
 
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
@@ -423,6 +424,38 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
+        List<IHostAnnotations> iHostAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
+        });
+        Assertions.assertEquals(3, iHostAnnotations.size());
+        Assertions.assertEquals("credmond", iHostAnnotations.get(0).getUser());
+        Assertions.assertEquals("1234", iHostAnnotations.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", iHostAnnotations.get(0).getUrl());
+        Assertions.assertEquals("customers", iHostAnnotations.get(0).getTable());
+        Assertions.assertEquals("credmond", iHostAnnotations.get(1).getUser());
+        Assertions.assertEquals("5678", iHostAnnotations.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", iHostAnnotations.get(1).getUrl());
+        Assertions.assertEquals("customers", iHostAnnotations.get(1).getTable());
+        Assertions.assertEquals("credmond", iHostAnnotations.get(2).getUser());
+        Assertions.assertEquals("9012", iHostAnnotations.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", iHostAnnotations.get(2).getUrl());
+        Assertions.assertEquals("customers", iHostAnnotations.get(02).getTable());
+
+        List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<HostAnnotations>>() {
+        });
+        Assertions.assertEquals(3, hostsAnnotations.size());
+        Assertions.assertEquals("credmond", hostsAnnotations.get(0).getUser());
+        Assertions.assertEquals("1234", hostsAnnotations.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsAnnotations.get(0).getUrl());
+        Assertions.assertEquals("customers", hostsAnnotations.get(0).getTable());
+        Assertions.assertEquals("credmond", hostsAnnotations.get(1).getUser());
+        Assertions.assertEquals("5678", hostsAnnotations.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostsAnnotations.get(1).getUrl());
+        Assertions.assertEquals("customers", hostsAnnotations.get(1).getTable());
+        Assertions.assertEquals("credmond", hostsAnnotations.get(2).getUser());
+        Assertions.assertEquals("9012", hostsAnnotations.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsAnnotations.get(2).getUrl());
+        Assertions.assertEquals("customers", hostsAnnotations.get(2).getTable());
+
         List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(0, noHosts.size());
@@ -548,6 +581,49 @@ public class GestaltIntegrationTests {
         String getPassword();
     }
 
+    public interface IHostAnnotations {
+        @Config(path = "user")
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        @Config(defaultVal = "customers" )
+        String getTable();
+    }
+
+    public static class HostAnnotations implements IHost {
+        private String user;
+        private String url;
+
+        @Config(path = "password")
+        private String secret;
+
+        @Config(defaultVal = "customers")
+        private String table;
+
+        public HostAnnotations() {
+        }
+
+        @Override
+        public String getUser() {
+            return user;
+        }
+
+        @Override
+        public String getUrl() {
+            return url;
+        }
+
+        @Override
+        public String getPassword() {
+            return secret;
+        }
+
+        public String getTable() {return table;}
+    }
+
     public static class Host implements IHost {
         private String user;
         private String url;
@@ -556,14 +632,17 @@ public class GestaltIntegrationTests {
         public Host() {
         }
 
+        @Override
         public String getUser() {
             return user;
         }
 
+        @Override
         public String getUrl() {
             return url;
         }
 
+        @Override
         public String getPassword() {
             return password;
         }

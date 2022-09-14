@@ -69,4 +69,14 @@ public interface ConfigNodeService {
      * @return ValidateOf node or any errors.
      */
     ValidateOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode);
+
+    /**
+     * From a given node navigate to the next node.
+     *
+     * @param path to here for logging.
+     * @param tokens list of token for the next node
+     * @param currentNode current node we want to navigate from
+     * @return ValidateOf node or any errors.
+     */
+    ValidateOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, ConfigNode currentNode);
 }

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.decoder.Decoder
 import org.github.gestalt.config.decoder.DecoderService
 import org.github.gestalt.config.decoder.Priority
@@ -9,11 +10,16 @@ import org.github.gestalt.config.kotlin.entity.DataClassHasNoConstructor
 import org.github.gestalt.config.kotlin.entity.DataClassMissingRequiredMember
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
+import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.node.MapNode
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.utils.PathUtil
 import org.github.gestalt.config.utils.ValidateOf
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
 
 /**
  * Kotlin Data Decoder.
@@ -64,15 +70,44 @@ class DataClassDecoder : Decoder<Any> {
                 val missingMembers: MutableList<String> = mutableListOf()
                 val parameters = constructor.parameters
                     .associateWith {
-                        val nextPath = if (path.isNotEmpty()) "$path.${it.name}" else it.name
+                        var paramName: String = it.name ?: ""
+                        val props = classifier.declaredMemberProperties.firstOrNull { it.name == paramName }
 
-                        val configNode = decoderService.getNextNode(nextPath, it.name, node)
+
+                        // if we have an annotation, use that for the path instead of the name.
+                        val configAnnotation: Config? =  props?.javaField?.getAnnotation(Config::class.java)
+                        if (configAnnotation?.path?.isNotEmpty() == true) {
+                            paramName = configAnnotation.path
+                        }
+                        val nextPath = PathUtil.pathForKey(path, paramName)
+
+                        val configNode = decoderService.getNextNode(nextPath, paramName, node)
                         errors.addAll(configNode.errors)
                         var results: Any? = null
                         when {
-                            !it.isOptional && !configNode.hasResults() -> {
-                                missingMembers.add(it.name ?: "")
+                            !configNode.hasResults() && configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
+                                val defaultValidateOf: ValidateOf<*> = decoderService.decodeNode(
+                                    nextPath,
+                                    LeafNode(configAnnotation?.defaultVal),
+                                    KTypeCapture.of<Any>(it.type)
+                                )
+
+                                if (defaultValidateOf.hasErrors()) {
+                                    errors.addAll(defaultValidateOf.errors)
+                                }
+
+                                if (defaultValidateOf.hasResults()) {
+                                    results = defaultValidateOf.results()
+                                } else {
+                                    missingMembers.add(it.name ?: "null")
+                                }
                             }
+
+                            !it.isOptional && !configNode.hasResults() -> {
+                                missingMembers.add(paramName)
+
+                            }
+
                             configNode.hasResults() -> {
                                 val parameter = decoderService.decodeNode(nextPath, configNode.results(), KTypeCapture.of<Any>(it.type))
                                 if (parameter.hasErrors()) {
@@ -97,9 +132,11 @@ class DataClassDecoder : Decoder<Any> {
                         errors.add(DataClassMissingRequiredMember(path, classifier.simpleName ?: "", missingMembers))
                         ValidateOf.inValid(errors)
                     }
+
                     parameters.isNotEmpty() -> {
                         ValidateOf.validateOf(constructor.callBy(parameters), errors)
                     }
+
                     else -> {
                         try {
                             // so try and use the default constructor, it may provide all the default args

@@ -1,8 +1,10 @@
 package org.github.gestalt.config.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,6 +24,10 @@ public final class RecordUtils {
     private static final MethodHandle MH_GET_NAME;
     private static final MethodHandle MH_GET_TYPE;
     private static final MethodHandle MH_GET_GENERIC_TYPE;
+
+    private static final MethodHandle MH_GET_DECLARED_ANNOTATION;
+
+    private static final MethodHandle MH_GET_ACCESSOR;
     private static final MethodHandles.Lookup LOOKUP;
 
     static {
@@ -30,6 +36,8 @@ public final class RecordUtils {
         MethodHandle MH_getName;
         MethodHandle MH_getType;
         MethodHandle MH_getGenericType;
+        MethodHandle MH_getDeclaredAnnotation;
+        MethodHandle MH_getAccessor;
         LOOKUP = MethodHandles.lookup();
 
         try {
@@ -46,6 +54,10 @@ public final class RecordUtils {
                                .asType(methodType(Class.class, Object.class));
             MH_getGenericType = LOOKUP.findVirtual(c, "getGenericType", methodType(Type.class))
                                       .asType(methodType(Type.class, Object.class));
+            MH_getDeclaredAnnotation = LOOKUP.findVirtual(c, "getDeclaredAnnotations", methodType(Annotation[].class))
+                                     .asType(methodType(Annotation[].class, Object.class));
+            MH_getAccessor = LOOKUP.findVirtual(c, "getAccessor", methodType(Method.class))
+                                   .asType(methodType(Method.class, Object.class));
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             // pre-Java-14
             MH_isRecord = null;
@@ -53,6 +65,8 @@ public final class RecordUtils {
             MH_getName = null;
             MH_getType = null;
             MH_getGenericType = null;
+            MH_getDeclaredAnnotation = null;
+            MH_getAccessor = null;
         } catch (IllegalAccessException unexpected) {
             throw new AssertionError(unexpected);
         }
@@ -62,6 +76,8 @@ public final class RecordUtils {
         MH_GET_NAME = MH_getName;
         MH_GET_TYPE = MH_getType;
         MH_GET_GENERIC_TYPE = MH_getGenericType;
+        MH_GET_DECLARED_ANNOTATION = MH_getDeclaredAnnotation;
+        MH_GET_ACCESSOR = MH_getAccessor;
     }
 
     private RecordUtils() {
@@ -103,7 +119,9 @@ public final class RecordUtils {
                 recordComponents[i] = new RecComponent(
                     (String) MH_GET_NAME.invokeExact(comp),
                     (Type) MH_GET_GENERIC_TYPE.invokeExact(comp),
-                    (Class<?>) MH_GET_TYPE.invokeExact(comp), i);
+                    (Class<?>) MH_GET_TYPE.invokeExact(comp),
+                    (Annotation[]) MH_GET_DECLARED_ANNOTATION.invokeExact(comp),
+                    (Method) MH_GET_ACCESSOR.invokeExact(comp), i);
             }
             if (comparator != null) {
                 Arrays.sort(recordComponents, comparator);
@@ -159,4 +177,6 @@ public final class RecordUtils {
             throw new RuntimeException("Could not construct type (" + recordType.getName() + ")", t);
         }
     }
+
+
 }

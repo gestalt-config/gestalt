@@ -10,6 +10,7 @@ module org.github.gestalt.core {
     requires org.slf4j;
 
     exports org.github.gestalt.config;
+    exports org.github.gestalt.config.annotations;
     exports org.github.gestalt.config.builder;
     exports org.github.gestalt.config.decoder;
     exports org.github.gestalt.config.entity;

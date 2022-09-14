@@ -1,8 +1,9 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.PathUtil;
@@ -80,6 +81,12 @@ public class ObjectDecoder implements Decoder<Object> {
                 String name = field.getName();
                 Type fieldClass = field.getGenericType();
 
+                // if we have an annotation, use that for the path instead of the name.
+                Config configAnnotation = field.getAnnotation(Config.class);
+                if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
+                    name = configAnnotation.path();
+                }
+
                 String nextPath = PathUtil.pathForKey(path, name);
 
                 if (!Modifier.isStatic(modifiers)) {
@@ -87,11 +94,22 @@ public class ObjectDecoder implements Decoder<Object> {
 
                     ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
 
-                    errors.addAll(configNode.getErrors(ValidationLevel.WARN));
-                    if (configNode.hasErrors(ValidationLevel.ERROR)) {
-                        errors.addAll(configNode.getErrors(ValidationLevel.ERROR));
-                    } else if (!configNode.hasResults()) {
-                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
+                    errors.addAll(configNode.getErrors());
+                    if (!configNode.hasResults()) {
+                        // if we have no value, check the config annotation for a default.
+                        if (configAnnotation != null && configAnnotation.defaultVal() != null &&
+                            !configAnnotation.defaultVal().isEmpty()) {
+                            ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
+                                TypeCapture.of(fieldClass));
+
+                            if (defaultValidateOf.hasErrors()) {
+                                errors.addAll(defaultValidateOf.getErrors());
+                            }
+
+                            if (defaultValidateOf.hasResults()) {
+                                field.set(obj, defaultValidateOf.results());
+                            }
+                        }
                     } else {
                         ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                             TypeCapture.of(fieldClass));

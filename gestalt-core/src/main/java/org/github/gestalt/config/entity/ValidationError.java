@@ -743,7 +743,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Null Token on path: " + path;
+            return "Null or Empty Token on path: " + path;
         }
     }
 

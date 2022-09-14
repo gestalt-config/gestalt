@@ -37,7 +37,7 @@ class ProxyDecoderTest {
     @Test
     void priority() {
         ProxyDecoder decoder = new ProxyDecoder();
-        Assertions.assertEquals(Priority.VERY_LOW, decoder.priority());
+        Assertions.assertEquals(Priority.LOW, decoder.priority());
     }
 
     @Test
@@ -124,12 +124,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
                 "LeafNode{value='aaaa'} attempting to decode Integer",
             validate.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int, during proxy decoding",
-            validate.getErrors().get(1).description());
 
         DBInfoInterface results = (DBInfoInterface) validate.results();
         Assertions.assertEquals(10, results.getPort());
@@ -151,11 +149,9 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Leaf on path: db.host.uri, missing value, LeafNode{value='null'} attempting to decode String",
             validate.getErrors().get(0).description());
-        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: java.lang.String, during proxy decoding",
-            validate.getErrors().get(1).description());
 
         DBInfoInterface results = (DBInfoInterface) validate.results();
         Assertions.assertEquals(100, results.getPort());
@@ -227,8 +223,8 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken, during navigating to next node",
-            validate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
+                " during navigating to next node", validate.getErrors().get(0).description());
 
         DBPoolInterface results = (DBPoolInterface) validate.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -246,6 +242,99 @@ class ProxyDecoderTest {
             Assertions.assertEquals("Failed to get proxy config while calling method: getDefaultWait in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
         }
+    }
+
+    @Test
+    void decodeAnnotations() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        IDBInfoAnnotations results = (IDBInfoAnnotations) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeAnnotationsDefault() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
+                "during navigating to next node", validate.getErrors().get(0).description());
+
+        IDBInfoAnnotations results = (IDBInfoAnnotations) validate.results();
+        Assertions.assertEquals(1234, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeBadAnnotationsDefault() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate =
+            decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoBadAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
+                "during navigating to next node", validate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
+                "attempting to decode Integer",  validate.getErrors().get(1).description());
+
+        IDBInfoBadAnnotations results = (IDBInfoBadAnnotations) validate.results();
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+
+        try {
+            results.getPort();
+            Assertions.fail("Should throw an exception");
+        } catch (UndeclaredThrowableException e) {
+            Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals("Failed to get proxy config while calling method: getPort in path: db.host.",
+                e.getUndeclaredThrowable().getMessage());
+        }
+    }
+
+    @Test
+    void decodeAnnotationsLong() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new MapNode(Map.of("port", new LeafNode("100"))));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotationsLong.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        IDBInfoAnnotationsLong results = (IDBInfoAnnotationsLong) validate.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
     }
 }
 

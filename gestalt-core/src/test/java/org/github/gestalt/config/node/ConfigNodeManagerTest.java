@@ -1425,7 +1425,7 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Null Token on path: db.test",
+        Assertions.assertEquals("Null or Empty Token on path: db.test",
             navigateValidate.getErrors().get(0).description());
     }
 

@@ -354,4 +354,32 @@ public class ConfigNodeManager implements ConfigNodeService {
 
         return ValidateOf.valid(node);
     }
+
+    @Override
+    public ValidateOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, final ConfigNode currentNode) {
+        if (currentNode == null) {
+            return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
+        } else if (tokens == null) {
+            return ValidateOf.inValid(new ValidationError.NullTokenForPath(path));
+        } else {
+            ConfigNode node = currentNode;
+            List<ValidationError> errors = new ArrayList<>();
+
+            for (Token token : tokens) {
+                ValidateOf<ConfigNode> result = navigateToNextNode(path, token, node);
+
+                // if there are errors, add them to the error list abd do not add the merge results
+                if (result.hasErrors()) {
+                    return ValidateOf.inValid(result.getErrors());
+                }
+
+                if (result.hasResults()) {
+                    node = result.results();
+                } else {
+                    errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "navigating to node"));
+                }
+            }
+            return validateOf(node, errors);
+        }
+    }
 }
