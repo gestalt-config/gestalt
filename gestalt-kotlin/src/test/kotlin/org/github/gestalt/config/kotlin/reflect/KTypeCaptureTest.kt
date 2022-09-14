@@ -13,7 +13,7 @@ internal class KTypeCaptureTest {
 
         assertTrue(type.hasParameter())
         assertEquals("java.util.List<java.lang.String>", type.name)
-        assertEquals(String::class.java, type.firstParameterType.rawType)
+        assertEquals(String::class.java, type.firstParameterType!!.rawType)
         assertFalse(type.isAssignableFrom(Int::class.java))
         assertFalse(type.isAssignableFrom(Double::class.java))
         assertTrue(type.isAssignableFrom(MutableList::class.java))
@@ -178,7 +178,19 @@ internal class KTypeCaptureTest {
     @Test
     fun isAssignableGenericArray() {
         val type = kTypeCaptureOf<Array<Any>>()
-        assertFalse(type.hasParameter())
+        assertTrue(type.hasParameter())
+        assertNotNull(type.firstParameterType)
+        assertEquals("java.lang.Object[]", type.name)
+        assertFalse(type.isAssignableFrom(Holder::class))
+        assertFalse(type.isAssignableFrom(Int::class))
+        assertFalse(type.isAssignableFrom(MutableList::class))
+        assertTrue(type.isAssignableFrom(Array<Any>::class))
+    }
+
+    @Test
+    fun isAssignableGenericArrayStar() {
+        val type = kTypeCaptureOf<Array<*>>()
+        assertTrue(type.hasParameter())
         assertNull(type.firstParameterType)
         assertEquals("java.lang.Object[]", type.name)
         assertFalse(type.isAssignableFrom(Holder::class))
@@ -191,7 +203,7 @@ internal class KTypeCaptureTest {
     fun isAssignableGenericArray2() {
         val type = kTypeCaptureOf<List<Any>>()
         assertTrue(type.hasParameter())
-        assertEquals(Any::class.java, type.firstParameterType.rawType)
+        assertEquals(Any::class.java, type.firstParameterType!!.rawType)
         assertFalse(type.isAssignableFrom(Holder::class))
         assertFalse(type.isAssignableFrom(Int::class))
         assertTrue(type.isAssignableFrom(MutableList::class))

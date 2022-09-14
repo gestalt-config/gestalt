@@ -1,6 +1,7 @@
 package org.github.gestalt.config.kotlin.integration
 
 import org.github.gestalt.config.Gestalt
+import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.getConfig
@@ -177,13 +178,14 @@ class GestaltKotlinSample {
         assertEquals(25, pool.idleTimeoutSec)
         assertEquals(33.0f, pool.defaultWait)
 
-        val hostService:HostService = myApp.koin.get()
+        val hostService: HostService = myApp.koin.get()
         assertEquals("test3", hostService.hostPool.password)
         assertEquals("test2", hostService.hostPool.url)
         assertEquals("test1", hostService.hostPool.user)
     }
 
     private fun testValidation(gestalt: Gestalt) {
+
         val pool: HttpPool = gestalt.getConfig("http.pool")
         assertEquals(1000, pool.maxTotal.toInt())
         assertEquals(1000.toShort(), gestalt.getConfig("http.pool.maxTotal"))
@@ -220,6 +222,7 @@ class GestaltKotlinSample {
         assertEquals("9012", db.hosts!![2].password)
         assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts!![2].url)
         assertEquals("test", gestalt.getConfig("db.does.not.exist", "test"))
+
         val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
         assertEquals(3, hosts.size)
         assertEquals("credmond", hosts[0].user)
@@ -231,6 +234,22 @@ class GestaltKotlinSample {
         assertEquals("credmond", hosts[2].user)
         assertEquals("9012", hosts[2].password)
         assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts[2].url)
+
+        val hostAnnotations: List<HostConfig> = gestalt.getConfig("db.hosts", emptyList())
+        assertEquals(3, hostAnnotations.size)
+        assertEquals("credmond", hostAnnotations[0].user)
+        assertEquals("1234", hostAnnotations[0].secret)
+        assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostAnnotations[0].url)
+        assertEquals("customers", hostAnnotations[0].table)
+        assertEquals("credmond", hostAnnotations[1].user)
+        assertEquals("5678", hostAnnotations[1].secret)
+        assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostAnnotations[1].url)
+        assertEquals("customers", hostAnnotations[2].table)
+        assertEquals("credmond", hostAnnotations[2].user)
+        assertEquals("9012", hostAnnotations[2].secret)
+        assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostAnnotations[2].url)
+        assertEquals("customers", hostAnnotations[2].table)
+
         val noHosts: List<Host> = gestalt.getConfig("db.not.hosts", emptyList())
         assertEquals(0, noHosts.size)
         val admin: User = gestalt.getConfig("admin")
@@ -279,6 +298,12 @@ class GestaltKotlinSample {
     )
 
     class Host(var user: String? = null, var url: String? = null, var password: String? = null)
+    data class HostConfig(
+        var user: String? = null,
+        var url: String? = null,
+        @Config(path = "password") var secret: String? = null,
+        @Config(defaultVal = "customers") var table: String,
+    )
 
     class DataBase {
         var hosts: List<Host>? = null

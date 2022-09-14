@@ -42,13 +42,13 @@ public class ProxyDecoder implements Decoder<Object> {
     }
 
     /**
-     * must have a lower priority than the list and map decoders as they will also match a interface
+     * must have a higher priority than the object decoder
      *
      * @return VERY_LOW
      */
     @Override
     public Priority priority() {
-        return Priority.VERY_LOW;
+        return Priority.LOW;
     }
 
     @Override

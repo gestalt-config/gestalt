@@ -37,7 +37,7 @@ class ProxyDecoderTest {
     @Test
     void priority() {
         ProxyDecoder decoder = new ProxyDecoder();
-        Assertions.assertEquals(Priority.VERY_LOW, decoder.priority());
+        Assertions.assertEquals(Priority.LOW, decoder.priority());
     }
 
     @Test

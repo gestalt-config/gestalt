@@ -85,11 +85,6 @@ class DataClassDecoder : Decoder<Any> {
                         errors.addAll(configNode.errors)
                         var results: Any? = null
                         when {
-                            !it.isOptional && !configNode.hasResults() -> {
-                                missingMembers.add(paramName)
-
-                            }
-
                             !configNode.hasResults() && configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
                                 val defaultValidateOf: ValidateOf<*> = decoderService.decodeNode(
                                     nextPath,
@@ -106,6 +101,11 @@ class DataClassDecoder : Decoder<Any> {
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }
+                            }
+
+                            !it.isOptional && !configNode.hasResults() -> {
+                                missingMembers.add(paramName)
+
                             }
 
                             configNode.hasResults() -> {
