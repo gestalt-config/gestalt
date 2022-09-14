@@ -556,6 +556,22 @@ public class GestaltSample {
         Assertions.assertEquals("1234", ihostsDefault.get(0).getPassword());
         Assertions.assertEquals(10, ihostsDefault.get(0).getPort());
 
+        List<IHostAnnotations> iHostAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
+        });
+        Assertions.assertEquals(3, iHostAnnotations.size());
+        Assertions.assertEquals("credmond", iHostAnnotations.get(0).getUser());
+        Assertions.assertEquals("1234", iHostAnnotations.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", iHostAnnotations.get(0).getUrl());
+        Assertions.assertEquals("customers", iHostAnnotations.get(0).getTable());
+        Assertions.assertEquals("credmond", iHostAnnotations.get(1).getUser());
+        Assertions.assertEquals("5678", iHostAnnotations.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", iHostAnnotations.get(1).getUrl());
+        Assertions.assertEquals("customers", iHostAnnotations.get(1).getTable());
+        Assertions.assertEquals("credmond", iHostAnnotations.get(2).getUser());
+        Assertions.assertEquals("9012", iHostAnnotations.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", iHostAnnotations.get(2).getUrl());
+        Assertions.assertEquals("customers", iHostAnnotations.get(02).getTable());
+
         List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<HostAnnotations>>() {
         });
         Assertions.assertEquals(3, hostsAnnotations.size());
@@ -747,6 +763,18 @@ public class GestaltSample {
         String getUrl();
 
         String getPassword();
+    }
+
+    public interface IHostAnnotations {
+        @Config(path = "user")
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        @Config(defaultVal = "customers" )
+        String getTable();
     }
 
     public static class HostAnnotations implements IHost {
