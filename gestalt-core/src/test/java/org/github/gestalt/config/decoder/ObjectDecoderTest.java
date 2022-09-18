@@ -342,8 +342,6 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertTrue(validate.hasErrors());
-
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
                 "during navigating to next node",
@@ -365,8 +363,6 @@ class ObjectDecoderTest {
 
         ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoBadAnnotations.class), registry);
         Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
@@ -433,8 +429,6 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertTrue(validate.hasErrors());
-
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
                 "during navigating to next node",
@@ -456,8 +450,6 @@ class ObjectDecoderTest {
 
         ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoBadMethodAnnotations.class), registry);
         Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
