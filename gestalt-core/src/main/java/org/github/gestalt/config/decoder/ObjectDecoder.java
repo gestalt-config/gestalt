@@ -34,6 +34,25 @@ public class ObjectDecoder implements Decoder<Object> {
         ignoreTypes = getIgnoreTypes();
     }
 
+    private static Optional<Config> getMethodAnnotation(Class<?> klass, String methodName) {
+        Config result = null;
+
+        var method = Arrays.stream(klass.getMethods())
+                           .filter(it -> it.getName().equals(methodName))
+                           .filter(it -> {
+                               Config methodConfigAnnotation = it.getAnnotation(Config.class);
+                               return methodConfigAnnotation != null && methodConfigAnnotation.path() != null &&
+                                   !methodConfigAnnotation.path().isEmpty();
+                           })
+                           .findFirst();
+
+        if (method.isPresent()) {
+            result = method.get().getAnnotation(Config.class);
+
+        }
+        return Optional.ofNullable(result);
+    }
+
     @Override
     public Priority priority() {
         return Priority.VERY_LOW;
@@ -78,54 +97,74 @@ public class ObjectDecoder implements Decoder<Object> {
             List<Field> classFields = getClassFields(klass);
             for (Field field : classFields) {
                 int modifiers = field.getModifiers();
-                String name = field.getName();
+                String fieldName = field.getName();
+
+                if (Modifier.isStatic(modifiers)) {
+                    logger.info("Ignoring static field for class: " + klass.getName() + " field " + fieldName);
+                    continue;
+                }
+
                 Type fieldClass = field.getGenericType();
 
+                String name = fieldName;
                 // if we have an annotation, use that for the path instead of the name.
-                Config configAnnotation = field.getAnnotation(Config.class);
-                if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
-                    name = configAnnotation.path();
+                Optional<Config> configAnnotation = Optional.ofNullable(field.getAnnotation(Config.class));
+                if (configAnnotation.isPresent() && configAnnotation.get().path() != null && !configAnnotation.get().path().isEmpty()) {
+                    name = configAnnotation.get().path();
+                } else {
+
+                    // If there is no field annotation, check if there is a method field.
+                    String methodName;
+                    if (fieldClass.equals(boolean.class) || fieldClass.equals(Boolean.TYPE)) {
+                        methodName = "is" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+                    } else {
+                        methodName = "get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+                    }
+                    // first look for the method with the name and annotations.
+                    // This would be either isfeildName or getFieldName. If we dont find that try just the field name
+                    configAnnotation = getMethodAnnotation(klass, methodName).or(() -> getMethodAnnotation(klass, fieldName));
+
+                    if (configAnnotation.isPresent() && configAnnotation.get().path() != null && !configAnnotation.get().path().isEmpty()) {
+                        name = configAnnotation.get().path();
+                    }
                 }
 
                 String nextPath = PathUtil.pathForKey(path, name);
+                ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
 
-                if (!Modifier.isStatic(modifiers)) {
-                    field.setAccessible(true);
-
-                    ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
-
-                    errors.addAll(configNode.getErrors());
-                    if (!configNode.hasResults()) {
-                        // if we have no value, check the config annotation for a default.
-                        if (configAnnotation != null && configAnnotation.defaultVal() != null &&
-                            !configAnnotation.defaultVal().isEmpty()) {
-                            ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
+                errors.addAll(configNode.getErrors());
+                if (!configNode.hasResults()) {
+                    // if we have no value, check the config annotation for a default.
+                    if (configAnnotation.isPresent() && configAnnotation.get().defaultVal() != null &&
+                        !configAnnotation.get().defaultVal().isEmpty()) {
+                        ValidateOf<?> defaultValidateOf =
+                            decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.get().defaultVal()),
                                 TypeCapture.of(fieldClass));
 
-                            if (defaultValidateOf.hasErrors()) {
-                                errors.addAll(defaultValidateOf.getErrors());
-                            }
-
-                            if (defaultValidateOf.hasResults()) {
-                                field.set(obj, defaultValidateOf.results());
-                            }
-                        }
-                    } else {
-                        ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
-                            TypeCapture.of(fieldClass));
-                        if (fieldValidateOf.hasErrors()) {
-                            errors.addAll(fieldValidateOf.getErrors());
+                        if (defaultValidateOf.hasErrors()) {
+                            errors.addAll(defaultValidateOf.getErrors());
                         }
 
-                        if (fieldValidateOf.hasResults()) {
-                            field.set(obj, fieldValidateOf.results());
-                        } else {
-                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
+                        if (defaultValidateOf.hasResults()) {
+                            field.setAccessible(true);
+                            field.set(obj, defaultValidateOf.results());
                         }
                     }
                 } else {
-                    logger.info("Ignoring static field for class: " + klass.getName() + " field " + name);
+                    ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
+                        TypeCapture.of(fieldClass));
+                    if (fieldValidateOf.hasErrors()) {
+                        errors.addAll(fieldValidateOf.getErrors());
+                    }
+
+                    if (fieldValidateOf.hasResults()) {
+                        field.setAccessible(true);
+                        field.set(obj, fieldValidateOf.results());
+                    } else {
+                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
+                    }
                 }
+
             }
 
             return ValidateOf.validateOf(obj, errors);
