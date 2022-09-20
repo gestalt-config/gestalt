@@ -330,11 +330,27 @@ To register your own default Decoders, add it to a file in META-INF\services\org
 
 # Annotations
 When decoding a Java Bean style class, a record, an interface or a Kotlin Data Class you can provide a custom annotation to override the path for the configuration as well as provide a default. 
+The field annotation takes priority if both the field and method are annotated. 
+
 ```java
 public class DBInfo {
     @Config(path = "channel.port", defaultVal = "1234")
     private int port;
+    
+    public int getPort() {
+        return port;
+    }
 
+  DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
+}
+
+public class DBInfo {
+  private int port;
+  @Config(path = "channel.port", defaultVal = "1234")
+  public int getPort() {
+    return port;
+  }
+  
   DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
 }
 ```
