@@ -98,10 +98,9 @@ public class ObjectDecoder implements Decoder<Object> {
 
                 errors.addAll(configNode.getErrors());
                 if (!configNode.hasResults()) {
-                    String defaultValue = "";
                     // if we have no value, check the config annotation for a default.
                     // if we have an annotation, use that for the path instead of the name.
-                    defaultValue = getAnnotationValue(klass, field, fieldName, fieldClass, Config::defaultVal,
+                    String defaultValue = getAnnotationValue(klass, field, fieldName, fieldClass, Config::defaultVal,
                         config -> config.defaultVal() != null && !config.defaultVal().isEmpty());
 
                     if (!defaultValue.isEmpty()) {

@@ -4,6 +4,8 @@ public interface DBInfoInterface {
     default int getPort() {
         return 10;
     }
+
     String getUri();
+
     String getPassword();
 }

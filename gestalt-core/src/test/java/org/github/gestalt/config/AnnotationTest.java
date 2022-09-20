@@ -18,9 +18,12 @@ public class AnnotationTest {
     }
 
     @Test
+
     public void testAnnotation() throws NoSuchFieldException {
         TestClass test = new TestClass();
-
+        Assertions.assertEquals(100, test.myVal);
+        Assertions.assertEquals(200, test.myVal2);
+        Assertions.assertEquals(300, test.myVal3);
 
         Config annotation = test.getClass().getDeclaredField("myVal").getAnnotation(Config.class);
 

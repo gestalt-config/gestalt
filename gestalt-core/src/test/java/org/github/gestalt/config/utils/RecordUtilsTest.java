@@ -7,7 +7,6 @@ import org.github.gestalt.config.test.classes.Person3;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.RecordComponent;
 import java.util.Comparator;
 
 class RecordUtilsTest {
@@ -46,8 +45,6 @@ class RecordUtilsTest {
     void componentAnnotations() {
         RecComponent[] recComponents = RecordUtils.recordComponents(Person3.class, Comparator.comparing(RecComponent::name));
         Assertions.assertEquals("id", recComponents[0].name());
-
-        RecordComponent[] recComp = Person3.class.getRecordComponents();
 
         Object value = RecordUtils.componentValue(new Person3(52, "Tim"), recComponents[0]);
         Assertions.assertTrue(value instanceof Integer);
