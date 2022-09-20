@@ -42,7 +42,7 @@ public class ProxyDecoder implements Decoder<Object> {
     }
 
     /**
-     * must have a higher priority than the object decoder
+     * must have a higher priority than the object decoder.
      *
      * @return VERY_LOW
      */
@@ -58,7 +58,9 @@ public class ProxyDecoder implements Decoder<Object> {
 
     @Override
     public boolean matches(TypeCapture<?> klass) {
-        return klass.isInterface() && !Collection.class.isAssignableFrom(klass.getRawType()) && !Map.class.isAssignableFrom(klass.getRawType());
+        return klass.isInterface() &&
+            !Collection.class.isAssignableFrom(klass.getRawType()) &&
+            !Map.class.isAssignableFrom(klass.getRawType());
     }
 
     @Override

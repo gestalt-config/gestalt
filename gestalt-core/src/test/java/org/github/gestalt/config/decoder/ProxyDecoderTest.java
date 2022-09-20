@@ -253,7 +253,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), registry);
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(IDBInfoAnnotations.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -271,7 +272,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), registry);
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(IDBInfoAnnotations.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -327,7 +329,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoAnnotationsLong.class), registry);
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(IDBInfoAnnotationsLong.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 

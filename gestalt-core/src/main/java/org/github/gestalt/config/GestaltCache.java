@@ -47,6 +47,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         return getConfig(path, typeCapture, tags);
     }
 
+    @Override
     public <T> T getConfig(String path, TypeCapture<T> klass) throws GestaltException {
         return getConfig(path, klass, Tags.of());
     }

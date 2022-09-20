@@ -440,7 +440,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", iHostAnnotations.get(2).getUrl());
         Assertions.assertEquals("customers", iHostAnnotations.get(02).getTable());
 
-        List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<HostAnnotations>>() {
+        List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hostsAnnotations.size());
         Assertions.assertEquals("credmond", hostsAnnotations.get(0).getUser());
@@ -455,6 +455,24 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("9012", hostsAnnotations.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsAnnotations.get(2).getUrl());
         Assertions.assertEquals("customers", hostsAnnotations.get(2).getTable());
+
+        List<HostMethodAnnotations> hostsMethodAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(),
+            new TypeCapture<>() {
+            });
+        Assertions.assertEquals(3, hostsMethodAnnotations.size());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(0).getUser());
+        Assertions.assertEquals("1234", hostsMethodAnnotations.get(0).getSecret());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsMethodAnnotations.get(0).getUrl());
+        Assertions.assertEquals("customers", hostsMethodAnnotations.get(0).getTable());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(1).getUser());
+        Assertions.assertEquals("5678", hostsMethodAnnotations.get(1).getSecret());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostsMethodAnnotations.get(1).getUrl());
+        Assertions.assertEquals("customers", hostsMethodAnnotations.get(1).getTable());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(2).getUser());
+        Assertions.assertEquals("9012", hostsMethodAnnotations.get(2).getSecret());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsMethodAnnotations.get(2).getUrl());
+        Assertions.assertEquals("customers", hostsMethodAnnotations.get(2).getTable());
+
 
         List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
@@ -537,6 +555,38 @@ public class GestaltIntegrationTests {
         LEVEL0, LEVEL1
     }
 
+    public interface IHostDefault {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        default int getPort() {
+            return 10;
+        }
+    }
+
+    public interface IHost {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+    }
+
+    public interface IHostAnnotations {
+        @Config(path = "user")
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        @Config(defaultVal = "customers")
+        String getTable();
+    }
+
     public static class TestReloadListener implements CoreReloadListener {
 
         int count = 0;
@@ -558,39 +608,6 @@ public class GestaltIntegrationTests {
         public HttpPool() {
 
         }
-    }
-
-    public interface IHostDefault {
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-
-        default int getPort() {
-            return 10;
-        }
-    }
-
-
-    public interface IHost {
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-    }
-
-    public interface IHostAnnotations {
-        @Config(path = "user")
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-
-        @Config(defaultVal = "customers" )
-        String getTable();
     }
 
     public static class HostAnnotations implements IHost {
@@ -621,8 +638,41 @@ public class GestaltIntegrationTests {
             return secret;
         }
 
-        public String getTable() {return table;}
+        public String getTable() {
+            return table;
+        }
     }
+
+    public static class HostMethodAnnotations {
+        private String user;
+        private String url;
+
+        private String secret;
+
+        private String table;
+
+        public HostMethodAnnotations() {
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        @Config(path = "password")
+        public String getSecret() {
+            return secret;
+        }
+
+        @Config(defaultVal = "customers")
+        public String getTable() {
+            return table;
+        }
+    }
+
 
     public static class Host implements IHost {
         private String user;

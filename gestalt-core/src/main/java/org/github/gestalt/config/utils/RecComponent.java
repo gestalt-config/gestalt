@@ -27,6 +27,8 @@ public class RecComponent {
      * @param name name of the Record component
      * @param type type of Record component
      * @param klass class of the Record component
+     * @param annotations Annotations on the component
+     * @param accessor Accessor for this record component.
      * @param index index of the Record component
      */
     public RecComponent(String name, Type type, Class<?> klass, Annotation[] annotations, Method accessor, int index) {

@@ -588,6 +588,22 @@ public class GestaltSample {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsAnnotations.get(2).getUrl());
         Assertions.assertEquals("customers", hostsAnnotations.get(2).getTable());
 
+        List<HostMethodAnnotations> hostsMethodAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<HostMethodAnnotations>>() {
+        });
+        Assertions.assertEquals(3, hostsMethodAnnotations.size());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(0).getUser());
+        Assertions.assertEquals("1234", hostsMethodAnnotations.get(0).getSecret());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsMethodAnnotations.get(0).getUrl());
+        Assertions.assertEquals("customers", hostsMethodAnnotations.get(0).getTable());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(1).getUser());
+        Assertions.assertEquals("5678", hostsMethodAnnotations.get(1).getSecret());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostsMethodAnnotations.get(1).getUrl());
+        Assertions.assertEquals("customers", hostsMethodAnnotations.get(1).getTable());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(2).getUser());
+        Assertions.assertEquals("9012", hostsMethodAnnotations.get(2).getSecret());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsMethodAnnotations.get(2).getUrl());
+        Assertions.assertEquals("customers", hostsMethodAnnotations.get(2).getTable());
+
         List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
         });
         Assertions.assertEquals(0, noHosts.size());
@@ -805,6 +821,29 @@ public class GestaltSample {
             return secret;
         }
 
+        public String getTable() {return table;}
+    }
+
+    public static class HostMethodAnnotations{
+        private String user;
+        private String url;
+        private String secret;
+        private String table;
+
+        public String getUser() {
+            return user;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        @Config(path = "password")
+        public String getSecret() {
+            return secret;
+        }
+
+        @Config(defaultVal = "customers")
         public String getTable() {return table;}
     }
 

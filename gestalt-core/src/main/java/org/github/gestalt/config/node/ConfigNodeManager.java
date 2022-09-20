@@ -269,6 +269,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         return errors;
     }
 
+    @Override
     public ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags) {
         ValidateOf<ConfigNode> results;
         // first check with the tags provided.

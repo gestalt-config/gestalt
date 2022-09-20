@@ -205,7 +205,7 @@ public class TypeCapture<T> {
     }
 
     /**
-     * If this type is an interface
+     * If this type is an interface.
      *
      * @return If this type is an interface
      */
