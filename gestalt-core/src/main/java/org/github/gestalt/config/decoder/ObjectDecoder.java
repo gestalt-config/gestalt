@@ -88,8 +88,7 @@ public class ObjectDecoder implements Decoder<Object> {
 
                 Type fieldClass = field.getGenericType();
 
-                String name = getAnnotationValue(klass, field, fieldName, fieldClass, Config::path,
-                    config -> config.path() != null && !config.path().isEmpty());
+                String name = getAnnotationValue(klass, field, fieldName, fieldClass, Config::path);
 
                 name = name.isEmpty() ? fieldName : name;
 
@@ -100,17 +99,13 @@ public class ObjectDecoder implements Decoder<Object> {
                 if (!configNode.hasResults()) {
                     // if we have no value, check the config annotation for a default.
                     // if we have an annotation, use that for the path instead of the name.
-                    String defaultValue = getAnnotationValue(klass, field, fieldName, fieldClass, Config::defaultVal,
-                        config -> config.defaultVal() != null && !config.defaultVal().isEmpty());
+                    String defaultValue = getAnnotationValue(klass, field, fieldName, fieldClass, Config::defaultVal);
 
                     if (!defaultValue.isEmpty()) {
                         ValidateOf<?> defaultValidateOf =
                             decoderService.decodeNode(nextPath, new LeafNode(defaultValue), TypeCapture.of(fieldClass));
 
-                        if (defaultValidateOf.hasErrors()) {
-                            errors.addAll(defaultValidateOf.getErrors());
-                        }
-
+                        errors.addAll(defaultValidateOf.getErrors());
                         if (defaultValidateOf.hasResults()) {
                             field.setAccessible(true);
                             field.set(obj, defaultValidateOf.results());
@@ -119,10 +114,8 @@ public class ObjectDecoder implements Decoder<Object> {
                 } else {
                     ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                         TypeCapture.of(fieldClass));
-                    if (fieldValidateOf.hasErrors()) {
-                        errors.addAll(fieldValidateOf.getErrors());
-                    }
 
+                    errors.addAll(fieldValidateOf.getErrors());
                     if (fieldValidateOf.hasResults()) {
                         field.setAccessible(true);
                         field.set(obj, fieldValidateOf.results());
@@ -130,7 +123,6 @@ public class ObjectDecoder implements Decoder<Object> {
                         errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
                     }
                 }
-
             }
 
             return ValidateOf.validateOf(obj, errors);
@@ -143,25 +135,31 @@ public class ObjectDecoder implements Decoder<Object> {
     }
 
     private String getAnnotationValue(Class<?> klass, Field field, String fieldName, Type fieldClass,
-                                      Function<Config, String> get, Function<Config, Boolean> find) {
+                                      Function<Config, String> get) {
         String value = "";
         // if we have an annotation, use that for the path instead of the name.
         Optional<Config> configAnnotation = Optional.ofNullable(field.getAnnotation(Config.class));
-        if (configAnnotation.isPresent() && find.apply(configAnnotation.get())) {
+        if (configAnnotation.isPresent() &&
+            get.apply(configAnnotation.get()) != null &&
+            !get.apply(configAnnotation.get()).isEmpty()
+        ) {
             value = get.apply(configAnnotation.get());
         } else {
 
             // If there is no field annotation, check if there is a method field.
-            configAnnotation = findMethodConfig(klass, fieldName, fieldClass, find);
+            configAnnotation = findMethodConfig(klass, fieldName, fieldClass, get);
 
-            if (configAnnotation.isPresent() && find.apply(configAnnotation.get())) {
+            if (configAnnotation.isPresent() &&
+                get.apply(configAnnotation.get()) != null &&
+                !get.apply(configAnnotation.get()).isEmpty()
+            ) {
                 value = get.apply(configAnnotation.get());
             }
         }
         return value;
     }
 
-    private Optional<Config> findMethodConfig(Class<?> klass, String fieldName, Type fieldClass, Function<Config, Boolean> find) {
+    private Optional<Config> findMethodConfig(Class<?> klass, String fieldName, Type fieldClass, Function<Config, String> get) {
         Optional<Config> configAnnotation;
         String methodName;
         if (fieldClass.equals(boolean.class) || fieldClass.equals(Boolean.TYPE)) {
@@ -171,18 +169,20 @@ public class ObjectDecoder implements Decoder<Object> {
         }
         // first look for the method with the name and annotations.
         // This would be either isfeildName or getFieldName. If we dont find that try just the field name
-        configAnnotation = getMethodAnnotation(klass, methodName, find).or(() -> getMethodAnnotation(klass, fieldName, find));
+        configAnnotation = getMethodAnnotation(klass, methodName, get).or(() -> getMethodAnnotation(klass, fieldName, get));
         return configAnnotation;
     }
 
-    private Optional<Config> getMethodAnnotation(Class<?> klass, String methodName, Function<Config, Boolean> find) {
+    private Optional<Config> getMethodAnnotation(Class<?> klass, String methodName, Function<Config, String> get) {
         Config result = null;
 
         var method = Arrays.stream(klass.getMethods())
                            .filter(it -> it.getName().equals(methodName))
                            .filter(it -> {
                                Config methodConfigAnnotation = it.getAnnotation(Config.class);
-                               return methodConfigAnnotation != null && find.apply(methodConfigAnnotation);
+                               return methodConfigAnnotation != null &&
+                                   get.apply(methodConfigAnnotation) != null &&
+                                   !get.apply(methodConfigAnnotation).isEmpty();
                            })
                            .findFirst();
 

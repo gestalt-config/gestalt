@@ -88,7 +88,7 @@ class ProxyDecoderTest {
     }
 
     @Test
-    void decodeDefaultValues() {
+    void decodeDefaultMethodValues() {
         ProxyDecoder decoder = new ProxyDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -336,6 +336,29 @@ class ProxyDecoderTest {
 
         IDBInfoAnnotationsLong results = (IDBInfoAnnotationsLong) validate.results();
         Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeAnnotationsOnlyDefault() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(IDBInfoMethodAnnotations.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
+            "during navigating to next node", validate.getErrors().get(0).description());
+
+        IDBInfoMethodAnnotations results = (IDBInfoMethodAnnotations) validate.results();
+        Assertions.assertEquals(1234, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
     }
