@@ -43,7 +43,9 @@ class SystemPropertiesConfigSourceTest {
         Optional<Pair<String, String>> version = list.stream().filter(it -> "java.specification.version".equals(it.getFirst())).findFirst();
 
         Assertions.assertEquals("java.specification.version", version.get().getFirst());
-        Assertions.assertTrue("11".equals(version.get().getSecond()) || "17".equals(version.get().getSecond()));
+        Assertions.assertTrue("11".equals(version.get().getSecond()) ||
+            "17".equals(version.get().getSecond()) ||
+            "19".equals(version.get().getSecond()));
     }
 
     @Test

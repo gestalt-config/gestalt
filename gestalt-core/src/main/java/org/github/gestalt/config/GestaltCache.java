@@ -82,12 +82,13 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
 
 
     @Override
-    @SuppressWarnings("unchecked")
+
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
         return  getConfig(path, defaultVal, klass, Tags.of());
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
         return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, klass, tags));

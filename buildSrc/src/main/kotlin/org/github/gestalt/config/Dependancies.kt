@@ -69,6 +69,8 @@ object Test {
         const val mockk = "1.12.7"
         const val kotlinTestAssertions = "5.4.2"
         const val awsMock = "2.6.1"
+
+        const val jmhVersion = "1.35"
     }
 
     const val junitAPI = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
@@ -80,6 +82,10 @@ object Test {
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
     const val kotlinTestAssertions = "io.kotest:kotest-assertions-core-jvm:${Versions.kotlinTestAssertions}"
     const val awsMock = "com.adobe.testing:s3mock-junit5:${Versions.awsMock}"
+
+    const val jmh = "org.openjdk.jmh:jmh-core:${Versions.jmhVersion}"
+    const val jmhAnnotation = "org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmhVersion}"
+
 
 }
 

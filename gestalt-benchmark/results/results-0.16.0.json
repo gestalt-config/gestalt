@@ -1,0 +1,634 @@
+[
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Object",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 22720.275443879367,
+            "scoreError" : 491.4759500337134,
+            "scoreConfidence" : [
+                22228.799493845654,
+                23211.75139391308
+            ],
+            "scorePercentiles" : {
+                "0.0" : 22388.622762067134,
+                "50.0" : 22716.531320900984,
+                "90.0" : 23064.229920256053,
+                "95.0" : 23065.8657544892,
+                "99.0" : 23065.8657544892,
+                "99.9" : 23065.8657544892,
+                "99.99" : 23065.8657544892,
+                "99.999" : 23065.8657544892,
+                "99.9999" : 23065.8657544892,
+                "100.0" : 23065.8657544892
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    22419.347450952177,
+                    22404.282907366993,
+                    22446.955922109206,
+                    22388.622762067134,
+                    22406.090596276365
+                ],
+                [
+                    22990.39433020133,
+                    22986.106719692765,
+                    23049.507412157705,
+                    23045.580583480798,
+                    23065.8657544892
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Object_No_Cache",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 113.0959764350124,
+            "scoreError" : 1.8208059824766514,
+            "scoreConfidence" : [
+                111.27517045253575,
+                114.91678241748906
+            ],
+            "scorePercentiles" : {
+                "0.0" : 111.75596614925988,
+                "50.0" : 113.01098282221716,
+                "90.0" : 114.69859468330709,
+                "95.0" : 114.70989493160369,
+                "99.0" : 114.70989493160369,
+                "99.9" : 114.70989493160369,
+                "99.99" : 114.70989493160369,
+                "99.999" : 114.70989493160369,
+                "99.9999" : 114.70989493160369,
+                "100.0" : 114.70989493160369
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    112.30755856360067,
+                    111.75596614925988,
+                    112.19456209261737,
+                    111.83583839939448,
+                    111.9032402533036
+                ],
+                [
+                    114.70989493160369,
+                    114.59689244863772,
+                    114.11829148062746,
+                    113.71440708083367,
+                    113.82311295024539
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Setup",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1446.4989203594669,
+            "scoreError" : 21.849762192413728,
+            "scoreConfidence" : [
+                1424.6491581670532,
+                1468.3486825518805
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1427.8799661163405,
+                "50.0" : 1445.9251917146958,
+                "90.0" : 1469.2190400478567,
+                "95.0" : 1469.3834315054287,
+                "99.0" : 1469.3834315054287,
+                "99.9" : 1469.3834315054287,
+                "99.99" : 1469.3834315054287,
+                "99.999" : 1469.3834315054287,
+                "99.9999" : 1469.3834315054287,
+                "100.0" : 1469.3834315054287
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1452.4606012076983,
+                    1452.941957093465,
+                    1469.3834315054287,
+                    1436.9145649684706,
+                    1467.7395169297072
+                ],
+                [
+                    1431.8599795315226,
+                    1448.854072520791,
+                    1427.8799661163405,
+                    1433.958802812643,
+                    1442.9963109086007
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_String",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 22780.136434992888,
+            "scoreError" : 144.78222861277223,
+            "scoreConfidence" : [
+                22635.354206380114,
+                22924.918663605662
+            ],
+            "scorePercentiles" : {
+                "0.0" : 22620.474609637346,
+                "50.0" : 22781.66061655231,
+                "90.0" : 22916.007882430767,
+                "95.0" : 22920.833618279546,
+                "99.0" : 22920.833618279546,
+                "99.9" : 22920.833618279546,
+                "99.99" : 22920.833618279546,
+                "99.999" : 22920.833618279546,
+                "99.9999" : 22920.833618279546,
+                "100.0" : 22920.833618279546
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    22767.11084108441,
+                    22691.305735251088,
+                    22708.026190183038,
+                    22620.474609637346,
+                    22716.62390503422
+                ],
+                [
+                    22872.57625979176,
+                    22796.210392020213,
+                    22920.833618279546,
+                    22843.8419838092,
+                    22864.36081483809
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_String_No_Cache",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 722.4106785483652,
+            "scoreError" : 3.056448522073034,
+            "scoreConfidence" : [
+                719.3542300262922,
+                725.4671270704383
+            ],
+            "scorePercentiles" : {
+                "0.0" : 719.667711855682,
+                "50.0" : 722.6749534215769,
+                "90.0" : 725.8475481760781,
+                "95.0" : 725.9882551409323,
+                "99.0" : 725.9882551409323,
+                "99.9" : 725.9882551409323,
+                "99.99" : 725.9882551409323,
+                "99.999" : 725.9882551409323,
+                "99.9999" : 725.9882551409323,
+                "100.0" : 725.9882551409323
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    725.9882551409323,
+                    720.7431336193358,
+                    723.8015691220451,
+                    720.4951195099641,
+                    722.8161135534739
+                ],
+                [
+                    722.7432286317288,
+                    720.6637903466766,
+                    724.5811854923905,
+                    719.667711855682,
+                    722.606678211425
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Object",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 43.35222934240436,
+            "scoreError" : 0.2883235088195318,
+            "scoreConfidence" : [
+                43.063905833584826,
+                43.64055285122389
+            ],
+            "scorePercentiles" : {
+                "0.0" : 43.08242434326537,
+                "50.0" : 43.38507026860941,
+                "90.0" : 43.56254898935372,
+                "95.0" : 43.56437682687256,
+                "99.0" : 43.56437682687256,
+                "99.9" : 43.56437682687256,
+                "99.99" : 43.56437682687256,
+                "99.999" : 43.56437682687256,
+                "99.9999" : 43.56437682687256,
+                "100.0" : 43.56437682687256
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    43.47393146712131,
+                    43.12102532123772,
+                    43.08242434326537,
+                    43.195051885566556,
+                    43.20747021601608
+                ],
+                [
+                    43.56437682687256,
+                    43.54609845168414,
+                    43.29620907009751,
+                    43.520361369758255,
+                    43.515344472424054
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Object_No_Cache",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 8830.14539820927,
+            "scoreError" : 124.22755515467885,
+            "scoreConfidence" : [
+                8705.91784305459,
+                8954.372953363949
+            ],
+            "scorePercentiles" : {
+                "0.0" : 8703.148029240774,
+                "50.0" : 8844.152923699585,
+                "90.0" : 8914.634581395823,
+                "95.0" : 8915.253344625913,
+                "99.0" : 8915.253344625913,
+                "99.9" : 8915.253344625913,
+                "99.99" : 8915.253344625913,
+                "99.999" : 8915.253344625913,
+                "99.9999" : 8915.253344625913,
+                "100.0" : 8915.253344625913
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    8720.139860626692,
+                    8703.148029240774,
+                    8768.201654958486,
+                    8799.811215718091,
+                    8797.52886503423
+                ],
+                [
+                    8907.170714459584,
+                    8909.065712325017,
+                    8892.639953422819,
+                    8915.253344625913,
+                    8888.494631681078
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Setup",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 6.911234812950175E-4,
+            "scoreError" : 9.246962699115522E-6,
+            "scoreConfidence" : [
+                6.81876518595902E-4,
+                7.00370443994133E-4
+            ],
+            "scorePercentiles" : {
+                "0.0" : 6.798332339387368E-4,
+                "50.0" : 6.923447996800781E-4,
+                "90.0" : 6.984974451962093E-4,
+                "95.0" : 6.987477478733789E-4,
+                "99.0" : 6.987477478733789E-4,
+                "99.9" : 6.987477478733789E-4,
+                "99.99" : 6.987477478733789E-4,
+                "99.999" : 6.987477478733789E-4,
+                "99.9999" : 6.987477478733789E-4,
+                "100.0" : 6.987477478733789E-4
+            },
+            "scoreUnit" : "s/op",
+            "rawData" : [
+                [
+                    6.952894554042789E-4,
+                    6.826858778625954E-4,
+                    6.91954917919713E-4,
+                    6.962447211016831E-4,
+                    6.987477478733789E-4
+                ],
+                [
+                    6.927346814404432E-4,
+                    6.952574680732926E-4,
+                    6.798332339387368E-4,
+                    6.871386188907194E-4,
+                    6.913480904453329E-4
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_String",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 43.42949057669236,
+            "scoreError" : 0.7996873843668083,
+            "scoreConfidence" : [
+                42.629803192325554,
+                44.229177961059165
+            ],
+            "scorePercentiles" : {
+                "0.0" : 42.86300880211505,
+                "50.0" : 43.42446867960659,
+                "90.0" : 44.010581819896174,
+                "95.0" : 44.01795441090223,
+                "99.0" : 44.01795441090223,
+                "99.9" : 44.01795441090223,
+                "99.99" : 44.01795441090223,
+                "99.999" : 44.01795441090223,
+                "99.9999" : 44.01795441090223,
+                "100.0" : 44.01795441090223
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    42.86351715378637,
+                    42.94377979352432,
+                    42.970176205299985,
+                    43.01575908097577,
+                    42.86300880211505
+                ],
+                [
+                    43.83317827823741,
+                    43.91482988531571,
+                    43.92847365592506,
+                    43.944228500841696,
+                    44.01795441090223
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.35",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_String_No_Cache",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "D:\\Dev\\java\\zulu-jdk17.30.15\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Dfile.encoding=windows-1252",
+            "-Djava.io.tmpdir=C:\\Users\\Colin\\Documents\\Programming\\project\\gestaltSSH\\gestalt-benchmark\\build\\tmp\\jmh",
+            "-Duser.country=CA",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "17.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "17.0.1+12-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "5 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1416.2357966216875,
+            "scoreError" : 19.053750184287555,
+            "scoreConfidence" : [
+                1397.1820464374,
+                1435.289546805975
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1393.7400892065223,
+                "50.0" : 1423.3219871841325,
+                "90.0" : 1427.5922951995615,
+                "95.0" : 1427.6933019018052,
+                "99.0" : 1427.6933019018052,
+                "99.9" : 1427.6933019018052,
+                "99.99" : 1427.6933019018052,
+                "99.999" : 1427.6933019018052,
+                "99.9999" : 1427.6933019018052,
+                "100.0" : 1427.6933019018052
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    1426.436466994725,
+                    1422.9086521230079,
+                    1424.4891399993112,
+                    1423.7353222452573,
+                    1426.683234879367
+                ],
+                [
+                    1427.6933019018052,
+                    1412.1318985831738,
+                    1401.0173251640397,
+                    1393.7400892065223,
+                    1403.522535119667
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

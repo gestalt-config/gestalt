@@ -72,6 +72,35 @@ public class GestaltSample {
     }
 
     @Test
+    public void integrationTestNoCache() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
+        File devFile = new File(devFileURL.getFile());
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .useCacheDecorator(false)
+            .build();
+
+        // Load the configurations, this will thow exceptions if there are any errors.
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
     public void integrationTestTags() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
