@@ -112,6 +112,7 @@ public abstract class Benchmarks {
 
 
     public static class HttpPool {
+
         public short maxTotal;
         public long maxPerRoute;
         public int validateAfterInactivity;
@@ -121,6 +122,54 @@ public abstract class Benchmarks {
 
         public HttpPool() {
 
+        }
+
+        public short getMaxTotal() {
+            return maxTotal;
+        }
+
+        public void setMaxTotal(short maxTotal) {
+            this.maxTotal = maxTotal;
+        }
+
+        public long getMaxPerRoute() {
+            return maxPerRoute;
+        }
+
+        public void setMaxPerRoute(long maxPerRoute) {
+            this.maxPerRoute = maxPerRoute;
+        }
+
+        public int getValidateAfterInactivity() {
+            return validateAfterInactivity;
+        }
+
+        public void setValidateAfterInactivity(int validateAfterInactivity) {
+            this.validateAfterInactivity = validateAfterInactivity;
+        }
+
+        public double getKeepAliveTimeoutMs() {
+            return keepAliveTimeoutMs;
+        }
+
+        public void setKeepAliveTimeoutMs(double keepAliveTimeoutMs) {
+            this.keepAliveTimeoutMs = keepAliveTimeoutMs;
+        }
+
+        public int getIdleTimeoutSec() {
+            return idleTimeoutSec;
+        }
+
+        public void setIdleTimeoutSec(int idleTimeoutSec) {
+            this.idleTimeoutSec = idleTimeoutSec;
+        }
+
+        public float getDefaultWait() {
+            return defaultWait;
+        }
+
+        public void setDefaultWait(float defaultWait) {
+            this.defaultWait = defaultWait;
         }
     }
 }
