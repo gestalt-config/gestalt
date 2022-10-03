@@ -107,10 +107,7 @@ public class ProxyDecoder implements Decoder<Object> {
                     ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
                         TypeCapture.of(returnType));
 
-                    if (defaultValidateOf.hasErrors()) {
-                        errors.addAll(defaultValidateOf.getErrors());
-                    }
-
+                    errors.addAll(defaultValidateOf.getErrors());
                     if (defaultValidateOf.hasResults()) {
                         methodResults.put(methodName, defaultValidateOf.results());
                     }
@@ -118,10 +115,8 @@ public class ProxyDecoder implements Decoder<Object> {
             } else {
                 ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                     TypeCapture.of(returnType));
-                if (fieldValidateOf.hasErrors()) {
-                    errors.addAll(fieldValidateOf.getErrors());
-                }
 
+                errors.addAll(fieldValidateOf.getErrors());
                 if (fieldValidateOf.hasResults()) {
                     methodResults.put(methodName, fieldValidateOf.results());
                 }

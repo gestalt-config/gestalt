@@ -391,10 +391,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             return false;
         } else if (error instanceof ValidationError.ArrayMissingIndex && !gestaltConfig.isTreatMissingArrayIndexAsError()) {
             return true;
-        } else if ((error instanceof ValidationError.DecodingLeafMissingValue ||
-            error instanceof ValidationError.NoResultsFoundForPath ||
-            error instanceof ValidationError.NoResultsFoundForNode) &&
-            !gestaltConfig.isTreatMissingValuesAsErrors()) {
+        } else if (error.hasNoResults() && !gestaltConfig.isTreatMissingValuesAsErrors()) {
             return true;
         }
 

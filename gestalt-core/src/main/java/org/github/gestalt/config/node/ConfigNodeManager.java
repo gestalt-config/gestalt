@@ -83,15 +83,14 @@ public class ConfigNodeManager implements ConfigNodeService {
             ValidateOf<ConfigNode> results = postProcess("", root, postProcessors);
 
             // If we have results we want to update the root to the new post processed config tree.
+            errors.addAll(results.getErrors());
             if (results.hasResults()) {
                 roots.put(tags, results.results());
             } else {
                 ppSuccessful = false;
                 errors.add(new ValidationError.NodePostProcessingNoResults());
             }
-            errors.addAll(results.getErrors());
         }
-
 
         return validateOf(ppSuccessful, errors);
     }
@@ -302,7 +301,7 @@ public class ConfigNodeManager implements ConfigNodeService {
         for (Token token : tokens) {
             ValidateOf<ConfigNode> result = navigateToNextNode(path, token, currentNode);
 
-            // if there are errors, add them to the error list abd do not add the merge results
+            // if there are errors, add them to the error list and do not add the merge results
             if (result.hasErrors()) {
                 return ValidateOf.inValid(result.getErrors());
             }

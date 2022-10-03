@@ -72,10 +72,7 @@ public class RecordDecoder implements Decoder<Object> {
                     ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
                         TypeCapture.of(fieldClass));
 
-                    if (defaultValidateOf.hasErrors()) {
-                        errors.addAll(defaultValidateOf.getErrors());
-                    }
-
+                    errors.addAll(defaultValidateOf.getErrors());
                     if (defaultValidateOf.hasResults()) {
                         values[i] = defaultValidateOf.results();
                     } else {
@@ -88,10 +85,7 @@ public class RecordDecoder implements Decoder<Object> {
                 ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
                     TypeCapture.of(fieldClass));
 
-                if (fieldValidateOf.hasErrors()) {
-                    errors.addAll(fieldValidateOf.getErrors());
-                }
-
+                errors.addAll(fieldValidateOf.getErrors());
                 if (fieldValidateOf.hasResults()) {
                     values[i] = fieldValidateOf.results();
                 } else {

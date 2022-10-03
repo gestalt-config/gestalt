@@ -49,6 +49,11 @@ public abstract class ValidationError {
         this.level = level;
     }
 
+
+    public boolean hasNoResults() {
+        return false;
+    }
+
     /**
      * Empty path provided to tokenizer. Parsing error.
      */
@@ -367,6 +372,11 @@ public abstract class ValidationError {
         public String description() {
             return "Unable to find node matching path: " + path;
         }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
+        }
     }
 
     /**
@@ -387,6 +397,11 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Leaf on path: " + path + ", missing value, " + node + " attempting to decode " + nodeType;
+        }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
         }
     }
 
@@ -652,6 +667,11 @@ public abstract class ValidationError {
             } else {
                 return "Unable to find node matching path: " + path + ", during " + area;
             }
+        }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
         }
     }
 
@@ -1246,6 +1266,11 @@ public abstract class ValidationError {
         public String description() {
             return "No results generating tokens while running node transform path: " + path + " with: " + property;
         }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
+        }
     }
 
     /**
@@ -1263,6 +1288,11 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "No results generated from post processor ";
+        }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
         }
     }
 
