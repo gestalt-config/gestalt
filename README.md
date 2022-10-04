@@ -191,7 +191,7 @@ Example of how to create and load a configuration using Gestalt:
   List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), 
     new TypeCapture<List<Host>>() {});
 ```
-With kotlin this is made easier with the inline reified methods that automatically capture the type for you based on return type. 
+With kotlin this is made easier with the inline reified methods that automatically capture the type for you based on return type. If nothing is found it will throw a GestaltException unless the type is nullable, then it will return null.  
 ```kotlin
   data class HttpPool(
     var maxTotal: Short = 0,
@@ -232,7 +232,7 @@ If you want to use a different path style you can provide your own SentenceLexer
 
 # Kotlin
 For Kotlin Gestalt includes several extension methods that allow easier use of Gestalt by way of reified functions to better capture the generic type information. 
-Using the extension functions you don't need to specify the type if the return type has enough information to be inferred.
+Using the extension functions you don't need to specify the type if the return type has enough information to be inferred. If nothing is found it will throw a GestaltException unless the type is nullable, then it will return null.
 ```kotlin
   val pool: HttpPool = gestalt.getConfig("http.pool")
   val hosts: List<Host> = gestalt.getConfig("db.hosts", emptyList())
