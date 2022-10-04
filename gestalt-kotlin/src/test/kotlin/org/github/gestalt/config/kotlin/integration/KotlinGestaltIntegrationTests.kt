@@ -95,18 +95,91 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertFalse(user.overrideEnabled)
         Assertions.assertEquals(
             "active", gestalt.getConfig(
-                "serviceMode", TypeCapture.of(
-                    String::class.java
-                )
-            )
+            "serviceMode", TypeCapture.of(
+            String::class.java
+        )
+        )
         )
         Assertions.assertEquals(
             'a', gestalt.getConfig(
-                "serviceMode", TypeCapture.of(
-                    Char::class.java
-                )
-            )
+            "serviceMode", TypeCapture.of(
+            Char::class.java
         )
+        )
+        )
+    }
+
+    @Test
+    @Throws(GestaltException::class)
+    fun `Test Null Return Types`() {
+        val configs: MutableMap<String, String> = HashMap()
+        configs["db.hosts[0].password"] = "1234"
+        configs["db.hosts[1].password"] = "5678"
+        configs["db.hosts[2].password"] = "9012"
+        configs["db.idleTimeout"] = "123"
+        val defaultFileURL = KotlinGestaltIntegrationTests::class.java.classLoader.getResource("default.properties")
+        val defaultFile = File(defaultFileURL.file)
+        val devFileURL = KotlinGestaltIntegrationTests::class.java.classLoader.getResource("dev.properties")
+        val devFile = File(devFileURL.file)
+        val builder = GestaltBuilder()
+        val gestalt = builder
+            .addSource(FileConfigSource(defaultFile))
+            .addSource(FileConfigSource(devFile))
+            .addSource(MapConfigSource(configs))
+            .build()
+        gestalt.loadConfigs()
+        val maxTotal: Short? = gestalt.getConfig("http.pool.maxTotal")
+        Assertions.assertEquals(1000, maxTotal)
+
+        val notExist: Short? = gestalt.getConfig("http.pool.notExist")
+        Assertions.assertNull(notExist)
+
+        try {
+            val myVal: Long = gestalt.getConfig("http.pool.notExist")
+            Assertions.fail("Should not reach this")
+        } catch (e:GestaltException) {
+            Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
+                " - level: ERROR, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                "during navigating to next node", e.message)
+        }
+
+    }
+
+    @Test
+    @Throws(GestaltException::class)
+    fun `Test Null Return Types missing values`() {
+        val configs: MutableMap<String, String> = HashMap()
+        configs["db.hosts[0].password"] = "1234"
+        configs["db.hosts[1].password"] = "5678"
+        configs["db.hosts[2].password"] = "9012"
+        configs["db.idleTimeout"] = "123"
+        val defaultFileURL = KotlinGestaltIntegrationTests::class.java.classLoader.getResource("default.properties")
+        val defaultFile = File(defaultFileURL.file)
+        val devFileURL = KotlinGestaltIntegrationTests::class.java.classLoader.getResource("dev.properties")
+        val devFile = File(devFileURL.file)
+        val builder = GestaltBuilder()
+        val gestalt = builder
+            .addSource(FileConfigSource(defaultFile))
+            .addSource(FileConfigSource(devFile))
+            .addSource(MapConfigSource(configs))
+            .setTreatMissingValuesAsErrors(false)
+            .build()
+        gestalt.loadConfigs()
+        val maxTotal: Short? = gestalt.getConfig("http.pool.maxTotal")
+        Assertions.assertEquals(1000, maxTotal)
+
+        val notExist: Short? = gestalt.getConfig("http.pool.notExist")
+        Assertions.assertNull(notExist)
+
+        try {
+            val myVal: Long = gestalt.getConfig("http.pool.notExist")
+            Assertions.fail("Should not reach this")
+        } catch (e:GestaltException) {
+            Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
+                " - level: ERROR, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                "during navigating to next node", e.message)
+        }
+
     }
 
     @Test
@@ -134,7 +207,7 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertEquals(33.0f, pool.defaultWait)
 
         val devEnv = Tags.of("env", "dev")
-        val poolTags = gestalt.getConfig<HttpPool>("http.pool",devEnv)
+        val poolTags = gestalt.getConfig<HttpPool>("http.pool", devEnv)
         Assertions.assertEquals(1000, poolTags.maxTotal.toInt())
         Assertions.assertEquals(1000, poolTags.maxTotal.toInt())
         Assertions.assertEquals(1000.toShort(), gestalt.getConfig("http.pool.maxTotal", devEnv))
@@ -228,22 +301,22 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertFalse(user.overrideEnabled)
         Assertions.assertEquals(
             "active", gestalt.getConfig(
-                "serviceMode", TypeCapture.of(
-                    String::class.java
-                )
-            )
+            "serviceMode", TypeCapture.of(
+            String::class.java
+        )
+        )
         )
         Assertions.assertEquals(
             'a', gestalt.getConfig(
-                "serviceMode", TypeCapture.of(
-                    Char::class.java
-                )
-            )
+            "serviceMode", TypeCapture.of(
+            Char::class.java
+        )
+        )
         )
         val booking = gestalt.getConfig(
             "subservice.booking", TypeCapture.of(
-                SubService::class.java
-            )
+            SubService::class.java
+        )
         )
         Assertions.assertTrue(booking.isEnabled)
         Assertions.assertEquals("https://dev.booking.host.name", booking.service!!.host)
