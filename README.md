@@ -370,10 +370,10 @@ If you provide 2 tags in the source, when retrieving the configuration you must 
 ```java
   // head.shot.multiplier = 1.3
   // max.online.players = 32
-  ClassPathConfigSource pveConfig = new ClassPathConfigSource("/test.properties", Tags.of("mode", "pve"));
+  ClassPathConfigSource pveConfig = new ClassPathConfigSource("/test-pve.properties", Tags.of("mode", "pve"));
 
   // head.shot.multiplier = 1.5
-  ClassPathConfigSource pvpConfig = new ClassPathConfigSource("/test.properties", Tags.of("mode", "pvp"));
+  ClassPathConfigSource pvpConfig = new ClassPathConfigSource("/test-pvp.properties", Tags.of("mode", "pvp"));
 
   // head.shot.multiplier = 1.0
   // gut.shot.multiplier = 1.0
