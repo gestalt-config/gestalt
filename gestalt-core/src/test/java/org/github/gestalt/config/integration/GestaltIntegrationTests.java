@@ -424,21 +424,21 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
-        List<IHostAnnotations> iHostAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
+        List<IHostAnnotations> ihostAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
-        Assertions.assertEquals(3, iHostAnnotations.size());
-        Assertions.assertEquals("credmond", iHostAnnotations.get(0).getUser());
-        Assertions.assertEquals("1234", iHostAnnotations.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", iHostAnnotations.get(0).getUrl());
-        Assertions.assertEquals("customers", iHostAnnotations.get(0).getTable());
-        Assertions.assertEquals("credmond", iHostAnnotations.get(1).getUser());
-        Assertions.assertEquals("5678", iHostAnnotations.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", iHostAnnotations.get(1).getUrl());
-        Assertions.assertEquals("customers", iHostAnnotations.get(1).getTable());
-        Assertions.assertEquals("credmond", iHostAnnotations.get(2).getUser());
-        Assertions.assertEquals("9012", iHostAnnotations.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", iHostAnnotations.get(2).getUrl());
-        Assertions.assertEquals("customers", iHostAnnotations.get(02).getTable());
+        Assertions.assertEquals(3, ihostAnnotations.size());
+        Assertions.assertEquals("credmond", ihostAnnotations.get(0).getUser());
+        Assertions.assertEquals("1234", ihostAnnotations.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", ihostAnnotations.get(0).getUrl());
+        Assertions.assertEquals("customers", ihostAnnotations.get(0).getTable());
+        Assertions.assertEquals("credmond", ihostAnnotations.get(1).getUser());
+        Assertions.assertEquals("5678", ihostAnnotations.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", ihostAnnotations.get(1).getUrl());
+        Assertions.assertEquals("customers", ihostAnnotations.get(1).getTable());
+        Assertions.assertEquals("credmond", ihostAnnotations.get(2).getUser());
+        Assertions.assertEquals("9012", ihostAnnotations.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", ihostAnnotations.get(2).getUrl());
+        Assertions.assertEquals("customers", ihostAnnotations.get(02).getTable());
 
         List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });

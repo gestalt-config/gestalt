@@ -1,5 +1,3 @@
-import org.github.gestalt.config.Test
-
 /*
  * Apply the plugin to setup testing dependencies and tasks.
  */
@@ -11,14 +9,14 @@ plugins {
 
 dependencies {
     // Use JUnit Jupiter API for testing.
-    testImplementation(Test.junitAPI)
+    testImplementation(libs.junitAPI)
 
     // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly(Test.junitEngine)
+    testRuntimeOnly(libs.junitEngine)
 
-    testImplementation(Test.assertJ)
+    testImplementation(libs.assertJ)
 
-    testImplementation(Test.mockito)
+    testImplementation(libs.mockito)
 }
 
 tasks.jacocoTestReport {

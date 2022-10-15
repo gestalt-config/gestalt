@@ -10,7 +10,7 @@ plugins {
 }
 
 dependencies {
-    errorprone(org.github.gestalt.config.Plugins.errorProne)
+    errorprone(libs.errorProne)
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -18,13 +18,13 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 checkstyle {
-    toolVersion = "8.42"
+    toolVersion = libs.versions.checkStyle.get()
     configFile = file(rootDir.path + "/config/checkstyle/google_checks.xml")
     isIgnoreFailures = true
 }
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.34.0"
+    toolVersion = libs.versions.pmd.get()
     ruleSets = listOf(rootDir.path + "/config/pmd/custom_ruleset.xml")
 }

@@ -1,6 +1,3 @@
-import org.github.gestalt.config.Application
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("gestalt.java-library-conventions")
     id("gestalt.kotlin-common-conventions")
@@ -11,6 +8,6 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(Application.Kotlin.kotlinReflection)
+    implementation(libs.kotlin.reflection)
 }
 

@@ -14,7 +14,6 @@ import java.util.Map;
 
 import static org.mockito.Mockito.mockStatic;
 
-
 class EnvironmentConfigSourceTest {
 
     @Test
@@ -25,7 +24,6 @@ class EnvironmentConfigSourceTest {
         Assertions.assertNotNull(envConfig.loadList());
         Assertions.assertTrue(envConfig.loadList().size() > 0);
     }
-
 
     @Test
     void format() {

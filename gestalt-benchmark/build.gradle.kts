@@ -1,6 +1,3 @@
-import org.github.gestalt.config.Test
-import kotlin.time.measureTime
-
 plugins {
     `java-library`
     id("me.champeau.jmh") version "0.6.8"
@@ -11,25 +8,22 @@ repositories {
     mavenCentral()
 }
 
-val gestaltVersion = "0.10.0"
-
 dependencies {
-    jmh(Test.jmh)
-    jmh(Test.jmhAnnotation)
+    jmh(libs.jmh)
+    jmh(libs.jmh.annotations)
 
     // this is the line that solves the missing /META-INF/BenchmarkList error
-    jmhAnnotationProcessor(Test.jmhAnnotation)
+    jmhAnnotationProcessor(libs.jmh.annotations)
 
-    implementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
-    implementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
-
+    implementation(libs.gestalt.core)
+    implementation(libs.gestalt.kotlin)
 }
 
 
 jmh {
     // setup
     failOnError.set(true)
-    resultsFile.set(File("${project.projectDir}/results/results-${gestaltVersion}.json"))
+    resultsFile.set(File("${project.projectDir}/results/results-${libs.versions.gestalt.get()}.json"))
     resultFormat.set("JSON")
 
     // Warmup

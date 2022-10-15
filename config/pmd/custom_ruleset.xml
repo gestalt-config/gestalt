@@ -89,7 +89,6 @@ under the License.
     <rule ref="category/java/design.xml/SimplifyConditional"/>
     <rule ref="category/java/design.xml/SingularField"/>
     <rule ref="category/java/design.xml/UseUtilityClass"/>
-    <rule ref="category/java/design.xml/SimplifyBooleanAssertion"/>
 
     <rule ref="category/java/errorprone.xml/AvoidBranchingStatementAsLastInLoop"/>
     <rule ref="category/java/errorprone.xml/AvoidDecimalLiteralsInBigDecimalConstructor"/>
@@ -99,14 +98,7 @@ under the License.
     <rule ref="category/java/errorprone.xml/CheckSkipResult"/>
     <rule ref="category/java/errorprone.xml/ClassCastExceptionWithToArray"/>
     <rule ref="category/java/errorprone.xml/DontUseFloatTypeForLoopIndices"/>
-    <rule ref="category/java/errorprone.xml/EmptyFinallyBlock"/>
-    <rule ref="category/java/errorprone.xml/EmptyIfStmt"/>
-    <rule ref="category/java/errorprone.xml/EmptyInitializer"/>
-    <rule ref="category/java/errorprone.xml/EmptyStatementBlock"/>
     <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop"/>
-    <rule ref="category/java/errorprone.xml/EmptySwitchStatements"/>
-    <rule ref="category/java/errorprone.xml/EmptySynchronizedBlock"/>
-    <rule ref="category/java/errorprone.xml/EmptyTryBlock"/>
     <rule ref="category/java/errorprone.xml/JumbledIncrementer"/>
     <rule ref="category/java/errorprone.xml/MisplacedNullCheck"/>
     <rule ref="category/java/errorprone.xml/OverrideBothEqualsAndHashcode"/>
@@ -124,12 +116,10 @@ under the License.
     <rule ref="category/java/multithreading.xml/UseNotifyAllInsteadOfNotify"/>
 
     <rule ref="category/java/performance.xml/BigIntegerInstantiation"/>
-    <rule ref="category/java/performance.xml/BooleanInstantiation"/>
     <rule ref="category/java/performance.xml/OptimizableToArrayCall"/>
     <rule ref="category/java/performance.xml/TooFewBranchesForASwitchStatement"/>
     <rule ref="category/java/performance.xml/AddEmptyString"/>
     <rule ref="category/java/performance.xml/AvoidArrayLoops"/>
-    <rule ref="category/java/performance.xml/UnnecessaryWrapperObjectCreation"/>
     <rule ref="category/java/performance.xml/UseArrayListInsteadOfVector"/>
     <rule ref="category/java/performance.xml/UseArraysAsList"/>
     <rule ref="category/java/performance.xml/UseStringBufferForStringAppends"/>

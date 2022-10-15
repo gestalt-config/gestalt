@@ -1,0 +1,105 @@
+[versions]
+kotlin = "1.7.20"
+kodeinDI = "7.15.0"
+koinDI= "3.2.2"
+
+jackson = "2.13.4"
+
+slf4j = "2.0.3"
+
+hocon = "1.4.2"
+aws = "2.17.291"
+jgit = "6.3.0.202209071007-r"
+
+eddsa = "0.3.0"
+
+junit5 = "5.9.1"
+assertJ = "3.23.1"
+mockito = "4.8.0"
+mockk = "1.13.2"
+koTestAssertions = "5.5.1"
+awsMock = "2.8.0"
+
+errorprone = "2.16"
+errorpronejavac = "9+181-r4173-1"
+detekt = "1.21.0"
+gradleDetekt = "1.21.0"
+
+checkStyle = "10.3.4"
+pmd = "6.50.0"
+
+jmh = "1.35"
+
+gestalt = "0.16.1"
+
+gradleVersions = "0.42.0"
+gitVersions = "0.15.0"
+gradleErrorProne = "2.0.2"
+
+[libraries]
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-Simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+kotlin-Reflection = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-dokka = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "kotlin" }
+gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "kotlin" }
+kodein-DI = { module = "org.kodein.di:kodein-di-jvm", version.ref = "kodeinDI" }
+koin-DI = { module = "io.insert-koin:koin-core", version.ref = "koinDI" }
+
+
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+
+jackson-java8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+
+jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
+jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+
+hocon = { module = "com.typesafe:config", version.ref = "hocon" }
+
+aws-S3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }
+eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
+
+junitAPI = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
+junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
+
+mockito = { module = "org.mockito:mockito-inline", version.ref = "mockito" }
+
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+koTestAssertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "koTestAssertions" }
+aws-Mock = { module = "com.adobe.testing:s3mock-junit5", version.ref = "awsMock" }
+
+jmh = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
+jmh-annotations = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
+
+errorProne = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+gradle-detekt  = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "gradleDetekt" }
+
+gradle-ben-manes-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleVersions" }
+gradle-error-prone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
+gradle-git-versions = { module = "com.palantir.gradle.gitversion:gradle-git-version", version.ref = "gitVersions" }
+
+
+gestalt-core = { module = "com.github.gestalt-config:gestalt-core", version.ref = "gestalt" }
+gestalt-hocon = { module = "com.github.gestalt-config:gestalt-hocon", version.ref = "gestalt" }
+gestalt-kotlin = { module = "com.github.gestalt-config:gestalt-kotlin", version.ref = "gestalt" }
+gestalt-json = { module = "com.github.gestalt-config:gestalt-json", version.ref = "gestalt" }
+gestalt-toml = { module = "com.github.gestalt-config:gestalt-toml", version.ref = "gestalt" }
+gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
+gestalt-s3 = { module = "com.github.gestalt-config:gestalt-s3", version.ref = "gestalt" }
+gestalt-kodein-di = { module = "com.github.gestalt-config:gestalt-kodein-di", version.ref = "gestalt" }
+gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", version.ref = "gestalt" }
+
+[bundles]
+jackson = ["jackson-core", "jackson-databind", "jackson-dataformat-yaml", "jackson-java8", "jackson-jsr310"]
+
+[plugins]
+

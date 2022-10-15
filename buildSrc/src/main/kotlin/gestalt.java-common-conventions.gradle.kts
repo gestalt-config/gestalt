@@ -1,5 +1,3 @@
-import org.github.gestalt.config.Application
-
 /*
  * Apply the java Plugin to add support for Java.
  * Adds a set of common dependencies all modules need.
@@ -25,5 +23,5 @@ tasks.compileJava {
 }
 
 dependencies {
-    implementation(Application.Logging.slf4japi)
+    implementation(libs.slf4j.api)
 }

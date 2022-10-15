@@ -1,6 +1,3 @@
-import org.github.gestalt.config.Application
-import org.github.gestalt.config.Test
-
 plugins {
     id("gestalt.java-library-conventions")
     id("gestalt.java-test-conventions")
@@ -10,8 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(Application.AWS.awsS3)
-    testImplementation(Test.awsMock)
+    implementation(libs.aws.s3)
+    testImplementation(libs.aws.mock)
 }
 
 

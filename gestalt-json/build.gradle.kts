@@ -1,5 +1,3 @@
-import org.github.gestalt.config.Application
-
 plugins {
     id("gestalt.java-library-conventions")
     id("gestalt.java-test-conventions")
@@ -9,10 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(Application.Json.jacksonCore)
-    implementation(Application.Json.jacksonDataBind)
-
-    implementation(Application.Json.jacksonJava8)
-    implementation(Application.Json.jacksonJsr310)
+    implementation(libs.bundles.jackson)
 }
 

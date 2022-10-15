@@ -3,11 +3,11 @@ plugins {
 }
 
 dependencies {
-    detektPlugins(org.github.gestalt.config.Plugins.detekt)
+    detektPlugins(libs.detekt)
 }
 
 detekt {
-    toolVersion = org.github.gestalt.config.Plugins.Versions.detekt
+    toolVersion = libs.versions.detekt.get()
     config = files(project.rootDir.resolve("config/detekt/config.yml"))
     debug = false
     parallel = false

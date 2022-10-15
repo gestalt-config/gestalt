@@ -11,5 +11,5 @@ tasks.compileTestJava {
 }
 
 dependencies {
-    testImplementation(org.github.gestalt.config.Application.Logging.slf4jSimple)
+    testImplementation(libs.slf4j.simple)
 }
