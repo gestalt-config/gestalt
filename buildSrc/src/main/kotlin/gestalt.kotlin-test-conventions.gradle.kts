@@ -1,5 +1,3 @@
-import org.github.gestalt.config.Test
-
 plugins {
     jacoco
     id("gestalt.kotlin-common-conventions")
@@ -7,11 +5,11 @@ plugins {
 
 dependencies {
     //Testing dependencies
-    testImplementation(Test.junitAPI)
-    testRuntimeOnly(Test.junitEngine)
-    testImplementation(Test.mockk)
-    testImplementation(Test.kotlinTestAssertions)
-    testImplementation(Test.mockito)
+    testImplementation(libs.junitAPI)
+    testRuntimeOnly(libs.junitEngine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.koTestAssertions)
+    testImplementation(libs.mockito)
 }
 
 tasks.test {
@@ -23,9 +21,6 @@ tasks.test {
 
 //setup Jacoco
 apply(plugin = "jacoco")
-jacoco {
-    toolVersion = "0.8.7"
-}
 
 tasks.withType<JacocoReport> {
     reports {

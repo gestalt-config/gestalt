@@ -1,5 +1,3 @@
-import org.github.gestalt.config.Application
-
 plugins {
     id("gestalt.java-library-conventions")
     id("gestalt.java-test-conventions")
@@ -9,5 +7,5 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(Application.Hocon.hocon)
+    implementation(libs.hocon)
 }

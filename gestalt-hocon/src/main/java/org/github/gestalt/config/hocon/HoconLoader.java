@@ -28,13 +28,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class HoconLoader implements ConfigLoader {
 
-    private ConfigParseOptions configParseOptions = ConfigParseOptions.defaults();
+    private final ConfigParseOptions configParseOptions;
 
     /**
      * Default constructor for HoconLoader that uses the default ConfigParseOptions.
      */
     public HoconLoader() {
-
+        configParseOptions = ConfigParseOptions.defaults();
     }
 
     /**

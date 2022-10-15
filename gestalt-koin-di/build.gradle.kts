@@ -8,7 +8,7 @@ plugins {
 dependencies {
     implementation(project(":gestalt-core"))
     implementation(project(":gestalt-kotlin"))
-    implementation(org.github.gestalt.config.Application.Kotlin.koinDI)
+    implementation(libs.koin.di)
 }
 
 tasks.jar {

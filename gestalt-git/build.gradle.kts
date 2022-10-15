@@ -1,5 +1,3 @@
-import org.github.gestalt.config.Application
-
 plugins {
     id("gestalt.kotlin-common-conventions")
     id("gestalt.kotlin-test-conventions")
@@ -9,8 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(Application.Git.jgit)
-    implementation(Application.Git.jgitApacheSSH)
-    implementation(Application.Git.eddsa)
+    implementation(libs.jgit)
+    implementation(libs.jgit.apache.ssh)
+    implementation(libs.eddsa)
 }
 

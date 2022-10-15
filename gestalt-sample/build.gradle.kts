@@ -11,22 +11,21 @@ repositories {
 }
 
 dependencies {
-    val gestaltVersion = "0.16.1"
-    testImplementation("com.github.gestalt-config:gestalt-core:$gestaltVersion")
-    testImplementation("com.github.gestalt-config:gestalt-hocon:$gestaltVersion")
-    testImplementation("com.github.gestalt-config:gestalt-kotlin:$gestaltVersion")
-    testImplementation("com.github.gestalt-config:gestalt-json:$gestaltVersion")
-    testImplementation("com.github.gestalt-config:gestalt-toml:$gestaltVersion")
-    testImplementation("com.github.gestalt-config:gestalt-yaml:$gestaltVersion")
-    testImplementation("com.github.gestalt-config:gestalt-s3:$gestaltVersion")
+    testImplementation(libs.gestalt.core)
+    testImplementation(libs.gestalt.hocon)
+    testImplementation(libs.gestalt.kotlin)
+    testImplementation(libs.gestalt.json)
+    testImplementation(libs.gestalt.toml)
+    testImplementation(libs.gestalt.yaml)
+    testImplementation(libs.gestalt.s3)
 
-    testImplementation("com.github.gestalt-config:gestalt-kodein-di:$gestaltVersion")
-    implementation(org.github.gestalt.config.Application.Kotlin.kodeinDI)
+    testImplementation(libs.gestalt.kodein.di)
+    implementation(libs.kodein.di)
 
-    testImplementation("com.github.gestalt-config:gestalt-koin-di:$gestaltVersion")
-    implementation(org.github.gestalt.config.Application.Kotlin.koinDI)
+    testImplementation(libs.gestalt.koin.di)
+    implementation(libs.koin.di)
 
-    testImplementation(org.github.gestalt.config.Test.awsMock)
+    testImplementation(libs.aws.mock)
 }
 
 tasks.jar {
