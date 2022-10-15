@@ -150,6 +150,22 @@ class ListDecoderTest {
     }
 
     @Test
+    void arrayDecodeLeafWithEscapeComma() {
+        ListDecoder decoder = new ListDecoder();
+
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", new LeafNode("a,b,c\\,d"), new TypeCapture<List<String>>() {
+        }, decoderService);
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("a", values.results().get(0));
+        Assertions.assertEquals("b", values.results().get(1));
+        Assertions.assertEquals("c,d", values.results().get(2));
+    }
+
+    @Test
     void arrayDecodeNullLeaf() {
         ListDecoder decoder = new ListDecoder();
 

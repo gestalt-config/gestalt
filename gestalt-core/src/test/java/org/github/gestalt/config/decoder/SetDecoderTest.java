@@ -164,6 +164,25 @@ class SetDecoderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void arrayDecodeLeafWithEscapeComma() {
+        SetDecoder decoder = new SetDecoder();
+
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new LeafNode("a,b,c\\,d"), new TypeCapture<List<String>>() {
+        }, decoderService);
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertEquals(3, values.results().size());
+        Set<String> results = (Set<String>) values.results();
+        assertThat(results)
+            .contains("a")
+            .contains("b")
+            .contains("c,d");
+    }
+
+    @Test
     void arrayDecodeNullLeaf() {
         SetDecoder decoder = new SetDecoder();
 
