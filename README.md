@@ -287,7 +287,7 @@ To register your own default ConfigLoaders, add it to a file in META-INF\service
 # Decoders
 | Type              | details                                                                                                                                                                                                                                                                                                                                                      |
 |-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Array             | Java primitive array type with any generic class, Can decode simple types from a single comma separated value, or from an array node                                                                                                                                                                                                                         |
+| Array             | Java primitive array type with any generic class, Can decode simple types from a single comma separated value, or from an array node. You can escape the comma with a \\, so the values are not split.                                                                                                                                                       |
 | BigDecimal        |                                                                                                                                                                                                                                                                                                                                                              |
 | BigInteger        |                                                                                                                                                                                                                                                                                                                                                              |
 | Boolean           | Boolean and boolean                                                                                                                                                                                                                                                                                                                                          |
@@ -301,7 +301,7 @@ To register your own default ConfigLoaders, add it to a file in META-INF\service
 | Float             | Float and float                                                                                                                                                                                                                                                                                                                                              |
 | Instant           |                                                                                                                                                                                                                                                                                                                                                              |
 | Integer           | Integer and int                                                                                                                                                                                                                                                                                                                                              |
-| List              | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node                                                                                                                                                                                                                                       |
+| List              | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node. You can escape the comma with a \\, so the values are not split.                                                                                                                                                                                                                                     |
 | LocalDate         | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_LOCAL_DATE                                                                                                                                                                                                                                                                |
 | LocalDateTime     | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME                                                                                                                                                                                                                                                                 |
 | Long              | Long or long                                                                                                                                                                                                                                                                                                                                                 |
@@ -329,30 +329,37 @@ If you didn't manually add any Decoders as part of the GestaltBuilder, it will a
 To register your own default Decoders, add it to a file in META-INF\services\org.github.gestalt.config.decoder.Decoder and add the full path to your Decoder
 
 # Annotations
-When decoding a Java Bean style class, a record, an interface or a Kotlin Data Class you can provide a custom annotation to override the path for the configuration as well as provide a default. 
-The field annotation takes priority if both the field and method are annotated. 
+When decoding a Java Bean style class, a record, an interface or a Kotlin Data Class you can provide a custom annotation to override the path for the field as well as provide a default.
+The field annotation `@Config` takes priority if both the field and method are annotated.
+The class annotation `@ConfigPrefix` allows the user to define the prefix for the config object as part of the class instead of the `getConfig()` call. If you provide both the resulting prefix is first the prefix in getConfig then the annotation.
+For example using `@ConfigPrefix(prefix = "connection")` with `DBInfo pool = gestalt.getConfig("db", DBInfo.class);` the resulting path would be `db.connection`.
 
 ```java
+@ConfigPrefix(prefix = "db")
 public class DBInfo {
     @Config(path = "channel.port", defaultVal = "1234")
     private int port;
-    
+
+    public int getPort() {
+        return port;
+    }
+}
+
+DBInfo pool = gestalt.getConfig("", DBInfo.class);
+
+
+public class DBInfo {
+    private int port;
+
+    @Config(path = "channel.port", defaultVal = "1234")
     public int getPort() {
         return port;
     }
 
-  DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
-}
+}  
 
-public class DBInfo {
-  private int port;
-  @Config(path = "channel.port", defaultVal = "1234")
-  public int getPort() {
-    return port;
-  }
-  
-  DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
-}
+DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
+
 ```
 
 The path provided in the annotation is used to find the configuration from the base path provided in the call to Gestalt getConfig.

@@ -3,6 +3,7 @@ package org.github.gestalt.config.integration;
 import com.adobe.testing.s3mock.junit5.S3MockExtension;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
+import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -552,6 +553,26 @@ public class GestaltSample {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
+        //  validate prefix annotation
+        DataBasePrefix dbPrefix = gestalt.getConfig("", DataBasePrefix.class);
+        // not really a great test for ensuring we are hitting a cache
+        Assertions.assertEquals(600, dbPrefix.connectionTimeout);
+        Assertions.assertEquals(123, dbPrefix.idleTimeout);
+        Assertions.assertEquals(60000.0F, dbPrefix.maxLifetime);
+        Assertions.assertNull(dbPrefix.isEnabled);
+
+        Assertions.assertEquals(3, dbPrefix.hosts.size());
+        Assertions.assertEquals("credmond", dbPrefix.hosts.get(0).getUser());
+        // index into the path of an array.
+        Assertions.assertEquals("1234", dbPrefix.hosts.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", dbPrefix.hosts.get(0).url);
+        Assertions.assertEquals("credmond", dbPrefix.hosts.get(1).getUser());
+        Assertions.assertEquals("5678", dbPrefix.hosts.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", dbPrefix.hosts.get(1).url);
+        Assertions.assertEquals("credmond", dbPrefix.hosts.get(2).getUser());
+        Assertions.assertEquals("9012", dbPrefix.hosts.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", dbPrefix.hosts.get(2).url);
+
         List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
         });
         Assertions.assertEquals(3, hosts.size());
@@ -909,6 +930,18 @@ public class GestaltSample {
 
 
         public DataBase() {
+        }
+    }
+
+    @ConfigPrefix(prefix = "db")
+    public static class DataBasePrefix {
+        public List<Host> hosts;
+        public int connectionTimeout;
+        public Integer idleTimeout;
+        public float maxLifetime;
+        public Boolean isEnabled;
+
+        public DataBasePrefix() {
         }
     }
 

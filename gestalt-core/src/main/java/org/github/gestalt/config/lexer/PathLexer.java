@@ -28,9 +28,10 @@ public class PathLexer extends SentenceLexer {
      * Should allow most characters, even the delimiter. Although the string will be split with the delimiter so will not be seen
      */
     public static final String DEFAULT_EVALUATOR = "^((?<name>[\\w .,+=\\-;:\"'`~!@#$%^&*()\\<>]+)(?<array>\\[(?<index>\\d*)])?)$";
-    public static final String DELIMITER = "\\.";
+    public static final String DELIMITER = ".";
     private final Pattern pathPattern;
     private final String delimiter;
+    private final String delimiterRegex;
 
     /**
      * Build a path lexer to tokenize a path.
@@ -38,22 +39,24 @@ public class PathLexer extends SentenceLexer {
     public PathLexer() {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
         this.delimiter = DELIMITER;
+        this.delimiterRegex = Pattern.quote(DELIMITER);
     }
 
     /**
-     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "\\.".
+     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. ".".
      *
-     * @param delimiter a regex to split the path on.
+     * @param delimiter the character to split the sentence
      */
     public PathLexer(String delimiter) {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
         this.delimiter = delimiter;
+        this.delimiterRegex = Pattern.quote(delimiter);
     }
 
     /**
-     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "\\."
+     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
      *
-     * @param delimiter a regex to split the path on.
+     * @param delimiter the character to split the sentence
      * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
      *     name = name of the element
      *     array = if this element is an array
@@ -62,11 +65,17 @@ public class PathLexer extends SentenceLexer {
     public PathLexer(String delimiter, String pathPatternRegex) {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
         this.delimiter = delimiter;
+        this.delimiterRegex = Pattern.quote(delimiter);
+    }
+
+    @Override
+    public String getDeliminator() {
+        return delimiter;
     }
 
     @Override
     protected List<String> tokenizer(String sentence) {
-        return sentence != null && !sentence.isEmpty() ? Arrays.asList(sentence.split(delimiter)) : Collections.emptyList();
+        return sentence != null && !sentence.isEmpty() ? Arrays.asList(sentence.split(delimiterRegex)) : Collections.emptyList();
     }
 
     @Override

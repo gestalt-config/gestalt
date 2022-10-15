@@ -30,7 +30,7 @@ pmd = "6.50.0"
 
 jmh = "1.35"
 
-gestalt = "0.16.1"
+gestalt = "0.16.2"
 
 gradleVersions = "0.42.0"
 gitVersions = "0.15.0"
