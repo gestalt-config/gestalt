@@ -276,7 +276,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(tags);
 
         String combinedPath = buildPathWithConfigPrefix(klass, path);
-
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
         if (tokens.hasErrors()) {
             if (logger.isWarnEnabled()) {
