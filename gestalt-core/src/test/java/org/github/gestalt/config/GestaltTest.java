@@ -21,6 +21,8 @@ import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
+import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -92,7 +94,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -162,7 +164,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs, Tags.of("toys", "ball"))),
@@ -206,6 +208,71 @@ class GestaltTest {
     }
 
     @Test
+    public void testPrefixAnnotation() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.uri", "somedatabase");
+        configs.put("db.port", "3306");
+
+        configs.put("user.db.password", "test2");
+        configs.put("user.db.uri", "anotherDB");
+        configs.put("user.db.port", "1234");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer();
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(
+                Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
+                configNodeManager, lexer),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        DBInfoPathAnnotation dbInfo = gestalt.getConfig("", DBInfoPathAnnotation.class);
+
+        Assertions.assertEquals("test", dbInfo.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfo.getUri());
+        Assertions.assertEquals(3306, dbInfo.getPort());
+
+        // test different accessors
+        Optional<DBInfoPathAnnotation> dbInfoOptional = gestalt.getConfigOptional("", DBInfoPathAnnotation.class);
+
+        Assertions.assertEquals("test", dbInfoOptional.get().getPassword());
+        Assertions.assertEquals("somedatabase", dbInfoOptional.get().getUri());
+        Assertions.assertEquals(3306, dbInfoOptional.get().getPort());
+
+        DBInfoPathAnnotation dbInfoDefault = gestalt.getConfig("", new DBInfoPathAnnotation(), DBInfoPathAnnotation.class);
+
+        Assertions.assertEquals("test", dbInfoDefault.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfoDefault.getUri());
+        Assertions.assertEquals(3306, dbInfoDefault.getPort());
+
+        // test mixing a provided path with an annotated path
+        DBInfoPathAnnotation usersDBInfo = gestalt.getConfig("user", DBInfoPathAnnotation.class);
+
+        Assertions.assertEquals("test2", usersDBInfo.getPassword());
+        Assertions.assertEquals("anotherDB", usersDBInfo.getUri());
+        Assertions.assertEquals(1234, usersDBInfo.getPort());
+
+
+        // test with a longer annotated path
+        DBInfoPathMultiAnnotation multiDBInfo = gestalt.getConfig("", DBInfoPathMultiAnnotation.class);
+
+        Assertions.assertEquals("test2", multiDBInfo.getPassword());
+        Assertions.assertEquals("anotherDB", multiDBInfo.getUri());
+        Assertions.assertEquals(1234, multiDBInfo.getPort());
+    }
+
+    @Test
     public void testMerge() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
@@ -225,7 +292,7 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
@@ -278,7 +345,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2), new MapConfigSource(configs3)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
@@ -323,7 +390,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2, Tags.of("toy", "ball")),
                 new MapConfigSource(configs3)),
@@ -367,7 +434,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -401,7 +468,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -430,7 +497,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -460,7 +527,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -490,7 +557,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -526,7 +593,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -579,7 +646,7 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -608,7 +675,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -649,7 +716,7 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -689,7 +756,7 @@ class GestaltTest {
         config.setTreatMissingValuesAsErrors(false);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
@@ -751,7 +818,7 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.emptyList(),
@@ -781,7 +848,7 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -818,7 +885,7 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -848,7 +915,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         Mockito.when(configLoaderRegistry.getLoader(Mockito.anyString())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(
@@ -888,7 +955,7 @@ class GestaltTest {
         config.setTreatMissingValuesAsErrors(false);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -933,7 +1000,7 @@ class GestaltTest {
         config.setTreatMissingValuesAsErrors(false);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -963,7 +1030,7 @@ class GestaltTest {
         config.setTreatMissingValuesAsErrors(true);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -1002,7 +1069,7 @@ class GestaltTest {
         config.setTreatMissingValuesAsErrors(true);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
@@ -1036,13 +1103,13 @@ class GestaltTest {
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer),
-            new PathLexer("\\."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
+            new PathLexer("."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
 
@@ -1077,7 +1144,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         CoreListener coreListener = new CoreListener();
@@ -1135,7 +1202,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         CoreListener coreListener = new CoreListener();
@@ -1197,7 +1264,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         CoreListener coreListener = new CoreListener();
@@ -1234,7 +1301,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         CoreListener coreListener = new CoreListener();
@@ -1302,7 +1369,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         CoreListener coreListener = new CoreListener();
@@ -1367,7 +1434,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
-        SentenceLexer lexer = new PathLexer("\\.");
+        SentenceLexer lexer = new PathLexer(".");
 
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         CoreListener coreListener = new CoreListener();

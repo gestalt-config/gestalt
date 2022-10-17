@@ -34,7 +34,7 @@ public class PropertyLoader implements ConfigLoader {
      * Construct a default property loader using the default path lexer for "." separated paths.
      */
     public PropertyLoader() {
-        this(new PathLexer("\\."), new MapConfigParser());
+        this(new PathLexer("."), new MapConfigParser());
     }
 
     /**

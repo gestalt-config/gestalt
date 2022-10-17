@@ -30,7 +30,7 @@ public class MapConfigLoader implements ConfigLoader {
      * Construct a default Map Config loader using the default path lexer for "." separated paths.
      */
     public MapConfigLoader() {
-        this(new PathLexer("\\."), new MapConfigParser());
+        this(new PathLexer("."), new MapConfigParser());
     }
 
     /**

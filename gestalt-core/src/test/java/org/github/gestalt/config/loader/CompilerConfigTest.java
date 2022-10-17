@@ -50,7 +50,7 @@ class CompilerConfigTest {
 
         // create our class to be tested
         MapConfigLoader mapConfigLoader
-            = new MapConfigLoader(new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
+            = new MapConfigLoader(new PathLexer(".", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
         ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
@@ -94,7 +94,7 @@ class CompilerConfigTest {
 
         // create our class to be tested
         MapConfigLoader mapConfigLoader
-            = new MapConfigLoader(new PathLexer("\\.", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
+            = new MapConfigLoader(new PathLexer(".", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
         ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));

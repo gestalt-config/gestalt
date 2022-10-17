@@ -26,8 +26,21 @@ class PathLexerTest {
     }
 
     @Test
+    public void testTokenizerAlternate() {
+        PathLexer pathLexer = new PathLexer("_");
+
+        List<String> validate = pathLexer.tokenizer("the_quick[]_brown_fox");
+
+        Assertions.assertEquals(4, validate.size());
+        Assertions.assertEquals("the", validate.get(0));
+        Assertions.assertEquals("quick[]", validate.get(1));
+        Assertions.assertEquals("brown", validate.get(2));
+        Assertions.assertEquals("fox", validate.get(3));
+    }
+
+    @Test
     public void testEmptyTokenizer() {
-        PathLexer pathLexer = new PathLexer("\\.");
+        PathLexer pathLexer = new PathLexer(".");
 
         List<String> validate = pathLexer.tokenizer("");
         Assertions.assertEquals(0, validate.size());

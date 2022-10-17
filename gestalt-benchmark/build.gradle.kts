@@ -19,7 +19,6 @@ dependencies {
     implementation(libs.gestalt.kotlin)
 }
 
-
 jmh {
     // setup
     failOnError.set(true)

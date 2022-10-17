@@ -1,5 +1,6 @@
 package org.github.gestalt.config.reflect;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
@@ -211,6 +212,26 @@ public class TypeCapture<T> {
      */
     public boolean isInterface() {
         return getRawType().isInterface();
+    }
+
+    /**
+     * Get the annotations on this type.
+     *
+     * @return annotations on this type
+     */
+    public Annotation[] getAnnotations() {
+        return getRawType().getAnnotations();
+    }
+
+    /**
+     * Get the annotations by type.
+     *
+     * @param <A> the type of the annotation
+     *
+     * @return annotations by type
+     */
+    public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
+        return getRawType().getAnnotationsByType(annotationClass);
     }
 
     /**

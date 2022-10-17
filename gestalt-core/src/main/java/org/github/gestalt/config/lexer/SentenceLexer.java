@@ -16,6 +16,13 @@ import java.util.stream.Collectors;
 public abstract class SentenceLexer {
 
     /**
+     * Return the deliminator
+     *
+     * @return the deliminator
+     */
+    public abstract String getDeliminator();
+
+    /**
      * Takes in a string representation of a path. Ie abc.def or ABC_DEF then returns each element separated by the delimiter
      *
      * @param sentence the sentence to tokenize
