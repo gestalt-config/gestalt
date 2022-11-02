@@ -4,6 +4,8 @@ include(
     "gestalt-koin-di", "gestalt-s3", "gestalt-sample", "gestalt-sample-java-latest", "gestalt-toml", "gestalt-yaml"
 )
 
+includeBuild("build-logic")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
