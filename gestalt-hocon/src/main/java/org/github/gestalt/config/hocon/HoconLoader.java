@@ -13,6 +13,8 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -70,9 +72,9 @@ public class HoconLoader implements ConfigLoader {
     public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
 
         if (source.hasStream()) {
-            try {
+            try (InputStream is = source.loadStream()) {
                 Config config = ConfigFactory.parseReader(
-                    new InputStreamReader(source.loadStream(), StandardCharsets.UTF_8), configParseOptions);
+                    new InputStreamReader(is, StandardCharsets.UTF_8), configParseOptions);
                 config = config.resolve();
                 if (config == null) {
                     throw new GestaltException("Exception loading source: " + source.name() + " no hocon found");
@@ -85,7 +87,7 @@ public class HoconLoader implements ConfigLoader {
                 } else {
                     return ValidateOf.inValid(node.getErrors());
                 }
-            } catch (ConfigException | NullPointerException e) {
+            } catch (ConfigException | NullPointerException | IOException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
         } else {
