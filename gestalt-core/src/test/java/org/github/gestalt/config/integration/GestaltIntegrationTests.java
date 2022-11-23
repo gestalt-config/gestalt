@@ -40,7 +40,7 @@ public class GestaltIntegrationTests {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("/dev.properties"))
+            .addSource(new ClassPathConfigSource("dev.properties"))
             .addSource(new MapConfigSource(configs))
             .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
             .build();
@@ -221,7 +221,7 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new ClassPathConfigSource("default.properties"))
             .addSource(new ClassPathConfigSource("/dev.properties"))
             .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource(false))
@@ -256,7 +256,7 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
+            .addSource(new ClassPathConfigSource("defaultPPEnv.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addDefaultPostProcessors()
@@ -297,7 +297,7 @@ public class GestaltIntegrationTests {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
+            .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
@@ -325,7 +325,7 @@ public class GestaltIntegrationTests {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
+            .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
             .build();
 
