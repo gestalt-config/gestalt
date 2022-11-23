@@ -16,6 +16,14 @@ class ClassPathConfigSourceTest {
     }
 
     @Test
+    void loadFileWithoutSlash() throws GestaltException {
+        ClassPathConfigSource classPathConfigSource = new ClassPathConfigSource("test.properties");
+
+        Assertions.assertTrue(classPathConfigSource.hasStream());
+        Assertions.assertNotNull(classPathConfigSource.loadStream());
+    }
+
+    @Test
     void loadFileNull() {
         GestaltException exception = Assertions.assertThrows(GestaltException.class, () -> new ClassPathConfigSource(null));
 
@@ -50,6 +58,7 @@ class ClassPathConfigSourceTest {
 
         Assertions.assertEquals("Class Path resource: /test.properties", classPathConfigSource.name());
     }
+
 
 
     @Test

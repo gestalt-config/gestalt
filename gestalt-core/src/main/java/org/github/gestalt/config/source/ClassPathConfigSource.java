@@ -51,9 +51,13 @@ public class ClassPathConfigSource implements ConfigSource {
 
     @Override
     public InputStream loadStream() throws GestaltException {
-        InputStream is = ClassPathConfigSource.class.getResourceAsStream(resource);
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
         if (is == null) {
-            throw new GestaltException("Unable to load classpath resource from " + resource);
+            is = ClassPathConfigSource.class.getResourceAsStream(resource);
+            if (is == null) {
+                throw new GestaltException("Unable to load classpath resource from " + resource);
+            }
         }
         return is;
     }

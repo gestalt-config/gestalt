@@ -14,6 +14,7 @@ import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -71,8 +72,8 @@ public class PropertyLoader implements ConfigLoader {
     public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
         Properties properties = new Properties();
         if (source.hasStream()) {
-            try {
-                properties.load(source.loadStream());
+            try (InputStream is = source.loadStream()) {
+                properties.load(is);
             } catch (IOException | NullPointerException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
