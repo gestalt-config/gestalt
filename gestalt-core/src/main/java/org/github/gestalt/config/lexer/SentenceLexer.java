@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public abstract class SentenceLexer {
 
     /**
-     * Return the deliminator
+     * Return the deliminator.
      *
      * @return the deliminator
      */
