@@ -1,34 +1,35 @@
 [versions]
-kotlin = "1.7.20"
-kodeinDI = "7.15.0"
+kotlin = "1.7.21"
+kotlinDokka = "1.7.20"
+kodeinDI = "7.16.0"
 koinDI= "3.2.2"
 
-jackson = "2.13.4"
+jackson = "2.14.1"
 
-slf4j = "2.0.3"
+slf4j = "2.0.4"
 
 hocon = "1.4.2"
-aws = "2.17.291"
+aws = "2.18.23"
 jgit = "6.3.0.202209071007-r"
 
 eddsa = "0.3.0"
 
 junit5 = "5.9.1"
 assertJ = "3.23.1"
-mockito = "4.8.0"
+mockito = "4.9.0"
 mockk = "1.13.2"
-koTestAssertions = "5.5.1"
-awsMock = "2.8.0"
+koTestAssertions = "5.5.4"
+awsMock = "2.10.0"
 
 errorprone = "2.16"
 errorpronejavac = "9+181-r4173-1"
-detekt = "1.21.0"
+detekt = "1.22.0"
 gradleDetekt = "1.21.0"
 
 checkStyle = "10.3.4"
 pmd = "6.50.0"
 
-jmh = "1.35"
+jmh = "1.36"
 
 gestalt = "0.16.2"
 
@@ -43,7 +44,7 @@ slf4j-Simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 kotlin-Reflection = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-dokka = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "kotlin" }
 gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-gradle-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "kotlin" }
+gradle-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "kotlinDokka" }
 kodein-DI = { module = "org.kodein.di:kodein-di-jvm", version.ref = "kodeinDI" }
 koin-DI = { module = "io.insert-koin:koin-core", version.ref = "koinDI" }
 
@@ -102,4 +103,5 @@ gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", versio
 jackson = ["jackson-core", "jackson-databind", "jackson-dataformat-yaml", "jackson-java8", "jackson-jsr310"]
 
 [plugins]
+jmh = { id = "me.champeau.jmh", version = "0.6.8" }
 
