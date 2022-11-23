@@ -16,6 +16,7 @@ import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -67,8 +68,8 @@ public class YamlLoader implements ConfigLoader {
     public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
 
         if (source.hasStream()) {
-            try {
-                JsonNode jsonNode = objectMapper.readTree(source.loadStream());
+            try (InputStream is = source.loadStream()) {
+                JsonNode jsonNode = objectMapper.readTree(is);
                 if (jsonNode == null || jsonNode.isNull()) {
                     throw new GestaltException("Exception loading source: " + source.name() + " no yaml found");
                 }
