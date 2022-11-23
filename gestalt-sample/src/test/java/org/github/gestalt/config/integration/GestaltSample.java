@@ -89,7 +89,7 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new ClassPathConfigSource("default.properties"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .useCacheDecorator(false)
@@ -388,7 +388,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.yml"))
+            .addSource(new ClassPathConfigSource("default.yml"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .build();
@@ -409,7 +409,7 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/default.json"))
-            .addSource(new ClassPathConfigSource("/dev.yml"))
+            .addSource(new ClassPathConfigSource("dev.yml"))
             .addSource(new MapConfigSource(configs))
             .build();
 
@@ -697,7 +697,7 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
+            .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addDefaultPostProcessors()
             .build();
@@ -736,7 +736,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
+            .addSource(new ClassPathConfigSource("defaultPPSys.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
