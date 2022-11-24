@@ -5,17 +5,11 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-        languageVersion = "1.7"
-    }
+kotlin {
+    jvmToolchain(17)
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-
     withSourcesJar()
     withJavadocJar()
 }

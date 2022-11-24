@@ -76,6 +76,37 @@ class DataClassDecoderTest {
     }
 
     @Test
+    fun `decode wrong node type`() {
+        val decoder = DataClassDecoder()
+        val configs = LeafNode("pass")
+
+        val validate = decoder.decode("db.host", configs, kTypeCaptureOf<DBInfo>(), registry!!)
+        Assertions.assertFalse(validate.hasResults())
+        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertEquals(
+            "Expected a map node on path: db.host, received a : LEAF",
+            validate.errors[0].description()
+        )
+    }
+
+    @Test
+    fun `decode wrong TypeCapture`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["port"] = LeafNode("100")
+        configs["uri"] = LeafNode("mysql.com")
+        configs["password"] = LeafNode("pass")
+
+        val validate = decoder.decode("db.host", MapNode(configs), TypeCapture.of(DBInfo::class.java), registry!!)
+        Assertions.assertFalse(validate.hasResults())
+        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertEquals(
+            "Data Class: org.github.gestalt.config.kotlin.test.classes.DBInfo, can not be constructed on path: db.host",
+            validate.errors[0].description()
+        )
+    }
+
+    @Test
     fun `decode Missing With Default`() {
         val decoder = DataClassDecoder()
         val configs: MutableMap<String, ConfigNode> = HashMap()
