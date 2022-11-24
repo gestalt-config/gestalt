@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 public final class Tags {
     private final Set<Tag> tags;
 
+    private static final Tags defaultTags = new Tags(Set.of());
+
     private Tags(Set<Tag> tags) {
         this.tags = new HashSet<>(tags);
     }
@@ -22,7 +24,7 @@ public final class Tags {
      * @return Tags
      */
     public static Tags of() {                   //NOPMD
-        return new Tags(Set.of());
+        return defaultTags;
     }
 
     /**

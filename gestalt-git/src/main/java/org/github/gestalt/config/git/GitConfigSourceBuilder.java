@@ -18,7 +18,7 @@ public class GitConfigSourceBuilder {
     private CredentialsProvider credentials;
     private SshSessionFactory SshSessionFactory;
 
-    private Tags tags;
+    private Tags tags = Tags.of();
 
     /**
      * @param repoURI the URI to the git repo. Depending on your authentication method it can be either https or git or sshd
@@ -94,6 +94,6 @@ public class GitConfigSourceBuilder {
      * @throws GestaltException any exceptions thrown while constructing the GitConfigSource.
      */
     public GitConfigSource build() throws GestaltException {
-        return new GitConfigSource(repoURI, localRepoDirectory, configFilePath, branch, credentials, SshSessionFactory);
+        return new GitConfigSource(repoURI, localRepoDirectory, configFilePath, branch, credentials, SshSessionFactory, tags);
     }
 }

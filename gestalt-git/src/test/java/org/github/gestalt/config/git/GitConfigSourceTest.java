@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 // cicd isn't setup to run this test.
-@Disabled
 class GitConfigSourceTest {
 
     @Test
@@ -76,6 +75,7 @@ class GitConfigSourceTest {
     }
 
     @Test
+    @Disabled
     void hasStreamWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
@@ -101,6 +101,7 @@ class GitConfigSourceTest {
     }
 
     @Test
+    @Disabled
     void hasStreamSSHWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();

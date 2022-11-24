@@ -1,6 +1,6 @@
 plugins {
-    jacoco
     id("gestalt.kotlin-common-conventions")
+    jacoco
 }
 
 dependencies {

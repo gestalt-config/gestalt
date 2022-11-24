@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 class CollectionUtilsTest {
 
@@ -14,7 +15,7 @@ class CollectionUtilsTest {
     void distinctBy() {
         List<String> myStrings = List.of("A", "B", "C", "D", "A", "E", "C");
 
-        List<String> distinct = myStrings.stream().filter(CollectionUtils.distinctBy(String::valueOf)).toList();
+        List<String> distinct = myStrings.stream().filter(CollectionUtils.distinctBy(String::valueOf)).collect(Collectors.toList());
         Assertions.assertTrue(distinct.contains("A"));
         Assertions.assertEquals(distinct, List.of("A", "B", "C", "D", "E"));
     }

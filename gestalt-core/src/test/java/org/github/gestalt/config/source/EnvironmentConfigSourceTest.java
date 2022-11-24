@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mockStatic;
 
@@ -71,8 +72,8 @@ class EnvironmentConfigSourceTest {
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
             var results = envConfig.loadList();
 
-            var resultKeys = results.stream().map(Pair::getFirst).toList();
-            var resultValues = results.stream().map(Pair::getSecond).toList();
+            var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
+            var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
 
             assertThat(resultKeys).contains("key1", "key2", "prefix_key3", "prefix_key4");
             assertThat(resultValues).contains("value1", "value2", "value3", "value4");
@@ -89,8 +90,8 @@ class EnvironmentConfigSourceTest {
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
             var results = envConfig.loadList();
 
-            var resultKeys = results.stream().map(Pair::getFirst).toList();
-            var resultValues = results.stream().map(Pair::getSecond).toList();
+            var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
+            var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
 
             assertThat(resultKeys).contains("key3", "key4");
             assertThat(resultValues).contains("value3", "value4");
@@ -107,8 +108,8 @@ class EnvironmentConfigSourceTest {
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix", false);
             var results = envConfig.loadList();
 
-            var resultKeys = results.stream().map(Pair::getFirst).toList();
-            var resultValues = results.stream().map(Pair::getSecond).toList();
+            var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
+            var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
 
             assertThat(resultKeys).contains("prefix_key3", "prefix_key4");
             assertThat(resultValues).contains("value3", "value4");
@@ -125,8 +126,8 @@ class EnvironmentConfigSourceTest {
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
             var results = envConfig.loadList();
 
-            var resultKeys = results.stream().map(Pair::getFirst).toList();
-            var resultValues = results.stream().map(Pair::getSecond).toList();
+            var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
+            var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
 
             assertThat(resultKeys).contains("key3", "key4");
             assertThat(resultValues).contains("value3", "value4");

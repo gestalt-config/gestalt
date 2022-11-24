@@ -10,3 +10,5 @@ allprojects {
     group = "com.github.gestalt-config"
     version = "0.16.3"
 }
+
+
