@@ -10,7 +10,7 @@ name: Java CI with Gradle for branches
 on:
   push:
     branches:
-      - '*'
+      - '**'
       - '!main'
 
 permissions:
