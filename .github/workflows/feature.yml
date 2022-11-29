@@ -32,7 +32,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.3.3
 
       - name: Execute Gradle build
-        run: ./gradlew build
+        run: ./gradlew clean build
         env:
           DB_IDLETIMEOUT: 123
           SUBSERVICE_BOOKING_ISENABLED: true
