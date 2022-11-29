@@ -30,8 +30,9 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.3.3
-        with:
-          arguments: build
+
+      - name: Execute Gradle build
+        run: ./gradlew build
         env:
           DB_IDLETIMEOUT: 123
           SUBSERVICE_BOOKING_ISENABLED: true
