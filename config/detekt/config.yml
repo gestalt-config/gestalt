@@ -10,6 +10,7 @@ build:
 config:
   validation: true
   warningsAsErrors: false
+  checkExhaustiveness: false
   # when writing own rules with new properties, exclude the property path e.g.: 'my_rule_set,.*>.*>[my_property]'
   excludes: ''
 
@@ -78,15 +79,21 @@ comments:
     searchInInnerClass: true
     searchInInnerObject: true
     searchInInnerInterface: true
+    searchInProtectedClass: false
   UndocumentedPublicFunction:
     active: false
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    searchProtectedFunction: false
   UndocumentedPublicProperty:
     active: false
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    searchProtectedProperty: false
 
 complexity:
   active: true
+  CognitiveComplexMethod:
+    active: false
+    threshold: 15
   ComplexCondition:
     active: true
     threshold: 4
@@ -95,7 +102,8 @@ complexity:
     threshold: 10
     includeStaticDeclarations: false
     includePrivateDeclarations: false
-  ComplexMethod:
+    ignoreOverloaded: false
+  CyclomaticComplexMethod:
     active: true
     threshold: 15
     ignoreSingleWhenExpression: false
@@ -386,6 +394,8 @@ performance:
   SpreadOperator:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+  UnnecessaryPartOfBinaryExpression:
+    active: false
   UnnecessaryTemporaryInstantiation:
     active: true
 
@@ -412,8 +422,6 @@ potential-bugs:
       - 'java.util.HashSet'
       - 'java.util.LinkedHashMap'
       - 'java.util.HashMap'
-  DuplicateCaseInWhenExpression:
-    active: true
   ElseCaseInsteadOfExhaustiveWhen:
     active: false
   EqualsAlwaysReturnsTrueOrFalse:
@@ -428,12 +436,16 @@ potential-bugs:
     active: true
   IgnoredReturnValue:
     active: true
-    restrictToAnnotatedMethods: true
+    restrictToConfig: true
     returnValueAnnotations:
       - '*.CheckResult'
       - '*.CheckReturnValue'
     ignoreReturnValueAnnotations:
       - '*.CanIgnoreReturnValue'
+    returnValueTypes:
+      - 'kotlin.sequences.Sequence'
+      - 'kotlinx.coroutines.flow.*Flow'
+      - 'java.util.stream.*Stream'
     ignoreFunctionCall: []
   ImplicitDefaultLocale:
     active: true
@@ -455,16 +467,13 @@ potential-bugs:
   MissingPackageDeclaration:
     active: false
     excludes: ['**/*.kts']
-  MissingWhenCase:
-    active: true
-    allowElseExpression: true
   NullCheckOnMutableProperty:
     active: false
   NullableToStringCall:
     active: false
-  RedundantElseInWhen:
-    active: true
   UnconditionalJumpStatementInLoop:
+    active: false
+  UnnecessaryNotNullCheck:
     active: false
   UnnecessaryNotNullOperator:
     active: true
@@ -488,6 +497,8 @@ potential-bugs:
 
 style:
   active: true
+  AlsoCouldBeApply:
+    active: false
   CanBeNonNullable:
     active: false
   CascadingCallWrapping:
@@ -499,7 +510,8 @@ style:
     active: false
   DataClassContainsFunctions:
     active: false
-    conversionFunctionPrefix: 'to'
+    conversionFunctionPrefix:
+      - 'to'
   DataClassShouldBeImmutable:
     active: false
   DestructuringDeclarationWithTooManyEntries:
@@ -531,14 +543,10 @@ style:
   ForbiddenMethodCall:
     active: false
     methods:
-      - 'kotlin.io.print'
-      - 'kotlin.io.println'
-  ForbiddenPublicDataClass:
-    active: true
-    excludes: ['**']
-    ignorePackages:
-      - '*.internal'
-      - '*.internal.*'
+      - reason: 'print does not allow you to configure the output stream. Use a logger instead.'
+        value: 'kotlin.io.print'
+      - reason: 'println does not allow you to configure the output stream. Use a logger instead.'
+        value: 'kotlin.io.println'
   ForbiddenSuppress:
     active: false
     rules: []
@@ -550,13 +558,7 @@ style:
     active: true
     ignoreOverridableFunction: true
     ignoreActualFunction: true
-    excludedFunctions: ''
-  LibraryCodeMustSpecifyReturnType:
-    active: true
-    excludes: ['**']
-  LibraryEntitiesShouldNotBePublic:
-    active: true
-    excludes: ['**']
+    excludedFunctions: []
   LoopWithTooManyJumpStatements:
     active: true
     maxJumpCount: 1
@@ -591,12 +593,16 @@ style:
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
+    excludeRawStrings: true
   MayBeConst:
     active: true
   ModifierOrder:
     active: true
   MultilineLambdaItParameter:
     active: false
+  MultilineRawStringIndentation:
+    active: false
+    indentSize: 4
   NestedClassesVisibility:
     active: true
   NewLineAtEndOfFile:
@@ -626,7 +632,8 @@ style:
   ReturnCount:
     active: true
     max: 2
-    excludedFunctions: 'equals'
+    excludedFunctions:
+      - 'equals'
     excludeLabeled: false
     excludeReturnFromLambda: true
     excludeGuardClauses: false
@@ -641,6 +648,8 @@ style:
     max: 2
     excludeGuardClauses: false
   TrailingWhitespace:
+    active: false
+  TrimMultilineRawString:
     active: false
   UnderscoresInNumericLiterals:
     active: false
@@ -664,6 +673,7 @@ style:
     active: false
   UnnecessaryParentheses:
     active: false
+    allowForUnclearPrecedence: false
   UntilInsteadOfRangeTo:
     active: false
   UnusedImports:
@@ -698,6 +708,8 @@ style:
     active: true
   UseRequireNotNull:
     active: true
+  UseSumOfInsteadOfFlatMapSize:
+    active: false
   UselessCallOnNotNull:
     active: true
   UtilityClassWithPublicConstructor:
@@ -706,7 +718,6 @@ style:
     active: true
     ignoreLateinitVar: false
   WildcardImport:
-    active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    active: false
     excludeImports:
       - 'java.util.*'
