@@ -34,9 +34,3 @@ jobs:
           OSSRH_USERNAME: ${{secrets.OSSRH_USERNAME}}
           OSSRH_PASSWORD: ${{secrets.OSSRH_PASSWORD}}
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-build-libs
-          path: build/libs
-          retention-days: 3
