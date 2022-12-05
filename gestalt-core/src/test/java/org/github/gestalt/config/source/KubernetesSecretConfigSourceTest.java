@@ -91,12 +91,10 @@ class KubernetesSecretConfigSourceTest {
     void loadList() throws GestaltException {
         KubernetesSecretConfigSource source = new KubernetesSecretConfigSource(kubernetesPath);
         var results = source.loadList();
-        Assertions.assertEquals("db.host.password", results.get(0).getFirst());
-        Assertions.assertEquals("abcdef", results.get(0).getSecond());
-        Assertions.assertEquals("db.host.uri", results.get(1).getFirst());
-        Assertions.assertEquals("jdbc:postgresql://localhost:5432/mydb1", results.get(1).getSecond());
-        Assertions.assertEquals("subservice.booking.token", results.get(2).getFirst());
-        Assertions.assertEquals("111222333", results.get(2).getSecond());
+        assertThat(results).hasSize(3)
+                           .contains(new Pair<>("db.host.password", "abcdef"))
+                           .contains(new Pair<>("db.host.uri", "jdbc:postgresql://localhost:5432/mydb1"))
+                           .contains(new Pair<>("subservice.booking.token", "111222333"));
     }
 
     @Test
