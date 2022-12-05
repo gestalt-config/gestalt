@@ -22,7 +22,7 @@ class RecordDecoderTest {
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+        registry = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
             new ObjectDecoder(), new FloatDecoder(), new RecordDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }

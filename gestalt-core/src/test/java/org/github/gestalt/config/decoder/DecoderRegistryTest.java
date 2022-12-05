@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +35,7 @@ class DecoderRegistryTest {
 
     @Test
     void getDecoder() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         List<Decoder<?>> decoders = decoderRegistry.getDecoders();
@@ -47,14 +46,14 @@ class DecoderRegistryTest {
 
     @Test
     void setDecoder() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         List<Decoder<?>> decoders = decoderRegistry.getDecoders();
 
         Assertions.assertEquals(4, decoders.size());
 
-        decoderRegistry.setDecoders(Arrays.asList(new DoubleDecoder(), new LongDecoder()));
+        decoderRegistry.setDecoders(List.of(new DoubleDecoder(), new LongDecoder()));
 
         decoders = decoderRegistry.getDecoders();
 
@@ -63,7 +62,7 @@ class DecoderRegistryTest {
 
     @Test
     void getDecoderForClass() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         List<Decoder> decoders = decoderRegistry.getDecoderForClass(TypeCapture.of(String.class));
@@ -92,7 +91,7 @@ class DecoderRegistryTest {
     @Test
     void decoderRegistryConfigNodeNull() {
         try {
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder()), null, lexer, List.of(new StandardPathMapper()));
         } catch (GestaltException e) {
             Assertions.assertEquals("ConfigNodeService can not be null", e.getMessage());
@@ -102,7 +101,7 @@ class DecoderRegistryTest {
     @Test
     void decoderLexerNull() {
         try {
-            new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder()), configNodeService, null, List.of(new StandardPathMapper()));
         } catch (GestaltException e) {
             Assertions.assertEquals("SentenceLexer can not be null", e.getMessage());
@@ -120,7 +119,7 @@ class DecoderRegistryTest {
 
     @Test
     void getNextNodeObject() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder(), new LongDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         ConfigNode leaf = new LeafNode("test");
@@ -142,7 +141,7 @@ class DecoderRegistryTest {
 
     @Test
     void decodeNode() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         ConfigNode leaf = new LeafNode("value");
@@ -156,7 +155,7 @@ class DecoderRegistryTest {
 
     @Test
     void decodeNodeDuplicates() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder(), new LongDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         ConfigNode leaf = new LeafNode("100");
@@ -170,7 +169,7 @@ class DecoderRegistryTest {
 
     @Test
     void decodeNodeDuplicatesCustom() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder(), new LongDecoderCustomHigh(), new LongDecoderCustomVH()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
 
@@ -193,7 +192,7 @@ class DecoderRegistryTest {
 
     @Test
     void getNextNodeObjectBadToken() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         ConfigNode leaf = new LeafNode("value");
@@ -216,7 +215,7 @@ class DecoderRegistryTest {
 
     @Test
     void getNextNodeObjectNoResultToken() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         ConfigNode leaf = new LeafNode("value");
@@ -240,7 +239,7 @@ class DecoderRegistryTest {
 
     @Test
     void getNextNodeArray() throws GestaltException {
-        DecoderRegistry decoderRegistry = new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
         ConfigNode leaf = new LeafNode("value");

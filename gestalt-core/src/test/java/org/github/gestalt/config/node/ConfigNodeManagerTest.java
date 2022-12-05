@@ -1721,17 +1721,17 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test abc def",
-            configNodeManager.navigateToNode("db.name", List.of(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
+            configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("3306 abc def",
-            configNodeManager.navigateToNode("db.port", List.of(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
+            configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals("John abc def",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("Steve abc def",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
                              .results().getValue().get());
     }
 
@@ -1772,17 +1772,17 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test",
-            configNodeManager.navigateToNode("db.name", List.of(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
+            configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("3306",
-            configNodeManager.navigateToNode("db.port", List.of(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
+            configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals("John",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("Steve",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
                              .results().getValue().get());
     }
 
@@ -1815,17 +1815,17 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test abc",
-            configNodeManager.navigateToNode("db.name", List.of(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
+            configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("3306 abc",
-            configNodeManager.navigateToNode("db.port", List.of(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
+            configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals("John abc",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("Steve abc",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
                              .results().getValue().get());
 
 
@@ -1883,7 +1883,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
+        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1893,14 +1893,14 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test abc",
-            configNodeManager.navigateToNode("db.name", List.of(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
+            configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("3306 abc",
-            configNodeManager.navigateToNode("db.port", List.of(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
+            configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals("John abc",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals(2, validateOf.getErrors().size());
@@ -1929,7 +1929,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
+        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1940,14 +1940,14 @@ class ConfigNodeManagerTest {
 
 
         Assertions.assertEquals("test abc",
-            configNodeManager.navigateToNode("db.name", List.of(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
+            configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals("John abc",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
                              .results().getValue().get());
         Assertions.assertEquals("Steve abc",
-            configNodeManager.navigateToNode("admin", List.of(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
                              .results().getValue().get());
 
         Assertions.assertEquals(2, validateOf.getErrors().size());
@@ -2016,7 +2016,7 @@ class ConfigNodeManagerTest {
         public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
                 return ValidateOf.validateOf(currentNode,
-                    List.of(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
+                    Arrays.asList(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
             }
             return ValidateOf.valid(currentNode);
         }

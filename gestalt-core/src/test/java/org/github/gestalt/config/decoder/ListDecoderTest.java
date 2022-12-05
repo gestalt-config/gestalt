@@ -29,7 +29,7 @@ class ListDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
-        decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer,
+        decoderService = new DecoderRegistry(List.of(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -95,7 +95,7 @@ class ListDecoderTest {
         arrayNode[1] = new LeafNode("0.222");
         arrayNode[2] = new LeafNode("0.33");
 
-        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
         ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {

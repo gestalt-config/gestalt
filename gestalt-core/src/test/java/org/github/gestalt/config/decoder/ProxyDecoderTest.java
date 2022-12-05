@@ -25,7 +25,7 @@ class ProxyDecoderTest {
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+        registry = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
             new ObjectDecoder(), new FloatDecoder(), new BooleanDecoder(), new ProxyDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }

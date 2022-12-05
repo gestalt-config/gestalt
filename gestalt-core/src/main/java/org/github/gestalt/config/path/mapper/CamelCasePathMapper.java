@@ -9,12 +9,16 @@ import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @ConfigPriority(500)
 public class CamelCasePathMapper implements PathMapper {
+    private final Pattern regex = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+
+    @SuppressWarnings("StringSplitter")
     @Override
     public ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
-        String[] camelCaseWords = sentence.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+        String[] camelCaseWords = regex.split(sentence);
         List<Token> tokens = new ArrayList<>();
         for (String word : camelCaseWords) {
             ValidateOf<List<Token>> lexedValidateOf = lexer.scan(word);

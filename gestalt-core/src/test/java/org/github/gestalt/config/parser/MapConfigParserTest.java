@@ -11,7 +11,6 @@ import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +24,13 @@ class MapConfigParserTest {
     public void testBuildConfigTree() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("20"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
+            new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("20"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.parse(test, false);
@@ -52,13 +51,13 @@ class MapConfigParserTest {
     public void testBuildConfigTreeMissingResults() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("20"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
+            new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("20"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, false);
@@ -75,13 +74,13 @@ class MapConfigParserTest {
     public void testValidConfigTree() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("11"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
+            new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("11"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, false);
@@ -105,19 +104,19 @@ class MapConfigParserTest {
     public void testValidConfigTreeArrayOfSingleObjects() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ObjectToken("name")), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ObjectToken("port")), new ConfigValue("11")),
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ObjectToken("name")), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ObjectToken("port")), new ConfigValue("12")),
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("101"))
         );
 
@@ -150,27 +149,27 @@ class MapConfigParserTest {
     public void testValidConfigTreeArrayOfArraysObjects() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ArrayToken(0),
                 new ObjectToken("name")), new ConfigValue("host1")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ArrayToken(1),
                 new ObjectToken("port")), new ConfigValue("11")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ArrayToken(0),
                 new ObjectToken("name")), new ConfigValue("host2")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ArrayToken(1),
                 new ObjectToken("port")), new ConfigValue("12")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("101"))
         );
 
@@ -201,12 +200,12 @@ class MapConfigParserTest {
     public void testValidConfigTreeArrayOfObjects() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
             new Pair<>(Collections.singletonList(new ObjectToken("redis")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ObjectToken("name")), new ConfigValue("host1"))
         );
 
@@ -241,13 +240,13 @@ class MapConfigParserTest {
     public void testValidateMultipleTokenTypes() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
@@ -267,13 +266,13 @@ class MapConfigParserTest {
     public void testValidateMultipleTokenTypesWarnings() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1)), new ConfigValue("host2")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, false);
@@ -295,12 +294,12 @@ class MapConfigParserTest {
     public void testValidateMismatchedPathLength() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
@@ -318,12 +317,12 @@ class MapConfigParserTest {
     public void testValidateMismatchedPathLengthWarnings() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, false);
@@ -343,12 +342,12 @@ class MapConfigParserTest {
     public void testValidateMismatchedPathLength2() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
             new Pair<>(Collections.singletonList(new ObjectToken("db")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
@@ -366,12 +365,12 @@ class MapConfigParserTest {
     public void testValidateBadArrayIndex() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(-1)), new ConfigValue("host2"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(-1)), new ConfigValue("host2"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
@@ -389,12 +388,12 @@ class MapConfigParserTest {
     public void testValidateDuplicateArray() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host2"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host2"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
@@ -411,12 +410,12 @@ class MapConfigParserTest {
     public void testValidateMismatchedArrayPathLength() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("hostDB1")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ObjectToken("name")),
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("hostDB1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ObjectToken("name")),
                 new ConfigValue("hostDB2"))
         );
 
@@ -434,14 +433,14 @@ class MapConfigParserTest {
     public void testArrayIndexMissing() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host0")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(2)), new ConfigValue("host2")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(4)), new ConfigValue("host4")),
-            new Pair<>(Arrays.asList(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("10"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host0")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(2)), new ConfigValue("host2")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(4)), new ConfigValue("host4")),
+            new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("10"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, false);
@@ -467,25 +466,25 @@ class MapConfigParserTest {
     public void testValidConfigTreeArrayOfArraysDuplicateIndex() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ArrayToken(0)), new ConfigValue("host1")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ArrayToken(0)), new ConfigValue("11")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ArrayToken(0),
                 new ObjectToken("name")), new ConfigValue("host1")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(1), new ArrayToken(1),
                 new ObjectToken("port")), new ConfigValue("12")),
 
-            new Pair<>(Arrays.asList(
+            new Pair<>(List.of(
                 new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("10"))
         );
 
@@ -502,12 +501,12 @@ class MapConfigParserTest {
     @Test
     public void testDuplicateArrayIndex() {
         MapConfigParser mapConfigParser = new MapConfigParser();
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), new ConfigValue("John")),
-            new Pair<>(Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), new ConfigValue("Steve")),
-            new Pair<>(Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), new ConfigValue("Gary"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("admin"), new ArrayToken(0)), new ConfigValue("John")),
+            new Pair<>(List.of(new ObjectToken("admin"), new ArrayToken(1)), new ConfigValue("Steve")),
+            new Pair<>(List.of(new ObjectToken("admin"), new ArrayToken(1)), new ConfigValue("Gary"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
@@ -524,11 +523,11 @@ class MapConfigParserTest {
     public void testUnknownObjectType() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        List<Pair<List<Token>, ConfigValue>> test = Arrays.asList(
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
-            new Pair<>(Arrays.asList(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
-            new Pair<>(Arrays.asList(new ObjectToken("redis"), new OtherToken()), new ConfigValue("10"))
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("redis"), new OtherToken()), new ConfigValue("10"))
         );
 
         ValidateOf<ConfigNode> validateOfResults = mapConfigParser.buildConfigTree(test, 0, true);
