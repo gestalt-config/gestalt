@@ -230,7 +230,7 @@ class GitConfigSourceTest {
     }
 
     @Test
-    void id() throws GestaltException, IOException {
+    void idTest() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
