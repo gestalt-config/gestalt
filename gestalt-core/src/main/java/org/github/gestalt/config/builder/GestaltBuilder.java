@@ -306,15 +306,15 @@ public class GestaltBuilder {
     /**
      * List of PostProcessor to add to the builder.
      *
-     * @param postProcessor list of PostProcessor to add.
+     * @param postProcessors list of PostProcessor to add.
      * @return GestaltBuilder builder
      * @throws GestaltConfigurationException no PostProcessor provided
      */
-    public GestaltBuilder addPostProcessors(List<PostProcessor> postProcessor) throws GestaltConfigurationException {
+    public GestaltBuilder addPostProcessors(List<PostProcessor> postProcessors) throws GestaltConfigurationException {
         if (postProcessors == null || postProcessors.isEmpty()) {
             throw new GestaltConfigurationException("No PostProcessor provided while adding");
         }
-        this.postProcessors.addAll(postProcessor);
+        this.postProcessors.addAll(postProcessors);
 
         return this;
     }

@@ -60,13 +60,13 @@ public class DecoderRegistry implements DecoderService {
 
 
         if (pathMappers == null || pathMappers.isEmpty()) {
-            throw new GestaltConfigurationException("pathMappers can not be null");
+            throw new GestaltConfigurationException("pathMappers can not be null or empty");
         } else {
             this.pathMappers = CollectionUtils.buildOrderedConfigPriorities(pathMappers, false);
         }
 
         if (decoders == null || decoders.isEmpty()) {
-            throw new GestaltConfigurationException("Decoder list was null");
+            throw new GestaltConfigurationException("Decoder list was null or empty");
         } else {
             this.decoders.addAll(decoders);
         }
@@ -85,6 +85,16 @@ public class DecoderRegistry implements DecoderService {
     @Override
     public void setDecoders(List<Decoder<?>> decoders) {
         this.decoders = decoders;
+    }
+
+    @Override
+    public List<PathMapper> getPathMappers() {
+        return pathMappers;
+    }
+
+    @Override
+    public void setPathMappers(List<PathMapper> pathMappers) {
+        this.pathMappers = pathMappers;
     }
 
     /**
@@ -123,22 +133,22 @@ public class DecoderRegistry implements DecoderService {
         ValidateOf<ConfigNode> result = null;
         List<ValidationError> errors = new ArrayList<>();
         for (PathMapper pathMapper : pathMappers) {
-            ValidateOf<List<Token>> listValidateOf = pathMapper.map(path, nextString, lexer);
+            ValidateOf<List<Token>> pathValidateOf = pathMapper.map(path, nextString, lexer);
 
             // if there are errors, add them to the error list abd do not add the merge results
-            if (listValidateOf.hasErrors()) {
-                errors.addAll(listValidateOf.getErrors());
+            if (pathValidateOf.hasErrors()) {
+                errors.addAll(pathValidateOf.getErrors());
             }
 
-            if (!listValidateOf.hasResults()) {
+            if (!pathValidateOf.hasResults()) {
                 continue;
             }
 
-            List<Token> nextTokens = listValidateOf.results();
+            List<Token> nextTokens = pathValidateOf.results();
             result = configNodeService.navigateToNextNode(path, nextTokens, configNode);
             // if there are errors, add them to the error list abd do not add the merge results
             if (result.hasErrors()) {
-                errors.addAll(listValidateOf.getErrors());
+                errors.addAll(result.getErrors());
             }
 
             if (result.hasResults()) {
@@ -147,7 +157,11 @@ public class DecoderRegistry implements DecoderService {
         }
 
         if (result == null || !result.hasResults()) {
-            return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "decoding"));
+            if (!errors.isEmpty()) {
+                return ValidateOf.inValid(errors);
+            } else {
+                return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "decoding"));
+            }
         } else {
             return result;
         }

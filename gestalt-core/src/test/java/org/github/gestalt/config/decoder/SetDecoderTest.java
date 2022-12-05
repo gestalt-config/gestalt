@@ -3,7 +3,6 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -33,7 +32,7 @@ class SetDecoderTest {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
         decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer,
-            Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper()));
+            List.of(new StandardPathMapper()));
     }
 
     @Test

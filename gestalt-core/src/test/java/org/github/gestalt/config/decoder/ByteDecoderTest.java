@@ -5,7 +5,6 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +63,7 @@ class ByteDecoderTest {
 
         ValidateOf<Byte> validate = decoder.decode("db.port", new LeafNode("a"), TypeCapture.of(Byte.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals("a".getBytes(Charset.defaultCharset())[0], validate.results());
@@ -78,7 +76,7 @@ class ByteDecoderTest {
 
         ValidateOf<Byte> validate = decoder.decode("db.port", new LeafNode("aaa"), TypeCapture.of(Byte.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -94,7 +92,7 @@ class ByteDecoderTest {
 
         ValidateOf<Byte> validate = decoder.decode("db.port", new LeafNode(""), TypeCapture.of(Byte.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

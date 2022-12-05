@@ -6,7 +6,6 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -18,10 +17,10 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 class LocalDateTimeDecoderTest {
 
@@ -63,7 +62,7 @@ class LocalDateTimeDecoderTest {
 
         ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -79,7 +78,7 @@ class LocalDateTimeDecoderTest {
 
         ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -97,7 +96,7 @@ class LocalDateTimeDecoderTest {
 
         ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -113,7 +112,7 @@ class LocalDateTimeDecoderTest {
 
         ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -129,7 +128,7 @@ class LocalDateTimeDecoderTest {
 
         ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -145,7 +144,7 @@ class LocalDateTimeDecoderTest {
 
         ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
             new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

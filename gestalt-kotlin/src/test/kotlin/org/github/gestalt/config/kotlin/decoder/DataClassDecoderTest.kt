@@ -29,7 +29,7 @@ class DataClassDecoderTest {
             listOf(
                 LongDecoder(), IntegerDecoder(), StringDecoder(),
                 DataClassDecoder(), FloatDecoder()
-            ), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper())
+            ), configNodeService, lexer, listOf(StandardPathMapper())
         )
     }
 
