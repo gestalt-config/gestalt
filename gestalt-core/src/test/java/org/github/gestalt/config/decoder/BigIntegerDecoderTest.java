@@ -5,6 +5,8 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +68,8 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
@@ -77,7 +81,8 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), new TypeCapture<Double>() {
-        }, new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer));
+        }, new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
+            Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
@@ -89,7 +94,8 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
@@ -101,7 +107,8 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -117,7 +124,8 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124.2"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

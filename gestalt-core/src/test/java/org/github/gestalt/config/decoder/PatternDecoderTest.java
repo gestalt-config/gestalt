@@ -6,6 +6,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,7 +58,8 @@ class PatternDecoderTest {
         PatternDecoder decoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = decoder.decode("db.user", new LeafNode("test"), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -68,7 +72,8 @@ class PatternDecoderTest {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -83,7 +88,8 @@ class PatternDecoderTest {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

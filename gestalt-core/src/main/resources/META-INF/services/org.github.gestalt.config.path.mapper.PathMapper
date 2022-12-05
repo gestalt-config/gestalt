@@ -1,0 +1,2 @@
+org.github.gestalt.config.path.mapper.StandardPathMapper
+org.github.gestalt.config.path.mapper.CamelCasePathMapper

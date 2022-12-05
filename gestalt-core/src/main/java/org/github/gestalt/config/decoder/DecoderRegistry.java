@@ -7,9 +7,11 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.Token;
+import org.github.gestalt.config.utils.CollectionUtils;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +31,8 @@ public class DecoderRegistry implements DecoderService {
 
     private final ConfigNodeService configNodeService;
     private final SentenceLexer lexer;
-
     private List<Decoder<?>> decoders = new ArrayList<>();
+    private List<PathMapper> pathMappers;
 
     /**
      * Constructor to build Decoder Registry.
@@ -38,9 +40,13 @@ public class DecoderRegistry implements DecoderService {
      * @param decoders list of all supported decoders
      * @param configNodeService config node service that holds the config nodes.
      * @param lexer sentence lexer to decode
+     * @param pathMappers path mappers to test
      * @throws GestaltConfigurationException any configuration exceptions for empty parameters.
      */
-    public DecoderRegistry(List<Decoder<?>> decoders, ConfigNodeService configNodeService, SentenceLexer lexer)
+    public DecoderRegistry(List<Decoder<?>> decoders,
+                           ConfigNodeService configNodeService,
+                           SentenceLexer lexer,
+                           List<PathMapper> pathMappers)
         throws GestaltConfigurationException {
         if (configNodeService == null) {
             throw new GestaltConfigurationException("ConfigNodeService can not be null");
@@ -52,10 +58,17 @@ public class DecoderRegistry implements DecoderService {
         }
         this.lexer = lexer;
 
-        if (decoders != null) {
-            this.decoders.addAll(decoders);
+
+        if (pathMappers == null || pathMappers.isEmpty()) {
+            throw new GestaltConfigurationException("pathMappers can not be null");
         } else {
+            this.pathMappers = CollectionUtils.buildOrderedConfigPriorities(pathMappers, false);
+        }
+
+        if (decoders == null || decoders.isEmpty()) {
             throw new GestaltConfigurationException("Decoder list was null");
+        } else {
+            this.decoders.addAll(decoders);
         }
     }
 
@@ -107,20 +120,37 @@ public class DecoderRegistry implements DecoderService {
 
     @Override
     public ValidateOf<ConfigNode> getNextNode(String path, String nextString, ConfigNode configNode) {
+        ValidateOf<ConfigNode> result = null;
+        List<ValidationError> errors = new ArrayList<>();
+        for (PathMapper pathMapper : pathMappers) {
+            ValidateOf<List<Token>> listValidateOf = pathMapper.map(path, nextString, lexer);
 
-        ValidateOf<List<Token>> listValidateOf = lexer.scan(nextString);
+            // if there are errors, add them to the error list abd do not add the merge results
+            if (listValidateOf.hasErrors()) {
+                errors.addAll(listValidateOf.getErrors());
+            }
 
-        // if there are errors, add them to the error list abd do not add the merge results
-        if (listValidateOf.hasErrors()) {
-            return ValidateOf.inValid(listValidateOf.getErrors());
+            if (!listValidateOf.hasResults()) {
+                continue;
+            }
+
+            List<Token> nextTokens = listValidateOf.results();
+            result = configNodeService.navigateToNextNode(path, nextTokens, configNode);
+            // if there are errors, add them to the error list abd do not add the merge results
+            if (result.hasErrors()) {
+                errors.addAll(listValidateOf.getErrors());
+            }
+
+            if (result.hasResults()) {
+                return result;
+            }
         }
 
-        if (!listValidateOf.hasResults()) {
+        if (result == null || !result.hasResults()) {
             return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "decoding"));
+        } else {
+            return result;
         }
-
-        List<Token> nextTokens = listValidateOf.results();
-        return configNodeService.navigateToNextNode(path, nextTokens, configNode);
     }
 
     @Override

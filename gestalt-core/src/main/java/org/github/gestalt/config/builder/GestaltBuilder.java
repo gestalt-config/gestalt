@@ -15,6 +15,7 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
@@ -59,6 +60,7 @@ public class GestaltBuilder {
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<PostProcessor> postProcessors = new ArrayList<>();
+    private List<PathMapper> pathMappers = new ArrayList<>();
 
     private boolean useCacheDecorator = true;
 
@@ -117,6 +119,22 @@ public class GestaltBuilder {
             postProcessorsSet.add(it);
         });
         postProcessors.addAll(postProcessorsSet);
+        return this;
+    }
+
+    /**
+     * Add default post processors to the builder. Uses the ServiceLoader to find all registered post processors and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultPathMappers() {
+        List<PathMapper> pathMappersSet = new ArrayList<>();
+        ServiceLoader<PathMapper> loader = ServiceLoader.load(PathMapper.class);
+        loader.forEach(it -> {
+            it.applyConfig(gestaltConfig);
+            pathMappersSet.add(it);
+        });
+        pathMappers.addAll(pathMappersSet);
         return this;
     }
 
@@ -293,7 +311,7 @@ public class GestaltBuilder {
      * @throws GestaltConfigurationException no PostProcessor provided
      */
     public GestaltBuilder addPostProcessors(List<PostProcessor> postProcessor) throws GestaltConfigurationException {
-        if (sources == null || sources.isEmpty()) {
+        if (postProcessors == null || postProcessors.isEmpty()) {
             throw new GestaltConfigurationException("No PostProcessor provided while adding");
         }
         this.postProcessors.addAll(postProcessor);
@@ -310,6 +328,50 @@ public class GestaltBuilder {
     public GestaltBuilder addPostProcessor(PostProcessor postProcessor) {
         Objects.requireNonNull(postProcessor, "PostProcessor should not be null");
         this.postProcessors.add(postProcessor);
+        return this;
+    }
+
+    /**
+     * Sets the list of PathMappers. Replaces any PathMappers already set.
+     *
+     * @param pathMappers list of pathMappers to run.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException exception if there are no pathMappers
+     */
+    public GestaltBuilder setPathMappers(List<PathMapper> pathMappers) throws GestaltConfigurationException {
+        if (pathMappers == null || pathMappers.isEmpty()) {
+            throw new GestaltConfigurationException("No PathMappers provided while setting");
+        }
+        this.pathMappers = pathMappers;
+
+        return this;
+    }
+
+    /**
+     * List of PostProcessor to add to the builder.
+     *
+     * @param pathMappers list of PathMapper to add.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException no PathMapper provided
+     */
+    public GestaltBuilder addPathMapper(List<PathMapper> pathMappers) throws GestaltConfigurationException {
+        if (pathMappers == null || pathMappers.isEmpty()) {
+            throw new GestaltConfigurationException("No PathMapper provided while adding");
+        }
+        this.pathMappers.addAll(pathMappers);
+
+        return this;
+    }
+
+    /**
+     * Add a single PathMapper to the builder.
+     *
+     * @param pathMapper add a single PathMapper
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addPathMapper(PathMapper pathMapper) {
+        Objects.requireNonNull(pathMapper, "PathMapper should not be null");
+        this.pathMappers.add(pathMapper);
         return this;
     }
 
@@ -549,11 +611,17 @@ public class GestaltBuilder {
             addDefaultDecoders();
         }
 
+        // setup the default path mappers, if there are none, add the default ones.
+        if (pathMappers.isEmpty()) {
+            logger.info("No path mapper provided, using defaults");
+            addDefaultPathMappers();
+        }
+
         // if the decoderService does not exist, create it.
         // Otherwise get all the decoders from the decoderService, combine them with the ones in the builder,
         // and update the decoderService
         if (decoderService == null) {
-            decoderService = new DecoderRegistry(decoders, configNodeService, sentenceLexer);
+            decoderService = new DecoderRegistry(decoders, configNodeService, sentenceLexer, pathMappers);
         } else {
             decoders.addAll(decoderService.getDecoders());
             List<Decoder<?>> dedupedDecoders = dedupeDecoders();

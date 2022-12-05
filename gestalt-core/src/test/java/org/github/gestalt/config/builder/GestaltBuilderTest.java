@@ -12,6 +12,8 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
@@ -56,7 +58,7 @@ class GestaltBuilderTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         builder = builder.setDecoderService(new DecoderRegistry(Arrays.asList(new StringDecoder(), new DoubleDecoder()),
-            configNodeManager, lexer))
+            configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())))
             .setDecoders(decoders)
             .addDecoder(new LongDecoder())
             .setTreatWarningsAsErrors(true)

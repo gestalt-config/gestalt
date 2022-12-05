@@ -14,6 +14,8 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -52,7 +54,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -99,7 +101,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -169,7 +171,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs, Tags.of("toys", "ball"))),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -230,7 +232,7 @@ class GestaltTest {
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(
                 Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -297,7 +299,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -349,7 +351,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2), new MapConfigSource(configs3)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -395,7 +397,7 @@ class GestaltTest {
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2, Tags.of("toy", "ball")),
                 new MapConfigSource(configs3)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -439,7 +441,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         gestalt.loadConfigs();
@@ -473,7 +475,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(ValidateOf.validateOf(null, Collections.emptyList()));
@@ -502,7 +504,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
@@ -532,7 +534,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.singletonList(new TestPostProcessor("aaa")));
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
@@ -562,7 +564,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
             Arrays.asList(new TestPostProcessorSwapNodes("path1", "path2"), new TestPostProcessorSwapNodes("prop1", "prop2")));
 
@@ -598,7 +600,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -651,7 +653,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -680,7 +682,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -721,7 +723,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -761,7 +763,8 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Arrays.asList(new MapConfigSource(configs), new MapConfigSource(configs2)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-                new ListDecoder()), configNodeManager, lexer), lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
+                new ListDecoder()), configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -823,7 +826,7 @@ class GestaltTest {
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.emptyList(),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         try {
@@ -852,7 +855,8 @@ class GestaltTest {
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer),
+            new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -889,7 +893,8 @@ class GestaltTest {
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(Arrays.asList(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer),
+            new DecoderRegistry(Arrays.asList(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -924,7 +929,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
         try {
@@ -960,7 +965,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1005,7 +1010,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, gestalt::loadConfigs);
@@ -1035,7 +1040,7 @@ class GestaltTest {
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1074,7 +1079,7 @@ class GestaltTest {
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1108,7 +1113,7 @@ class GestaltTest {
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             new PathLexer("."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1154,7 +1159,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1212,7 +1217,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1273,7 +1278,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             null,
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         try {
@@ -1310,7 +1315,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1379,7 +1384,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();
@@ -1444,7 +1449,7 @@ class GestaltTest {
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(Arrays.asList(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer),
+                configNodeManager, lexer, Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList());
 
         gestalt.loadConfigs();

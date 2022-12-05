@@ -7,6 +7,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +18,7 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +62,8 @@ class FileDecoderTest {
         URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
         ValidateOf<File> validate = decoder.decode("db.user", new LeafNode(defaultFile.getAbsolutePath()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -72,7 +76,8 @@ class FileDecoderTest {
         FileDecoder stringDecoder = new FileDecoder();
 
         ValidateOf<File> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -87,7 +92,8 @@ class FileDecoderTest {
         FileDecoder stringDecoder = new FileDecoder();
 
         ValidateOf<File> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer,
+                Arrays.asList(new StandardPathMapper(), new CamelCasePathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
