@@ -16,5 +16,14 @@ public interface PathMapper {
      */
     default void applyConfig(GestaltConfig config) {
     }
+
+    /**
+     * Takes a sentance and converts it into a set of tokens to navigate.
+     *
+     * @param path the current path we are looking in
+     * @param sentence the next segment of the path to check
+     * @param lexer the sentence lexer used to tokenize the sentence.
+     * @return the list of tokens to check in the path
+     */
     ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer);
 }

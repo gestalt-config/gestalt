@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Splits the sentence by camel case. So each capitalized word is a new token. 
+ */
 @ConfigPriority(500)
 public class CamelCasePathMapper implements PathMapper {
     private final Pattern regex = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");

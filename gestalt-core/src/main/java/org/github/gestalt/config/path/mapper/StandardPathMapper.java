@@ -7,6 +7,9 @@ import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.List;
 
+/**
+ * Standard Path mapper looks for an exact match.
+ */
 @ConfigPriority(1000)
 public class StandardPathMapper implements PathMapper {
     @Override
