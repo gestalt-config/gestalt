@@ -1,11 +1,15 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.node.NodeType;
+import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.ArrayToken;
@@ -89,6 +93,26 @@ class DecoderRegistryTest {
     }
 
     @Test
+    void decoderRegistryPathMapperNull() {
+        try {
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+                new StringDecoder()), configNodeService, lexer, null);
+        } catch (GestaltException e) {
+            Assertions.assertEquals("pathMappers can not be null or empty", e.getMessage());
+        }
+    }
+
+    @Test
+    void decoderRegistryPathMapperEmpty() {
+        try {
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+                new StringDecoder()), configNodeService, lexer, List.of());
+        } catch (GestaltException e) {
+            Assertions.assertEquals("pathMappers can not be null or empty", e.getMessage());
+        }
+    }
+
+    @Test
     void decoderRegistryConfigNodeNull() {
         try {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
@@ -115,6 +139,16 @@ class DecoderRegistryTest {
         } catch (GestaltException e) {
             Assertions.assertEquals("Decoder list was null or empty", e.getMessage());
         }
+    }
+
+    @Test
+    void decoderRegistryGetAndSetPathMapper() throws GestaltConfigurationException {
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+                new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
+
+        List<PathMapper> pathMappers = List.of(new StandardPathMapper(), new TestPathMapper());
+        decoderRegistry.setPathMappers(pathMappers);
+        Assertions.assertEquals(decoderRegistry.getPathMappers(), pathMappers);
     }
 
     @Test
@@ -230,7 +264,7 @@ class DecoderRegistryTest {
         Assertions.assertTrue(test.hasErrors());
 
         Assertions.assertEquals(1, test.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: test, for class: MapNode, during decoding",
+        Assertions.assertEquals("Unable to find node matching path: test, for class: leaf, during decoding",
             test.getErrors().get(0).description());
 
         Mockito.verify(lexer, Mockito.times(1)).scan(any());
@@ -256,6 +290,110 @@ class DecoderRegistryTest {
         Assertions.assertEquals(leaf, test.results());
 
         Mockito.verify(lexer, Mockito.times(0)).scan(any());
+        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(List.class), any());
+    }
+
+    @Test
+    void getNextNodeMultiPathMappers() throws GestaltException {
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper(), new TestPathMapper()));
+
+        ConfigNode leaf = new LeafNode("test");
+
+        Token nextToken = new ObjectToken("run");
+        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+
+
+        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        Assertions.assertTrue(test.hasResults());
+        Assertions.assertFalse(test.hasErrors());
+
+        Assertions.assertEquals(leaf, test.results());
+
+        Mockito.verify(lexer, Mockito.times(1)).scan(any());
+        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(List.class), any());
+    }
+
+    @ConfigPriority(500)
+    public class TestPathMapper implements PathMapper {
+        @Override
+        public ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
+            return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, NodeType.LEAF.getType(), "TestPathMapper"));
+        }
+    }
+    @Test
+    void getNextNodeMultiPathMappersFirstNoFind() throws GestaltException {
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder()), configNodeService, lexer, List.of(new TestPathMapper(), new StandardPathMapper()));
+
+        ConfigNode leaf = new LeafNode("test");
+
+        Token nextToken = new ObjectToken("run");
+        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+
+
+        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        Assertions.assertTrue(test.hasResults());
+        Assertions.assertFalse(test.hasErrors());
+
+        Assertions.assertEquals(leaf, test.results());
+
+        Mockito.verify(lexer, Mockito.times(1)).scan(any());
+        Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(List.class), any());
+    }
+
+    @Test
+    void getNextNodeMultiPathMappersNoneFind() throws GestaltException {
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder()), configNodeService, lexer, List.of(new TestPathMapper(), new TestPathMapper()));
+
+        ConfigNode leaf = new LeafNode("test");
+
+        Token nextToken = new ObjectToken("run");
+        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+
+
+        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        Assertions.assertFalse(test.hasResults());
+        Assertions.assertTrue(test.hasErrors());
+
+        Assertions.assertEquals(2, test.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: test, for class: leaf, during TestPathMapper",
+            test.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: test, for class: leaf, during TestPathMapper",
+            test.getErrors().get(1).description());
+
+        Mockito.verify(lexer, Mockito.times(0)).scan(any());
+        Mockito.verify(configNodeService, Mockito.times(0)).navigateToNextNode(any(), any(List.class), any());
+    }
+
+    @Test
+    void getNextNodeMultiPathMappersNoneFindDuringNavigateToNextNode() throws GestaltException {
+        DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder()), configNodeService, lexer, List.of(new TestPathMapper(), new StandardPathMapper()));
+
+        ConfigNode leaf = new LeafNode("test");
+
+        Token nextToken = new ObjectToken("run");
+        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf))
+               .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", NodeType.LEAF.getType(), "navigate to next node")));
+
+
+        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        Assertions.assertFalse(test.hasResults());
+        Assertions.assertTrue(test.hasErrors());
+
+        Assertions.assertEquals(2, test.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: test, for class: leaf, during navigate to next node",
+            test.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: test, for class: leaf, during TestPathMapper",
+            test.getErrors().get(1).description());
+
+        Mockito.verify(lexer, Mockito.times(1)).scan(any());
         Mockito.verify(configNodeService, Mockito.times(1)).navigateToNextNode(any(), any(List.class), any());
     }
 

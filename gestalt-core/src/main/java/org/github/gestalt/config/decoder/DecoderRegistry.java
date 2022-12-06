@@ -6,7 +6,6 @@ import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
-import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.ArrayToken;
@@ -130,7 +129,7 @@ public class DecoderRegistry implements DecoderService {
 
     @Override
     public ValidateOf<ConfigNode> getNextNode(String path, String nextString, ConfigNode configNode) {
-        ValidateOf<ConfigNode> result = null;
+        ValidateOf<ConfigNode> result;
         List<ValidationError> errors = new ArrayList<>();
         for (PathMapper pathMapper : pathMappers) {
             ValidateOf<List<Token>> pathValidateOf = pathMapper.map(path, nextString, lexer);
@@ -156,15 +155,13 @@ public class DecoderRegistry implements DecoderService {
             }
         }
 
-        if (result == null || !result.hasResults()) {
-            if (!errors.isEmpty()) {
-                return ValidateOf.inValid(errors);
-            } else {
-                return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "decoding"));
-            }
+        //Will only reach here if there is no result.
+        if (!errors.isEmpty()) {
+            result = ValidateOf.inValid(errors);
         } else {
-            return result;
+            result = ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, configNode.getNodeType().getType(), "decoding"));
         }
+        return result;
     }
 
     @Override
@@ -172,6 +169,5 @@ public class DecoderRegistry implements DecoderService {
         Token nextToken = new ArrayToken(nextIndex);
 
         return configNodeService.navigateToNextNode(path, List.of(nextToken), configNode);
-
     }
 }
