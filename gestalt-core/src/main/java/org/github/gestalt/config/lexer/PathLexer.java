@@ -7,7 +7,6 @@ import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.StringUtils;
 import org.github.gestalt.config.utils.ValidateOf;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -75,7 +74,7 @@ public class PathLexer extends SentenceLexer {
 
     @Override
     protected List<String> tokenizer(String sentence) {
-        return sentence != null && !sentence.isEmpty() ? Arrays.asList(sentence.split(delimiterRegex)) : Collections.emptyList();
+        return sentence != null && !sentence.isEmpty() ? List.of(sentence.split(delimiterRegex)) : Collections.emptyList();
     }
 
     @Override
@@ -105,7 +104,7 @@ public class PathLexer extends SentenceLexer {
             if (StringUtils.isInteger(arrayIndex)) {
                 int index = Integer.parseInt(arrayIndex);
                 if (index >= 0) {
-                    results = ValidateOf.valid(Arrays.asList(new ObjectToken(name), new ArrayToken(index)));
+                    results = ValidateOf.valid(List.of(new ObjectToken(name), new ArrayToken(index)));
                 } else {
                     results = ValidateOf.inValid(new ValidationError.InvalidArrayNegativeIndexToken(word, index, sentence));
                 }

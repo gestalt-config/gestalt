@@ -230,6 +230,30 @@ If you want to use a different path style you can provide your own SentenceLexer
   String password = gestalt.getConfig("db.hosts[2].password", String.class);
 ```
 
+# Searching for path while Decoding Objects 
+When decoding a class, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and searched for in order.     
+
+```java
+// With a class of 
+public static class DBConnection {
+    @Config(path = "host")
+    private String uri;
+    private int dbPort;
+    private String dbPath;
+}
+
+// Given a config of
+"users.host" => "myHost"
+"users.uri" => "myHost"
+"users.db.port" => "1234"
+"users.db.path" => "usersTable"
+  
+// the uri will map to host
+// the dbPort will automatically map to db.port
+// the dbPath will automatically map to db.path.   
+DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
+```
+
 # Kotlin
 For Kotlin Gestalt includes several extension methods that allow easier use of Gestalt by way of reified functions to better capture the generic type information. 
 Using the extension functions you don't need to specify the type if the return type has enough information to be inferred. If nothing is found it will throw a GestaltException unless the type is nullable, then it will return null.

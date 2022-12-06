@@ -573,6 +573,30 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(33.0F, poolTags2.defaultWait);
     }
 
+    @Test
+    public void integrationTestCamelCase() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("users.host", "myHost");
+        configs.put("users.uri", "different host");
+        configs.put("users.db.port", "1234");
+        configs.put("users.db.path", "usersTable");
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(configs))
+            .build();
+
+        gestalt.loadConfigs();
+
+        DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
+        Assertions.assertEquals("myHost", connection.getUri());
+        Assertions.assertEquals(1234, connection.getDbPort());
+        Assertions.assertEquals("usersTable", connection.getDbPath());
+    }
+
+
     public enum Role {
         LEVEL0, LEVEL1
     }
@@ -798,6 +822,37 @@ public class GestaltIntegrationTests {
 
         public void setPath(String path) {
             this.path = path;
+        }
+    }
+
+    public static class DBConnection {
+        @Config(path = "host")
+        private String uri;
+        private int dbPort;
+        private String dbPath;
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public int getDbPort() {
+            return dbPort;
+        }
+
+        public void setDbPort(int dbPort) {
+            this.dbPort = dbPort;
+        }
+
+        public String getDbPath() {
+            return dbPath;
+        }
+
+        public void setDbPath(String dbPath) {
+            this.dbPath = dbPath;
         }
     }
 }

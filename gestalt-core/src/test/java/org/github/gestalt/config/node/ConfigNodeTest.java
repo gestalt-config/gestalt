@@ -62,7 +62,7 @@ class ConfigNodeTest {
 
     @Test
     void size() {
-        ArrayNode arrayNode = new ArrayNode(Arrays.asList(new LeafNode("a"), new LeafNode("b")));
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
         Map<String, ConfigNode> mapNode = new HashMap<>();
         mapNode.put("test", new LeafNode("leaf"));
         mapNode.put("test2", new LeafNode("leaf2"));
@@ -115,7 +115,7 @@ class ConfigNodeTest {
 
     @Test
     void hash() {
-        ArrayNode arrayNode = new ArrayNode(Arrays.asList(new LeafNode("a"), new LeafNode("b")));
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
         Map<String, ConfigNode> mapNode = new HashMap<>();
         mapNode.put("test", new LeafNode("leaf"));
         mapNode.put("test2", new LeafNode("leaf2"));
@@ -135,7 +135,7 @@ class ConfigNodeTest {
 
     @Test
     void toStringTest() {
-        ArrayNode arrayNode = new ArrayNode(Arrays.asList(new LeafNode("a"), new LeafNode("b")));
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
         Map<String, ConfigNode> mapNode = new HashMap<>();
         mapNode.put("test", new LeafNode("leaf"));
         mapNode.put("test2", new LeafNode("leaf2"));

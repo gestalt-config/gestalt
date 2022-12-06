@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -43,6 +44,20 @@ public interface DecoderService {
      * @param decoder list of decoders
      */
     void addDecoders(List<Decoder<?>> decoder);
+
+    /**
+     * Get all path mappers the decoder service has registered.
+     *
+     * @return PathMapper
+     */
+    List<PathMapper> getPathMappers();
+
+    /**
+     * Set all path mappers the decoder service can use.
+     *
+     * @param pathMappers path mappers to replace the current ones
+     */
+    void setPathMappers(List<PathMapper> pathMappers);
 
     /**
      * Gets the next node from a config node, in a path for a string.

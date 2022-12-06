@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +29,8 @@ class ListDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
-        decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer);
+        decoderService = new DecoderRegistry(List.of(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -93,7 +95,7 @@ class ListDecoderTest {
         arrayNode[1] = new LeafNode("0.222");
         arrayNode[2] = new LeafNode("0.33");
 
-        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ListDecoder decoder = new ListDecoder();
 
         ValidateOf<List<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<List<Double>>() {

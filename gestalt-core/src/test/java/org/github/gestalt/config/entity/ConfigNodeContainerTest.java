@@ -10,10 +10,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 class ConfigNodeContainerTest {
 
@@ -30,7 +27,7 @@ class ConfigNodeContainerTest {
 
         Map<String, ConfigNode> root1Node = new HashMap<>();
         root1Node.put("db", new MapNode(dbNode));
-        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        root1Node.put("admin", new ArrayNode(List.of(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource());
@@ -51,7 +48,7 @@ class ConfigNodeContainerTest {
 
         Map<String, ConfigNode> root1Node = new HashMap<>();
         root1Node.put("db", new MapNode(dbNode));
-        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        root1Node.put("admin", new ArrayNode(List.of(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
         UUID id = UUID.randomUUID();
@@ -72,7 +69,7 @@ class ConfigNodeContainerTest {
 
         Map<String, ConfigNode> root1Node = new HashMap<>();
         root1Node.put("db", new MapNode(dbNode));
-        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        root1Node.put("admin", new ArrayNode(List.of(arrayNode)));
 
         ConfigNode[] arrayNode2 = new ConfigNode[2];
         arrayNode2[0] = new LeafNode("John");
@@ -84,7 +81,7 @@ class ConfigNodeContainerTest {
 
         Map<String, ConfigNode> root2Node = new HashMap<>();
         root2Node.put("db", new MapNode(dbNode2));
-        root2Node.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
+        root2Node.put("admin", new ArrayNode(List.of(arrayNode2)));
         ConfigNode root2 = new MapNode(root2Node);
 
         UUID id = UUID.randomUUID();
@@ -115,7 +112,7 @@ class ConfigNodeContainerTest {
 
         Map<String, ConfigNode> root1Node = new HashMap<>();
         root1Node.put("db", new MapNode(dbNode));
-        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        root1Node.put("admin", new ArrayNode(List.of(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
         UUID id = UUID.fromString("9d4e9197-5898-45e6-9056-a4a29d2c2a64");

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 class ConfigLoaderRegistryTest {
 
@@ -37,7 +37,7 @@ class ConfigLoaderRegistryTest {
 
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
 
-        configLoaderRegistry.addLoaders(Arrays.asList(loader2, loader3));
+        configLoaderRegistry.addLoaders(List.of(loader2, loader3));
 
         Assertions.assertEquals(loader2, configLoaderRegistry.getLoader("test2"));
 
@@ -62,7 +62,7 @@ class ConfigLoaderRegistryTest {
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
 
         configLoaderRegistry.addLoader(loader);
-        configLoaderRegistry.setLoaders(Arrays.asList(loader2, loader3));
+        configLoaderRegistry.setLoaders(List.of(loader2, loader3));
         Assertions.assertEquals(2, configLoaderRegistry.getConfigLoaders().size());
 
         Assertions.assertThrows(GestaltConfigurationException.class,

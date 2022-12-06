@@ -7,6 +7,8 @@ import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.ConfigNodeService
 import org.github.gestalt.config.node.LeafNode
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper
+import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
@@ -50,7 +52,7 @@ internal class IntegerDecoderTest {
             "db.port", LeafNode("124"), TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(listOf(integerDecoder), configNodeService, lexer)
+            DecoderRegistry(listOf(integerDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -66,7 +68,7 @@ internal class IntegerDecoderTest {
             "db.port", LeafNode("12s4"), TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(listOf(integerDecoder), configNodeService, lexer)
+            DecoderRegistry(listOf(integerDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -87,7 +89,8 @@ internal class IntegerDecoderTest {
         val validate: ValidateOf<Int> = decoder.decode(
             "db.port",
             LeafNode("12345678901234567890123456789012345678901234567890123456789"),
-            TypeCapture.of(Int::class.java), DecoderRegistry(listOf(decoder), configNodeService, lexer)
+            TypeCapture.of(Int::class.java), DecoderRegistry(listOf(decoder), configNodeService, lexer,
+                listOf(StandardPathMapper(), CamelCasePathMapper()))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

@@ -6,6 +6,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 class DateDecoderTest {
@@ -66,7 +68,8 @@ class DateDecoderTest {
 
 
         ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(instant.toString()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -86,7 +89,8 @@ class DateDecoderTest {
 
 
         ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(instant.toString()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -104,7 +108,8 @@ class DateDecoderTest {
         Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
 
         ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -119,7 +124,8 @@ class DateDecoderTest {
         String now = "not a date";
 
         ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -134,7 +140,8 @@ class DateDecoderTest {
         DateDecoder decoder = new DateDecoder();
 
         ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -149,7 +156,8 @@ class DateDecoderTest {
         DateDecoder decoder = new DateDecoder();
 
         ValidateOf<Date> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

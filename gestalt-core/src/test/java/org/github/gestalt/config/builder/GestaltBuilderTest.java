@@ -12,6 +12,8 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
@@ -47,7 +49,7 @@ class GestaltBuilderTest {
         List<ConfigSource> sources = new ArrayList<>();
         sources.add(new MapConfigSource(configs));
 
-        List<Decoder<?>> decoders = new ArrayList<>(Arrays.asList(new StringDecoder(), new DoubleDecoder()));
+        List<Decoder<?>> decoders = new ArrayList<>(List.of(new StringDecoder(), new DoubleDecoder()));
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer();
@@ -55,25 +57,28 @@ class GestaltBuilderTest {
         CoreReloadListener coreReloadListener = new CoreReloadListener();
 
         GestaltBuilder builder = new GestaltBuilder();
-        builder = builder.setDecoderService(new DecoderRegistry(Arrays.asList(new StringDecoder(), new DoubleDecoder()),
-            configNodeManager, lexer))
-            .setDecoders(decoders)
-            .addDecoder(new LongDecoder())
-            .setTreatWarningsAsErrors(true)
-            .setGestaltConfig(new GestaltConfig())
-            .setConfigLoaderService(new ConfigLoaderRegistry())
-            .addConfigLoader(new MapConfigLoader())
-            .addSources(sources)
-            .addSource(new MapConfigSource(configs))
-            .addSource(new MapConfigSource(configs2))
-            .setSentenceLexer(new PathLexer())
-            .setConfigNodeService(configNodeManager)
-            .addCoreReloadListener(coreReloadListener)
-            .addReloadStrategy(new TimedConfigReloadStrategy(sources.get(0), Duration.ofMillis(100)))
-            .addPostProcessors(Collections.singletonList(
-                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
-            .setPostProcessors(Collections.singletonList(
-                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))));
+        builder = builder.setDecoderService(new DecoderRegistry(List.of(new StringDecoder(), new DoubleDecoder()),
+                             configNodeManager, lexer, List.of(new StandardPathMapper())))
+                         .setDecoders(decoders)
+                         .addDecoder(new LongDecoder())
+                         .setTreatWarningsAsErrors(true)
+                         .setGestaltConfig(new GestaltConfig())
+                         .setConfigLoaderService(new ConfigLoaderRegistry())
+                         .addConfigLoader(new MapConfigLoader())
+                         .addSources(sources)
+                         .addSource(new MapConfigSource(configs))
+                         .addSource(new MapConfigSource(configs2))
+                         .setSentenceLexer(new PathLexer())
+                         .setConfigNodeService(configNodeManager)
+                         .addCoreReloadListener(coreReloadListener)
+                         .addReloadStrategy(new TimedConfigReloadStrategy(sources.get(0), Duration.ofMillis(100)))
+                         .addPostProcessors(Collections.singletonList(
+                             new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                         .setPostProcessors(Collections.singletonList(
+                             new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                         .addPathMapper(new StandardPathMapper())
+                         .addPathMapper(List.of(new CamelCasePathMapper()))
+                         .setPathMappers(List.of(new StandardPathMapper()));
 
         Gestalt gestalt = builder.build();
         gestalt.loadConfigs();
@@ -268,7 +273,7 @@ class GestaltBuilderTest {
         sources.add(new MapConfigSource(configs));
         sources.add(new MapConfigSource(configs2));
 
-        List<Decoder<?>> decoders = new ArrayList<>(Arrays.asList(new StringDecoder(), new DoubleDecoder()));
+        List<Decoder<?>> decoders = new ArrayList<>(List.of(new StringDecoder(), new DoubleDecoder()));
 
         List<ConfigLoader> configLoaders = new ArrayList<>(Collections.singletonList(new MapConfigLoader()));
 

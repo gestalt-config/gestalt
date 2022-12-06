@@ -5,6 +5,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.test.classes.*;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -24,8 +25,9 @@ class ProxyDecoderTest {
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        registry = new DecoderRegistry(Arrays.asList(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new FloatDecoder(), new BooleanDecoder(), new ProxyDecoder()), configNodeService, lexer);
+        registry = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+            new ObjectDecoder(), new FloatDecoder(), new BooleanDecoder(), new ProxyDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test

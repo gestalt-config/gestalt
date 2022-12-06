@@ -27,4 +27,5 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.token;
     exports org.github.gestalt.config.utils;
     exports org.github.gestalt.config.tag;
+    exports org.github.gestalt.config.path.mapper;
 }

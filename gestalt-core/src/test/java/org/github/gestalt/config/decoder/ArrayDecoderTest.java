@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -28,7 +29,8 @@ class ArrayDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
-        decoderService = new DecoderRegistry(Arrays.asList(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer);
+        decoderService = new DecoderRegistry(List.of(doubleDecoder, stringDecoder, listDecoder), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -88,7 +90,7 @@ class ArrayDecoderTest {
         arrayNode[1] = new LeafNode("Steve");
         arrayNode[2] = new LeafNode("Matt");
 
-        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
         ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(String[].class), decoderService);
@@ -112,7 +114,7 @@ class ArrayDecoderTest {
         arrayNode[1] = new LeafNode("0.222");
         arrayNode[2] = new LeafNode("0.33");
 
-        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
         ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class), decoderService);

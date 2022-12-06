@@ -5,6 +5,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -60,7 +61,8 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("true"), TypeCapture.of(Boolean.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertTrue(validate.results());
@@ -71,7 +73,8 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("false"), TypeCapture.of(Boolean.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertFalse(validate.results());
@@ -82,7 +85,8 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode(null), TypeCapture.of(Boolean.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

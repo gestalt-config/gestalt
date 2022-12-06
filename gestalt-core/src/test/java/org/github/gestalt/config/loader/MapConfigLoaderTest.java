@@ -53,7 +53,7 @@ class MapConfigLoaderTest {
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
-            .thenReturn(ValidateOf.valid(Arrays.asList(new ObjectToken("db"), new ObjectToken("name"))));
+            .thenReturn(ValidateOf.valid(List.of(new ObjectToken("db"), new ObjectToken("name"))));
 
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
@@ -113,7 +113,7 @@ class MapConfigLoaderTest {
         Mockito.when(lexer.scan("test"))
                .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
-               .thenReturn(ValidateOf.valid(Arrays.asList(new ObjectToken("db"), new ObjectToken("name"))));
+               .thenReturn(ValidateOf.valid(List.of(new ObjectToken("db"), new ObjectToken("name"))));
 
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
@@ -176,7 +176,7 @@ class MapConfigLoaderTest {
             .thenReturn(ValidateOf.valid(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
             .thenReturn(ValidateOf.inValid(
-                Arrays.asList(new ValidationError.FailedToTokenizeElement("name", "db.name"),
+                List.of(new ValidationError.FailedToTokenizeElement("name", "db.name"),
                     new ValidationError.EmptyPath())));
 
         // mock the source so we return our test data stream.
@@ -222,7 +222,7 @@ class MapConfigLoaderTest {
         Mockito.when(lexer.scan("test"))
             .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
         Mockito.when(lexer.scan("db.name"))
-            .thenReturn(ValidateOf.valid(Arrays.asList(new ObjectToken("db"), new ObjectToken("name"))));
+            .thenReturn(ValidateOf.valid(List.of(new ObjectToken("db"), new ObjectToken("name"))));
 
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);

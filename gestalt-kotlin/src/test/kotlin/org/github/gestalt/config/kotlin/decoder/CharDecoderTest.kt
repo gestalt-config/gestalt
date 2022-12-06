@@ -7,6 +7,8 @@ import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.ConfigNodeService
 import org.github.gestalt.config.node.LeafNode
+import org.github.gestalt.config.path.mapper.CamelCasePathMapper
+import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
@@ -51,7 +53,7 @@ internal class CharDecoderTest {
             "db.port", LeafNode("a"), TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer)
+            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -67,7 +69,7 @@ internal class CharDecoderTest {
             "db.port", LeafNode("aaa"), TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer)
+            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -88,7 +90,7 @@ internal class CharDecoderTest {
             "db.port", LeafNode(""), TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer)
+            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

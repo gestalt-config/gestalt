@@ -5,6 +5,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -59,7 +60,8 @@ class ShortDecoderTest {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Short.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals((short) 124, (short) validate.results());
@@ -71,7 +73,8 @@ class ShortDecoderTest {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Short.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -87,7 +90,8 @@ class ShortDecoderTest {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12345678901234567890123456789012345678901234567890123456789"),
-            TypeCapture.of(Short.class), new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer));
+            TypeCapture.of(Short.class), new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

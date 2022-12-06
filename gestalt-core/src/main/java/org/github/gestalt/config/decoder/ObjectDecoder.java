@@ -53,7 +53,7 @@ public class ObjectDecoder implements Decoder<Object> {
     }
 
     private Set<Class<?>> getIgnoreTypes() {
-        return new HashSet<>(Arrays.asList(
+        return new HashSet<>(List.of(
             Boolean.class, Byte.class, Character.class, Double.class, Float.class, Integer.class, Long.class,
             Short.class, String.class, Void.class));
     }
@@ -198,7 +198,7 @@ public class ObjectDecoder implements Decoder<Object> {
         Class<?> currentClass = klass;
         while (currentClass != null) {
             final Field[] fields = currentClass.getDeclaredFields();
-            classFields.addAll(Arrays.asList(fields));
+            classFields.addAll(List.of(fields));
             currentClass = currentClass.getSuperclass();
         }
         return classFields;
