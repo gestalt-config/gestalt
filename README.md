@@ -231,22 +231,24 @@ If you want to use a different path style you can provide your own SentenceLexer
 ```
 
 # Searching for path while Decoding Objects 
-When decoding a class, we search for the fields by exact match first. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and searched for in order.     
+When decoding a class, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and searched for in order.     
 
 ```java
 // With a class of 
 public static class DBConnection {
-    private String host;
+    @Config(path = "host")
+    private String uri;
     private int dbPort;
     private String dbPath;
 }
 
 // Given a config of
 "users.host" => "myHost"
+"users.uri" => "myHost"
 "users.db.port" => "1234"
 "users.db.path" => "usersTable"
   
-// the host will map to host  
+// the uri will map to host
 // the dbPort will automatically map to db.port
 // the dbPath will automatically map to db.path.   
 DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));

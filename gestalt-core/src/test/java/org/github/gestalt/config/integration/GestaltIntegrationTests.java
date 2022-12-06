@@ -578,6 +578,7 @@ public class GestaltIntegrationTests {
 
         Map<String, String> configs = new HashMap<>();
         configs.put("users.host", "myHost");
+        configs.put("users.uri", "different host");
         configs.put("users.db.port", "1234");
         configs.put("users.db.path", "usersTable");
 
@@ -590,7 +591,7 @@ public class GestaltIntegrationTests {
         gestalt.loadConfigs();
 
         DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
-        Assertions.assertEquals("myHost", connection.getHost());
+        Assertions.assertEquals("myHost", connection.getUri());
         Assertions.assertEquals(1234, connection.getDbPort());
         Assertions.assertEquals("usersTable", connection.getDbPath());
     }
@@ -825,16 +826,17 @@ public class GestaltIntegrationTests {
     }
 
     public static class DBConnection {
-        private String host;
+        @Config(path = "host")
+        private String uri;
         private int dbPort;
         private String dbPath;
 
-        public String getHost() {
-            return host;
+        public String getUri() {
+            return uri;
         }
 
-        public void setHost(String host) {
-            this.host = host;
+        public void setUri(String uri) {
+            this.uri = uri;
         }
 
         public int getDbPort() {
