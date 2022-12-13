@@ -107,7 +107,7 @@ class GitConfigSourceTest {
         configDirectory.toFile().deleteOnExit();
 
         // Must set the git user and password in Env Vars
-        String certLocation = System.getenv("GIT_GESTALT_SSH_LOCATION");
+        //String certLocation = System.getenv("GIT_GESTALT_SSH_LOCATION");
         String password = System.getenv("GIT_GESTALT_SSH_PASSWORD");
 
         Path sshDir = FS.DETECTED.userHome().toPath().resolve(".ssh");

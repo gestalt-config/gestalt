@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * Loads a file from git.
@@ -37,13 +38,15 @@ public class GitConfigSource implements ConfigSource {
     private final Tags tags;
 
     /**
+     * Create a new GitConfigSources.
+     *
      * @param repoURI the URI to the git repo
      * @param localRepoDirectory the local directory you want to save the git repo to.
      * @param configFilePath the path to the config file in the git repo
      * @param branch the branch you want to pull from git
      * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
      * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     *   The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     *     The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @throws GestaltException if there is a badly configured git repo
      */
     public GitConfigSource(String repoURI, Path localRepoDirectory, String configFilePath, String branch, CredentialsProvider credentials,
@@ -52,13 +55,15 @@ public class GitConfigSource implements ConfigSource {
     }
 
     /**
+     * Create a new GitConfigSources.
+     *
      * @param repoURI the URI to the git repo
      * @param localRepoDirectory the local directory you want to save the git repo to.
      * @param configFilePath the path to the config file in the git repo
      * @param branch the branch you want to pull from git
      * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
      * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     *   The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     *     The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @param tags tags associated with the source
      * @throws GestaltException if there is a badly configured git repo
      */
@@ -115,10 +120,11 @@ public class GitConfigSource implements ConfigSource {
     }
 
     private void deleteLocalDirectory(Path dir) throws IOException {
-        Files.walk(dir)
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+        try (Stream<Path> pathStream = Files.walk(dir)) {
+            pathStream.sorted(Comparator.reverseOrder())
+                      .map(Path::toFile)
+                      .forEach(File::delete);
+        }
     }
 
     private void pullLatest(CredentialsProvider credentials, SshSessionFactory sshSessionFactory) throws GitAPIException {
@@ -169,7 +175,7 @@ public class GitConfigSource implements ConfigSource {
     }
 
     /**
-     * Finds the extension of a file to get the file format
+     * Finds the extension of a file to get the file format.
      *
      * @param fileName the name of the file
      * @return the extension of the file
