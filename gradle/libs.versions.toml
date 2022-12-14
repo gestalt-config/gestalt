@@ -6,6 +6,8 @@ koinDI= "3.2.2"
 
 jackson = "2.14.1"
 
+guice = "5.1.0"
+
 slf4j = "2.0.5"
 
 hocon = "1.4.2"
@@ -58,6 +60,8 @@ jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr
 
 jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+
+guice = { module = "com.google.inject:guice", version.ref = "guice"}
 
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 
