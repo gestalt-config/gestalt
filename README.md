@@ -540,7 +540,7 @@ app.uuid=${random:uuid}
 Allow Gestalt to inject configuration directly into your classes using Guice using the `@InjectConfig` annotation on any class fields. This does not support constructor injection (due to Guice limitation)
 To enable add the `new GestaltModule(gestalt)` to your Guice Modules, then pass in your instance of Gestalt.
 
-See the [unit tests](https://github.com/gestalt-config/gestalt/gestalt-guice/src/test/java/org/github/gestalt/config/guice/kodein/test/GuiceTest.java) for examples of use.
+See the [unit tests](gestalt-guice/src/test/java/org/github/gestalt/config/guice/GuiceTest.java) for examples of use.
 ```java
 Injector injector = Guice.createInjector(new GestaltModule(gestalt));
 
@@ -560,7 +560,7 @@ public static class MyService {
 When you are using Kodein you can use it to inject your configurations directly into your objects.
 By using the extension method `gestalt` within the scope of the Kodein DI DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
-See the [unit tests](https://github.com/gestalt-config/gestalt/gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config/kotlin/kodein/test/KodeinTest.kt) for examples of use.
+See the [unit tests](gestalt-kodein-di/src/test/kotlin/org/github/gestalt/config/kotlin/kodein/test/KodeinTest.kt) for examples of use.
 
 ```kotlin
   val kodein = DI {
@@ -576,7 +576,7 @@ See the [unit tests](https://github.com/gestalt-config/gestalt/gestalt-kodein-di
 When you are using Koin you can use it to inject your configurations directly into your objects.
 By using the extension method `gestalt` within the scope of the koin module DSL you can specify the path to your configurations, and it will automatically inject configurations into your object.
 
-See the [unit tests](https://github.com/gestalt-config/gestalt/blob/main/gestalt-koin-di/src/test/kotlin/org/github/gestalt/config/kotlin/koin/test/KoinTest.kt) for examples of use.
+See the [unit tests](gestalt-koin-di/src/test/kotlin/org/github/gestalt/config/kotlin/koin/test/KoinTest.kt) for examples of use.
 
 ```kotlin
   val koinModule = module {
@@ -593,7 +593,7 @@ See the [unit tests](https://github.com/gestalt-config/gestalt/blob/main/gestalt
 ```
 
 # Example code
-For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/credmond-git/gestalt/tree/main/gestalt-sample-java-latest/src/test)
+For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-sample-java-latest/src/test)
 
 # Architectural details
 This section is more for those wishing to know more about how Gestalt works, or how to add their own functionality. If you only wish to get configuration from Gestalt As Is, then feel free to skip it. 
