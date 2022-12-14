@@ -1,12 +1,16 @@
 package org.github.gestalt.config.integration;
 
 import com.adobe.testing.s3mock.junit5.S3MockExtension;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.guice.GestaltModule;
+import org.github.gestalt.config.guice.InjectConfig;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
@@ -676,6 +680,33 @@ public class GestaltSample {
 
         Assertions.assertEquals("active", gestalt.getConfig("serviceMode", TypeCapture.of(String.class)));
         Assertions.assertEquals('a', gestalt.getConfig("serviceMode", TypeCapture.of(Character.class)));
+
+        // Validate that guice gets the injected config.
+        Injector injector = Guice.createInjector(new GestaltModule(gestalt));
+        DBQueryService dbService = injector.getInstance(DBQueryService.class);
+        db = dbService.getDataBase();
+        Assertions.assertEquals(600, db.connectionTimeout);
+        Assertions.assertEquals(600, gestalt.getConfig("DB.connectionTimeout", Integer.class));
+        Assertions.assertEquals(123, db.idleTimeout);
+        Assertions.assertEquals(60000.0F, db.maxLifetime);
+        Assertions.assertNull(db.isEnabled);
+        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+
+        Assertions.assertEquals(3, db.hosts.size());
+        Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
+        // index into the path of an array.
+        Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
+        Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", db.hosts.get(0).url);
+        Assertions.assertEquals("credmond", db.hosts.get(1).getUser());
+        Assertions.assertEquals("5678", db.hosts.get(1).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", db.hosts.get(1).url);
+        Assertions.assertEquals("credmond", db.hosts.get(2).getUser());
+        Assertions.assertEquals("9012", db.hosts.get(2).getPassword());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts.get(2).url);
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
+
     }
 
     @Test
@@ -805,6 +836,7 @@ public class GestaltSample {
         Assertions.assertEquals(1234, connection.getDbPort());
         Assertions.assertEquals("usersTable", connection.getDbPath());
     }
+
 
     public enum Role {
         LEVEL0, LEVEL1
@@ -1053,6 +1085,18 @@ public class GestaltSample {
 
         public void setDbPath(String dbPath) {
             this.dbPath = dbPath;
+        }
+    }
+
+    public static class DBQueryService {
+        private @InjectConfig(path = "db") DataBase dataBase;
+
+        public DataBase getDataBase() {
+            return dataBase;
+        }
+
+        public void setDataBase(DataBase dataBase) {
+            this.dataBase = dataBase;
         }
     }
 }

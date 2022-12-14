@@ -33,7 +33,7 @@ pmd = "6.50.0"
 
 jmh = "1.36"
 
-gestalt = "0.16.5"
+gestalt = "0.16.6"
 
 gradleVersions = "0.42.0"
 gitVersions = "0.15.0"
@@ -94,6 +94,7 @@ gradle-git-versions = { module = "com.palantir.gradle.gitversion:gradle-git-vers
 
 
 gestalt-core = { module = "com.github.gestalt-config:gestalt-core", version.ref = "gestalt" }
+gestalt-guice = { module = "com.github.gestalt-config:gestalt-guice", version.ref = "gestalt" }
 gestalt-hocon = { module = "com.github.gestalt-config:gestalt-hocon", version.ref = "gestalt" }
 gestalt-kotlin = { module = "com.github.gestalt-config:gestalt-kotlin", version.ref = "gestalt" }
 gestalt-json = { module = "com.github.gestalt-config:gestalt-json", version.ref = "gestalt" }

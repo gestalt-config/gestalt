@@ -26,6 +26,9 @@ dependencies {
     implementation(libs.koin.di)
 
     testImplementation(libs.aws.mock)
+
+    testImplementation(libs.gestalt.guice)
+    implementation(libs.guice)
 }
 
 tasks.jar {
