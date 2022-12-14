@@ -7,8 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(libs.jgit)
-    implementation(libs.jgit.apache.ssh)
-    implementation(libs.eddsa)
+    implementation(libs.guice)
 }
 

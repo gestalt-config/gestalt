@@ -316,12 +316,13 @@ class DecoderRegistryTest {
     }
 
     @ConfigPriority(500)
-    public class TestPathMapper implements PathMapper {
+    public static class TestPathMapper implements PathMapper {
         @Override
         public ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
             return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, NodeType.LEAF.getType(), "TestPathMapper"));
         }
     }
+
     @Test
     void getNextNodeMultiPathMappersFirstNoFind() throws GestaltException {
         DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
@@ -380,8 +381,8 @@ class DecoderRegistryTest {
         Token nextToken = new ObjectToken("run");
         Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
         Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf))
-               .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", NodeType.LEAF.getType(), "navigate to next node")));
-
+               .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test",
+                   NodeType.LEAF.getType(), "navigate to next node")));
 
         ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertFalse(test.hasResults());
