@@ -124,14 +124,14 @@ public class ConfigProducer {
     @Produces
     @GestaltConfig
     protected <T> Optional<T> produceOptionalConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return ConfigProducerUtil.getOptionalValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected <T> Supplier<T> produceSupplierConfigProperty(InjectionPoint ip) {
-        return () -> ConfigProducerUtil.getValue(ip, getConfig());
+        return () -> ConfigProducerUtil.getSupplierValue(ip, getConfig());
     }
 
     @Dependent
@@ -152,27 +152,6 @@ public class ConfigProducer {
     @Produces
     @GestaltConfig
     protected <K, V> Map<K, V> producesMapConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
-    }
-
-    @Dependent
-    @Produces
-    @GestaltConfig
-    protected OptionalInt produceOptionalIntConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
-    }
-
-    @Dependent
-    @Produces
-    @GestaltConfig
-    protected OptionalLong produceOptionalLongConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
-    }
-
-    @Dependent
-    @Produces
-    @GestaltConfig
-    protected OptionalDouble produceOptionalDoubleConfigProperty(InjectionPoint ip) {
         return ConfigProducerUtil.getValue(ip, getConfig());
     }
 }

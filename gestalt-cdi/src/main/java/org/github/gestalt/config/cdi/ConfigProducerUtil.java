@@ -1,6 +1,14 @@
 package org.github.gestalt.config.cdi;
 
 
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.AnnotatedMember;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Provider;
+import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.reflect.TypeCapture;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -9,15 +17,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-
-import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.spi.AnnotatedMember;
-import jakarta.enterprise.inject.spi.AnnotatedType;
-import jakarta.enterprise.inject.spi.InjectionPoint;
-import jakarta.inject.Provider;
-
-import org.github.gestalt.config.Gestalt;
 
 /**
  * Actual implementations for producer method in CDI producer {@link ConfigProducer}.
@@ -42,16 +43,32 @@ public final class ConfigProducerUtil {
         return getValue(getName(injectionPoint), getType(injectionPoint), getDefaultValue(injectionPoint), config);
     }
 
-    private static Type getType(InjectionPoint injectionPoint) {
-        Type type = injectionPoint.getType();
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            if (parameterizedType.getRawType().equals(Provider.class)
-                    || parameterizedType.getRawType().equals(Instance.class)) {
-                return parameterizedType.getActualTypeArguments()[0];
-            }
+    /**
+     * Retrieves a converted configuration value from {@link Gestalt}.
+     *
+     * @param name the name of the configuration property.
+     * @param type the {@link Type} of the configuration value to convert.
+     * @param defaultValue the default value to use if no configuration value is found.
+     * @param config the current {@link Gestalt} instance.
+     * @return the converted configuration value.
+     */
+    public static <T> T getValue(String name, Type type, String defaultValue, Gestalt config) {
+        try {
+            return config.getConfig(name, TypeCapture.of(type));
+        } catch (GestaltException e) {
+            throw new ConfigException("Exception getting configuration for " + name + " type " + type, e);
         }
-        return type;
+    }
+
+    /**
+     * Retrieves a converted configuration value from {@link GestaltConfig}.
+     *
+     * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
+     * @param config the current {@link GestaltConfig} instance.
+     * @return the converted configuration value.
+     */
+    public static <T> Optional<T> getOptionalValue(InjectionPoint injectionPoint, Gestalt config) {
+        return getOptionalValue(getName(injectionPoint), getType(injectionPoint), getDefaultValue(injectionPoint), config);
     }
 
     /**
@@ -61,15 +78,53 @@ public final class ConfigProducerUtil {
      * @param type the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
      * @param config the current {@link Gestalt} instance.
-     *
      * @return the converted configuration value.
      */
-    public static <T> T getValue(String name, Type type, String defaultValue, Gestalt config) {
-        if (name == null) {
-            return null;
-        }
+    @SuppressWarnings("unchecked")
+    public static <T> Optional<T> getOptionalValue(String name, Type type, String defaultValue, Gestalt config) {
+        TypeCapture<Optional<T>> typeCapture = TypeCapture.of(type);
+        return config.getConfigOptional(name, (TypeCapture<T>) typeCapture.getFirstParameterType());
+    }
 
-        return null;
+    /**
+     * Retrieves a converted configuration value from {@link GestaltConfig}.
+     *
+     * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
+     * @param config the current {@link GestaltConfig} instance.
+     * @return the converted configuration value.
+     */
+    public static <T> T getSupplierValue(InjectionPoint injectionPoint, Gestalt config) {
+        return getSupplierValue(getName(injectionPoint), getType(injectionPoint), getDefaultValue(injectionPoint), config);
+    }
+
+    /**
+     * Retrieves a converted configuration value from {@link Gestalt}.
+     *
+     * @param name the name of the configuration property.
+     * @param type the {@link Type} of the configuration value to convert.
+     * @param defaultValue the default value to use if no configuration value is found.
+     * @param config the current {@link Gestalt} instance.
+     * @return the converted configuration value.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getSupplierValue(String name, Type type, String defaultValue, Gestalt config) {
+        TypeCapture<T> typeCapture = TypeCapture.of(type);
+        try {
+            return config.getConfig(name, (TypeCapture<T>) typeCapture.getFirstParameterType());
+        } catch (GestaltException e) {
+            throw new ConfigException("Exception getting supplier value for " + name + " type " + type, e);
+        }
+    }
+
+    private static Type getType(InjectionPoint injectionPoint) {
+        Type type = injectionPoint.getType();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            if (parameterizedType.getRawType().equals(Provider.class) || parameterizedType.getRawType().equals(Instance.class)) {
+                return parameterizedType.getActualTypeArguments()[0];
+            }
+        }
+        return type;
     }
 
     @SuppressWarnings("unchecked")
@@ -83,39 +138,6 @@ public final class ConfigProducerUtil {
         } else {
             throw new ConfigException("Not supported raw type", type.getTypeName());
         }
-    }
-
-    /**
-     * Indicates whether the given type is a type of Map or is a Supplier or Optional of Map.
-     *
-     * @param type the type to check
-     * @return {@code true} if the given type is a type of Map or is a Supplier or Optional of Map,
-     *         {@code false} otherwise.
-     */
-    private static boolean hasMap(final Type type) {
-        Class<?> rawType = rawTypeOf(type);
-        if (rawType == Map.class) {
-            return true;
-        } else if (type instanceof ParameterizedType) {
-            return hasMap(((ParameterizedType) type).getActualTypeArguments()[0]);
-        }
-        return false;
-    }
-
-    private static <T> boolean hasCollection(final Type type) {
-        Class<T> rawType = rawTypeOf(type);
-        if (type instanceof ParameterizedType) {
-            ParameterizedType paramType = (ParameterizedType) type;
-            Type[] typeArgs = paramType.getActualTypeArguments();
-            if (rawType == List.class) {
-                return true;
-            } else if (rawType == Set.class) {
-                return true;
-            } else {
-                return hasCollection(typeArgs[0]);
-            }
-        }
-        return false;
     }
 
     private static String getName(InjectionPoint injectionPoint) {

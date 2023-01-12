@@ -30,6 +30,11 @@ public class ConfigException extends RuntimeException {
         this.configPropertyName = configPropertyName;
     }
 
+    public ConfigException(String message, Throwable cause) {
+        super(message, cause);
+        this.configPropertyName = null;
+    }
+
     public ConfigException(String message, String configPropertyName, Throwable cause) {
         super(message, cause);
         this.configPropertyName = configPropertyName;
