@@ -14,11 +14,11 @@ public @interface GestaltConfigs {
     @Nonbinding
     String prefix() default "";
 
-    public static final class Literal extends AnnotationLiteral<GestaltConfigs> implements GestaltConfigs {
+    final class Literal extends AnnotationLiteral<GestaltConfigs> implements GestaltConfigs {
 
         private final String prefix;
 
-        public static Literal of(String prefix) {
+        public static Literal of(String prefix) {  //NOPMD
             return new Literal(prefix);
         }
 

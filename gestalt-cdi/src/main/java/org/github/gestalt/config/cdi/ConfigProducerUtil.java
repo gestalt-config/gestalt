@@ -15,10 +15,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Actual implementations for producer method in CDI producer {@link ConfigProducer}.
@@ -143,7 +140,7 @@ public final class ConfigProducerUtil {
     private static String getName(InjectionPoint injectionPoint) {
         for (Annotation qualifier : injectionPoint.getQualifiers()) {
             if (qualifier.annotationType().equals(GestaltConfig.class)) {
-                GestaltConfig configProperty = ((GestaltConfig) qualifier);
+                GestaltConfig configProperty = (GestaltConfig) qualifier;
                 return getConfigKey(injectionPoint, configProperty);
             }
         }
@@ -154,7 +151,7 @@ public final class ConfigProducerUtil {
         for (Annotation qualifier : injectionPoint.getQualifiers()) {
             if (qualifier.annotationType().equals(GestaltConfig.class)) {
                 String str = ((GestaltConfig) qualifier).defaultValue();
-                if (!str.isEmpty()) {
+                if (!str.isBlank()) {
                     return str;
                 }
                 Class<?> rawType = rawTypeOf(injectionPoint.getType());
@@ -175,7 +172,7 @@ public final class ConfigProducerUtil {
 
     static String getConfigKey(InjectionPoint ip, GestaltConfig configProperty) {
         String key = configProperty.path();
-        if (!key.trim().isEmpty()) {
+        if (!key.isBlank()) {
             return key;
         }
         if (ip.getAnnotated() instanceof AnnotatedMember) {
@@ -185,9 +182,9 @@ public final class ConfigProducerUtil {
                 String[] parts = declaringType.getJavaClass().getCanonicalName().split("\\.");
                 StringBuilder sb = new StringBuilder(parts[0]);
                 for (int i = 1; i < parts.length; i++) {
-                    sb.append(".").append(parts[i]);
+                    sb.append('.').append(parts[i]);
                 }
-                sb.append(".").append(member.getJavaMember().getName());
+                sb.append('.').append(member.getJavaMember().getName());
                 return sb.toString();
             }
         }

@@ -15,7 +15,6 @@
  */
 package org.github.gestalt.config.cdi;
 
-
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.*;
@@ -26,11 +25,9 @@ import jakarta.inject.Provider;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static org.github.gestalt.config.cdi.ConfigProducer.isClassHandledByConfigProducer;
-
 
 /**
  * CDI Extension to produces Config bean.
@@ -39,28 +36,20 @@ import static org.github.gestalt.config.cdi.ConfigProducer.isClassHandledByConfi
  */
 public class ConfigExtension implements Extension {
     private final Set<InjectionPoint> configPropertyInjectionPoints = new HashSet<>();
+
     /**
-     * ConfigProperties for SmallRye Config
+     * ConfigProperties for SmallRye Config.
      */
     private final Set<ConfigClassWithPrefix> configProperties = new HashSet<>();
+
     /**
-     * ConfigProperties for CDI
+     * ConfigProperties for CDI.
      */
     private final Set<ConfigClassWithPrefix> configPropertiesBeans = new HashSet<>();
 
     public ConfigExtension() {
     }
 
-    /**
-     * Indicates whether the given type is a type of Map.
-     *
-     * @param type the type to check
-     * @return {@code true} if the given type is a type of Map, {@code false} otherwise.
-     */
-    private static boolean isMap(final Type type) {
-        return type instanceof ParameterizedType &&
-            Map.class.isAssignableFrom((Class<?>) ((ParameterizedType) type).getRawType());
-    }
 
     protected void beforeBeanDiscovery(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
         AnnotatedType<ConfigProducer> configBean = bm.createAnnotatedType(ConfigProducer.class);
@@ -86,7 +75,7 @@ public class ConfigExtension implements Extension {
             ConfigClassWithPrefix properties = configClassWithPrefix(processAnnotatedType.getAnnotatedType().getJavaClass(),
                 processAnnotatedType.getAnnotatedType().getAnnotation(GestaltConfigs.class).prefix());
             // Unconfigured is represented as an empty String in SmallRye Config
-            if (!properties.getPrefix().equals("")) {
+            if (!properties.getPrefix().isEmpty()) {
                 configProperties.add(properties);
             } else {
                 configProperties.add(ConfigClassWithPrefix.configClassWithPrefix(properties.getKlass(), ""));
@@ -105,7 +94,7 @@ public class ConfigExtension implements Extension {
                 pip.getInjectionPoint().getAnnotated().getAnnotation(GestaltConfigs.class).prefix());
 
             // If the prefix is empty at the injection point, fallbacks to the class prefix (already registered)
-            if (!properties.getPrefix().equals("")) {
+            if (!properties.getPrefix().isEmpty()) {
                 configProperties.add(properties);
             }
             // Cover all combinations of the configurator bean for ConfigProperties because prefix is binding

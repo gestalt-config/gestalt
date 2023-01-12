@@ -22,7 +22,10 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import org.github.gestalt.config.Gestalt;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -33,23 +36,23 @@ import java.util.function.Supplier;
 @ApplicationScoped
 public class ConfigProducer {
     public static boolean isClassHandledByConfigProducer(Type requiredType) {
-        return requiredType == String.class
-            || requiredType == Boolean.class
-            || requiredType == Boolean.TYPE
-            || requiredType == Integer.class
-            || requiredType == Integer.TYPE
-            || requiredType == Long.class
-            || requiredType == Long.TYPE
-            || requiredType == Float.class
-            || requiredType == Float.TYPE
-            || requiredType == Double.class
-            || requiredType == Double.TYPE
-            || requiredType == Short.class
-            || requiredType == Short.TYPE
-            || requiredType == Byte.class
-            || requiredType == Byte.TYPE
-            || requiredType == Character.class
-            || requiredType == Character.TYPE;
+        return requiredType == String.class ||
+            requiredType == Boolean.class ||
+            requiredType == Boolean.TYPE ||
+            requiredType == Integer.class ||
+            requiredType == Integer.TYPE ||
+            requiredType == Long.class ||
+            requiredType == Long.TYPE ||
+            requiredType == Float.class ||
+            requiredType == Float.TYPE ||
+            requiredType == Double.class ||
+            requiredType == Double.TYPE ||
+            requiredType == Short.class ||
+            requiredType == Short.TYPE ||
+            requiredType == Byte.class ||
+            requiredType == Byte.TYPE ||
+            requiredType == Character.class ||
+            requiredType == Character.TYPE;
     }
 
     @Produces

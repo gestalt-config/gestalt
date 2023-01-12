@@ -42,9 +42,9 @@ public class ConfigPropertiesInjectionBean<T> implements Bean<T> {
     @Override
     public T create(final CreationalContext<T> creationalContext) {
         String prefix = configClassWithPrefix.getPrefix();
-        if (prefix.equals("")) {
+        if (prefix.isBlank()) {
             prefix = configClassWithPrefix.getKlass().getAnnotation(GestaltConfigs.class).prefix();
-            if (prefix.equals("")) {
+            if (prefix.isBlank()) {
                 prefix = "";
             }
         }
@@ -79,8 +79,9 @@ public class ConfigPropertiesInjectionBean<T> implements Bean<T> {
 
     @Override
     public String getName() {
-        return this.getClass().getSimpleName() + "_" + configClassWithPrefix.getKlass().getName() + "_"
-            + configClassWithPrefix.getPrefix();
+        return this.getClass().getSimpleName() + "_" +
+            configClassWithPrefix.getKlass().getName() + "_" +
+            configClassWithPrefix.getPrefix();
     }
 
     @Override

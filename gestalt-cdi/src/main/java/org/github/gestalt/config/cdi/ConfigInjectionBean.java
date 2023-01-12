@@ -51,7 +51,7 @@ public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
     private final Class<?> clazz;
 
     /**
-     * only access via {@link #getConfig()}
+     * only access via {@link #getConfig()}.
      */
     private Gestalt _config;
 

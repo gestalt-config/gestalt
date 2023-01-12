@@ -11,6 +11,10 @@ public class ConfigClassWithPrefix {
         this.prefix = prefix;
     }
 
+    public static ConfigClassWithPrefix configClassWithPrefix(Class<?> klass, String prefix) {
+        return new ConfigClassWithPrefix(klass, prefix);
+    }
+
     public Class<?> getKlass() {
         return this.klass;
     }
@@ -23,7 +27,7 @@ public class ConfigClassWithPrefix {
         if (this == o) {
             return true;
         } else if (o != null && this.getClass() == o.getClass()) {
-            ConfigClassWithPrefix that = (ConfigClassWithPrefix)o;
+            ConfigClassWithPrefix that = (ConfigClassWithPrefix) o;
             return this.klass.equals(that.klass) && this.prefix.equals(that.prefix);
         } else {
             return false;
@@ -31,11 +35,7 @@ public class ConfigClassWithPrefix {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.klass, this.prefix});
-    }
-
-    public static ConfigClassWithPrefix configClassWithPrefix(Class<?> klass, String prefix) {
-        return new ConfigClassWithPrefix(klass, prefix);
+        return Objects.hash(this.klass, this.prefix);
     }
 
     /*

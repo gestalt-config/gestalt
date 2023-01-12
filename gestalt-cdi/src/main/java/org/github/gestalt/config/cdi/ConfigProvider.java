@@ -2,12 +2,14 @@ package org.github.gestalt.config.cdi;
 
 import org.github.gestalt.config.Gestalt;
 
-public class ConfigProvider {
-    private static Gestalt gestalt = null;
+public final class ConfigProvider {
+    private static volatile Gestalt gestalt = null;
+
+    private ConfigProvider() { }
 
     public static void registerGestalt(Gestalt regGestalt) {
-        if (gestalt == null) {
-            synchronized (Gestalt.class) {
+        if (gestalt == null) {  // NOPMD
+            synchronized (ConfigProvider.class) {
                 if (gestalt == null) {
                     gestalt = regGestalt;
                     return;
