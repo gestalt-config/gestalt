@@ -31,10 +31,13 @@ import java.util.function.Supplier;
 /**
  * CDI producer for {@link Gestalt} bean.
  *
+ * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
+ * @author Colin Redmond (c) 2023.
  */
 @ApplicationScoped
-public class ConfigProducer {
+public class GestaltConfigProducer {
     public static boolean isClassHandledByConfigProducer(Type requiredType) {
         return requiredType == String.class ||
             requiredType == Boolean.class ||
@@ -57,104 +60,104 @@ public class ConfigProducer {
 
     @Produces
     protected Gestalt getConfig() {
-        return ConfigProvider.getGestaltConfig();
+        return GestaltConfigProvider.getGestaltConfig();
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected String produceStringConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Long getLongValue(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Integer getIntegerValue(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Float produceFloatConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Double produceDoubleConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Boolean produceBooleanConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Short produceShortConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Byte produceByteConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected Character produceCharacterConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected <T> Optional<T> produceOptionalConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getOptionalValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getOptionalValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected <T> Supplier<T> produceSupplierConfigProperty(InjectionPoint ip) {
-        return () -> ConfigProducerUtil.getSupplierValue(ip, getConfig());
+        return () -> GestaltConfigProducerUtil.getSupplierValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected <T> Set<T> producesSetConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected <T> List<T> producesListConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
     @GestaltConfig
     protected <K, V> Map<K, V> producesMapConfigProperty(InjectionPoint ip) {
-        return ConfigProducerUtil.getValue(ip, getConfig());
+        return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 }

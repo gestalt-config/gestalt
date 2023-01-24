@@ -18,7 +18,6 @@ class MetadataInjectionPoint implements InjectionPoint {
         return InjectionPoint.class;
     }
 
-    @SuppressWarnings("serial")
     @Override
     public Set<Annotation> getQualifiers() {
         return Collections.singleton(new AnnotationLiteral<Default>() {

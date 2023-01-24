@@ -9,6 +9,7 @@ import org.github.gestalt.config.source.MapConfigSource;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldJunit5Extension;
 import org.jboss.weld.junit5.WeldSetup;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(WeldJunit5Extension.class)
 class ConfigInjectionTest {
     @WeldSetup
-    WeldInitiator weld = WeldInitiator.from(ConfigExtension.class, ConfigBean.class)
+    WeldInitiator weld = WeldInitiator.from(GestaltConfigExtension.class, ConfigBean.class)
                                       .addBeans()
                                       .activate(ApplicationScoped.class)
                                       .inject(this)
@@ -43,6 +44,7 @@ class ConfigInjectionTest {
         configs.put("charId", "Q");
         configs.put("map.data1", "1,2,3,4,5");
         configs.put("map.data2", "6,7,8,9,0");
+        configs.put("color.enum", "RED");
 
 
         GestaltBuilder builder = new GestaltBuilder();
@@ -51,7 +53,12 @@ class ConfigInjectionTest {
             .build();
         gestalt.loadConfigs();
 
-        ConfigProvider.registerGestalt(gestalt);
+        GestaltConfigProvider.registerGestalt(gestalt);
+    }
+
+    @AfterAll
+    static void cleanup() {
+        GestaltConfigProvider.unRegisterGestalt();
     }
 
     @Test
@@ -78,6 +85,7 @@ class ConfigInjectionTest {
         assertEquals(Optional.empty(), configBean.getEmptyOpt());
 
         assertEquals("steve", configBean.getSupplierMyProp().get());
+        assertEquals(Color.RED, configBean.getColorEnum());
     }
 
     @ApplicationScoped
@@ -146,6 +154,10 @@ class ConfigInjectionTest {
         @GestaltConfig(path = "my.prop.user")
         Supplier<String> supplierMyProp;
 
+        @Inject
+        @GestaltConfig(path = "color.enum")
+        Color colorEnum;
+
         public ConfigBean() {
         }
 
@@ -212,5 +224,15 @@ class ConfigInjectionTest {
         public Supplier<String> getSupplierMyProp() {
             return supplierMyProp;
         }
+
+        public Color getColorEnum() {
+            return colorEnum;
+        }
+    }
+
+    enum Color {
+        RED,
+        GREEN,
+        BLUE
     }
 }

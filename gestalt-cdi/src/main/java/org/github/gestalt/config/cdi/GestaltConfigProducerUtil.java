@@ -18,13 +18,16 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
- * Actual implementations for producer method in CDI producer {@link ConfigProducer}.
+ * Actual implementations for producer method in CDI producer {@link GestaltConfigProducer}.
+ *
+ * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="https://github.com/guhilling">Gunnar Hilling</a>
+ * @author Colin Redmond (c) 2023.
  */
-public final class ConfigProducerUtil {
+public final class GestaltConfigProducerUtil {
 
-    private ConfigProducerUtil() {
+    private GestaltConfigProducerUtil() {
         throw new UnsupportedOperationException();
     }
 
@@ -53,7 +56,7 @@ public final class ConfigProducerUtil {
         try {
             return config.getConfig(name, TypeCapture.of(type));
         } catch (GestaltException e) {
-            throw new ConfigException("Exception getting configuration for " + name + " type " + type, e);
+            throw new GestaltConfigException("Exception getting configuration for " + name + " type " + type, e);
         }
     }
 
@@ -109,7 +112,7 @@ public final class ConfigProducerUtil {
         try {
             return config.getConfig(name, (TypeCapture<T>) typeCapture.getFirstParameterType());
         } catch (GestaltException e) {
-            throw new ConfigException("Exception getting supplier value for " + name + " type " + type, e);
+            throw new GestaltConfigException("Exception getting supplier value for " + name + " type " + type, e);
         }
     }
 
@@ -133,7 +136,7 @@ public final class ConfigProducerUtil {
         } else if (type instanceof GenericArrayType) {
             return (Class<T>) Array.newInstance(rawTypeOf(((GenericArrayType) type).getGenericComponentType()), 0).getClass();
         } else {
-            throw new ConfigException("Not supported raw type", type.getTypeName());
+            throw new GestaltConfigException("Not supported raw type", type.getTypeName());
         }
     }
 
@@ -188,7 +191,7 @@ public final class ConfigProducerUtil {
                 return sb.toString();
             }
         }
-        throw new ConfigException("No Configuration Property Name");
+        throw new GestaltConfigException("No Configuration Property Name");
     }
 
 }

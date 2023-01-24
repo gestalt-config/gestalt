@@ -27,14 +27,17 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.github.gestalt.config.cdi.ConfigProducer.isClassHandledByConfigProducer;
+import static org.github.gestalt.config.cdi.GestaltConfigProducer.isClassHandledByConfigProducer;
 
 /**
  * CDI Extension to produces Config bean.
  *
+ * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
+ * @author Colin Redmond (c) 2023.
  */
-public class ConfigExtension implements Extension {
+public class GestaltConfigExtension implements Extension {
     private final Set<InjectionPoint> configPropertyInjectionPoints = new HashSet<>();
 
     /**
@@ -47,13 +50,13 @@ public class ConfigExtension implements Extension {
      */
     private final Set<ConfigClassWithPrefix> configPropertiesBeans = new HashSet<>();
 
-    public ConfigExtension() {
+    public GestaltConfigExtension() {
     }
 
 
     protected void beforeBeanDiscovery(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
-        AnnotatedType<ConfigProducer> configBean = bm.createAnnotatedType(ConfigProducer.class);
-        bbd.addAnnotatedType(configBean, ConfigProducer.class.getName());
+        AnnotatedType<GestaltConfigProducer> configBean = bm.createAnnotatedType(GestaltConfigProducer.class);
+        bbd.addAnnotatedType(configBean, GestaltConfigProducer.class.getName());
 
         // Remove NonBinding annotation. OWB is not able to look up CDI beans programmatically with NonBinding in the
         // case the look-up changed the non-binding parameters (in this case the prefix)
@@ -122,8 +125,8 @@ public class ConfigExtension implements Extension {
             }
         }
 
-        customTypes.forEach(customType -> abd.addBean(new ConfigInjectionBean<>(bm, customType)));
-        configPropertiesBeans.forEach(properties -> abd.addBean(new ConfigPropertiesInjectionBean<>(properties)));
+        customTypes.forEach(customType -> abd.addBean(new GestaltConfigInjectionBean<>(bm, customType)));
+        configPropertiesBeans.forEach(properties -> abd.addBean(new GestaltConfigsInjectionBean<>(properties)));
     }
 
     protected void validate(@Observes AfterDeploymentValidation adv) {

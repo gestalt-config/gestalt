@@ -35,12 +35,17 @@ import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Provider;
 
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.reflect.TypeCapture;
 
 /**
+ * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ *
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
+ * @author Colin Redmond (c) 2023.
  */
-public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
+public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
 
     private static final Set<Annotation> QUALIFIERS = new HashSet<>();
     static {
@@ -55,7 +60,7 @@ public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
      */
     private Gestalt _config;
 
-    public ConfigInjectionBean(BeanManager bm, Class<?> clazz) {
+    public GestaltConfigInjectionBean(BeanManager bm, Class<?> clazz) {
         this.bm = bm;
         this.clazz = clazz;
     }
@@ -67,7 +72,7 @@ public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
 
     @Override
     public Class<?> getBeanClass() {
-        return ConfigInjectionBean.class;
+        return GestaltConfigInjectionBean.class;
     }
 
     @Override
@@ -81,7 +86,7 @@ public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
         InjectionPoint ip = (InjectionPoint) bm.getInjectableReference(new MetadataInjectionPoint(), context);
         Annotated annotated = ip.getAnnotated();
         GestaltConfig configProperty = annotated.getAnnotation(GestaltConfig.class);
-        String key = ConfigProducerUtil.getConfigKey(ip, configProperty);
+        String key = GestaltConfigProducerUtil.getConfigKey(ip, configProperty);
         String defaultValue = configProperty.defaultValue();
 
         try {
@@ -103,19 +108,22 @@ public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
                     return (T) getConfig().getConfig(key, annotatedTypeClass);
                 } else {
                     Optional<T> optionalValue = (Optional<T>) getConfig().getConfigOptional(key, annotatedTypeClass);
-                    return optionalValue.get();
+                    return optionalValue.orElseGet(
+                        () -> (T) ((GestaltCore) getConfig()).getDecoderService()
+                                                             .decodeNode(key, defaultValue, TypeCapture.of(annotatedTypeClass))
+                    );
                 }
             }
         } catch (GestaltException e) {
-            throw new ConfigException("Unable to get configuration for ", key, e);
+            throw new GestaltConfigException("Unable to get configuration for ", key, e);
         }
 
-        throw new ConfigException("Unknown configuration ", key);
+        throw new GestaltConfigException("Unknown configuration ", key);
     }
 
     public Gestalt getConfig() {
         if (_config == null) {
-            _config = ConfigProvider.getGestaltConfig();
+            _config = GestaltConfigProvider.getGestaltConfig();
         }
         return _config;
     }

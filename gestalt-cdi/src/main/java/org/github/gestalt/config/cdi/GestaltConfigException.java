@@ -16,26 +16,25 @@
 
 package org.github.gestalt.config.cdi;
 
-
-public class ConfigException extends RuntimeException {
+public class GestaltConfigException extends RuntimeException {
     private final String configPropertyName;
 
-    public ConfigException(String message) {
+    public GestaltConfigException(String message) {
         super(message);
         this.configPropertyName = null;
     }
 
-    public ConfigException(String message, String configPropertyName) {
+    public GestaltConfigException(String message, String configPropertyName) {
         super(message);
         this.configPropertyName = configPropertyName;
     }
 
-    public ConfigException(String message, Throwable cause) {
+    public GestaltConfigException(String message, Throwable cause) {
         super(message, cause);
         this.configPropertyName = null;
     }
 
-    public ConfigException(String message, String configPropertyName, Throwable cause) {
+    public GestaltConfigException(String message, String configPropertyName, Throwable cause) {
         super(message, cause);
         this.configPropertyName = configPropertyName;
     }

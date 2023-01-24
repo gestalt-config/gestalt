@@ -37,11 +37,4 @@ public class ConfigClassWithPrefix {
     public int hashCode() {
         return Objects.hash(this.klass, this.prefix);
     }
-
-    /*
-    public static ConfigClassWithPrefix configClassWithPrefix(Class<?> klass) {
-        return configClassWithPrefix(klass, ConfigMappings.getPrefix(klass));
-    }
-
-     */
 }

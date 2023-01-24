@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.Set;
 
 
-public class ConfigPropertiesInjectionBean<T> implements Bean<T> {
+public class GestaltConfigsInjectionBean<T> implements Bean<T> {
     private final ConfigClassWithPrefix configClassWithPrefix;
     private final Set<Annotation> qualifiers;
 
-    ConfigPropertiesInjectionBean(final ConfigClassWithPrefix configClassWithPrefix) {
+    GestaltConfigsInjectionBean(final ConfigClassWithPrefix configClassWithPrefix) {
         this.configClassWithPrefix = configClassWithPrefix;
         this.qualifiers = Collections.singleton(GestaltConfigs.Literal.of(configClassWithPrefix.getPrefix()));
     }
@@ -49,11 +49,11 @@ public class ConfigPropertiesInjectionBean<T> implements Bean<T> {
             }
         }
 
-        Gestalt config = ConfigProvider.getGestaltConfig();
+        Gestalt config = GestaltConfigProvider.getGestaltConfig();
         try {
             return config.getConfig(prefix, getBeanClass());
         } catch (GestaltException e) {
-            throw new ConfigException("unable to retrieve config for ", prefix, e);
+            throw new GestaltConfigException("unable to retrieve config for ", prefix, e);
         }
     }
 
