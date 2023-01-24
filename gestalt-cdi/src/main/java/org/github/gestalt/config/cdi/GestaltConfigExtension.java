@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.github.gestalt.config.cdi;
 
 import jakarta.enterprise.event.Observes;
@@ -32,7 +33,7 @@ import static org.github.gestalt.config.cdi.GestaltConfigProducer.isClassHandled
 /**
  * CDI Extension to produces Config bean.
  *
- * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ * </p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
  * @author Colin Redmond (c) 2023.

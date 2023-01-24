@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.github.gestalt.config.cdi;
 
 import java.lang.annotation.Annotation;
@@ -48,6 +49,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
 
     private static final Set<Annotation> QUALIFIERS = new HashSet<>();
+
     static {
         QUALIFIERS.add(new GestaltConfigLiteral());
     }
@@ -58,7 +60,7 @@ public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapabl
     /**
      * only access via {@link #getConfig()}.
      */
-    private Gestalt _config;
+    private Gestalt config;
 
     public GestaltConfigInjectionBean(BeanManager bm, Class<?> clazz) {
         this.bm = bm;
@@ -95,10 +97,10 @@ public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapabl
                 Type rawType = paramType.getRawType();
 
                 // handle Provider<T> and Instance<T>
-                if (rawType instanceof Class
-                    && (((Class<?>) rawType).isAssignableFrom(Provider.class)
-                    || ((Class<?>) rawType).isAssignableFrom(Instance.class))
-                    && paramType.getActualTypeArguments().length == 1) {
+                if (rawType instanceof Class &&
+                    (((Class<?>) rawType).isAssignableFrom(Provider.class) ||
+                        ((Class<?>) rawType).isAssignableFrom(Instance.class)) &&
+                    paramType.getActualTypeArguments().length == 1) {
                     Class<?> paramTypeClass = (Class<?>) paramType.getActualTypeArguments()[0];
                     return (T) getConfig().getConfig(key, paramTypeClass);
                 }
@@ -122,10 +124,10 @@ public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapabl
     }
 
     public Gestalt getConfig() {
-        if (_config == null) {
-            _config = GestaltConfigProvider.getGestaltConfig();
+        if (config == null) {
+            config = GestaltConfigProvider.getGestaltConfig();
         }
-        return _config;
+        return config;
     }
 
     @Override

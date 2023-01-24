@@ -6,6 +6,7 @@ import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.ArrayToken;
@@ -109,6 +110,12 @@ public class DecoderRegistry implements DecoderService {
             .stream()
             .filter(decoder -> decoder.matches(klass))
             .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass) {
+        return decodeNode(path, new LeafNode(configNode), klass);
     }
 
     @Override
