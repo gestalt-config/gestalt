@@ -25,6 +25,7 @@ public class GestaltConfigsInjectionBean<T> implements Bean<T> {
 
 
     @Override
+    @SuppressWarnings({"unchecked"})
     public Class<T> getBeanClass() {
         return (Class<T>) configClassWithPrefix.getKlass();
     }
@@ -97,6 +98,7 @@ public class GestaltConfigsInjectionBean<T> implements Bean<T> {
 
     private static class GestaltConfigsLiteral extends AnnotationLiteral<GestaltConfigs> implements GestaltConfigs {
 
+        @Override
         public String prefix() {
             return null;
         }

@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Actual implementations for producer method in CDI producer {@link GestaltConfigProducer}.
  *
- * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ * <p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="https://github.com/guhilling">Gunnar Hilling</a>
  * @author Colin Redmond (c) 2023.
@@ -36,6 +36,7 @@ public final class GestaltConfigProducerUtil {
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
      * @param config the current {@link GestaltConfig} instance.
+     * @param <T> type of class to get.
      *
      * @return the converted configuration value.
      */
@@ -50,6 +51,7 @@ public final class GestaltConfigProducerUtil {
      * @param type the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
      * @param config the current {@link Gestalt} instance.
+     * @param <T> type of class to get.
      * @return the converted configuration value.
      */
     public static <T> T getValue(String name, Type type, String defaultValue, Gestalt config) {
@@ -65,6 +67,7 @@ public final class GestaltConfigProducerUtil {
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
      * @param config the current {@link GestaltConfig} instance.
+     * @param <T> type of class to get.
      * @return the converted configuration value.
      */
     public static <T> Optional<T> getOptionalValue(InjectionPoint injectionPoint, Gestalt config) {
@@ -78,6 +81,7 @@ public final class GestaltConfigProducerUtil {
      * @param type the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
      * @param config the current {@link Gestalt} instance.
+     * @param <T> type of class to get.
      * @return the converted configuration value.
      */
     @SuppressWarnings("unchecked")
@@ -90,7 +94,8 @@ public final class GestaltConfigProducerUtil {
      * Retrieves a converted configuration value from {@link GestaltConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
-     * @param config the current {@link GestaltConfig} instance.
+     * @param config the current {@link Gestalt} instance.
+     * @param <T> type of class to get.
      * @return the converted configuration value.
      */
     public static <T> T getSupplierValue(InjectionPoint injectionPoint, Gestalt config) {
@@ -104,6 +109,7 @@ public final class GestaltConfigProducerUtil {
      * @param type the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
      * @param config the current {@link Gestalt} instance.
+     * @param <T> type of class to get.
      * @return the converted configuration value.
      */
     @SuppressWarnings("unchecked")

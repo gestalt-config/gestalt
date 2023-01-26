@@ -23,10 +23,11 @@ public class ConfigClassWithPrefix {
         return this.prefix;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (o != null && this.getClass() == o.getClass()) {
+        } else if (!(o instanceof ConfigClassWithPrefix)) {
             ConfigClassWithPrefix that = (ConfigClassWithPrefix) o;
             return this.klass.equals(that.klass) && this.prefix.equals(that.prefix);
         } else {
@@ -34,6 +35,7 @@ public class ConfigClassWithPrefix {
         }
     }
 
+    @Override
     public int hashCode() {
         return Objects.hash(this.klass, this.prefix);
     }

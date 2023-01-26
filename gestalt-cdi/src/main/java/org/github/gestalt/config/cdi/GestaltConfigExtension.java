@@ -33,7 +33,7 @@ import static org.github.gestalt.config.cdi.GestaltConfigProducer.isClassHandled
 /**
  * CDI Extension to produces Config bean.
  *
- * </p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ * <p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
  * @author Colin Redmond (c) 2023.

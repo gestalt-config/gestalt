@@ -26,6 +26,7 @@ public @interface GestaltConfigs {
             this.prefix = prefix;
         }
 
+        @Override
         public String prefix() {
             return this.prefix;
         }

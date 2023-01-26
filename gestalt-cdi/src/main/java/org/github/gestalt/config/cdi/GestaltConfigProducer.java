@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 /**
  * CDI producer for {@link Gestalt} bean.
  *
- * </p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ * <p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
  * @author Colin Redmond (c) 2023.
