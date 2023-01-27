@@ -1,8 +1,8 @@
 [versions]
-kotlin = "1.7.22"
+kotlin = "1.8.0"
 kotlinDokka = "1.7.20"
-kodeinDI = "7.16.0"
-koinDI= "3.2.2"
+kodeinDI = "7.18.0"
+koinDI= "3.3.2"
 
 jackson = "2.14.1"
 
@@ -11,22 +11,22 @@ cdi = "3.0.0"
 weld = "3.1.0.Final"
 weldCore = "4.0.3.Final"
 
-slf4j = "2.0.5"
+slf4j = "2.0.6"
 
 hocon = "1.4.2"
-aws = "2.18.30"
+aws = "2.19.25"
 jgit = "6.4.0.202211300538-r"
 
 eddsa = "0.3.0"
 
-junit5 = "5.9.1"
-assertJ = "3.23.1"
-mockito = "4.9.0"
+junit5 = "5.9.2"
+assertJ = "3.24.2"
+mockito = "5.0.0"
 mockk = "1.13.3"
 koTestAssertions = "5.5.4"
-awsMock = "2.10.1"
+awsMock = "2.11.0"
 
-errorprone = "2.16"
+errorprone = "2.18.0"
 errorpronejavac = "9+181-r4173-1"
 detekt = "1.22.0"
 gradleDetekt = "1.21.0"
