@@ -8,7 +8,7 @@ import org.github.gestalt.config.Gestalt;
 import java.lang.reflect.Field;
 
 /**
- * Configures a type listener for the annotation @InjectConfig
+ * Configures a type listener for the annotation @InjectConfig.
  */
 class GestaltConfigTypeListener implements TypeListener {
 

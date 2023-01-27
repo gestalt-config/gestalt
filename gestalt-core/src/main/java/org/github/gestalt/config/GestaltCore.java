@@ -76,6 +76,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return loadErrors;
     }
 
+    public DecoderService getDecoderService() {
+        return decoderService;
+    }
+
     @Override
     public void loadConfigs() throws GestaltException {
         if (sources == null || sources.isEmpty()) {

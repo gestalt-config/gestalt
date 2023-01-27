@@ -7,6 +7,9 @@ koinDI= "3.2.2"
 jackson = "2.14.1"
 
 guice = "5.1.0"
+cdi = "3.0.0"
+weld = "3.1.0.Final"
+weldCore = "4.0.3.Final"
 
 slf4j = "2.0.5"
 
@@ -62,6 +65,10 @@ jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-t
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 
 guice = { module = "com.google.inject:guice", version.ref = "guice"}
+
+cdi = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api", version.ref = "cdi" }
+weld-junit5 = { module  = "org.jboss.weld:weld-junit5", version.ref = "weld" }
+weld-core = { module  = "org.jboss.weld:weld-core-impl", version.ref = "weldCore" }
 
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 

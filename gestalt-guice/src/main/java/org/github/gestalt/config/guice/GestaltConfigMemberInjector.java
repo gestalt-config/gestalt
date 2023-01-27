@@ -7,7 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import java.lang.reflect.Field;
 
 /**
- * Members Injector for Gestalt
+ * Members Injector for Gestalt.
  *
  * @param <T> type of the field.
  */

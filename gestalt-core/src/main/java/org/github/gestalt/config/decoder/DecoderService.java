@@ -36,6 +36,17 @@ public interface DecoderService {
      * @param <T> The generic type of the node we are decoding.
      * @return ValidateOf the code we are decoding.
      */
+    <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass);
+
+    /**
+     * Decode a node and return the ValidateOf with the results.
+     *
+     * @param path Current path we are decoding, used for logging
+     * @param configNode the current node we are decoding
+     * @param klass the TypeCapture of the node we are decoding
+     * @param <T> The generic type of the node we are decoding.
+     * @return ValidateOf the code we are decoding.
+     */
     <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass);
 
     /**
