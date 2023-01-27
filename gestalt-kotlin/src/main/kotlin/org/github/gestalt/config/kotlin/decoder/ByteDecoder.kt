@@ -12,7 +12,7 @@ import java.nio.charset.Charset
 /**
  * Kotlin Byte Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 class ByteDecoder : LeafDecoder<Byte>() {
     override fun name(): String {

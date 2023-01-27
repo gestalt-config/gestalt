@@ -6,7 +6,7 @@ import java.util.Objects;
  * Token for an array that has an index.
  * Must be a positive number
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class ArrayToken extends Token {
     private final int index;

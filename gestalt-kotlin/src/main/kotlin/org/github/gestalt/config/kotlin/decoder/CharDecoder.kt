@@ -11,7 +11,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin Char Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 class CharDecoder : LeafDecoder<Char>() {
     override fun name(): String {

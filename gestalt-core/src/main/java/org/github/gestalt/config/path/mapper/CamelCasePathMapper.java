@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Splits the sentence by camel case. So each capitalized word is a new token.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(500)
 public class CamelCasePathMapper implements PathMapper {

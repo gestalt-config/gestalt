@@ -1,7 +1,7 @@
 /*
  * Apply the plugin to setup testing dependencies and tasks.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 
 plugins {

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Decodes primitive arrays of any type.
  *
  * @param <T> type of array
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class ArrayDecoder<T> implements Decoder<T[]> {
 

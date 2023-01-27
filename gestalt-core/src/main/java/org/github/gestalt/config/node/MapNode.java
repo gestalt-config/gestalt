@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Map node holds a map of config nodes we can get by key.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class MapNode implements ConfigNode {
 

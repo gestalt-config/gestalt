@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Static utility functions to analyze and build a config node.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class ConfigCompiler {
     private ConfigCompiler() {

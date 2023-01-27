@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Token that stores an objects by name.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class ObjectToken extends Token {
     private final String name;

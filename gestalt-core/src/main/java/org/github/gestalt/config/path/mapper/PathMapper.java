@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Interface to map a sentance to a list of tokens.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public interface PathMapper {
     /**

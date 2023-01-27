@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * Class to convert a sentence to tokens
  * This class is fully customizable by passing in your own tokenizer and evaluator functions.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public abstract class SentenceLexer {
 

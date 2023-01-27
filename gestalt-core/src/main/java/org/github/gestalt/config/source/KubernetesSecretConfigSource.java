@@ -19,7 +19,7 @@ import java.util.UUID;
  * Load a config source as kubernetes files secrets.
  * https://kubernetes.io/docs/concepts/configuration/secret/#projection-of-secret-keys-to-specific-paths
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class KubernetesSecretConfigSource implements ConfigSource {
     public static final String K8_SECRET_CONFIG = "k8Secret";

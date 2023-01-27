@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * Load a config source from a classpath resource using the getResourceAsStream method.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class ClassPathConfigSource implements ConfigSource {
     private final String resource;

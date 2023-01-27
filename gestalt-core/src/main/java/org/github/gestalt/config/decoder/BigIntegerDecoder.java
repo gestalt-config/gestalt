@@ -11,7 +11,7 @@ import java.math.BigInteger;
 /**
  * Decode Big Integers.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class BigIntegerDecoder extends LeafDecoder<BigInteger> {
 

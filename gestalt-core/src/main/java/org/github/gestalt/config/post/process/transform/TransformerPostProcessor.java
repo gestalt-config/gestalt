@@ -27,7 +27,7 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  * It will then return the first value found.
  * So in the above example you can also use "hello ${USER_NAME} you are level ${USER_LEVEL}!" and it will find the values in the Env Vars.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class TransformerPostProcessor implements PostProcessor {
     private static final Pattern pattern = Pattern.compile(

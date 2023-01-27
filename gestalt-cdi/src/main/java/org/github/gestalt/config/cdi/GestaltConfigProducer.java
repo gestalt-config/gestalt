@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  * <p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023. (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023. (c) 2023.
  */
 @ApplicationScoped
 public class GestaltConfigProducer {

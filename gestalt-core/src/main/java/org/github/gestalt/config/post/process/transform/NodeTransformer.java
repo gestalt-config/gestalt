@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Allows you to provide a custom map to inject into leaf values that match ${map:key}, where the key is used to lookup into the map.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(300)
 public class NodeTransformer implements Transformer {

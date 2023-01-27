@@ -6,7 +6,7 @@ import java.util.Objects;
  * A Token for a Tag.
  * Not currently used.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class TagToken extends Token {
     private final String tag;

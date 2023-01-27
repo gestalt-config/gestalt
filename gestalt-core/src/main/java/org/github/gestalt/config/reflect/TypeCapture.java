@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * This class is modeled on the TypeToken from Guava, TypeLiteral from guice and jackson.
  *
  * @param <T> type to capture
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class TypeCapture<T> {
     /**
@@ -226,9 +226,9 @@ public class TypeCapture<T> {
     /**
      * Get the annotations by type.
      *
+     * @param annotationClass annotation class
+     * @return the annotation
      * @param <A> the type of the annotation
-     *
-     * @return annotations by type
      */
     public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
         return getRawType().getAnnotationsByType(annotationClass);

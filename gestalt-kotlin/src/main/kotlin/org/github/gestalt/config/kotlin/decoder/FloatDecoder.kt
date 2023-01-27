@@ -12,7 +12,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin Float Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 class FloatDecoder : LeafDecoder<Float>() {
     override fun name(): String {

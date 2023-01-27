@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Decode a UUID.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class UUIDDecoder extends LeafDecoder<UUID> {
 

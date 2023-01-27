@@ -12,7 +12,7 @@ import java.util.TimerTask;
 /**
  * Reloads a sources every specified duration.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class TimedConfigReloadStrategy extends ConfigReloadStrategy {
     private static final Logger logger = LoggerFactory.getLogger(TimedConfigReloadStrategy.class.getName());

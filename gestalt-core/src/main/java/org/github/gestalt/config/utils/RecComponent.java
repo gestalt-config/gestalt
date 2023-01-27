@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
  * <p>The latter is the index of the record components in the class file's
  * record attribute, required to invoke the record's canonical constructor.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class RecComponent {
     private final String name;

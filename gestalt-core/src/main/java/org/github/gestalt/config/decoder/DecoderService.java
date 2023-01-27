@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Contains all decoders and functionality interact and decode a node.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public interface DecoderService {
     /**

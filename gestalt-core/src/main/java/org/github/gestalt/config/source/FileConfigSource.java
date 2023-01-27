@@ -18,7 +18,7 @@ import java.util.UUID;
 /**
  * Load a config source from a local file.
  *
- * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class FileConfigSource implements ConfigSource {
     private static final Logger logger = LoggerFactory.getLogger(FileConfigSource.class.getName());
