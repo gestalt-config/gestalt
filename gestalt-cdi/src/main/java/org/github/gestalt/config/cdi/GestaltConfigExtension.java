@@ -61,23 +61,23 @@ public class GestaltConfigExtension implements Extension {
 
         // Remove NonBinding annotation. OWB is not able to look up CDI beans programmatically with NonBinding in the
         // case the look-up changed the non-binding parameters (in this case the prefix)
-        AnnotatedTypeConfigurator<GestaltConfigs> configPropertiesConfigurator = bbd
-            .configureQualifier(GestaltConfigs.class);
+        AnnotatedTypeConfigurator<InjectConfigs> configPropertiesConfigurator = bbd
+            .configureQualifier(InjectConfigs.class);
         configPropertiesConfigurator.methods().forEach(methodConfigurator -> methodConfigurator
             .remove(annotation -> annotation.annotationType().equals(Nonbinding.class)));
     }
 
     protected void processConfigProperties(
-        @Observes @WithAnnotations(GestaltConfigs.class) ProcessAnnotatedType<?> processAnnotatedType) {
+        @Observes @WithAnnotations(InjectConfigs.class) ProcessAnnotatedType<?> processAnnotatedType) {
         // Even if we filter in the CDI event, beans containing injection points of ConfigProperties are also fired.
-        if (processAnnotatedType.getAnnotatedType().isAnnotationPresent(GestaltConfigs.class)) {
+        if (processAnnotatedType.getAnnotatedType().isAnnotationPresent(InjectConfigs.class)) {
             // We are going to veto, because it may be a managed bean, and we will use a configurator bean
             processAnnotatedType.veto();
 
             // Each config class is both in SmallRyeConfig and managed by a configurator bean.
             // CDI requires more beans for injection points due to binding prefix.
             ConfigClassWithPrefix properties = configClassWithPrefix(processAnnotatedType.getAnnotatedType().getJavaClass(),
-                processAnnotatedType.getAnnotatedType().getAnnotation(GestaltConfigs.class).prefix());
+                processAnnotatedType.getAnnotatedType().getAnnotation(InjectConfigs.class).prefix());
             // Unconfigured is represented as an empty String in SmallRye Config
             if (!properties.getPrefix().isEmpty()) {
                 configProperties.add(properties);
@@ -89,13 +89,13 @@ public class GestaltConfigExtension implements Extension {
     }
 
     protected void processConfigInjectionPoints(@Observes ProcessInjectionPoint<?, ?> pip) {
-        if (pip.getInjectionPoint().getAnnotated().isAnnotationPresent(GestaltConfig.class)) {
+        if (pip.getInjectionPoint().getAnnotated().isAnnotationPresent(InjectConfig.class)) {
             configPropertyInjectionPoints.add(pip.getInjectionPoint());
         }
 
-        if (pip.getInjectionPoint().getAnnotated().isAnnotationPresent(GestaltConfigs.class)) {
+        if (pip.getInjectionPoint().getAnnotated().isAnnotationPresent(InjectConfigs.class)) {
             ConfigClassWithPrefix properties = configClassWithPrefix((Class<?>) pip.getInjectionPoint().getType(),
-                pip.getInjectionPoint().getAnnotated().getAnnotation(GestaltConfigs.class).prefix());
+                pip.getInjectionPoint().getAnnotated().getAnnotation(InjectConfigs.class).prefix());
 
             // If the prefix is empty at the injection point, fallbacks to the class prefix (already registered)
             if (!properties.getPrefix().isEmpty()) {

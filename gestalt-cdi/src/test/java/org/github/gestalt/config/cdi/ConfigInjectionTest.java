@@ -92,70 +92,70 @@ class ConfigInjectionTest {
     static class ConfigBean {
 
         @Inject
-        @GestaltConfig(path = "my.prop.user")
+        @InjectConfig(path = "my.prop.user")
         String myPropUser;
 
         @Inject
-        @GestaltConfig(path = "expansion")
+        @InjectConfig(path = "expansion")
         Long expansionL;
 
         @Inject
-        @GestaltConfig(path = "expansion")
+        @InjectConfig(path = "expansion")
         Integer expansion;
         @Inject
-        @GestaltConfig(path = "secret")
+        @InjectConfig(path = "secret")
         Float secret;
 
         @Inject
-        @GestaltConfig(path = "my.prop.id")
+        @InjectConfig(path = "my.prop.id")
         Double myPropProfile;
 
         @Inject
-        @GestaltConfig(path = "my.prop.enabled")
+        @InjectConfig(path = "my.prop.enabled")
         Boolean myPropProfileEnabled;
 
         @Inject
-        @GestaltConfig(path = "shortId")
+        @InjectConfig(path = "shortId")
         Short shortId;
 
         @Inject
-        @GestaltConfig(path = "byteId")
+        @InjectConfig(path = "byteId")
         Byte byteId;
 
         @Inject
-        @GestaltConfig(path = "charId")
+        @InjectConfig(path = "charId")
         Character charId;
 
         @Inject
-        @GestaltConfig(path = "my.prop")
+        @InjectConfig(path = "my.prop")
         Map<String, String> myPropMap;
 
         @Inject
-        @GestaltConfig(path = "map")
+        @InjectConfig(path = "map")
         Map<String, List<Integer>> mapOfInt;
 
         @Inject
-        @GestaltConfig(path = "map.data1")
+        @InjectConfig(path = "map.data1")
         List<Integer> listOfInt;
 
         @Inject
-        @GestaltConfig(path = "map.data1")
+        @InjectConfig(path = "map.data1")
         Set<Integer> setOfInt;
 
         @Inject
-        @GestaltConfig(path = "my.prop.enabled")
+        @InjectConfig(path = "my.prop.enabled")
         Optional<Boolean> myPropProfileEnabledOpt;
 
         @Inject
-        @GestaltConfig(path = "my.prop.not.exist")
+        @InjectConfig(path = "my.prop.not.exist")
         Optional<Boolean> emptyOpt;
 
         @Inject
-        @GestaltConfig(path = "my.prop.user")
+        @InjectConfig(path = "my.prop.user")
         Supplier<String> supplierMyProp;
 
         @Inject
-        @GestaltConfig(path = "color.enum")
+        @InjectConfig(path = "color.enum")
         Color colorEnum;
 
         public ConfigBean() {

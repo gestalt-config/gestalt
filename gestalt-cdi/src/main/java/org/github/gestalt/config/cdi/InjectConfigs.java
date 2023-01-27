@@ -10,11 +10,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Qualifier
-public @interface GestaltConfigs {
+public @interface InjectConfigs {
     @Nonbinding
     String prefix() default "";
 
-    final class Literal extends AnnotationLiteral<GestaltConfigs> implements GestaltConfigs {
+    final class Literal extends AnnotationLiteral<InjectConfigs> implements InjectConfigs {
 
         private final String prefix;
 

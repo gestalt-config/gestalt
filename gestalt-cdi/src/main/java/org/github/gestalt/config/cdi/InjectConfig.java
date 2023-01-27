@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
-public @interface GestaltConfig {
+public @interface InjectConfig {
     @Nonbinding
     String path() default "";
 

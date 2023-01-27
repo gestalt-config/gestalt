@@ -51,7 +51,7 @@ public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapabl
     private static final Set<Annotation> QUALIFIERS = new HashSet<>();
 
     static {
-        QUALIFIERS.add(new GestaltConfigLiteral());
+        QUALIFIERS.add(new InjectConfigLiteral());
     }
 
     private final BeanManager bm;
@@ -87,7 +87,7 @@ public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapabl
     public T create(CreationalContext<T> context) {
         InjectionPoint ip = (InjectionPoint) bm.getInjectableReference(new MetadataInjectionPoint(), context);
         Annotated annotated = ip.getAnnotated();
-        GestaltConfig configProperty = annotated.getAnnotation(GestaltConfig.class);
+        InjectConfig configProperty = annotated.getAnnotation(InjectConfig.class);
         String key = GestaltConfigProducerUtil.getConfigKey(ip, configProperty);
         String defaultValue = configProperty.defaultValue();
 
@@ -170,7 +170,7 @@ public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapabl
         return "ConfigInjectionBean_" + clazz;
     }
 
-    private static class GestaltConfigLiteral extends AnnotationLiteral<GestaltConfig> implements GestaltConfig {
+    private static class InjectConfigLiteral extends AnnotationLiteral<InjectConfig> implements InjectConfig {
 
         @Override
         public String path() {

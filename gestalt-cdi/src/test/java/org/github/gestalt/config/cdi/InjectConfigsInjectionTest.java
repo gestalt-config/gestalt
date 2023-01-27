@@ -21,18 +21,18 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(WeldJunit5Extension.class)
-class GestaltConfigsInjectionTest {
+class InjectConfigsInjectionTest {
     @WeldSetup
     WeldInitiator weld = WeldInitiator
-        .from(GestaltConfigExtension.class, GestaltConfigsInjectionTest.class, Server.class)
+        .from(GestaltConfigExtension.class, InjectConfigsInjectionTest.class, Server.class)
         .inject(this)
         .build();
 
     @Inject
-    @GestaltConfigs
+    @InjectConfigs
     Server server;
     @Inject
-    @GestaltConfigs(prefix = "cloud")
+    @InjectConfigs(prefix = "cloud")
     Server serverCloud;
 
     @Inject
@@ -86,7 +86,7 @@ class GestaltConfigsInjectionTest {
 
     @Test
     void select() {
-        Server server = CDI.current().select(Server.class, GestaltConfigs.Literal.of("")).get();
+        Server server = CDI.current().select(Server.class, InjectConfigs.Literal.of("")).get();
         assertNotNull(server);
         assertEquals("localhost", server.theHost);
         assertEquals(8080, server.port);
@@ -94,7 +94,7 @@ class GestaltConfigsInjectionTest {
         assertEquals(1, server.list.size());
         assertEquals(1, server.set.size());
 
-        Server cloud = CDI.current().select(Server.class, GestaltConfigs.Literal.of("cloud")).get();
+        Server cloud = CDI.current().select(Server.class, InjectConfigs.Literal.of("cloud")).get();
         assertNotNull(cloud);
         assertEquals("cloud", cloud.theHost);
         assertEquals(9090, cloud.port);
@@ -104,7 +104,7 @@ class GestaltConfigsInjectionTest {
     }
 
     @Dependent
-    @GestaltConfigs(prefix = "server")
+    @InjectConfigs(prefix = "server")
     public static class Server {
         public String theHost;
         public int port;

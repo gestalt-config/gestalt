@@ -20,7 +20,7 @@ public class GestaltConfigsInjectionBean<T> implements Bean<T> {
 
     GestaltConfigsInjectionBean(final ConfigClassWithPrefix configClassWithPrefix) {
         this.configClassWithPrefix = configClassWithPrefix;
-        this.qualifiers = Collections.singleton(GestaltConfigs.Literal.of(configClassWithPrefix.getPrefix()));
+        this.qualifiers = Collections.singleton(InjectConfigs.Literal.of(configClassWithPrefix.getPrefix()));
     }
 
 
@@ -44,7 +44,7 @@ public class GestaltConfigsInjectionBean<T> implements Bean<T> {
     public T create(final CreationalContext<T> creationalContext) {
         String prefix = configClassWithPrefix.getPrefix();
         if (prefix.isBlank()) {
-            prefix = configClassWithPrefix.getKlass().getAnnotation(GestaltConfigs.class).prefix();
+            prefix = configClassWithPrefix.getKlass().getAnnotation(InjectConfigs.class).prefix();
             if (prefix.isBlank()) {
                 prefix = "";
             }
@@ -96,7 +96,7 @@ public class GestaltConfigsInjectionBean<T> implements Bean<T> {
     }
 
 
-    private static class GestaltConfigsLiteral extends AnnotationLiteral<GestaltConfigs> implements GestaltConfigs {
+    private static class InjectConfigsLiteral extends AnnotationLiteral<InjectConfigs> implements InjectConfigs {
 
         @Override
         public String prefix() {

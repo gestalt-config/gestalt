@@ -66,98 +66,98 @@ public class GestaltConfigProducer {
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected String produceStringConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Long getLongValue(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Integer getIntegerValue(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Float produceFloatConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Double produceDoubleConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Boolean produceBooleanConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Short produceShortConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Byte produceByteConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected Character produceCharacterConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected <T> Optional<T> produceOptionalConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getOptionalValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected <T> Supplier<T> produceSupplierConfigProperty(InjectionPoint ip) {
         return () -> GestaltConfigProducerUtil.getSupplierValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected <T> Set<T> producesSetConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected <T> List<T> producesListConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }
 
     @Dependent
     @Produces
-    @GestaltConfig
+    @InjectConfig
     protected <K, V> Map<K, V> producesMapConfigProperty(InjectionPoint ip) {
         return GestaltConfigProducerUtil.getValue(ip, getConfig());
     }

@@ -32,10 +32,10 @@ public final class GestaltConfigProducerUtil {
     }
 
     /**
-     * Retrieves a converted configuration value from {@link GestaltConfig}.
+     * Retrieves a converted configuration value from {@link InjectConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
-     * @param config the current {@link GestaltConfig} instance.
+     * @param config the current {@link InjectConfig} instance.
      * @param <T> type of class to get.
      *
      * @return the converted configuration value.
@@ -63,10 +63,10 @@ public final class GestaltConfigProducerUtil {
     }
 
     /**
-     * Retrieves a converted configuration value from {@link GestaltConfig}.
+     * Retrieves a converted configuration value from {@link InjectConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
-     * @param config the current {@link GestaltConfig} instance.
+     * @param config the current {@link InjectConfig} instance.
      * @param <T> type of class to get.
      * @return the converted configuration value.
      */
@@ -91,7 +91,7 @@ public final class GestaltConfigProducerUtil {
     }
 
     /**
-     * Retrieves a converted configuration value from {@link GestaltConfig}.
+     * Retrieves a converted configuration value from {@link InjectConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
      * @param config the current {@link Gestalt} instance.
@@ -148,8 +148,8 @@ public final class GestaltConfigProducerUtil {
 
     private static String getName(InjectionPoint injectionPoint) {
         for (Annotation qualifier : injectionPoint.getQualifiers()) {
-            if (qualifier.annotationType().equals(GestaltConfig.class)) {
-                GestaltConfig configProperty = (GestaltConfig) qualifier;
+            if (qualifier.annotationType().equals(InjectConfig.class)) {
+                InjectConfig configProperty = (InjectConfig) qualifier;
                 return getConfigKey(injectionPoint, configProperty);
             }
         }
@@ -158,8 +158,8 @@ public final class GestaltConfigProducerUtil {
 
     private static String getDefaultValue(InjectionPoint injectionPoint) {
         for (Annotation qualifier : injectionPoint.getQualifiers()) {
-            if (qualifier.annotationType().equals(GestaltConfig.class)) {
-                String str = ((GestaltConfig) qualifier).defaultValue();
+            if (qualifier.annotationType().equals(InjectConfig.class)) {
+                String str = ((InjectConfig) qualifier).defaultValue();
                 if (!str.isBlank()) {
                     return str;
                 }
@@ -179,7 +179,7 @@ public final class GestaltConfigProducerUtil {
         return null;
     }
 
-    static String getConfigKey(InjectionPoint ip, GestaltConfig configProperty) {
+    static String getConfigKey(InjectionPoint ip, InjectConfig configProperty) {
         String key = configProperty.path();
         if (!key.isBlank()) {
             return key;
