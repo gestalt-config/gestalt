@@ -14,6 +14,9 @@ import java.util.Collections;
 import java.util.Set;
 
 
+/**
+ * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ */
 public class GestaltConfigsInjectionBean<T> implements Bean<T> {
     private final ConfigClassWithPrefix configClassWithPrefix;
     private final Set<Annotation> qualifiers;
