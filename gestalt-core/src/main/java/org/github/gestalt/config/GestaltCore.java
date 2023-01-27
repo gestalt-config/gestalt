@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class GestaltCore implements Gestalt, ConfigReloadListener {
     private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());

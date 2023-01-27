@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * Decode an Enum.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Value for a config. Used to store the leaf value while parsing the configs.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class ConfigValue {
     private final String value;

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Holds and manages config nodes.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public interface ConfigNodeService {
 

@@ -22,6 +22,8 @@ import java.util.*;
  * Allows a user to create an object from an interface and retrieve configuration values.
  * Gestalt expects a standard java bean where the member value would be carModel then the method would be String getCarModel()
  * If the interface has a default method and is missing a config, it will return the default value.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class ProxyDecoder implements Decoder<Object> {
 

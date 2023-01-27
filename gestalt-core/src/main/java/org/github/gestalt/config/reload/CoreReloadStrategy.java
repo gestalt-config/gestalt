@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Store all core reload listeners and functionality to call the on reload.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class CoreReloadStrategy {
     /**

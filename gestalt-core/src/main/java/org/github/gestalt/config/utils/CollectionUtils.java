@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class for collections.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class CollectionUtils {
 

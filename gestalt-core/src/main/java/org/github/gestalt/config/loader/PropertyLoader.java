@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Loads from a property files from multiple sources, such as a file.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class PropertyLoader implements ConfigLoader {
 

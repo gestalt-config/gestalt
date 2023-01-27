@@ -11,7 +11,7 @@ import java.util.List;
  * Holds all the config reload listeners and the source we want to watch for.
  * On reload it will call the listeners with the sources.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class ConfigReloadStrategy {
 

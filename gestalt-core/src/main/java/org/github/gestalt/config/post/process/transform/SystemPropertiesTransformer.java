@@ -8,7 +8,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  * Allows you to inject System Properties into leaf values that match ${envVar:key},
  * where the key is used to lookup into the Environment Variables.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 @ConfigPriority(200)
 public class SystemPropertiesTransformer implements Transformer {

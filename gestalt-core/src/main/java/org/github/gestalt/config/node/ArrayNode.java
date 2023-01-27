@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Array config node that holds a list of configs.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class ArrayNode implements ConfigNode {
     private final List<ConfigNode> values;

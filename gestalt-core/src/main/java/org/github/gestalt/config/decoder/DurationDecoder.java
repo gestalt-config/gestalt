@@ -11,7 +11,7 @@ import java.time.Duration;
 /**
  * Decode a duration.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class DurationDecoder extends LeafDecoder<Duration> {
 

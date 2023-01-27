@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Validation errors for every possible error.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public abstract class ValidationError {
     private ValidationLevel level;

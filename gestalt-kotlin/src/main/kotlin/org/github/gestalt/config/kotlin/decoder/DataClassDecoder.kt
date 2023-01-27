@@ -28,7 +28,7 @@ import kotlin.reflect.jvm.javaField
  *
  * <p>If all members are optional and we have no parameters we will try and create the class with the default empty constructor.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 class DataClassDecoder : Decoder<Any> {
     override fun name(): String {

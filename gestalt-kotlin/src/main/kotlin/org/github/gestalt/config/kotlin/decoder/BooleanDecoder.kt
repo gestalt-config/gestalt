@@ -10,7 +10,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin Boolean Decoder.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 class BooleanDecoder : LeafDecoder<Boolean>() {
     override fun name(): String {

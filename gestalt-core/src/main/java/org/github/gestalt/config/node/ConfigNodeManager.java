@@ -21,7 +21,7 @@ import static org.github.gestalt.config.utils.ValidateOf.validateOf;
 /**
  * Holds and manages config nodes.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();

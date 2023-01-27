@@ -11,7 +11,7 @@ import java.time.format.DateTimeParseException;
 /**
  * Decode an Instant.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class InstantDecoder extends LeafDecoder<Instant> {
 

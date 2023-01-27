@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * Represents a tag that can be applied to data.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class Tag {
     private final String key;

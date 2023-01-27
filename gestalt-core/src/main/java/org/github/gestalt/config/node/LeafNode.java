@@ -6,7 +6,7 @@ import java.util.Optional;
 /**
  * leaf node that holds a value.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class LeafNode implements ConfigNode {
     private final String value;

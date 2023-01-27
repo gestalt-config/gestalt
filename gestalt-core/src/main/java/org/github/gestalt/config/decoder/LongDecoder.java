@@ -9,7 +9,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 /**
  * Decode a Long.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class LongDecoder extends LeafDecoder<Long> {
 

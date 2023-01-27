@@ -4,7 +4,9 @@ import java.util.Map;
 
 /**
  * Wrapper for getting the System Environments.
- * Used so we can Mock the results
+ * Used so we can Mock the results.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class SystemWrapper {
 

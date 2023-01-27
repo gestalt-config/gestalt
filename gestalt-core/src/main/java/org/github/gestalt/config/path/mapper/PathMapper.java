@@ -7,6 +7,11 @@ import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.List;
 
+/**
+ * Interface to map a sentance to a list of tokens.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ */
 public interface PathMapper {
     /**
      * Apply the GestaltConfig to the PathMapper. Needed when building via the ServiceLoader

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Utility to build an error message from a list of validations.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class ErrorsUtil {
     private ErrorsUtil() {

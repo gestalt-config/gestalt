@@ -10,7 +10,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin String Decoder.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 class StringDecoder : LeafDecoder<String>() {
     override fun name(): String {

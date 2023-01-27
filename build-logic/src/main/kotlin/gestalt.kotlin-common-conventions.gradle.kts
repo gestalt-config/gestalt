@@ -1,5 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+/*
+ * Apply the plugin to setup kotlin code plugins.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ */
+
 plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka")

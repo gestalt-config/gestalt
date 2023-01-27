@@ -17,6 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/*
+ * Benchmark of basic Gestalt configuration.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ */
+
 public abstract class Benchmarks {
 
     @State(Scope.Benchmark)

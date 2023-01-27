@@ -7,6 +7,11 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 import kotlin.reflect.typeOf
 
+/**
+ * Extension function for koin to allow us to inject configuration using the method gestalt
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ */
 inline fun <reified T : Any> Scope.gestalt(
     path: String,
     default: T? = null,

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Apply the supplied transforms as we convert it.
  * Then write that as an input stream for the next stage in the parsing.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class EnvironmentConfigSource implements ConfigSource {
 

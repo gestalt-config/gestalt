@@ -1,3 +1,9 @@
+/*
+ * Apply the plugin to setup kotlin code test plugins.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ */
+
 plugins {
     id("gestalt.kotlin-common-conventions")
     jacoco

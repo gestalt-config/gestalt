@@ -8,6 +8,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotate a class to provide a prefix.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 @Target(value = { TYPE })
 @Retention(value = RUNTIME)

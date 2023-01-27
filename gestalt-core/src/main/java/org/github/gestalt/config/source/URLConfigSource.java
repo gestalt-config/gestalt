@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * Load a config source from a URL. A format for the data in the string must also be provided.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class URLConfigSource implements ConfigSource {
     private final String sourceURL;

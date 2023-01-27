@@ -44,7 +44,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
  * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
- * @author Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
 

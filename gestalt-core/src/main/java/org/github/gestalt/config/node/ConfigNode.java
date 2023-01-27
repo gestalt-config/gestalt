@@ -5,7 +5,7 @@ import java.util.Optional;
 /**
  * Interface for a config node.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public interface ConfigNode {
 

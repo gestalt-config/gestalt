@@ -8,6 +8,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A annotation to apply a priority to a configuration.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 @Target(value = {TYPE})
 @Retention(value = RUNTIME)

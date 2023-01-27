@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 /**
  * Decode Big Decimals.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
 

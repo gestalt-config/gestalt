@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Base class for decoding collections. Will handle validation of the node type.
  *
  * @param <T> generic type of the collection
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public abstract class CollectionDecoder<T extends Collection<?>> implements Decoder<T> {
 

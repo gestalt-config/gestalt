@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Decoder support for Java Records.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class RecordDecoder implements Decoder<Object> {
 

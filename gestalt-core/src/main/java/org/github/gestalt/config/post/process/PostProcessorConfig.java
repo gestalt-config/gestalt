@@ -6,6 +6,8 @@ import org.github.gestalt.config.node.ConfigNodeService;
 
 /**
  * Holds the configuration that is provided to the post processors.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class PostProcessorConfig {
     private final GestaltConfig config;

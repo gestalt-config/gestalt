@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 /**
  * Decode a File.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class FileDecoder extends LeafDecoder<File> {
 

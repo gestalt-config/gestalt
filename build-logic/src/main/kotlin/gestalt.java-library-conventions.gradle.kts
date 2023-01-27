@@ -1,5 +1,7 @@
 /*
  * Apply the plugin to create a java-library module.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 
 plugins {

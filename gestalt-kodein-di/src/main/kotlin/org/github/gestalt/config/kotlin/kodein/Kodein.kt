@@ -6,6 +6,11 @@ import org.kodein.di.DirectDIAware
 import org.kodein.di.instance
 import kotlin.reflect.typeOf
 
+/**
+ * Extension function for Kodein to allow us to inject configuration using the method gestalt
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
+ */
 inline fun <reified T : Any> DirectDIAware.gestalt(
     path: String,
     default: T? = null,

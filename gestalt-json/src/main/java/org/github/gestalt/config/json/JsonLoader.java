@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * Loads from a json files from multiple sources, such as a file.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class JsonLoader implements ConfigLoader {
 

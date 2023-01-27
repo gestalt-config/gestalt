@@ -10,6 +10,8 @@ import static org.github.gestalt.config.utils.ValidateOf.validateOf;
 
 /**
  * Utility class for merging nodes.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class MergeNodes {
 

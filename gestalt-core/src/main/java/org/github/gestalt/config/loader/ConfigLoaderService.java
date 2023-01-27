@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Maintains all config loaders. Provides methods for registering and searching for config loaders
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public interface ConfigLoaderService {
 

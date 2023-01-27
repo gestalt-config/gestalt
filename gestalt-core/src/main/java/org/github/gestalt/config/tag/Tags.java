@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 /**
  * Represents a collection of tags that can be applied to data.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class Tags {
     private final Set<Tag> tags;

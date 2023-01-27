@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  *
  * <p>The builder can be used to customize and replace any of the functionality of Gestalt.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class GestaltBuilder {
     private static final Logger logger = LoggerFactory.getLogger(GestaltBuilder.class.getName());

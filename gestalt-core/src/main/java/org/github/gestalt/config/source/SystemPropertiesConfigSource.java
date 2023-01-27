@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Convert the System properties into a config source.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class SystemPropertiesConfigSource implements ConfigSource {
 

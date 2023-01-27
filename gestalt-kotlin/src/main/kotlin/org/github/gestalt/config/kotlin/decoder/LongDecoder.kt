@@ -12,7 +12,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin Long Decoder.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 class LongDecoder : LeafDecoder<Long>() {
     override fun name(): String {

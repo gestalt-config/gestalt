@@ -5,7 +5,7 @@ import org.github.gestalt.config.entity.ValidationLevel
 
 /**
  * Kotlin specific Validation Errors
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 
 /**

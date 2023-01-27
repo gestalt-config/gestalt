@@ -3,6 +3,8 @@ import com.palantir.gradle.gitversion.VersionDetails
 /**
  * Apply to your main gradle build script to
  * Set all project versions to the last git tag if clean, tag and the git hash otherwise
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 plugins {
     id("com.palantir.git-version")

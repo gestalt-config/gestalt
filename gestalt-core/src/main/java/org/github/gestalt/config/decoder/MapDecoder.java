@@ -15,7 +15,7 @@ import java.util.*;
  * Decode a Map. Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int.
  * The value can be any type we can decode.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class MapDecoder implements Decoder<Map<?, ?>> {
 

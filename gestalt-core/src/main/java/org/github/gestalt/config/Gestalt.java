@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public interface Gestalt {
 

@@ -3,7 +3,7 @@ package org.github.gestalt.config.entity;
 /**
  * Level of the error, we can recover from warnings but may want to fail on errors.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public enum ValidationLevel {
     /**

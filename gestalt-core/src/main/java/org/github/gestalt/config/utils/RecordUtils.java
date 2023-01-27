@@ -16,6 +16,8 @@ import static java.lang.invoke.MethodType.methodType;
  * https://github.com/FrauBoes/record-s11n-util/blob/main/src/invoke/InvokeUtils.java
  *
  * <p>Utility methods for record serialization, using MethodHandles.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public final class RecordUtils {
 

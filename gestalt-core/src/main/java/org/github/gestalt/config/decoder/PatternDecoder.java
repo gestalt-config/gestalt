@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * Decode a Pattern.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public class PatternDecoder extends LeafDecoder<Pattern> {
 

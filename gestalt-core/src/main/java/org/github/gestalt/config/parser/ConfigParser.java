@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Takes in a tokenized config and returns a config node tree.
  *
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public interface ConfigParser {
 

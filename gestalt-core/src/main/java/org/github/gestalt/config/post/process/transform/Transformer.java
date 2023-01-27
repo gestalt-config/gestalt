@@ -6,6 +6,8 @@ import org.github.gestalt.config.utils.ValidateOf;
 /**
  * Allows you to add your own custom source for the TransformerPostProcessor.
  * Whenever the TransformerPostProcessor sees a value ${name:key} the transform is selected that matches the same name
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public interface Transformer {
 

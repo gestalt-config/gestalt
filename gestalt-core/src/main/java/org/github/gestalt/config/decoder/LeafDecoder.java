@@ -10,7 +10,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  * Base class for leaf decoders. Will decode leaf types, including booleans, integers ect.
  *
  * @param <T> generic type for this leaf decoder
- * @author Colin Redmond
+ * @author <a href="mailto:colin.redmond@outlook.com">Colin Redmond (c) 2023.
  */
 public abstract class LeafDecoder<T> implements Decoder<T> {
 
