@@ -1,4 +1,6 @@
 [versions]
+java = "11"
+javaLatest = "19"
 kotlin = "1.8.0"
 kotlinDokka = "1.7.20"
 kodeinDI = "7.18.0"
