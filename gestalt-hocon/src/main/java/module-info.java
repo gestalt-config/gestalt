@@ -6,4 +6,8 @@ module org.github.gestalt.hocon {
     requires typesafe.config;
 
     exports org.github.gestalt.config.hocon;
+
+    provides org.github.gestalt.config.loader.ConfigLoader with
+        org.github.gestalt.config.hocon.HoconLoader;
 }
+

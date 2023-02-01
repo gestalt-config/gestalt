@@ -11,17 +11,18 @@ repositories {
 }
 
 dependencies {
+    jacocoAggregation(project(":gestalt-cdi"))
     jacocoAggregation(project(":gestalt-core"))
+    jacocoAggregation(project(":gestalt-git"))
+    jacocoAggregation(project(":gestalt-guice"))
     jacocoAggregation(project(":gestalt-hocon"))
     jacocoAggregation(project(":gestalt-json"))
-    jacocoAggregation(project(":gestalt-git"))
-    jacocoAggregation(project(":gestalt-kotlin"))
     jacocoAggregation(project(":gestalt-kodein-di"))
     jacocoAggregation(project(":gestalt-koin-di"))
+    jacocoAggregation(project(":gestalt-kotlin"))
     jacocoAggregation(project(":gestalt-s3"))
     jacocoAggregation(project(":gestalt-toml"))
     jacocoAggregation(project(":gestalt-yaml"))
-    jacocoAggregation(project(":gestalt-test"))
 }
 
 reporting {

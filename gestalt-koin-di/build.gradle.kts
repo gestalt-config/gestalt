@@ -13,6 +13,6 @@ dependencies {
 
 tasks.jar {
     manifest {
-        attributes("Automatic-Module-Name" to "org.github.gestalt.config.kotlin.koin")
+        attributes("Automatic-Module-Name" to "org.github.gestalt.kotlin.koin")
     }
 }

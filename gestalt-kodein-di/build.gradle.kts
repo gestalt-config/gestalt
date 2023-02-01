@@ -13,7 +13,7 @@ dependencies {
 
 tasks.jar {
     manifest {
-        attributes("Automatic-Module-Name" to "org.github.gestalt.config.kotlin.kodein")
+        attributes("Automatic-Module-Name" to "org.github.gestalt.kotlin.kodein")
     }
 }
 

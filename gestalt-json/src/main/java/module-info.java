@@ -6,4 +6,7 @@ module org.github.gestalt.json {
     requires com.fasterxml.jackson.databind;
 
     exports org.github.gestalt.config.json;
+
+    provides org.github.gestalt.config.loader.ConfigLoader with
+        org.github.gestalt.config.json.JsonLoader;
 }
