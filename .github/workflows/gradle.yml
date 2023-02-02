@@ -28,7 +28,7 @@ jobs:
       - name: Set up JDK 19
         uses: actions/setup-java@v3
         with:
-          java-version: '179'
+          java-version: '19'
           distribution: 'temurin'
           
       - name: Build with Gradle
