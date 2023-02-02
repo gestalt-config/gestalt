@@ -321,7 +321,7 @@ public class GestaltSample {
         configs.put("db.hosts[1].password", "5678");
         configs.put("db.hosts[2].password", "9012");
 
-        String urlFile = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-sample/src/test/resources/default.json";
+        String urlFile = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-examples/gestalt-sample/src/test/resources/default.json";
 
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
