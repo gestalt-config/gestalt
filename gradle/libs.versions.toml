@@ -1,4 +1,6 @@
 [versions]
+java = "11"
+javaLatest = "19"
 kotlin = "1.8.0"
 kotlinDokka = "1.7.20"
 kodeinDI = "7.18.0"
@@ -36,7 +38,7 @@ pmd = "6.50.0"
 
 jmh = "1.36"
 
-gestalt = "0.18.0"
+gestalt = "0.19.0"
 
 gradleVersions = "0.42.0"
 gitVersions = "0.15.0"

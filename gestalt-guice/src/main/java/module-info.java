@@ -1,7 +1,7 @@
 /**
  * Module info definition for gestalt hocon integration
  */
-module org.github.gestalt.hocon {
+module org.github.gestalt.guice {
     requires org.github.gestalt.core;
     requires com.google.guice;
 
