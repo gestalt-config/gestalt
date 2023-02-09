@@ -135,7 +135,7 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertNull(notExist)
 
         try {
-            val myVal: Long = gestalt.getConfig("http.pool.notExist")
+            gestalt.getConfig<Long>("http.pool.notExist")
             Assertions.fail("Should not reach this")
         } catch (e:GestaltException) {
             Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
@@ -172,7 +172,7 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertNull(notExist)
 
         try {
-            val myVal: Long = gestalt.getConfig("http.pool.notExist")
+            gestalt.getConfig<Long>("http.pool.notExist")
             Assertions.fail("Should not reach this")
         } catch (e:GestaltException) {
             Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +

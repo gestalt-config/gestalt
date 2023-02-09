@@ -14,3 +14,9 @@ dependencies {
     testImplementation(libs.weld.core)
 }
 
+tasks.jar {
+    manifest {
+        attributes("Automatic-Module-Name" to "org.github.gestalt.cdi")
+    }
+}
+
