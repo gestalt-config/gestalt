@@ -16,7 +16,7 @@ weldCore = "4.0.3.Final"
 slf4j = "2.0.6"
 
 hocon = "1.4.2"
-aws = "2.20.2"
+aws = "2.20.3"
 jgit = "6.4.0.202211300538-r"
 
 eddsa = "0.3.0"
@@ -31,18 +31,19 @@ awsMock = "2.11.0"
 errorprone = "2.18.0"
 errorpronejavac = "9+181-r4173-1"
 detekt = "1.22.0"
-gradleDetekt = "1.21.0"
+gradleDetekt = "1.22.0"
 
-checkStyle = "10.3.4"
-pmd = "6.50.0"
+checkStyle = "10.7.0"
+pmd = "6.54.0"
 
 jmh = "1.36"
+gradleJmh = "0.6.8"
 
 gestalt = "0.19.0"
 
-gradleVersions = "0.42.0"
-gitVersions = "0.15.0"
-gradleErrorProne = "2.0.2"
+gradleVersions = "0.45.0"
+gitVersions = "1.0.0"
+gradleErrorProne = "3.0.1"
 
 [libraries]
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
@@ -117,5 +118,5 @@ gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", versio
 jackson = ["jackson-core", "jackson-databind", "jackson-dataformat-yaml", "jackson-java8", "jackson-jsr310"]
 
 [plugins]
-jmh = { id = "me.champeau.jmh", version = "0.6.8" }
+jmh = { id = "me.champeau.jmh", version.ref = "gradleJmh" }
 
