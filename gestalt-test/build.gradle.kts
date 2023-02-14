@@ -1,7 +1,6 @@
 plugins {
     id("gestalt.java-library-conventions")
     id("gestalt.java-test-conventions")
-    id("gestalt.java-code-quality-conventions")
 }
 
 java {
