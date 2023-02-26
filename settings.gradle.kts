@@ -5,8 +5,6 @@ include(
     "gestalt-koin-di", "gestalt-s3", "gestalt-toml", "gestalt-yaml"
 )
 
-includeBuild("build-logic")
-
 // testing utility projects
 include(
     "code-coverage-report", "gestalt-benchmark", "gestalt-examples:gestalt-sample",
@@ -17,6 +15,10 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
+}
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version("0.4.0")
 }
 
 dependencyResolutionManagement {

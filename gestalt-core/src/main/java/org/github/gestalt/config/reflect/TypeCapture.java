@@ -227,8 +227,8 @@ public class TypeCapture<T> {
      * Get the annotations by type.
      *
      * @param annotationClass annotation class
-     * @return the annotation
      * @param <A> the type of the annotation
+     * @return the annotation
      */
     public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
         return getRawType().getAnnotationsByType(annotationClass);

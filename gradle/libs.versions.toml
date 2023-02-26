@@ -16,7 +16,7 @@ weldCore = "4.0.3.Final"
 slf4j = "2.0.6"
 
 hocon = "1.4.2"
-aws = "2.20.3"
+aws = "2.20.12"
 jgit = "6.4.0.202211300538-r"
 
 eddsa = "0.3.0"
@@ -37,7 +37,7 @@ checkStyle = "10.7.0"
 pmd = "6.54.0"
 
 jmh = "1.36"
-gradleJmh = "0.6.8"
+gradleJmh = "0.7.0"
 
 gestalt = "0.19.0"
 
