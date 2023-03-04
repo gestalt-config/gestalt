@@ -19,6 +19,12 @@ dependencies {
     implementation(libs.gestalt.kotlin)
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(19))
+    }
+}
+
 jmh {
     // setup
     failOnError.set(true)
@@ -32,7 +38,9 @@ jmh {
     // Benchmarks
     fork.set(2)
     iterations.set(5)
-    timeOnIteration.set("5s")
+    timeOnIteration.set("30s")
+
+    jvmArgs.set(listOf("-Xmx1G", "-Xms1G", "-XX:+UseG1GC"))
 }
 
 // to view results https://jmh.morethan.io/

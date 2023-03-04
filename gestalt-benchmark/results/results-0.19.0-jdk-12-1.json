@@ -1,0 +1,614 @@
+[
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Object",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 28048.63650706323,
+            "scoreError" : 895.6038020157922,
+            "scoreConfidence" : [
+                27153.032705047437,
+                28944.240309079025
+            ],
+            "scorePercentiles" : {
+                "0.0" : 27455.311765139417,
+                "50.0" : 28016.585385084523,
+                "90.0" : 28732.394279459528,
+                "95.0" : 28737.14685758186,
+                "99.0" : 28737.14685758186,
+                "99.9" : 28737.14685758186,
+                "99.99" : 28737.14685758186,
+                "99.999" : 28737.14685758186,
+                "99.9999" : 28737.14685758186,
+                "100.0" : 28737.14685758186
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    28689.62107635851,
+                    28620.072359068417,
+                    28500.029918376138,
+                    28479.544986771874,
+                    28737.14685758186
+                ],
+                [
+                    27553.625783397172,
+                    27526.661215243952,
+                    27464.382183186783,
+                    27455.311765139417,
+                    27459.968925508165
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Object_No_Cache",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 39.04227071936782,
+            "scoreError" : 0.2931692424412442,
+            "scoreConfidence" : [
+                38.749101476926576,
+                39.335439961809065
+            ],
+            "scorePercentiles" : {
+                "0.0" : 38.823083310041625,
+                "50.0" : 39.04584562507854,
+                "90.0" : 39.26291707973703,
+                "95.0" : 39.264270071119974,
+                "99.0" : 39.264270071119974,
+                "99.9" : 39.264270071119974,
+                "99.99" : 39.264270071119974,
+                "99.999" : 39.264270071119974,
+                "99.9999" : 39.264270071119974,
+                "100.0" : 39.264270071119974
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    39.25074015729052,
+                    39.17456727975693,
+                    39.18758936209615,
+                    39.23836367337929,
+                    39.264270071119974
+                ],
+                [
+                    38.869005926313726,
+                    38.857897270712904,
+                    38.917123970400155,
+                    38.84006617256693,
+                    38.823083310041625
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Setup",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1224.5751119226534,
+            "scoreError" : 13.42451505076517,
+            "scoreConfidence" : [
+                1211.1505968718882,
+                1237.9996269734186
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1214.2254426278096,
+                "50.0" : 1222.3298344537818,
+                "90.0" : 1237.6310352681112,
+                "95.0" : 1237.762977770536,
+                "99.0" : 1237.762977770536,
+                "99.9" : 1237.762977770536,
+                "99.99" : 1237.762977770536,
+                "99.999" : 1237.762977770536,
+                "99.9999" : 1237.762977770536,
+                "100.0" : 1237.762977770536
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1236.4435527462872,
+                    1225.1812926531506,
+                    1229.6689641380008,
+                    1237.762977770536,
+                    1232.0091194861575
+                ],
+                [
+                    1215.4305268978815,
+                    1219.2004521487963,
+                    1216.350414503499,
+                    1214.2254426278096,
+                    1219.478376254413
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_String",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 28735.70608538038,
+            "scoreError" : 521.409519231704,
+            "scoreConfidence" : [
+                28214.296566148678,
+                29257.115604612085
+            ],
+            "scorePercentiles" : {
+                "0.0" : 28390.363995375366,
+                "50.0" : 28732.2214554386,
+                "90.0" : 29078.47578578263,
+                "95.0" : 29079.923347038988,
+                "99.0" : 29079.923347038988,
+                "99.9" : 29079.923347038988,
+                "99.99" : 29079.923347038988,
+                "99.999" : 29079.923347038988,
+                "99.9999" : 29079.923347038988,
+                "100.0" : 29079.923347038988
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    29065.4477344754,
+                    29061.281103290145,
+                    29041.338183567732,
+                    29079.923347038988,
+                    29065.10121322384
+                ],
+                [
+                    28392.920728030393,
+                    28418.931152000194,
+                    28418.648669492315,
+                    28423.10472730947,
+                    28390.363995375366
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_String_No_Cache",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 529.7547315311579,
+            "scoreError" : 12.005368872090855,
+            "scoreConfidence" : [
+                517.749362659067,
+                541.7601004032488
+            ],
+            "scorePercentiles" : {
+                "0.0" : 521.4463280921365,
+                "50.0" : 530.306218978433,
+                "90.0" : 537.5686698787716,
+                "95.0" : 537.5802061681125,
+                "99.0" : 537.5802061681125,
+                "99.9" : 537.5802061681125,
+                "99.99" : 537.5802061681125,
+                "99.999" : 537.5802061681125,
+                "99.9999" : 537.5802061681125,
+                "100.0" : 537.5802061681125
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    523.5596703420576,
+                    522.3107343555163,
+                    521.4463280921365,
+                    522.0511076517869,
+                    521.8324349707717
+                ],
+                [
+                    537.0527676148083,
+                    537.5802061681125,
+                    537.4648432747044,
+                    537.0899939468495,
+                    537.1592288948342
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Object",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 34.03047180640123,
+            "scoreError" : 0.4931760702469901,
+            "scoreConfidence" : [
+                33.53729573615424,
+                34.52364787664822
+            ],
+            "scorePercentiles" : {
+                "0.0" : 33.66454087023822,
+                "50.0" : 34.011338422381,
+                "90.0" : 34.43375669423256,
+                "95.0" : 34.43982460771889,
+                "99.0" : 34.43982460771889,
+                "99.9" : 34.43982460771889,
+                "99.99" : 34.43982460771889,
+                "99.999" : 34.43982460771889,
+                "99.9999" : 34.43982460771889,
+                "100.0" : 34.43982460771889
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    33.749732020017916,
+                    33.66454087023822,
+                    33.735205675822854,
+                    33.748372459278734,
+                    33.72813573128814
+                ],
+                [
+                    34.379145472855534,
+                    34.43982460771889,
+                    34.27294482474408,
+                    34.31062826211502,
+                    34.27618813993292
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Object_No_Cache",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 25748.1504886038,
+            "scoreError" : 399.26314172281417,
+            "scoreConfidence" : [
+                25348.887346880983,
+                26147.413630326613
+            ],
+            "scorePercentiles" : {
+                "0.0" : 25416.33990138605,
+                "50.0" : 25814.55031210473,
+                "90.0" : 26018.11903046297,
+                "95.0" : 26019.835639335935,
+                "99.0" : 26019.835639335935,
+                "99.9" : 26019.835639335935,
+                "99.99" : 26019.835639335935,
+                "99.999" : 26019.835639335935,
+                "99.9999" : 26019.835639335935,
+                "100.0" : 26019.835639335935
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    25939.288584896367,
+                    26002.669550606293,
+                    26000.58675600448,
+                    25982.031390052976,
+                    26019.835639335935
+                ],
+                [
+                    25689.812039313092,
+                    25480.466735737216,
+                    25472.89082180712,
+                    25416.33990138605,
+                    25477.583466898483
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Setup",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 8.068019500818138E-4,
+            "scoreError" : 2.035775602248831E-5,
+            "scoreConfidence" : [
+                7.864441940593254E-4,
+                8.271597061043021E-4
+            ],
+            "scorePercentiles" : {
+                "0.0" : 7.917844596912521E-4,
+                "50.0" : 8.072793722653423E-4,
+                "90.0" : 8.218830949134518E-4,
+                "95.0" : 8.221167392793534E-4,
+                "99.0" : 8.221167392793534E-4,
+                "99.9" : 8.221167392793534E-4,
+                "99.99" : 8.221167392793534E-4,
+                "99.999" : 8.221167392793534E-4,
+                "99.9999" : 8.221167392793534E-4,
+                "100.0" : 8.221167392793534E-4
+            },
+            "scoreUnit" : "s/op",
+            "rawData" : [
+                [
+                    7.917844596912521E-4,
+                    7.978216438938806E-4,
+                    7.939362953361022E-4,
+                    7.950706286108019E-4,
+                    7.922763084235542E-4
+                ],
+                [
+                    8.16737100636804E-4,
+                    8.197802956203382E-4,
+                    8.221167392793534E-4,
+                    8.191045697750601E-4,
+                    8.193914595509914E-4
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_String",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 34.35860894756512,
+            "scoreError" : 1.0054249877321486,
+            "scoreConfidence" : [
+                33.353183959832975,
+                35.36403393529727
+            ],
+            "scorePercentiles" : {
+                "0.0" : 33.668615450524264,
+                "50.0" : 34.34204875906308,
+                "90.0" : 35.066909291076925,
+                "95.0" : 35.072388706912314,
+                "99.0" : 35.072388706912314,
+                "99.9" : 35.072388706912314,
+                "99.99" : 35.072388706912314,
+                "99.999" : 35.072388706912314,
+                "99.9999" : 35.072388706912314,
+                "100.0" : 35.072388706912314
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    33.73990926547385,
+                    33.78732726443015,
+                    33.739264428753415,
+                    33.668615450524264,
+                    33.71386275863894
+                ],
+                [
+                    35.007854401607915,
+                    35.01759454855845,
+                    34.89677025369602,
+                    35.072388706912314,
+                    34.94250239705589
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_String_No_Cache",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.gradle\\jdks\\adoptopenjdk-12-amd64-windows\\jdk-12.0.2+10\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "12.0.2",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "12.0.2+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "30 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1838.471717145822,
+            "scoreError" : 72.55908920662567,
+            "scoreConfidence" : [
+                1765.9126279391962,
+                1911.0308063524476
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1790.3007415423901,
+                "50.0" : 1836.60683547957,
+                "90.0" : 1895.9914555374958,
+                "95.0" : 1896.735578522381,
+                "99.0" : 1896.735578522381,
+                "99.9" : 1896.735578522381,
+                "99.99" : 1896.735578522381,
+                "99.999" : 1896.735578522381,
+                "99.9999" : 1896.735578522381,
+                "100.0" : 1896.735578522381
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    1874.3228681549401,
+                    1874.5401783931818,
+                    1889.2943486735285,
+                    1882.7937030625062,
+                    1896.735578522381
+                ],
+                [
+                    1798.8908028042,
+                    1792.337264437269,
+                    1791.065676975758,
+                    1790.3007415423901,
+                    1794.4360088920646
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+
