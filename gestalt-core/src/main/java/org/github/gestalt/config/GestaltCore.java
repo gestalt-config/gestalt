@@ -258,8 +258,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(tags);
 
         try {
-            var results = getConfigInternal(path, false, defaultVal, klass, tags);
-            return results;
+            return getConfigInternal(path, false, defaultVal, klass, tags);
         } catch (GestaltException e) {
             logger.warn(e.getMessage());
         }
@@ -392,9 +391,4 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
         return error.level() != ValidationLevel.ERROR;
     }
-
-    private <T> boolean isOptional(TypeCapture<T> klass) {
-        return Optional.class.isAssignableFrom(klass.getRawType()) || OptionalDouble.class.isAssignableFrom(klass.getRawType()) || OptionalInt.class.isAssignableFrom(klass.getRawType()) || OptionalLong.class.isAssignableFrom(klass.getRawType());
-    }
-
 }
