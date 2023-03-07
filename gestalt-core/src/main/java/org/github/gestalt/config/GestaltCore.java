@@ -227,30 +227,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        String combinedPath = buildPathWithConfigPrefix(klass, path);
-        ValidateOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
-        if (tokens.hasErrors()) {
-            throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
-        } else {
-            ValidateOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
-
-            if (checkErrorsShouldFail(results)) {
-                throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
-                    results.getErrors());
-
-            } else if (results.hasErrors() && logger.isDebugEnabled()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + combinedPath +
-                    ", for class: " + klass.getName(), results.getErrors());
-                logger.debug(errorMsg);
-            }
-
-            if (results.hasResults()) {
-                return results.results();
-            }
-        }
-        throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
+        return getConfigInternal(path, true, null, klass, tags);
     }
-
 
     @Override
     public <T> T getConfig(String path, T defaultVal, Class<T> klass) {
@@ -279,42 +257,11 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        String combinedPath = buildPathWithConfigPrefix(klass, path);
-        ValidateOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
-        if (tokens.hasErrors()) {
-            if (logger.isWarnEnabled()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Unable to parse path: " + combinedPath, tokens.getErrors());
-                logger.warn(errorMsg);
-            }
-
-            return defaultVal;
-        } else {
-            ValidateOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
-
-            if (checkErrorsShouldFail(results)) {
-                if (logger.isWarnEnabled()) {
-                    String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config with default path: " + combinedPath +
-                        ", for class: " + klass.getName() + " returning default value", results.getErrors());
-                    logger.warn(errorMsg);
-                }
-
-                return defaultVal;
-
-            } else if (results.hasErrors() && logger.isInfoEnabled()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config with default path: " + combinedPath +
-                    ", for class: " + klass.getName(), results.getErrors());
-                logger.info(errorMsg);
-            }
-
-            if (results.hasResults()) {
-                return results.results();
-            }
-        }
-
-        if (logger.isInfoEnabled()) {
-            String errorMsg = ErrorsUtil.buildErrorMessage("No results for config with default path: " + combinedPath +
-                ", and class: " + klass.getName(), tokens.getErrors());
-            logger.info(errorMsg);
+        try {
+            var results = getConfigInternal(path, false, defaultVal, klass, tags);
+            return results;
+        } catch (GestaltException e) {
+            logger.warn(e.getMessage());
         }
 
         return defaultVal;
@@ -342,7 +289,24 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
+        try {
+            var results = getConfigInternal(path, false, null, klass, tags);
+            return Optional.ofNullable(results);
+        } catch (GestaltException e) {
+            logger.warn(e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    private <T> T getConfigInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags) throws GestaltException {
+
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
@@ -350,43 +314,50 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         String combinedPath = buildPathWithConfigPrefix(klass, path);
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
         if (tokens.hasErrors()) {
-            if (logger.isWarnEnabled()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Unable to parse path: " + combinedPath + " returning empty optional",
-                    tokens.getErrors());
-                logger.warn(errorMsg);
+            if (failOnErrors) {
+                throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
+            } else {
+                if (logger.isWarnEnabled()) {
+                    String errorMsg = ErrorsUtil.buildErrorMessage("Unable to parse path: " + combinedPath + " returning empty optional", tokens.getErrors());
+                    logger.warn(errorMsg);
+                }
+                return defaultVal;
             }
-
-            return Optional.empty();
         } else {
             ValidateOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
 
             if (checkErrorsShouldFail(results)) {
-                if (logger.isWarnEnabled()) {
-                    String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + combinedPath +
-                        ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
-                    logger.warn(errorMsg);
+                if (failOnErrors) {
+                    throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(), results.getErrors());
+                } else {
+                    if (logger.isWarnEnabled()) {
+                        String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + combinedPath + ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
+                        logger.warn(errorMsg);
+                    }
+
+                    return defaultVal;
                 }
 
-                return Optional.empty();
-
             } else if (results.hasErrors() && logger.isInfoEnabled()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + combinedPath +
-                    ", for class: " + klass.getName(), results.getErrors());
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + combinedPath + ", for class: " + klass.getName(), results.getErrors());
                 logger.info(errorMsg);
             }
 
             if (results.hasResults()) {
-                return Optional.of(results.results());
+                return results.results();
             }
         }
 
         if (logger.isInfoEnabled()) {
-            String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath + ", and class: " +
-                klass.getName() + " returning empty Optional", tokens.getErrors());
+            String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath + ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
             logger.info(errorMsg);
         }
 
-        return Optional.empty();
+        if (failOnErrors) {
+            throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
+        } else {
+            return defaultVal;
+        }
     }
 
     private <T> ValidateOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
@@ -420,6 +391,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         return error.level() != ValidationLevel.ERROR;
+    }
+
+    private <T> boolean isOptional(TypeCapture<T> klass) {
+        return Optional.class.isAssignableFrom(klass.getRawType()) || OptionalDouble.class.isAssignableFrom(klass.getRawType()) || OptionalInt.class.isAssignableFrom(klass.getRawType()) || OptionalLong.class.isAssignableFrom(klass.getRawType());
     }
 
 }
