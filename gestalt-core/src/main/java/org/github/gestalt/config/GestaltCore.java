@@ -288,7 +288,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags) {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);

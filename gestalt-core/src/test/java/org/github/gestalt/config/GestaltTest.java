@@ -68,6 +68,9 @@ class GestaltTest {
         Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
 
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class, Tags.of()));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class, Tags.of()));
+
         Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
         Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
         }));
@@ -616,6 +619,11 @@ class GestaltTest {
         Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class));
         Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", String.class));
 
+        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, Integer.class, Tags.of()));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class, Tags.of()));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class, Tags.of()));
+        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", String.class, Tags.of()));
+
         Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", new TypeCapture<String>() {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", "aaa", TypeCapture.of(String.class)));
@@ -692,6 +700,11 @@ class GestaltTest {
         Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class));
         Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class));
         Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class));
+
+        Assertions.assertEquals(Optional.of("test"), gestalt.getConfigOptional("db.name", String.class, Tags.of()));
+        Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class, Tags.of()));
+        Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class, Tags.of()));
+        Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class, Tags.of()));
 
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.port", Integer.class));
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", String.class));
