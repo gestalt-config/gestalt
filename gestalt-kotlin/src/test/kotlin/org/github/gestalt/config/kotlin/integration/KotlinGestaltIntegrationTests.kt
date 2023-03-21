@@ -139,7 +139,7 @@ class KotlinGestaltIntegrationTests {
             Assertions.fail("Should not reach this")
         } catch (e:GestaltException) {
             Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
-                " - level: ERROR, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
                 "during navigating to next node", e.message)
         }
 
@@ -176,7 +176,7 @@ class KotlinGestaltIntegrationTests {
             Assertions.fail("Should not reach this")
         } catch (e:GestaltException) {
             Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
-                " - level: ERROR, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
                 "during navigating to next node", e.message)
         }
 

@@ -68,7 +68,7 @@ public class ProxyDecoder implements Decoder<Object> {
     @Override
     public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         if (!(node instanceof MapNode)) {
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, node.getNodeType()));
+            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, node));
         }
 
         Map<String, Object> methodResults = new HashMap<>();

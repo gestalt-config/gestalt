@@ -2,7 +2,7 @@
 java = "11"
 javaLatest = "19"
 kotlin = "1.8.10"
-kotlinDokka = "1.7.20"
+kotlinDokka = "1.8.10"
 kodeinDI = "7.18.0"
 koinDI= "3.3.3"
 
@@ -16,8 +16,8 @@ weldCore = "4.0.3.Final"
 slf4j = "2.0.6"
 
 hocon = "1.4.2"
-aws = "2.20.12"
-jgit = "6.4.0.202211300538-r"
+aws = "2.20.19"
+jgit = "6.5.0.202303070854-r"
 
 eddsa = "0.3.0"
 
@@ -41,7 +41,7 @@ gradleJmh = "0.7.0"
 
 gestalt = "0.19.0"
 
-gradleVersions = "0.45.0"
+gradleVersions = "0.46.0"
 gitVersions = "1.0.0"
 gradleErrorProne = "3.0.1"
 

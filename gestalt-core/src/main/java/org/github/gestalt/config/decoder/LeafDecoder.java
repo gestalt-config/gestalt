@@ -30,7 +30,7 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
             if (node.getValue().isPresent()) {
                 results = leafDecode(path, node, type);
             } else {
-                results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, node, name()));
+                results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, name()));
             }
         } else {
             results = ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));

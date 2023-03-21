@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GestaltIntegrationTests {
 
@@ -374,6 +371,9 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
         // index into the path of an array.
         Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
+        Optional<String> optUser = gestalt.getConfig("db.hosts[0].user", new TypeCapture<>() { });
+        Assertions.assertTrue(optUser.isPresent());
+        Assertions.assertEquals("credmond", optUser.get());
         Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", db.hosts.get(0).url);
         Assertions.assertEquals("credmond", db.hosts.get(1).getUser());
@@ -495,6 +495,21 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsMethodAnnotations.get(2).getUrl());
         Assertions.assertEquals("customers", hostsMethodAnnotations.get(2).getTable());
 
+        List<HostOpt> hostsOpt = gestalt.getConfig("db.hosts", Collections.emptyList(),
+            new TypeCapture<>() { });
+        Assertions.assertEquals(3, hostsOpt.size());
+        Assertions.assertEquals("credmond", hostsOpt.get(0).getUser().get());
+        Assertions.assertEquals("1234", hostsOpt.get(0).getPassword().get());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsOpt.get(0).getUrl().get());
+        Assertions.assertFalse(hostsOpt.get(0).getPort().isPresent());
+        Assertions.assertEquals("credmond", hostsOpt.get(1).getUser().get());
+        Assertions.assertEquals("5678", hostsOpt.get(1).getPassword().get());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostsOpt.get(1).getUrl().get());
+        Assertions.assertFalse(hostsOpt.get(1).getPort().isPresent());
+        Assertions.assertEquals("credmond", hostsOpt.get(2).getUser().get());
+        Assertions.assertEquals("9012", hostsOpt.get(2).getPassword().get());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsOpt.get(2).getUrl().get());
+        Assertions.assertFalse(hostsOpt.get(2).getPort().isPresent());
 
         List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
@@ -741,6 +756,33 @@ public class GestaltIntegrationTests {
         @Override
         public String getPassword() {
             return password;
+        }
+    }
+
+    public static class HostOpt {
+        private Optional<String> user;
+        private Optional<String> url;
+        private Optional<String> password;
+
+        private Optional<Integer> port;
+
+        public HostOpt() {
+        }
+
+        public Optional<String> getUser() {
+            return user;
+        }
+
+        public Optional<String> getUrl() {
+            return url;
+        }
+
+        public Optional<String> getPassword() {
+            return password;
+        }
+
+        public Optional<Integer> getPort() {
+            return port;
         }
     }
 

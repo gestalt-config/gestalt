@@ -21,11 +21,14 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ErrorsUtil;
+import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
 
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
@@ -227,7 +230,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigInternal(path, true, null, klass, tags);
+        // fail on errors if this is not an optional type.
+        // get the default value used if this is an optional type
+        // most likely an optional.empty()
+        Pair<Boolean, T> isOptionalAndDefault = isOptionalAndDefault(klass);
+
+        return getConfigInternal(path, !isOptionalAndDefault.getFirst(), isOptionalAndDefault.getSecond(), klass, tags);
     }
 
     @Override
@@ -312,15 +320,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         String combinedPath = buildPathWithConfigPrefix(klass, path);
         ValidateOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
         if (tokens.hasErrors()) {
-            if (failOnErrors) {
-                throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
-            } else {
-                if (logger.isWarnEnabled()) {
-                    String errorMsg = ErrorsUtil.buildErrorMessage("Unable to parse path: " + combinedPath + " returning empty optional", tokens.getErrors());
-                    logger.warn(errorMsg);
-                }
-                return defaultVal;
-            }
+            throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
         } else {
             ValidateOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
 
@@ -360,14 +360,30 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private <T> ValidateOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
         ValidateOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
-        if (node.hasErrors()) {
-            return ValidateOf.inValid(node.getErrors());
-        } else if (node.hasResults()) {
-            ConfigNode currentNode = node.results();
 
-            return decoderService.decodeNode(path, currentNode, klass);
+        if (!node.hasErrors() || node.hasErrors(MISSING_VALUE)) {
+            // if we have no errors or the error is from a missing value, lets try and decode the node.
+            // for missing values some decoders like optional decoders will handle the errors.
+            ValidateOf<T> decodedResults = decoderService.decodeNode(path, node.results(), klass);
+
+            // if we don't have a result and we received missing node errors.
+            // return the errors from the call to navigate to node.
+            // So we don't get too many "duplicate" errors
+            // Otherwise if we have a result return both sets of errors.
+            List<ValidationError> errors = new ArrayList<>();
+            if (!decodedResults.hasResults() && node.hasErrors(MISSING_VALUE)) {
+                errors.addAll(node.getErrors());
+            } else {
+                errors.addAll(node.getErrors());
+                errors.addAll(decodedResults.getErrors());
+            }
+
+            return ValidateOf.validateOf(decodedResults.results(), errors);
         } else {
-            return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, klass.getName(), "get config"));
+
+            // if we have errors other than the missing values,
+            // return the errors and do not attempt to decode.
+            return ValidateOf.inValid(node.getErrors());
         }
     }
 
@@ -389,5 +405,20 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         return error.level() != ValidationLevel.ERROR;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Pair<Boolean, T> isOptionalAndDefault(TypeCapture<T> klass) {
+        if (Optional.class.isAssignableFrom(klass.getRawType())) {
+            return new Pair<>(true, (T) Optional.empty());
+        } else if (OptionalInt.class.isAssignableFrom(klass.getRawType())) {
+            return new Pair<>(true, (T) OptionalInt.empty());
+        } else if (OptionalLong.class.isAssignableFrom(klass.getRawType())) {
+            return new Pair<>(true, (T) OptionalLong.empty());
+        } else if (OptionalDouble.class.isAssignableFrom(klass.getRawType())) {
+            return new Pair<>(true, (T) OptionalDouble.empty());
+        } else {
+            return new Pair<>(false, null);
+        }
     }
 }

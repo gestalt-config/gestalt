@@ -75,9 +75,9 @@ internal class StringAndLeafDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertNull(validate.results())
         Assertions.assertNotNull(validate.errors)
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.errors[0].level())
         Assertions.assertEquals(
-            "Leaf on path: db.user, missing value, LeafNode{value='null'} attempting to decode kString",
+            "Leaf on path: db.user, has no value attempting to decode kString",
             validate.errors[0].description()
         )
     }
@@ -98,8 +98,7 @@ internal class StringAndLeafDecoderTest {
         Assertions.assertNotNull(validate.errors)
         Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
         Assertions.assertEquals(
-            "Expected a leaf on path: db.user, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode kString",
+            "Expected a leaf on path: db.user, received node type: map, attempting to decode kString",
             validate.errors[0].description()
         )
     }

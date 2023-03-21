@@ -147,7 +147,7 @@ class GestaltBuilderTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: admin[1], for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
                     "during navigating to next node");
         }
     }

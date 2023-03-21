@@ -11,6 +11,10 @@ public enum ValidationLevel {
      */
     ERROR,
     /**
+     * Missing value validation level. Represents a class of errors where we are missing a value.
+     */
+    MISSING_VALUE,
+    /**
      * Warning validation level.
      */
     WARN,

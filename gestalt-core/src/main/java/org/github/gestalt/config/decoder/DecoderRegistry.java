@@ -123,9 +123,7 @@ public class DecoderRegistry implements DecoderService {
     public <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass) {
         List<Decoder> classDecoder = getDecoderForClass(klass);
         classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
-        if (configNode == null) {
-            return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
-        } else if (classDecoder.isEmpty()) {
+       if (classDecoder.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));
         } else if (classDecoder.size() > 1) {
             logger.info("Found multiple decoders for {}, found: {}, using {}: ", klass, classDecoder, classDecoder.get(0));

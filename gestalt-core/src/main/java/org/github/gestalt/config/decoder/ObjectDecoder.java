@@ -62,7 +62,7 @@ public class ObjectDecoder implements Decoder<Object> {
     public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         if (!(node instanceof MapNode)) {
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node.getNodeType()));
+            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
         }
         Class<?> klass = type.getRawType();
 
@@ -87,8 +87,9 @@ public class ObjectDecoder implements Decoder<Object> {
                 }
 
                 Type fieldClass = field.getGenericType();
+                TypeCapture fieldType = TypeCapture.of(fieldClass);
 
-                String name = getAnnotationValue(klass, field, fieldName, fieldClass, Config::path);
+                String name = getFieldAnnotationValue(klass, field, fieldName, fieldClass, Config::path);
 
                 name = name.isEmpty() ? fieldName : name;
 
@@ -99,21 +100,31 @@ public class ObjectDecoder implements Decoder<Object> {
                 if (!configNode.hasResults()) {
                     // if we have no value, check the config annotation for a default.
                     // if we have an annotation, use that for the path instead of the name.
-                    String defaultValue = getAnnotationValue(klass, field, fieldName, fieldClass, Config::defaultVal);
+                    String defaultValue = getFieldAnnotationValue(klass, field, fieldName, fieldClass, Config::defaultVal);
 
                     if (!defaultValue.isEmpty()) {
                         ValidateOf<?> defaultValidateOf =
-                            decoderService.decodeNode(nextPath, new LeafNode(defaultValue), TypeCapture.of(fieldClass));
+                            decoderService.decodeNode(nextPath, new LeafNode(defaultValue), fieldType);
 
                         errors.addAll(defaultValidateOf.getErrors());
                         if (defaultValidateOf.hasResults()) {
                             field.setAccessible(true);
                             field.set(obj, defaultValidateOf.results());
                         }
+                    } else {
+
+                        // even though we have no node lets try to decode the field, as it may be an optional that can support null values.
+                        ValidateOf<?> decodedResults = decoderService.decodeNode(nextPath, configNode.results(), fieldType);
+
+                        if (decodedResults.hasResults()) {
+                            field.setAccessible(true);
+                            field.set(obj, decodedResults.results());
+                        }
+                        // don't add the errors from this attempt to decode the node since it was
+                        // only an attempt to see if this decoder can support nullable types.
                     }
                 } else {
-                    ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
-                        TypeCapture.of(fieldClass));
+                    ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(), fieldType);
 
                     errors.addAll(fieldValidateOf.getErrors());
                     if (fieldValidateOf.hasResults()) {
@@ -134,8 +145,8 @@ public class ObjectDecoder implements Decoder<Object> {
         }
     }
 
-    private String getAnnotationValue(Class<?> klass, Field field, String fieldName, Type fieldClass,
-                                      Function<Config, String> get) {
+    private String getFieldAnnotationValue(Class<?> klass, Field field, String fieldName, Type fieldClass,
+                                           Function<Config, String> get) {
         String value = "";
         // if we have an annotation, use that for the path instead of the name.
         Optional<Config> configAnnotation = Optional.ofNullable(field.getAnnotation(Config.class));

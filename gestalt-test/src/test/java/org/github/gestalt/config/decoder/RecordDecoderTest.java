@@ -179,8 +179,8 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a leaf on path: user.admin, received node type, received: LeafNode{value='12345'} " +
-            "attempting to decode Record", validate.getErrors().get(0).description());
+        Assertions.assertEquals("Expected a leaf on path: user.admin, received node type: leaf, attempting to decode Record",
+            validate.getErrors().get(0).description());
     }
 
     @Test

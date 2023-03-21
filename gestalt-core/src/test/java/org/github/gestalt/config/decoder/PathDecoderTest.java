@@ -82,8 +82,8 @@ class PathDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
         Assertions.assertNotNull(validate.getErrors());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Leaf on path: db.user, missing value, LeafNode{value='null'} attempting to decode Path",
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Leaf on path: db.user, has no value attempting to decode Path",
             validate.getErrors().get(0).description());
     }
 
@@ -99,8 +99,7 @@ class PathDecoderTest {
         Assertions.assertNull(validate.results());
         Assertions.assertNotNull(validate.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a leaf on path: db.user, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode Path",
+        Assertions.assertEquals("Expected a leaf on path: db.user, received node type: map, attempting to decode Path",
             validate.getErrors().get(0).description());
     }
 }
