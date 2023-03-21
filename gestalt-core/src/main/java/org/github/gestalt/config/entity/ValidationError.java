@@ -50,6 +50,7 @@ public abstract class ValidationError {
 
     /**
      * Returns true if this error is for a missing results issue.
+     *
      * @return true if this error is for a missing results issue
      */
     public boolean hasNoResults() {
@@ -499,10 +500,11 @@ public abstract class ValidationError {
         @Override
         public String description() {
             if (types == null) {
-                return "Expected a map node on path: " + path + ", received node type : " + (node == null ? "null" : node.getNodeType());
+                return "Expected a map node on path: " + path + ", received node type : " +
+                    (node == null ? "null" : node.getNodeType());
             } else {
-                return "Expected a map on path: " + path + ", received node type : " + (node == null ? "null" : node.getNodeType().getType()) +
-                    ", received invalid types: " + types;
+                return "Expected a map on path: " + path + ", received node type : " +
+                    (node == null ? "null" : node.getNodeType().getType()) + ", received invalid types: " + types;
             }
         }
     }

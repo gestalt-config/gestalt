@@ -14,9 +14,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.OptionalInt;
 
 /**
+ * Tests for an OptionalInt.
+ *
  * @author Colin Redmond (c) 2023.
  */
 class OptionalIntDecoderTest {
@@ -92,7 +96,7 @@ class OptionalIntDecoderTest {
     void decodeLeafIntNull() {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
-        ValidateOf<OptionalInt> validate = decoder.decode("db.port", null,TypeCapture.of(OptionalInt.class), registry);
+        ValidateOf<OptionalInt> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalInt.class), registry);
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());

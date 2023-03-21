@@ -20,6 +20,8 @@ import java.util.Optional;
 
 
 /**
+ * Test for an generic Optional
+ *
  * @author Colin Redmond (c) 2023.
  */
 class OptionalDecoderTest {

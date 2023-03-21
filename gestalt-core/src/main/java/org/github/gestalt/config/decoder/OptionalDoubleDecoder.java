@@ -7,7 +7,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 import java.util.OptionalDouble;
 
 /**
- * Decodes an OptionalLong type
+ * Decodes an OptionalDouble type.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
@@ -33,7 +33,7 @@ public class OptionalDoubleDecoder implements Decoder<OptionalDouble> {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
         ValidateOf<Double> optionalValue = decoderService.decodeNode(path, node, TypeCapture.of(Double.class));
 
-        if(optionalValue.hasResults()) {
+        if (optionalValue.hasResults()) {
             return ValidateOf.validateOf(OptionalDouble.of(optionalValue.results()), optionalValue.getErrors());
         } else {
             return ValidateOf.validateOf(OptionalDouble.empty(), optionalValue.getErrors());

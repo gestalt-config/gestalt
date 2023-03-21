@@ -311,7 +311,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return Optional.empty();
     }
 
-    private <T> T getConfigInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags) throws GestaltException {
+    private <T> T getConfigInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags)
+        throws GestaltException {
 
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
@@ -326,10 +327,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
             if (checkErrorsShouldFail(results)) {
                 if (failOnErrors) {
-                    throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(), results.getErrors());
+                    throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
+                        results.getErrors());
                 } else {
                     if (logger.isWarnEnabled()) {
-                        String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + combinedPath + ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
+                        String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + combinedPath +
+                            ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
                         logger.warn(errorMsg);
                     }
 
@@ -337,7 +340,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 }
 
             } else if (results.hasErrors() && logger.isInfoEnabled()) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + combinedPath + ", for class: " + klass.getName(), results.getErrors());
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + combinedPath +
+                    ", for class: " + klass.getName(), results.getErrors());
                 logger.info(errorMsg);
             }
 
@@ -347,7 +351,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         if (logger.isInfoEnabled()) {
-            String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath + ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
+            String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
+                ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
             logger.info(errorMsg);
         }
 

@@ -7,7 +7,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 import java.util.Optional;
 
 /**
- * Decodes an optional type
+ * Decodes a generic optional type.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */

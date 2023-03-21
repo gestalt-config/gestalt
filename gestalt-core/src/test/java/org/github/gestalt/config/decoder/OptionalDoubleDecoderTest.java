@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.OptionalDouble;
 
 /**
+ * Tests for an OptionalDouble.
+ *
  * @author Colin Redmond (c) 2023.
  */
 class OptionalDoubleDecoderTest {

@@ -33,7 +33,7 @@ public class OptionalLongDecoder implements Decoder<OptionalLong> {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
         ValidateOf<Long> optionalValue = decoderService.decodeNode(path, node, TypeCapture.of(Long.class));
 
-        if(optionalValue.hasResults()) {
+        if (optionalValue.hasResults()) {
             return ValidateOf.validateOf(OptionalLong.of(optionalValue.results()), optionalValue.getErrors());
         } else {
             return ValidateOf.validateOf(OptionalLong.empty(), optionalValue.getErrors());

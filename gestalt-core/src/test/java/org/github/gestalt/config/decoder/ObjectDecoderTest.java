@@ -12,7 +12,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class ObjectDecoderTest {
 
@@ -243,7 +246,7 @@ class ObjectDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         DBInfoOptional results = (DBInfoOptional) validate.results();
-        Assertions.assertFalse( results.getPort().isPresent());
+        Assertions.assertFalse(results.getPort().isPresent());
         Assertions.assertFalse(results.getPassword().isPresent());
         Assertions.assertFalse(results.getUri().isPresent());
 
