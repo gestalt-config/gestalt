@@ -20,7 +20,7 @@ import java.util.Optional;
 
 
 /**
- * Test for an generic Optional
+ * Test for a generic Optional.
  *
  * @author Colin Redmond (c) 2023.
  */

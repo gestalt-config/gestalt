@@ -7,7 +7,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 import java.util.OptionalLong;
 
 /**
- * Decodes an OptionalLong type
+ * Decodes an OptionalLong type.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */

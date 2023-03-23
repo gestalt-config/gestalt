@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -23,7 +24,7 @@ class RecordDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
         registry = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new FloatDecoder(), new RecordDecoder()), configNodeService, lexer,
+            new ObjectDecoder(), new FloatDecoder(), new RecordDecoder(), new OptionalDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -145,6 +146,7 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
     }
@@ -164,8 +166,11 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: user.admin.id, from node: LeafNode{value='dog'} " +
             "attempting to decode Integer", validate.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(1).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Class, during record decoding",
             validate.getErrors().get(1).description());
     }
@@ -179,6 +184,7 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
         Assertions.assertEquals("Expected a leaf on path: user.admin, received node type: leaf, attempting to decode Record",
             validate.getErrors().get(0).description());
     }
@@ -214,6 +220,7 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
 
@@ -235,8 +242,11 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
         Assertions.assertEquals("Unable to parse a number on Path: user.admin.identity, from node: LeafNode{value='abc'} " +
             "attempting to decode Integer", validate.getErrors().get(1).description());
     }
@@ -257,5 +267,44 @@ class RecordDecoderTest {
         PersonAnnotationsLong results = (PersonAnnotationsLong) validate.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
+    }
+
+    @Test
+    void decodeOptional() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        configs.put("id", new LeafNode("52"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonOptional.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+
+        PersonOptional results = (PersonOptional) validate.results();
+        Assertions.assertEquals("tim", results.name().get());
+        Assertions.assertEquals(52, results.id().get());
+    }
+
+    @Test
+    void decodeOptionalEmptyValue() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonOptional.class), registry);
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
+            "during navigating to next node", validate.getErrors().get(0).description());
+
+        PersonOptional results = (PersonOptional) validate.results();
+        Assertions.assertEquals("tim", results.name().get());
+        Assertions.assertFalse(results.id().isPresent());
+
     }
 }

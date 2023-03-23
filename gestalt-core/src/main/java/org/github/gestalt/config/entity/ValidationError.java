@@ -54,7 +54,7 @@ public abstract class ValidationError {
      * @return true if this error is for a missing results issue
      */
     public boolean hasNoResults() {
-        return false;
+        return level.equals(ValidationLevel.MISSING_VALUE);
     }
 
     /**
@@ -987,6 +987,27 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "No default Constructor for : " + klassName + " on Path: " + path;
+        }
+    }
+
+    /**
+     * While decoding a Object no value was found and the result will be null.
+     */
+    public static class NullValueDecodingObject extends ValidationError {
+        private final String path;
+        private final String field;
+        private final String klassName;
+
+        public NullValueDecodingObject(String path, String field, String klassName) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.field = field;
+            this.klassName = klassName;
+        }
+
+        @Override
+        public String description() {
+            return "Decoding object : " + klassName + " on path: " + path + ", field " + field + " results in null value";
         }
     }
 
