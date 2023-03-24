@@ -99,19 +99,6 @@ public final class ClassUtils {
         });
     }
 
-    /** Feed abbreviation maps. */
-    static {
-        final Map<String, String> map = new HashMap<>();
-        map.put("int", "I");
-        map.put("boolean", "Z");
-        map.put("float", "F");
-        map.put("long", "J");
-        map.put("short", "S");
-        map.put("byte", "B");
-        map.put("double", "D");
-        map.put("char", "C");
-    }
-
     /**
      * ClassUtils instances should NOT be constructed in standard programming. Instead, the class should be used as
      * {@code ClassUtils.getShortClassName(cls)}.

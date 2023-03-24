@@ -40,6 +40,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("dev.properties"))
             .addSource(new MapConfigSource(configs))
             .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -222,6 +223,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/dev.properties"))
             .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource(false))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -257,6 +259,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addDefaultPostProcessors()
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -297,6 +300,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -324,6 +328,7 @@ public class GestaltIntegrationTests {
             .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
             .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();

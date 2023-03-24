@@ -199,12 +199,6 @@ class MapDecoderTest {
 
     @Test
     void decodeMapNodeNullInside() {
-
-        Map<String, ConfigNode> configs = new HashMap<>();
-        configs.put("port", new LeafNode("100"));
-        configs.put("uri", new LeafNode("300"));
-        configs.put("password", new LeafNode("6000"));
-
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(null), new TypeCapture<List<String>>() {
@@ -221,14 +215,7 @@ class MapDecoderTest {
 
     @Test
     void decodeNullNode() {
-
-        Map<String, ConfigNode> configs = new HashMap<>();
-        configs.put("port", new LeafNode("100"));
-        configs.put("uri", new LeafNode("300"));
-        configs.put("password", new LeafNode("6000"));
-
         MapDecoder decoder = new MapDecoder();
-
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", null, new TypeCapture<List<String>>() {
             },
             registry);

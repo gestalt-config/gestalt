@@ -139,7 +139,7 @@ public class DecoderRegistry implements DecoderService {
         for (PathMapper pathMapper : pathMappers) {
             ValidateOf<List<Token>> pathValidateOf = pathMapper.map(path, nextString, lexer);
 
-            // if there are errors, add them to the error list abd do not add the merge results
+            // if there are errors, add them to the error list and do not add the merge results
             if (pathValidateOf.hasErrors()) {
                 errors.addAll(pathValidateOf.getErrors());
             }
@@ -150,8 +150,10 @@ public class DecoderRegistry implements DecoderService {
 
             List<Token> nextTokens = pathValidateOf.results();
             result = configNodeService.navigateToNextNode(path, nextTokens, configNode);
-            // if there are errors, add them to the error list abd do not add the merge results
-            if (result.hasErrors()) {
+
+            // if there are errors, add them to the error list and do not add the merge results
+            // Only add errors for the first path mapper, so we don't have "near" duplicate error messages for each path mapper.
+            if (result.hasErrors() && errors.isEmpty()) {
                 errors.addAll(result.getErrors());
             }
 

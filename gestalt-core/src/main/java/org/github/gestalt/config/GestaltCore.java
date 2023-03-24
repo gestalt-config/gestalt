@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static org.github.gestalt.config.entity.ValidationLevel.ERROR;
 import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
 
 /**
@@ -394,7 +395,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private <T> boolean checkErrorsShouldFail(ValidateOf<T> results) {
         if (results.hasErrors()) {
-            return results.getErrors().stream().noneMatch(this::ignoreError) || !results.hasResults();
+            return !results.getErrors().stream().allMatch(this::ignoreError) || !results.hasResults();
         } else {
             return false;
         }
@@ -407,9 +408,11 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             return true;
         } else if (error.hasNoResults() && !gestaltConfig.isTreatMissingValuesAsErrors()) {
             return true;
+        } else if (error instanceof ValidationError.NullValueDecodingObject && !gestaltConfig.isTreatNullValuesInClassAsErrors()) {
+            return true;
         }
 
-        return error.level() != ValidationLevel.ERROR;
+        return error.level() != ERROR && error.level() != MISSING_VALUE;
     }
 
     @SuppressWarnings("unchecked")
