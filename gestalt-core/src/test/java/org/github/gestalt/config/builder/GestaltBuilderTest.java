@@ -186,7 +186,8 @@ class GestaltBuilderTest {
                              " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
                              " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
                              "during navigating to next node\n" +
-                             " - level: ERROR, message: Decoding object : DBInfo on path: db.password, field password results in null value");
+                             " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
+                             "field password results in null value");
         }
     }
 

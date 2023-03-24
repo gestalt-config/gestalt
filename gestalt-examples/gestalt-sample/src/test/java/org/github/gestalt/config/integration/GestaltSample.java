@@ -68,6 +68,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/default.properties"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -97,6 +98,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .useCacheDecorator(false)
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -340,6 +342,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource())
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -372,6 +375,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -395,6 +399,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("default.yml"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -415,6 +420,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/default.json"))
             .addSource(new ClassPathConfigSource("dev.yml"))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -441,6 +447,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -467,6 +474,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -501,6 +509,7 @@ public class GestaltSample {
             .addSource(source)
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -770,6 +779,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addDefaultPostProcessors()
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -810,6 +820,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -840,6 +851,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();

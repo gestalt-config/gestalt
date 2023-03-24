@@ -171,9 +171,9 @@ class GestaltTest {
         Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
 
-        Assertions.assertEquals("John", gestalt.getConfig("admin[0]",  new TypeCapture<Optional<String>>() {
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", new TypeCapture<Optional<String>>() {
         }, Tags.of("toys", "ball")).get());
-        Assertions.assertFalse(gestalt.getConfig("admin[99]",  new TypeCapture<Optional<String>>() {
+        Assertions.assertFalse(gestalt.getConfig("admin[99]", new TypeCapture<Optional<String>>() {
         }, Tags.of("toys", "ball")).isPresent());
     }
 
@@ -815,9 +815,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
+                             "during navigating to next node");
         }
 
         try {
@@ -826,8 +826,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
-                    " - level: WARN, message: Missing array index: 2");
+                         .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
+                             " - level: WARN, message: Missing array index: 2");
         }
 
         try {
@@ -869,7 +869,7 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("No sources provided, unable to load any configs");
+                         .hasMessage("No sources provided, unable to load any configs");
         }
     }
 
@@ -906,8 +906,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
-                    " - level: ERROR, message: No decoders found for class: java.lang.Integer");
+                         .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
+                             " - level: ERROR, message: No decoders found for class: java.lang.Integer");
         }
     }
 
@@ -972,8 +972,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed to load configs from source: mapConfig\n" +
-                    " - level: ERROR, message: Duplicate array index: 1 for path: admin");
+                         .hasMessage("Failed to load configs from source: mapConfig\n" +
+                             " - level: ERROR, message: Duplicate array index: 1 for path: admin");
         }
     }
 
@@ -1012,9 +1012,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, for class: ObjectToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, for class: ObjectToken, " +
+                             "during navigating to next node");
         }
     }
 
@@ -1055,13 +1055,14 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
-                 " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                 "during navigating to next node\n" +
-                 " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
-                 " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                 "during navigating to next node\n" +
-                 " - level: ERROR, message: Decoding object : DBInfo on path: db.password, field password results in null value");
+                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                             "during navigating to next node\n" +
+                             " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                             "during navigating to next node\n" +
+                             " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
+                             "field password results in null value");
         }
     }
 
@@ -1174,9 +1175,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                             "during navigating to next node");
         }
     }
 
@@ -1213,9 +1214,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
+                             "during navigating to next node");
         }
     }
 
@@ -1247,8 +1248,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Unable to parse path: admin[a3]\n" +
-                    " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
+                         .hasMessage("Unable to parse path: admin[a3]\n" +
+                             " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
         }
 
         Optional<String> result = gestalt.getConfigOptional("admin[a3]", String.class);

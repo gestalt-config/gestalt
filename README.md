@@ -537,14 +537,15 @@ app.uuid=${random:uuid}
 * Note: The formats in the table would need to be embedded inside of ${random:format} so byte(length) would be ${random:byte(10)}
 # Gestalt configuration
 
-| Configuration | default | Details |
-| ------------- | ------- | ------- | 
-| treatWarningsAsErrors | false | if we treat warnings as errors Gestalt will fail on any warnings |
-| treatMissingArrayIndexAsError | false | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead |
-| treatMissingValuesAsErrors | false | By default Gestalt will insert null values into an object. By enabling this you will get an exception instead |
-| dateDecoderFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
-| localDateTimeFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
-| localDateFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
+| Configuration                  | default | Details                                                                                                                                                                                                                                                                                                          |
+|--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| treatWarningsAsErrors          | false   | if we treat warnings as errors Gestalt will fail on any warnings. When set to true it overrides the behaviour in the below configs.                                                                                                                                                                              |
+| treatMissingArrayIndexAsError  | false   | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead                                                                                                                                                                    |
+| treatMissingValuesAsErrors     | false   | By default Gestalt will not update values in classes not found in the config. Null values will be left null and values with defaults will keep their defaults. By enabling this you will get an exception if any value is missing.                                                                               |
+| treatNullValuesInClassAsErrors | true    | Prior to v0.20.0 null values and values not in the config but have a default in classes were treated the same. By enabling this you will get an exception if a value is null after decoding an object. If the value is missing but has a default this will be caught under the config treatMissingValuesAsErrors |
+| dateDecoderFormat              | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
+| localDateTimeFormat            | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
+| localDateFormat                | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
 
 # Additional Modules
 
