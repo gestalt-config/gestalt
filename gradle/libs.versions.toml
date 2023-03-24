@@ -13,17 +13,17 @@ cdi = "3.0.0"
 weld = "3.1.0.Final"
 weldCore = "4.0.3.Final"
 
-slf4j = "2.0.6"
+slf4j = "2.0.7"
 
 hocon = "1.4.2"
-aws = "2.20.19"
+aws = "2.20.31"
 jgit = "6.5.0.202303070854-r"
 
 eddsa = "0.3.0"
 
 junit5 = "5.9.2"
 assertJ = "3.24.2"
-mockito = "5.1.1"
+mockito = "5.2.0"
 mockk = "1.13.4"
 koTestAssertions = "5.5.5"
 awsMock = "2.11.0"
@@ -42,7 +42,7 @@ gradleJmh = "0.7.0"
 gestalt = "0.20.0"
 
 gradleVersions = "0.46.0"
-gitVersions = "1.0.0"
+gitVersions = "2.0.0"
 gradleErrorProne = "3.0.1"
 
 [libraries]
