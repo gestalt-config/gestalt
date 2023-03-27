@@ -1015,8 +1015,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                          .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, for class: ObjectToken, " +
-                             "during navigating to next node");
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, " +
+                             "for class: ObjectToken, during navigating to next node");
         }
     }
 
@@ -1161,7 +1161,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                          .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoOptional\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, during navigating to next node");
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                             "during navigating to next node");
         }
     }
 

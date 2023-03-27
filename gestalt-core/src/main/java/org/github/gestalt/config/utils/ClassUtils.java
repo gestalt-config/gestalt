@@ -16,6 +16,7 @@
  *
  * Copied from https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/ClassUtils.java
  */
+
 package org.github.gestalt.config.utils;
 
 import java.util.Arrays;
@@ -225,11 +226,12 @@ public final class ClassUtils {
                 return Double.TYPE.equals(toClass);
             }
             if (Character.TYPE.equals(cls) || Short.TYPE.equals(cls)) {
-                return Integer.TYPE.equals(toClass) || Long.TYPE.equals(toClass) || Float.TYPE.equals(toClass) || Double.TYPE.equals(toClass);
+                return Integer.TYPE.equals(toClass) || Long.TYPE.equals(toClass) || Float.TYPE.equals(toClass) ||
+                    Double.TYPE.equals(toClass);
             }
             if (Byte.TYPE.equals(cls)) {
-                return Short.TYPE.equals(toClass) || Integer.TYPE.equals(toClass) || Long.TYPE.equals(toClass) || Float.TYPE.equals(toClass)
-                    || Double.TYPE.equals(toClass);
+                return Short.TYPE.equals(toClass) || Integer.TYPE.equals(toClass) || Long.TYPE.equals(toClass) ||
+                    Float.TYPE.equals(toClass) || Double.TYPE.equals(toClass);
             }
             // should never get here
             return false;
@@ -255,7 +257,7 @@ public final class ClassUtils {
      *
      * @param classes the class array to convert, may be null or empty
      * @return an array which contains for each given class, the wrapper class or the original class if class is not a
-     * primitive. {@code null} if null input. Empty array if an empty array passed in.
+     *     primitive. {@code null} if null input. Empty array if an empty array passed in.
      * @since 2.1
      */
     public static Class<?>[] primitivesToWrappers(final Class<?>... classes) {
@@ -281,7 +283,7 @@ public final class ClassUtils {
      *
      * @param cls the class to convert, may be null
      * @return the wrapper class for {@code cls} or {@code cls} if {@code cls} is not a primitive. {@code null} if null
-     * input.
+     *     input.
      * @since 2.1
      */
     public static Class<?> primitiveToWrapper(final Class<?> cls) {

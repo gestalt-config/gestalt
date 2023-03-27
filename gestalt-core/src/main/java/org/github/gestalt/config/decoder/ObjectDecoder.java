@@ -243,9 +243,9 @@ public class ObjectDecoder implements Decoder<Object> {
             Config methodConfigAnnotation = method.get().getAnnotation(Config.class);
             if (methodConfigAnnotation != null &&
                 get.apply(methodConfigAnnotation) != null &&
-                !get.apply(methodConfigAnnotation).isEmpty())
-
+                !get.apply(methodConfigAnnotation).isEmpty()) {
                 result = method.get().getAnnotation(Config.class);
+            }
         }
         return Optional.ofNullable(result);
     }
