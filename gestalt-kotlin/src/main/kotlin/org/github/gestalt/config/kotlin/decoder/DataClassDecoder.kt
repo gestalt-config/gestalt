@@ -53,7 +53,7 @@ class DataClassDecoder : Decoder<Any> {
 
     override fun decode(path: String, node: ConfigNode, type: TypeCapture<*>, decoderService: DecoderService): ValidateOf<Any> {
         if (node !is MapNode) {
-            return ValidateOf.inValid(ValidationError.DecodingExpectedMapNodeType(path, node.nodeType))
+            return ValidateOf.inValid(ValidationError.DecodingExpectedMapNodeType(path, node))
         }
 
         if (type is KTypeCapture<*>) {

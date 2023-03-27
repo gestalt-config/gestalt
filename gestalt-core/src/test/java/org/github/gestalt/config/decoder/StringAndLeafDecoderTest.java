@@ -75,8 +75,24 @@ class StringAndLeafDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
         Assertions.assertNotNull(validate.getErrors());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Leaf on path: db.user, has no value attempting to decode String",
+            validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void nullLeafNode() throws GestaltException {
+        StringDecoder stringDecoder = new StringDecoder();
+
+        ValidateOf<String> validate = stringDecoder.decode("db.user", null, TypeCapture.of(String.class),
+            new DecoderRegistry(Collections.singletonList(stringDecoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertNull(validate.results());
+        Assertions.assertNotNull(validate.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Leaf on path: db.user, missing value, LeafNode{value='null'} attempting to decode String",
+        Assertions.assertEquals("Expected a leaf on path: db.user, received node type: null, attempting to decode String",
             validate.getErrors().get(0).description());
     }
 
@@ -92,8 +108,7 @@ class StringAndLeafDecoderTest {
         Assertions.assertNull(validate.results());
         Assertions.assertNotNull(validate.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a leaf on path: db.user, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode String",
+        Assertions.assertEquals("Expected a leaf on path: db.user, received node type: map, attempting to decode String",
             validate.getErrors().get(0).description());
     }
 }

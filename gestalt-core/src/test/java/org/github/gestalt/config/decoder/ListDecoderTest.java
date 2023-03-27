@@ -178,7 +178,22 @@ class ListDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Leaf on path: db.hosts, missing value, LeafNode{value='null'} attempting to decode List",
+        Assertions.assertEquals("Leaf on path: db.hosts, has no value attempting to decode List",
+            values.getErrors().get(0).description());
+    }
+
+    @Test
+    void arrayDecodeNullNode() {
+        ListDecoder decoder = new ListDecoder();
+
+        ValidateOf<List<?>> values = decoder.decode("db.hosts", null, new TypeCapture<List<Double>>() {
+        }, decoderService);
+
+        Assertions.assertTrue(values.hasErrors());
+        Assertions.assertFalse(values.hasResults());
+
+        Assertions.assertEquals(1, values.getErrors().size());
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode List",
             values.getErrors().get(0).description());
     }
 
@@ -250,8 +265,7 @@ class ListDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Expected a Array  on path: db.hosts, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode List",
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode List",
             values.getErrors().get(0).description());
     }
 }

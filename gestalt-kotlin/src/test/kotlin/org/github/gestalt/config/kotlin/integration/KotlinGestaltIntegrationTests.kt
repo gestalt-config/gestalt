@@ -30,6 +30,7 @@ class KotlinGestaltIntegrationTests {
             .addSource(FileConfigSource(defaultFile))
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig<HttpPool>("http.pool")
@@ -139,7 +140,7 @@ class KotlinGestaltIntegrationTests {
             Assertions.fail("Should not reach this")
         } catch (e:GestaltException) {
             Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
-                " - level: ERROR, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
                 "during navigating to next node", e.message)
         }
 
@@ -176,7 +177,7 @@ class KotlinGestaltIntegrationTests {
             Assertions.fail("Should not reach this")
         } catch (e:GestaltException) {
             Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
-                " - level: ERROR, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
                 "during navigating to next node", e.message)
         }
 
@@ -236,6 +237,7 @@ class KotlinGestaltIntegrationTests {
             .addSource(FileConfigSource(devFile))
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
+            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig("http.pool", HttpPool::class.java)

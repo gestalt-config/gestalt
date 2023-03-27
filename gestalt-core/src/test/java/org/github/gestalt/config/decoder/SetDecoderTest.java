@@ -188,14 +188,29 @@ class SetDecoderTest {
     void arrayDecodeNullLeaf() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("", new LeafNode(null), new TypeCapture<Set<Double>>() {
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new LeafNode(null), new TypeCapture<Set<Double>>() {
         }, decoderService);
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Leaf on path: , missing value, LeafNode{value='null'} attempting to decode Set",
+        Assertions.assertEquals("Leaf on path: db.hosts, has no value attempting to decode Set",
+            values.getErrors().get(0).description());
+    }
+
+    @Test
+    void arrayDecodeNullNode() {
+        SetDecoder decoder = new SetDecoder();
+
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", null, new TypeCapture<Set<Double>>() {
+        }, decoderService);
+
+        Assertions.assertTrue(values.hasErrors());
+        Assertions.assertFalse(values.hasResults());
+
+        Assertions.assertEquals(1, values.getErrors().size());
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode Set",
             values.getErrors().get(0).description());
     }
 
@@ -270,8 +285,7 @@ class SetDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Expected a Array  on path: db.hosts, received node type, received: " +
-                "MapNode{mapNode={}} attempting to decode Set",
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode Set",
             values.getErrors().get(0).description());
     }
 }

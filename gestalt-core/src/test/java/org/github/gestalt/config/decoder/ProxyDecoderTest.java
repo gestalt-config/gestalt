@@ -152,7 +152,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Leaf on path: db.host.uri, missing value, LeafNode{value='null'} attempting to decode String",
+        Assertions.assertEquals("Leaf on path: db.host.uri, has no value attempting to decode String",
             validate.getErrors().get(0).description());
 
         DBInfoInterface results = (DBInfoInterface) validate.results();
@@ -203,7 +203,20 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a map node on path: db.host, received a : LEAF",
+        Assertions.assertEquals("Expected a map node on path: db.host, received node type : LEAF",
+            validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeNullNode() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        ValidateOf<Object> validate = decoder.decode("db.host", null, TypeCapture.of(DBInforNoConstructor.class), registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Expected a map node on path: db.host, received node type : null",
             validate.getErrors().get(0).description());
     }
 

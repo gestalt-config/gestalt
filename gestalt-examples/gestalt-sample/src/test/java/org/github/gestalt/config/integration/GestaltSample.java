@@ -68,6 +68,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/default.properties"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -97,6 +98,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .useCacheDecorator(false)
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -340,6 +342,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .addSource(new EnvironmentConfigSource())
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -372,6 +375,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -395,6 +399,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("default.yml"))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -415,6 +420,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/default.json"))
             .addSource(new ClassPathConfigSource("dev.yml"))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -441,6 +447,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -467,6 +474,7 @@ public class GestaltSample {
             .addSource(new FileConfigSource(defaultFile))
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -501,6 +509,7 @@ public class GestaltSample {
             .addSource(source)
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -541,6 +550,13 @@ public class GestaltSample {
         Assertions.assertEquals(60000.0F, db.maxLifetime);
         Assertions.assertNull(db.isEnabled);
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+
+        // Test optional values.
+        Assertions.assertEquals(600, gestalt.getConfigOptional("db.connectionTimeout", Integer.class).get());
+        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", OptionalInt.class).getAsInt());
+        Assertions.assertEquals(600L, gestalt.getConfig("db.connectionTimeout", OptionalLong.class).getAsLong());
+        Assertions.assertEquals(600D, gestalt.getConfig("db.connectionTimeout", OptionalDouble.class).getAsDouble());
+        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", new TypeCapture<Optional<Integer>>() {}).get());
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -662,6 +678,38 @@ public class GestaltSample {
         });
         Assertions.assertEquals(0, noHosts.size());
 
+        List<HostOpt> hostsOpt = gestalt.getConfig("db.hosts", Collections.emptyList(),
+            new TypeCapture<>() { });
+        Assertions.assertEquals(3, hostsOpt.size());
+        Assertions.assertEquals("credmond", hostsOpt.get(0).getUser().get());
+        Assertions.assertEquals("1234", hostsOpt.get(0).getPassword().get());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsOpt.get(0).getUrl().get());
+        Assertions.assertFalse(hostsOpt.get(0).getPort().isPresent());
+        Assertions.assertEquals("credmond", hostsOpt.get(1).getUser().get());
+        Assertions.assertEquals("5678", hostsOpt.get(1).getPassword().get());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostsOpt.get(1).getUrl().get());
+        Assertions.assertFalse(hostsOpt.get(1).getPort().isPresent());
+        Assertions.assertEquals("credmond", hostsOpt.get(2).getUser().get());
+        Assertions.assertEquals("9012", hostsOpt.get(2).getPassword().get());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsOpt.get(2).getUrl().get());
+        Assertions.assertFalse(hostsOpt.get(2).getPort().isPresent());
+
+        List<HostOptionalInt> hostOptionalInt = gestalt.getConfig("db.hosts", Collections.emptyList(),
+            new TypeCapture<>() { });
+        Assertions.assertEquals(3, hostOptionalInt.size());
+        Assertions.assertEquals("credmond", hostOptionalInt.get(0).getUser().get());
+        Assertions.assertEquals(1234, hostOptionalInt.get(0).getPassword().getAsInt());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostOptionalInt.get(0).getUrl().get());
+        Assertions.assertFalse(hostOptionalInt.get(0).getPort().isPresent());
+        Assertions.assertEquals("credmond", hostOptionalInt.get(1).getUser().get());
+        Assertions.assertEquals(5678, hostOptionalInt.get(1).getPassword().getAsInt());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hostOptionalInt.get(1).getUrl().get());
+        Assertions.assertFalse(hostOptionalInt.get(1).getPort().isPresent());
+        Assertions.assertEquals("credmond", hostOptionalInt.get(2).getUser().get());
+        Assertions.assertEquals(9012, hostOptionalInt.get(2).getPassword().getAsInt());
+        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostOptionalInt.get(2).getUrl().get());
+        Assertions.assertFalse(hostOptionalInt.get(2).getPort().isPresent());
+
         User admin = gestalt.getConfig("admin", new TypeCapture<User>() {
         });
         Assertions.assertEquals(3, admin.user.length);
@@ -731,6 +779,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addDefaultPostProcessors()
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -771,6 +820,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
             .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -801,6 +851,7 @@ public class GestaltSample {
             .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
             .addSource(new ClassPathConfigSource("/integration.properties"))
             .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -950,6 +1001,60 @@ public class GestaltSample {
 
         @Config(defaultVal = "customers")
         public String getTable() {return table;}
+    }
+
+    public static class HostOpt {
+        private Optional<String> user;
+        private Optional<String> url;
+        private Optional<String> password;
+
+        private Optional<Integer> port;
+
+        public HostOpt() {
+        }
+
+        public Optional<String> getUser() {
+            return user;
+        }
+
+        public Optional<String> getUrl() {
+            return url;
+        }
+
+        public Optional<String> getPassword() {
+            return password;
+        }
+
+        public Optional<Integer> getPort() {
+            return port;
+        }
+    }
+
+    public static class HostOptionalInt {
+        private Optional<String> user;
+        private Optional<String> url;
+        private OptionalInt password;
+
+        private OptionalInt port;
+
+        public HostOptionalInt() {
+        }
+
+        public Optional<String> getUser() {
+            return user;
+        }
+
+        public Optional<String> getUrl() {
+            return url;
+        }
+
+        public OptionalInt getPassword() {
+            return password;
+        }
+
+        public OptionalInt getPort() {
+            return port;
+        }
     }
 
     public static class Host implements IHost {

@@ -97,7 +97,7 @@ class MapDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
-        Assertions.assertEquals("Leaf on path: db.host.port, missing value, LeafNode{value='null'} attempting to decode String",
+        Assertions.assertEquals("Leaf on path: db.host.port, has no value attempting to decode String",
             validate.getErrors().get(0).description());
         Assertions.assertEquals("Map key was null on path: db.host.port",
             validate.getErrors().get(1).description());
@@ -149,7 +149,7 @@ class MapDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
-        Assertions.assertEquals("Null Nodes on path: db.host.port",
+        Assertions.assertEquals("Expected a leaf on path: db.host.port, received node type: null, attempting to decode String",
             validate.getErrors().get(0).description());
         Assertions.assertEquals("Map key was null on path: db.host.port",
             validate.getErrors().get(1).description());
@@ -171,7 +171,7 @@ class MapDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a map node on path: db.host, received a : LEAF",
+        Assertions.assertEquals("Expected a map node on path: db.host, received node type : LEAF",
             validate.getErrors().get(0).description());
     }
 
@@ -192,8 +192,38 @@ class MapDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Expected a map on path: db.host, received a : MAP, " +
+        Assertions.assertEquals("Expected a map on path: db.host, received node type : map, " +
                 "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
+            validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeMapNodeNullInside() {
+        MapDecoder decoder = new MapDecoder();
+
+        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(null), new TypeCapture<List<String>>() {
+            },
+            registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Expected a map on path: db.host, received node type : map, " +
+                "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
+            validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeNullNode() {
+        MapDecoder decoder = new MapDecoder();
+        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", null, new TypeCapture<List<String>>() {
+            },
+            registry);
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Expected a map node on path: db.host, received node type : null",
             validate.getErrors().get(0).description());
     }
 

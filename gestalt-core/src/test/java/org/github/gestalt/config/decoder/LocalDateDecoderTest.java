@@ -135,8 +135,8 @@ class LocalDateDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
         Assertions.assertNotNull(validate.getErrors());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Leaf on path: db.user, missing value, LeafNode{value='null'} attempting to decode LocalDate",
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Leaf on path: db.user, has no value attempting to decode LocalDate",
             validate.getErrors().get(0).description());
     }
 
@@ -152,8 +152,23 @@ class LocalDateDecoderTest {
         Assertions.assertNull(validate.results());
         Assertions.assertNotNull(validate.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a leaf on path: db.user, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode LocalDate",
+        Assertions.assertEquals("Expected a leaf on path: db.user, received node type: map, attempting to decode LocalDate",
+            validate.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeNullNode() throws GestaltException {
+        LocalDateDecoder decoder = new LocalDateDecoder();
+
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),
+            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+                List.of(new StandardPathMapper())));
+        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertNull(validate.results());
+        Assertions.assertNotNull(validate.getErrors());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Expected a leaf on path: db.user, received node type: null, attempting to decode LocalDate",
             validate.getErrors().get(0).description());
     }
 }

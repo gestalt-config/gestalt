@@ -1,5 +1,6 @@
 package org.github.gestalt.config;
 
+import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -22,6 +23,8 @@ import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.test.classes.DBInfo;
+import org.github.gestalt.config.test.classes.DBInfoOptional;
 import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
 import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -52,7 +55,9 @@ class GestaltTest {
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+            new DecoderRegistry(
+                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
+                    new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
@@ -65,8 +70,21 @@ class GestaltTest {
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
 
+        //get the db.port as a Optional
+        Assertions.assertEquals(Double.valueOf(3306), gestalt.getConfig("db.port", OptionalDouble.class).getAsDouble());
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", OptionalInt.class).getAsInt());
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", OptionalLong.class).getAsLong());
+
+        //get a non-existent value as an optional
+        Assertions.assertFalse(gestalt.getConfig("db.port.none", OptionalDouble.class).isPresent());
+        Assertions.assertFalse(gestalt.getConfig("db.port.none", OptionalInt.class).isPresent());
+        Assertions.assertFalse(gestalt.getConfig("db.port.none", OptionalLong.class).isPresent());
+
         Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class, Tags.of()));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class, Tags.of()));
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
         Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<String>() {
@@ -79,6 +97,11 @@ class GestaltTest {
 
         Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class)));
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", new TypeCapture<Optional<String>>() {
+        }).get());
+        Assertions.assertFalse(gestalt.getConfig("does.not.exist", new TypeCapture<Optional<String>>() {
+        }).isPresent());
     }
 
     @Test
@@ -99,7 +122,8 @@ class GestaltTest {
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(new MapConfigSource(configs)),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+            new DecoderRegistry(
+                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList());
 
@@ -149,6 +173,10 @@ class GestaltTest {
         Assertions.assertEquals("John", gestalt.getConfig("admin[0]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class), Tags.of("toys", "ball")));
 
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", new TypeCapture<Optional<String>>() {
+        }, Tags.of("toys", "ball")).get());
+        Assertions.assertFalse(gestalt.getConfig("admin[99]", new TypeCapture<Optional<String>>() {
+        }, Tags.of("toys", "ball")).isPresent());
     }
 
     @Test
@@ -616,6 +644,11 @@ class GestaltTest {
         Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class));
         Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", String.class));
 
+        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, Integer.class, Tags.of()));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class, Tags.of()));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class, Tags.of()));
+        Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", String.class, Tags.of()));
+
         Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", new TypeCapture<String>() {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", "aaa", TypeCapture.of(String.class)));
@@ -692,6 +725,11 @@ class GestaltTest {
         Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class));
         Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class));
         Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class));
+
+        Assertions.assertEquals(Optional.of("test"), gestalt.getConfigOptional("db.name", String.class, Tags.of()));
+        Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class, Tags.of()));
+        Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class, Tags.of()));
+        Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class, Tags.of()));
 
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.port", Integer.class));
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", String.class));
@@ -779,9 +817,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
-                    " - level: ERROR, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
+                             "during navigating to next node");
         }
 
         try {
@@ -790,8 +828,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
-                    " - level: WARN, message: Missing array index: 2");
+                         .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
+                             " - level: WARN, message: Missing array index: 2");
         }
 
         try {
@@ -833,7 +871,7 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("No sources provided, unable to load any configs");
+                         .hasMessage("No sources provided, unable to load any configs");
         }
     }
 
@@ -870,8 +908,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
-                    " - level: ERROR, message: No decoders found for class: java.lang.Integer");
+                         .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
+                             " - level: ERROR, message: No decoders found for class: java.lang.Integer");
         }
     }
 
@@ -936,8 +974,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed to load configs from source: mapConfig\n" +
-                    " - level: ERROR, message: Duplicate array index: 1 for path: admin");
+                         .hasMessage("Failed to load configs from source: mapConfig\n" +
+                             " - level: ERROR, message: Duplicate array index: 1 for path: admin");
         }
     }
 
@@ -976,9 +1014,155 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find node matching path: no.exist.name, for class: ObjectToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, " +
+                             "for class: ObjectToken, during navigating to next node");
+        }
+    }
+
+    @Test
+    public void testNullResultsForNode() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatWarningsAsErrors(false);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(false);
+        config.setTreatNullValuesInClassAsErrors(true);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer(".");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+                new StringDecoder(), new ObjectDecoder()),
+                configNodeManager, lexer, List.of(new StandardPathMapper())),
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        try {
+            gestalt.getConfig("db", DBInfo.class);
+            Assertions.fail("Should not reach here");
+        } catch (GestaltException e) {
+            assertThat(e).isInstanceOf(GestaltException.class)
+                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                             "during navigating to next node\n" +
+                             " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                             "during navigating to next node\n" +
+                             " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
+                             "field password results in null value");
+        }
+    }
+
+    @Test
+    public void testNullResultsForNodeIgnored() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatWarningsAsErrors(false);
+        config.setTreatMissingArrayIndexAsError(false);
+        config.setTreatMissingValuesAsErrors(false);
+        config.setTreatNullValuesInClassAsErrors(false);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer(".");
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs)),
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+                new StringDecoder(), new ObjectDecoder()),
+                configNodeManager, lexer, List.of(new StandardPathMapper())),
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        try {
+            DBInfo dbInfo = gestalt.getConfig("db", DBInfo.class);
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(3306, dbInfo.getPort());
+            Assertions.assertNull(dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testOptionalResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(configs))
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatNullValuesInClassAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoOptional dbInfo = gestalt.getConfig("db", DBInfoOptional.class);
+            Assertions.assertEquals("test", dbInfo.getPassword().get());
+            Assertions.assertEquals(3306, dbInfo.getPort().get());
+            Assertions.assertTrue(dbInfo.getUri().isEmpty());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testOptionalResultsForMissingFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(configs))
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatNullValuesInClassAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            gestalt.getConfig("db", DBInfoOptional.class);
+            Assertions.fail("Should not reach here");
+
+        } catch (GestaltException e) {
+            assertThat(e).isInstanceOf(GestaltException.class)
+                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoOptional\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                             "during navigating to next node");
         }
     }
 
@@ -1049,9 +1233,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                             "during navigating to next node");
         }
     }
 
@@ -1088,9 +1272,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
-                    " - level: ERROR, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
+                             "during navigating to next node");
         }
     }
 
@@ -1122,8 +1306,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Unable to parse path: admin[a3]\n" +
-                    " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
+                         .hasMessage("Unable to parse path: admin[a3]\n" +
+                             " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
         }
 
         Optional<String> result = gestalt.getConfigOptional("admin[a3]", String.class);

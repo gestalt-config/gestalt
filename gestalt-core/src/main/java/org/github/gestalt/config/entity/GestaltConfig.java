@@ -13,6 +13,8 @@ public class GestaltConfig {
     private boolean treatMissingArrayIndexAsError = false;
     // Treat missing object values as errors. If false it will leave the default values or null.
     private boolean treatMissingValuesAsErrors = false;
+    //Treat null values in classes after decoding as errors.
+    private boolean treatNullValuesInClassAsErrors = true;
 
     // Java date decoder format.
     private String dateDecoderFormat = null;
@@ -73,6 +75,24 @@ public class GestaltConfig {
      */
     public void setTreatMissingValuesAsErrors(boolean treatMissingValuesAsErrors) {
         this.treatMissingValuesAsErrors = treatMissingValuesAsErrors;
+    }
+
+    /**
+     * Treat null values in classes after decoding as errors.
+     *
+     * @return Treat null values in classes after decoding as errors.
+     */
+    public boolean isTreatNullValuesInClassAsErrors() {
+        return treatNullValuesInClassAsErrors;
+    }
+
+    /**
+     * Treat null values in classes after decoding as errors.
+     *
+     * @param treatNullValuesInClassAsErrors Treat null values in classes after decoding as errors.
+     */
+    public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
+        this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
     }
 
     /**

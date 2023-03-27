@@ -93,9 +93,9 @@ internal class BooleanDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertNull(validate.results())
         Assertions.assertNotNull(validate.errors)
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.errors[0].level())
         Assertions.assertEquals(
-            "Leaf on path: db.enabled, missing value, LeafNode{value='null'} attempting to decode kBoolean",
+            "Leaf on path: db.enabled, has no value attempting to decode kBoolean",
             validate.errors[0].description()
         )
     }

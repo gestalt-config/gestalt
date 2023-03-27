@@ -41,7 +41,11 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
     public ValidateOf<T[]> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
         ValidateOf<T[]> results;
         if (node instanceof ArrayNode) {
-            results = arrayDecode(path, node, type, decoderService);
+            if (node.size() > 0) {
+                results = arrayDecode(path, node, type, decoderService);
+            } else {
+                results = ValidateOf.inValid(new ValidationError.DecodingArrayMissingValue(path, name()));
+            }
         } else if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {
                 String value = node.getValue().get();
@@ -54,7 +58,7 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
 
                 results = arrayDecode(path, new ArrayNode(leafNodes), type, decoderService);
             } else {
-                results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, node, name()));
+                results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, name()));
             }
         } else {
             results = ValidateOf.inValid(new ValidationError.DecodingExpectedArrayNodeType(path, node, name()));

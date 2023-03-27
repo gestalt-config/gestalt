@@ -63,6 +63,7 @@ public class RecordDecoder implements Decoder<Object> {
             String nextPath = PathUtil.pathForKey(path, name);
 
             ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
+            var typeCapture = TypeCapture.of(fieldClass);
 
             errors.addAll(configNode.getErrors());
             if (!configNode.hasResults()) {
@@ -70,7 +71,7 @@ public class RecordDecoder implements Decoder<Object> {
                 if (configAnnotation != null && configAnnotation.defaultVal() != null &&
                     !configAnnotation.defaultVal().isEmpty()) {
                     ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
-                        TypeCapture.of(fieldClass));
+                        typeCapture);
 
                     errors.addAll(defaultValidateOf.getErrors());
                     if (defaultValidateOf.hasResults()) {
@@ -79,11 +80,17 @@ public class RecordDecoder implements Decoder<Object> {
                         hasAllValues = false;
                     }
                 } else {
-                    hasAllValues = false;
+                    // when we have no result for the field and no annotation default
+                    // try and decode the value anyway, in case its supports a nullable type, such as optional.
+                    ValidateOf<?> decodedResults = decoderService.decodeNode(nextPath, configNode.results(), typeCapture);
+                    if (decodedResults.hasResults()) {
+                        values[i] = decodedResults.results();
+                    } else {
+                        hasAllValues = false;
+                    }
                 }
             } else {
-                ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
-                    TypeCapture.of(fieldClass));
+                ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(), typeCapture);
 
                 errors.addAll(fieldValidateOf.getErrors());
                 if (fieldValidateOf.hasResults()) {

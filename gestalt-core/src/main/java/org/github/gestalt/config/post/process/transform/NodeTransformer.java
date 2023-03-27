@@ -57,7 +57,7 @@ public class NodeTransformer implements Transformer {
                                                             .navigateToNode(path, validateOfTokens.results(), Tags.of());
 
         errors.addAll(validateOfConfigNode.getErrors());
-        if (validateOfConfigNode.hasErrors(ValidationLevel.ERROR)) {
+        if (validateOfConfigNode.hasErrors(ValidationLevel.MISSING_VALUE)) {
             errors.add(new ValidationError.NodePostProcessingErrorsNavigatingToNode(path, key));
             return ValidateOf.inValid(errors);
         }

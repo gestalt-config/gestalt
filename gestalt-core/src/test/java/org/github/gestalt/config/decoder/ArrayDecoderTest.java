@@ -187,7 +187,7 @@ class ArrayDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Leaf on path: db.hosts, missing value, LeafNode{value='null'} attempting to decode Array",
+        Assertions.assertEquals("Leaf on path: db.hosts, has no value attempting to decode Array",
             values.getErrors().get(0).description());
     }
 
@@ -260,8 +260,52 @@ class ArrayDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Expected a Array  on path: db.hosts, received node type, received: MapNode{mapNode={}} " +
-                "attempting to decode Array",
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode Array",
+            values.getErrors().get(0).description());
+    }
+
+    @Test
+    void arrayDecodeMapNodeNullInside() {
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
+
+        ValidateOf<Double[]> values = decoder.decode("db.hosts", new MapNode(null), TypeCapture.of(Double[].class),
+            decoderService);
+
+        Assertions.assertTrue(values.hasErrors());
+        Assertions.assertFalse(values.hasResults());
+
+        Assertions.assertEquals(1, values.getErrors().size());
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode Array",
+            values.getErrors().get(0).description());
+    }
+
+    @Test
+    void arrayDecodeListNodeNullInside() {
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
+
+        ValidateOf<Double[]> values = decoder.decode("db.hosts", new ArrayNode(null), TypeCapture.of(Double[].class),
+            decoderService);
+
+        Assertions.assertTrue(values.hasErrors());
+        Assertions.assertFalse(values.hasResults());
+
+        Assertions.assertEquals(1, values.getErrors().size());
+        Assertions.assertEquals("Array on path: db.hosts, has no value attempting to decode Array",
+            values.getErrors().get(0).description());
+    }
+
+    @Test
+    void arrayDecodeNullNode() {
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
+
+        ValidateOf<Double[]> values = decoder.decode("db.hosts", null, TypeCapture.of(Double[].class),
+            decoderService);
+
+        Assertions.assertTrue(values.hasErrors());
+        Assertions.assertFalse(values.hasResults());
+
+        Assertions.assertEquals(1, values.getErrors().size());
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode Array",
             values.getErrors().get(0).description());
     }
 

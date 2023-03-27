@@ -86,7 +86,7 @@ class DataClassDecoderTest {
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(
-            "Expected a map node on path: db.host, received a : LEAF",
+            "Expected a map node on path: db.host, received node type : LEAF",
             validate.errors[0].description()
         )
     }
@@ -243,7 +243,7 @@ class DataClassDecoderTest {
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
         Assertions.assertEquals(
-            "Leaf on path: db.host.port, missing value, LeafNode{value='null'} attempting to decode kInt",
+            "Leaf on path: db.host.port, has no value attempting to decode kInt",
             validate.errors[0].description()
         )
         Assertions.assertEquals(

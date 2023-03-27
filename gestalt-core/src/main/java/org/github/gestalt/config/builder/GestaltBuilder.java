@@ -67,6 +67,7 @@ public class GestaltBuilder {
     private Boolean treatWarningsAsErrors = null;
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
+    private Boolean treatNullValuesInClassAsErrors = null;
 
     private String dateDecoderFormat = null;
     private String localDateTimeFormat = null;
@@ -505,6 +506,17 @@ public class GestaltBuilder {
     }
 
     /**
+     * Treat null values in classes after decoding as errors.
+     *
+     * @param treatNullValuesInClassAsErrors treat null values in classes after decoding as errors
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setTreatNullValuesInClassAsErrors(Boolean treatNullValuesInClassAsErrors) {
+        this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
+        return this;
+    }
+
+    /**
      * Add a cache layer to gestalt.
      *
      * @param useCacheDecorator use a cache decorator.
@@ -679,6 +691,9 @@ public class GestaltBuilder {
 
         newConfig.setTreatMissingValuesAsErrors(Objects.requireNonNullElseGet(treatMissingValuesAsErrors,
             () -> gestaltConfig.isTreatMissingValuesAsErrors()));
+
+        newConfig.setTreatNullValuesInClassAsErrors(Objects.requireNonNullElseGet(treatNullValuesInClassAsErrors,
+            () -> gestaltConfig.isTreatNullValuesInClassAsErrors()));
 
         if (dateDecoderFormat != null) {
             newConfig.setDateDecoderFormat(dateDecoderFormat);

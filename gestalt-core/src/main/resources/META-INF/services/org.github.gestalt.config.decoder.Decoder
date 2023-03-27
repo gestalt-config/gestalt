@@ -18,6 +18,10 @@ org.github.gestalt.config.decoder.LocalDateTimeDecoder
 org.github.gestalt.config.decoder.LongDecoder
 org.github.gestalt.config.decoder.MapDecoder
 org.github.gestalt.config.decoder.ObjectDecoder
+org.github.gestalt.config.decoder.OptionalDecoder
+org.github.gestalt.config.decoder.OptionalDoubleDecoder
+org.github.gestalt.config.decoder.OptionalIntDecoder
+org.github.gestalt.config.decoder.OptionalLongDecoder
 org.github.gestalt.config.decoder.PathDecoder
 org.github.gestalt.config.decoder.PatternDecoder
 org.github.gestalt.config.decoder.ProxyDecoder

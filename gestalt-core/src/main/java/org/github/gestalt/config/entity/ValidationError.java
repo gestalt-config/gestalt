@@ -1,7 +1,6 @@
 package org.github.gestalt.config.entity;
 
 import org.github.gestalt.config.node.ConfigNode;
-import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.Token;
 
@@ -49,9 +48,13 @@ public abstract class ValidationError {
         this.level = level;
     }
 
-
+    /**
+     * Returns true if this error is for a missing results issue.
+     *
+     * @return true if this error is for a missing results issue
+     */
     public boolean hasNoResults() {
-        return false;
+        return level.equals(ValidationLevel.MISSING_VALUE);
     }
 
     /**
@@ -358,13 +361,37 @@ public abstract class ValidationError {
     }
 
     /**
+     * While decoding a leaf it is missing its value.
+     */
+    public static class DecodingArrayMissingValue extends ValidationError {
+        private final String path;
+        private final String decoderName;
+
+        public DecodingArrayMissingValue(String path, String decoderName) {
+            super(ValidationLevel.MISSING_VALUE);
+            this.path = path;
+            this.decoderName = decoderName;
+        }
+
+        @Override
+        public String description() {
+            return "Array on path: " + path + ", has no value attempting to decode " + decoderName;
+        }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
+        }
+    }
+
+    /**
      * No results found for path while building config node.
      */
     public static class NoResultsFoundForPath extends ValidationError {
         private final String path;
 
         public NoResultsFoundForPath(String path) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.MISSING_VALUE);
             this.path = path;
         }
 
@@ -384,19 +411,17 @@ public abstract class ValidationError {
      */
     public static class DecodingLeafMissingValue extends ValidationError {
         private final String path;
-        private final ConfigNode node;
-        private final String nodeType;
+        private final String decoderName;
 
-        public DecodingLeafMissingValue(String path, ConfigNode node, String nodeType) {
-            super(ValidationLevel.ERROR);
+        public DecodingLeafMissingValue(String path, String decoderName) {
+            super(ValidationLevel.MISSING_VALUE);
             this.path = path;
-            this.node = node;
-            this.nodeType = nodeType;
+            this.decoderName = decoderName;
         }
 
         @Override
         public String description() {
-            return "Leaf on path: " + path + ", missing value, " + node + " attempting to decode " + nodeType;
+            return "Leaf on path: " + path + ", has no value attempting to decode " + decoderName;
         }
 
         @Override
@@ -411,18 +436,19 @@ public abstract class ValidationError {
     public static class DecodingExpectedLeafNodeType extends ValidationError {
         private final String path;
         private final ConfigNode node;
-        private final String nodeType;
+        private final String decoderName;
 
-        public DecodingExpectedLeafNodeType(String path, ConfigNode node, String nodeType) {
+        public DecodingExpectedLeafNodeType(String path, ConfigNode node, String decoderName) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
-            this.nodeType = nodeType;
+            this.decoderName = decoderName;
         }
 
         @Override
         public String description() {
-            return "Expected a leaf on path: " + path + ", received node type, received: " + node + " attempting to decode " + nodeType;
+            return "Expected a leaf on path: " + path + ", received node type: " + (node == null ? "null" : node.getNodeType().getType()) +
+                ", attempting to decode " + decoderName;
         }
     }
 
@@ -432,18 +458,19 @@ public abstract class ValidationError {
     public static class DecodingExpectedArrayNodeType extends ValidationError {
         private final String path;
         private final ConfigNode node;
-        private final String nodeType;
+        private final String decoderName;
 
-        public DecodingExpectedArrayNodeType(String path, ConfigNode node, String nodeType) {
+        public DecodingExpectedArrayNodeType(String path, ConfigNode node, String decoderName) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
-            this.nodeType = nodeType;
+            this.decoderName = decoderName;
         }
 
         @Override
         public String description() {
-            return "Expected a Array  on path: " + path + ", received node type, received: " + node + " attempting to decode " + nodeType;
+            return "Expected a Array on path: " + path + ", received node type: " + (node == null ? "null" : node.getNodeType()) +
+                ", attempting to decode " + decoderName;
         }
     }
 
@@ -454,28 +481,30 @@ public abstract class ValidationError {
         private final String path;
         private final List<TypeCapture<?>> types;
 
-        private final NodeType nodeType;
+        private final ConfigNode node;
 
-        public DecodingExpectedMapNodeType(String path, List<TypeCapture<?>> types, NodeType nodeType) {
+        public DecodingExpectedMapNodeType(String path, List<TypeCapture<?>> types, ConfigNode node) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.types = types;
-            this.nodeType = nodeType;
+            this.node = node;
         }
 
-        public DecodingExpectedMapNodeType(String path, NodeType nodeType) {
+        public DecodingExpectedMapNodeType(String path, ConfigNode node) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.types = null;
-            this.nodeType = nodeType;
+            this.node = node;
         }
 
         @Override
         public String description() {
             if (types == null) {
-                return "Expected a map node on path: " + path + ", received a : " + nodeType;
+                return "Expected a map node on path: " + path + ", received node type : " +
+                    (node == null ? "null" : node.getNodeType());
             } else {
-                return "Expected a map on path: " + path + ", received a : " + nodeType + ", received invalid types: " + types;
+                return "Expected a map on path: " + path + ", received node type : " +
+                    (node == null ? "null" : node.getNodeType().getType()) + ", received invalid types: " + types;
             }
         }
     }
@@ -486,18 +515,18 @@ public abstract class ValidationError {
     public static class DecodingNumberParsing extends ValidationError {
         private final String path;
         private final ConfigNode node;
-        private final String nodeType;
+        private final String decoderName;
 
-        public DecodingNumberParsing(String path, ConfigNode node, String nodeType) {
+        public DecodingNumberParsing(String path, ConfigNode node, String decoderName) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
-            this.nodeType = nodeType;
+            this.decoderName = decoderName;
         }
 
         @Override
         public String description() {
-            return "Unable to parse a number on Path: " + path + ", from node: " + node + " attempting to decode " + nodeType;
+            return "Unable to parse a number on Path: " + path + ", from node: " + node + " attempting to decode " + decoderName;
         }
     }
 
@@ -599,7 +628,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * While deocing a maps value, it was null.
+     * While decoding a maps value, it was null.
      */
     public static class DecodersMapValueNull extends ValidationError {
         private final String path;
@@ -641,20 +670,20 @@ public abstract class ValidationError {
         private String klass;
 
         public NoResultsFoundForNode(String path, String area) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.MISSING_VALUE);
             this.path = path;
             this.area = area;
         }
 
         public NoResultsFoundForNode(String path, String klass, String area) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.MISSING_VALUE);
             this.path = path;
             this.klass = klass;
             this.area = area;
         }
 
         public NoResultsFoundForNode(String path, Class<?> klass, String area) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.MISSING_VALUE);
             this.path = path;
             this.klass = klass.getSimpleName();
             this.area = area;
@@ -961,6 +990,27 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * While decoding a Object no value was found and the result will be null.
+     */
+    public static class NullValueDecodingObject extends ValidationError {
+        private final String path;
+        private final String field;
+        private final String klassName;
+
+        public NullValueDecodingObject(String path, String field, String klassName) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.field = field;
+            this.klassName = klassName;
+        }
+
+        @Override
+        public String description() {
+            return "Decoding object : " + klassName + " on path: " + path + ", field " + field + " results in null value";
+        }
+    }
+
     public static class NoMatchingTransformFound extends ValidationError {
         private final String path;
         private final String transformName;
@@ -1257,7 +1307,7 @@ public abstract class ValidationError {
         private final String property;
 
         public NodePostProcessingNoResultsForTokens(String path, String property) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.MISSING_VALUE);
             this.path = path;
             this.property = property;
         }
@@ -1282,7 +1332,7 @@ public abstract class ValidationError {
          * Protected constructor so end users cant create a Validation error only inherit from it.
          */
         public NodePostProcessingNoResults() {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.MISSING_VALUE);
         }
 
         @Override

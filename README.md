@@ -147,6 +147,14 @@ The API to retrieve configurations:
    */
   <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass);
 ```   
+
+### getConfig
+
+To get a config Gestalt needs to know what type of config to get. For simple classes you can use the interface for classes, for Generic classes you need to use the `new TypeCapture<List<Host>>() {}` to capture the generic type. This allows you to decode Lists, and Sets with a generic type.
+There are multiple ways to get a config with either a default, an Optional or the straight value. With the default and Optional Gestalt will not throw an exception if there is an error, instead returning a default or an PlaceHolder Option.
+Gestalt uses the SentenceLexer provided by the builder to tokenize the path then use the ConfigNodeService to navigate to the node. With the node Gestalt calls the decoderService to convert the node into the appropriate type.
+
+
 The API also supports tagged versions, where providing a tag will retrieve configs that match the tags or the default of no tags. 
 ```java
  <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags);
@@ -159,7 +167,7 @@ Example of how to create and load a configuration using Gestalt:
     public long maxPerRoute;
     public int validateAfterInactivity;
     public double keepAliveTimeoutMs = 6000; // has a default value if not found in configurations
-    public int idleTimeoutSec = 10; // has a default value if not found in configurations
+    public OptionalInt idleTimeoutSec = 10; // has a default value if not found in configurations
     public float defaultWait = 33.0F; // has a default value if not found in configurations
 
     public HttpPool() {
@@ -171,6 +179,7 @@ Example of how to create and load a configuration using Gestalt:
     private String user;
     private String url;
     private String password;
+    private Optional<Integer> port;
 
     public Host() {
     }
@@ -327,12 +336,16 @@ To register your own default ConfigLoaders, add it to a file in META-INF\service
 | Float             | Float and float                                                                                                                                                                                                                                                                                                                                              |
 | Instant           |                                                                                                                                                                                                                                                                                                                                                              |
 | Integer           | Integer and int                                                                                                                                                                                                                                                                                                                                              |
-| List              | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node. You can escape the comma with a \\, so the values are not split.                                                                                                                                                                                                                                     |
+| List              | a Java list with any Generic class, Can decode simple types from a single comma separated value, or from an array node. You can escape the comma with a \\, so the values are not split.                                                                                                                                                                     |
 | LocalDate         | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_LOCAL_DATE                                                                                                                                                                                                                                                                |
 | LocalDateTime     | Takes a DateTimeFormatter as a parameter, by default it uses DateTimeFormatter.ISO_DATE_TIME                                                                                                                                                                                                                                                                 |
 | Long              | Long or long                                                                                                                                                                                                                                                                                                                                                 |
 | Map               | A map, Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int. The value can be any type we can decode.                                                                                                                                                                                                  |
 | Object            | Decodes a java Bean style class, although it will work with any java class.  Will fail if the constructor is private. Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors which you can disable using treatMissingValuesAsErrors = true. Decodes member classes and lists as well. |
+| Optional          | Decodes an optional value, if no value is found it will return an Optional.empty()                                                                                                                                                                                                                                                                           |
+| OptionalDouble    | Decodes an optional Double, if no value is found it will return an OptionalDouble.empty()                                                                                                                                                                                                                                                                    |
+| OptionaInt        | Decodes an optional Integer, if no value is found it will return an OptionaInt.empty()                                                                                                                                                                                                                                                                       |
+| OptionalLong      | Decodes an optional Long, if no value is found it will return an OptionalLong.empty()                                                                                                                                                                                                                                                                        |
 | Path              |                                                                                                                                                                                                                                                                                                                                                              |
 | Pattern           |                                                                                                                                                                                                                                                                                                                                                              |
 | Proxy (interface) | Will create a proxy for an interface that will return the config value based on the java bean method name. So a method "getCar()" would match a config named "car". If a config is missing it will call the default method if provided.                                                                                                                      |
@@ -381,11 +394,9 @@ public class DBInfo {
     public int getPort() {
         return port;
     }
-
 }  
 
 DBInfo pool = gestalt.getConfig("db.connection", DBInfo.class);
-
 ```
 
 The path provided in the annotation is used to find the configuration from the base path provided in the call to Gestalt getConfig.
@@ -526,14 +537,15 @@ app.uuid=${random:uuid}
 * Note: The formats in the table would need to be embedded inside of ${random:format} so byte(length) would be ${random:byte(10)}
 # Gestalt configuration
 
-| Configuration | default | Details |
-| ------------- | ------- | ------- | 
-| treatWarningsAsErrors | false | if we treat warnings as errors Gestalt will fail on any warnings |
-| treatMissingArrayIndexAsError | false | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead |
-| treatMissingValuesAsErrors | false | By default Gestalt will insert null values into an object. By enabling this you will get an exception instead |
-| dateDecoderFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
-| localDateTimeFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
-| localDateFormat | null | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder |
+| Configuration                  | default | Details                                                                                                                                                                                                                                                                                                          |
+|--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| treatWarningsAsErrors          | false   | if we treat warnings as errors Gestalt will fail on any warnings. When set to true it overrides the behaviour in the below configs.                                                                                                                                                                              |
+| treatMissingArrayIndexAsError  | false   | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead                                                                                                                                                                    |
+| treatMissingValuesAsErrors     | false   | By default Gestalt will not update values in classes not found in the config. Null values will be left null and values with defaults will keep their defaults. By enabling this you will get an exception if any value is missing.                                                                               |
+| treatNullValuesInClassAsErrors | true    | Prior to v0.20.0 null values and values not in the config but have a default in classes were treated the same. By enabling this you will get an exception if a value is null after decoding an object. If the value is missing but has a default this will be caught under the config treatMissingValuesAsErrors |
+| dateDecoderFormat              | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
+| localDateTimeFormat            | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
+| localDateFormat                | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
 
 # Additional Modules
 
@@ -760,10 +772,4 @@ public interface Transformer {
 
 To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
 
-the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}.
-
-### getConfig
-
-To get a config Gestalt needs to know what type of config to get. For simple classes you can use the interface for classes, for Generic classes you need to use the `new TypeCapture<List<Host>>() {}` to capture the generic type. This allows you to decode Lists, and Sets with a generic type. 
-There are multiple ways to get a config with either a default, an Optional or the straight value. With the default and Optional Gestalt will not throw an exception if there is an error, instead returning a default or an PlaceHolder Option.
-Gestalt uses the SentenceLexer provided by the builder to tokenize the path then use the ConfigNodeService to navigate to the node. With the node Gestalt calls the decoderService to convert the node into the appropriate type.  
+the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}
