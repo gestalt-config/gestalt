@@ -3,8 +3,8 @@ java = "11"
 javaLatest = "19"
 kotlin = "1.8.10"
 kotlinDokka = "1.8.10"
-kodeinDI = "7.18.0"
-koinDI= "3.3.3"
+kodeinDI = "7.19.0"
+koinDI= "3.4.0"
 
 jackson = "2.14.2"
 
@@ -16,7 +16,7 @@ weldCore = "4.0.3.Final"
 slf4j = "2.0.7"
 
 hocon = "1.4.2"
-aws = "2.20.31"
+aws = "2.20.32"
 jgit = "6.5.0.202303070854-r"
 
 eddsa = "0.3.0"
