@@ -1,5 +1,6 @@
 package org.github.gestalt.config;
 
+import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -23,6 +24,7 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
+import org.github.gestalt.config.test.classes.DBInfoOptional;
 import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
 import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -1105,6 +1107,61 @@ class GestaltTest {
             Assertions.assertNull(dbInfo.getUri());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testOptionalResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(configs))
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatNullValuesInClassAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoOptional dbInfo = gestalt.getConfig("db", DBInfoOptional.class);
+            Assertions.assertEquals("test", dbInfo.getPassword().get());
+            Assertions.assertEquals(3306, dbInfo.getPort().get());
+            Assertions.assertTrue(dbInfo.getUri().isEmpty());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testOptionalResultsForMissingFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(configs))
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatNullValuesInClassAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            gestalt.getConfig("db", DBInfoOptional.class);
+            Assertions.fail("Should not reach here");
+
+        } catch (GestaltException e) {
+            assertThat(e).isInstanceOf(GestaltException.class)
+                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoOptional\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, during navigating to next node");
         }
     }
 
