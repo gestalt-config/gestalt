@@ -5,16 +5,17 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.utils.ValidateOf;
 
 /**
- * Allows you to inject Environment Variables into leaf values that match ${env:key},
+ * Allows you to inject Environment Variables into leaf values that match ${envVar:key},
  * where the key is used to lookup into the Environment Variables.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(100)
-public class EnvironmentVariablesTransformer implements Transformer {
+@Deprecated
+public class EnvironmentVariablesTransformerOld implements Transformer {
     @Override
     public String name() {
-        return "env";
+        return "envVar";
     }
 
     @Override

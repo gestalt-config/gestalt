@@ -4,17 +4,17 @@ import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class EnvironmentVariablesTransformerTest {
+class EnvironmentVariablesTransformerOldTest {
 
     @Test
     void name() {
-        EnvironmentVariablesTransformer transformer = new EnvironmentVariablesTransformer();
-        Assertions.assertEquals("env", transformer.name());
+        EnvironmentVariablesTransformerOld transformer = new EnvironmentVariablesTransformerOld();
+        Assertions.assertEquals("envVar", transformer.name());
     }
 
     @Test
     void process() {
-        EnvironmentVariablesTransformer transformer = new EnvironmentVariablesTransformer();
+        EnvironmentVariablesTransformerOld transformer = new EnvironmentVariablesTransformerOld();
         ValidateOf<String> validateOfResults = transformer.process("hello", "DB_IDLETIMEOUT");
 
         Assertions.assertTrue(validateOfResults.hasResults());
@@ -26,7 +26,7 @@ class EnvironmentVariablesTransformerTest {
 
     @Test
     void processMissing() {
-        EnvironmentVariablesTransformer transformer = new EnvironmentVariablesTransformer();
+        EnvironmentVariablesTransformerOld transformer = new EnvironmentVariablesTransformerOld();
         ValidateOf<String> validateOfResults = transformer.process("hello", "NO_EXIST");
 
         Assertions.assertFalse(validateOfResults.hasResults());

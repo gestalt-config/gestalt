@@ -494,13 +494,14 @@ db.uri=jdbc:mysql://${envVar:DB_HOST}:${envVar:DB_PORT}/${sys:environment}
 
 ## Provided TransformerPostProcessor
 
-| keyword | priority | source                                             |
-| ------- |----------|----------------------------------------------------|
-| envVar | 100      | Environment Variables                              |
-| sys | 200      | Java System Properties                             |
-| map | 400      | A custom map provided to the constructor           |
-| node | 300         | map to another leaf node in the configuration tree |
-| random | n/a  | provides a random value |
+| keyword | priority | source                                       |
+|---------|----------|----------------------------------------------|
+| env     | 100      | Environment Variables                        |
+| envVar  | 100      | **Depricated** Environment Variables         |
+| sys     | 200      | Java System Properties                       |
+| map     | 400      | A custom map provided to the constructor     |
+| node    | 300      | map to another leaf node in the configuration tree |
+| random  | n/a      | provides a random value                      |
 
 ## random post processor
 To inject a random variable during post-processing you can use the format ${random:type(origin, bound)}
