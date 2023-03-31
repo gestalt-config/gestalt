@@ -476,7 +476,7 @@ For example if we have a properties file with a Database connection you don't wa
 You can use multiple string replacements within a single string.
 Specify a key in the format ${key} and it will check all the Transformer annotated with a `@ConfigPriority` in descending order and will return the first matching value. Or if you want to control which transformer to check specify by name using the format ${transformer:key}
 The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER, db.user or db_user will not match.
-You can escape the value with '\' like \${key} to prevent the substitution. 
+You can escape the value with '\\' like \\${key} to prevent the substitution. Or in property files  \\\\${key}
 
 ```properties
 db.user=${DB_USER}
