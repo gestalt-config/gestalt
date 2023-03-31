@@ -475,7 +475,8 @@ The main Post Processor is the TransformerPostProcessor which allows for string 
 For example if we have a properties file with a Database connection you don't want to save your usernames and passwords in the properties files. Instead, you want to inject the username and passwords as Environment Variables.
 You can use multiple string replacements within a single string.
 Specify a key in the format ${key} and it will check all the Transformer annotated with a `@ConfigPriority` in descending order and will return the first matching value. Or if you want to control which transformer to check specify by name using the format ${transformer:key}
-The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER, db.user or db_user will not match. 
+The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER, db.user or db_user will not match.
+You can escape the value with '\' like \${key} to prevent the substitution. 
 
 ```properties
 db.user=${DB_USER}
@@ -493,13 +494,14 @@ db.uri=jdbc:mysql://${envVar:DB_HOST}:${envVar:DB_PORT}/${sys:environment}
 
 ## Provided TransformerPostProcessor
 
-| keyword | priority | source                                             |
-| ------- |----------|----------------------------------------------------|
-| envVar | 100      | Environment Variables                              |
-| sys | 200      | Java System Properties                             |
-| map | 400      | A custom map provided to the constructor           |
-| node | 300         | map to another leaf node in the configuration tree |
-| random | n/a  | provides a random value |
+| keyword | priority | source                                       |
+|---------|----------|----------------------------------------------|
+| env     | 100      | Environment Variables                        |
+| envVar  | 100      | **Depricated** Environment Variables         |
+| sys     | 200      | Java System Properties                       |
+| map     | 400      | A custom map provided to the constructor     |
+| node    | 300      | map to another leaf node in the configuration tree |
+| random  | n/a      | provides a random value                      |
 
 ## random post processor
 To inject a random variable during post-processing you can use the format ${random:type(origin, bound)}

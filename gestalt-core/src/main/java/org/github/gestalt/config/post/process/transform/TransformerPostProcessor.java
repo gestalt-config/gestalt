@@ -31,7 +31,7 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  */
 public class TransformerPostProcessor implements PostProcessor {
     private static final Pattern pattern = Pattern.compile(
-        "\\$\\{((?<transform>\\w+):)?(?<key>[\\w ,_.+=;:\"'`~!@#$%^&*()\\[\\]<>]+)}"
+        "(^|(?<=[^\\\\]))\\$\\{((?<transform>\\w+):)?(?<key>[\\w ,_.+=;:\"'`~!@#$%^&*()\\[\\]<>]+)}"
     );
 
     private final Map<String, Transformer> transformers;

@@ -127,6 +127,58 @@ class TransformerPostProcessorTest {
     }
 
     @Test
+    void processEscapedTransformer() {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("weather", "sunny");
+        CustomMapTransformer customMapTransformer = new CustomMapTransformer(customMap);
+
+        Map<String, String> customMap2 = new HashMap<>();
+        customMap2.put("place", "Moon");
+        customMap2.put("weather", "cold");
+        CustomTransformer customTransformer = new CustomTransformer(customMap2);
+        SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
+        EnvironmentVariablesTransformer environmentVariablesTransformer = new EnvironmentVariablesTransformer();
+
+        System.setProperty("place", "Earth");
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
+            List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
+        LeafNode node = new LeafNode("\\${map:weather}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("\\${map:weather}", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processEscapedTransformerSentance() {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("weather", "sunny");
+        CustomMapTransformer customMapTransformer = new CustomMapTransformer(customMap);
+
+        Map<String, String> customMap2 = new HashMap<>();
+        customMap2.put("place", "Moon");
+        customMap2.put("weather", "cold");
+        CustomTransformer customTransformer = new CustomTransformer(customMap2);
+        SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
+        EnvironmentVariablesTransformer environmentVariablesTransformer = new EnvironmentVariablesTransformer();
+
+        System.setProperty("place", "Earth");
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
+            List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
+        LeafNode node = new LeafNode("hello ${place} it is \\${map:weather} today");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello Earth it is \\${map:weather} today", validateNode.results().getValue().get());
+    }
+
+    @Test
     void processDefaultTransformerNoValue() {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("weather", "sunny");

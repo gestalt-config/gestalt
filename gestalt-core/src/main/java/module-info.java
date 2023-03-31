@@ -78,6 +78,7 @@ module org.github.gestalt.core {
 
     provides org.github.gestalt.config.post.process.transform.Transformer with
         org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer,
+        org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformerOld,
         org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer,
         org.github.gestalt.config.post.process.transform.NodeTransformer,
         org.github.gestalt.config.post.process.transform.RandomTransformer;
