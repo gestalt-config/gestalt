@@ -10,5 +10,4 @@ java {
 }
 dependencies {
     testImplementation(project(":gestalt-core"))
-    testImplementation(libs.slf4j.simple)
 }

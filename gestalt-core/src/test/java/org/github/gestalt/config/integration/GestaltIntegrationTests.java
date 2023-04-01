@@ -13,6 +13,7 @@ import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +25,11 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class GestaltIntegrationTests {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     public void integrationTest() throws GestaltException {

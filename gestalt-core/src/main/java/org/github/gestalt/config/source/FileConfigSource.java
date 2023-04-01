@@ -3,8 +3,6 @@ package org.github.gestalt.config.source;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +19,7 @@ import java.util.UUID;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class FileConfigSource implements ConfigSource {
-    private static final Logger logger = LoggerFactory.getLogger(FileConfigSource.class.getName());
+    private static final System.Logger logger = System.getLogger(FileConfigSource.class.getName());
 
     private final Path path;
     private final UUID id = UUID.randomUUID();
@@ -79,7 +77,7 @@ public class FileConfigSource implements ConfigSource {
         } else if (!Files.isReadable(path)) {
             throw new GestaltException("Path is not a readable: " + path);
         } else if ("".equals(format(path))) {
-            logger.debug("Unable to find a format for the file: {}", path);
+            logger.log(System.Logger.Level.DEBUG, "Unable to find a format for the file: {0}", path);
         }
         return path;
     }

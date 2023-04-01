@@ -23,10 +23,12 @@ import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+import static java.lang.System.Logger.Level.DEBUG;
+import static java.lang.System.Logger.Level.WARNING;
+import static java.lang.System.Logger.Level.INFO;
 
 import static org.github.gestalt.config.entity.ValidationLevel.ERROR;
 import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
@@ -37,7 +39,7 @@ import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class GestaltCore implements Gestalt, ConfigReloadListener {
-    private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
+    private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());
 
     private final ConfigLoaderService configLoaderService;
     private final List<ConfigSource> sources;
@@ -102,7 +104,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                     loadErrors.addAll(mergedNode.getErrors());
                 }
             } else {
-                logger.warn("Failed to load node: {} did not have any results", source.name());
+                logger.log(WARNING, "Failed to load node: {0} did not have any results", source.name());
             }
         }
 
@@ -159,10 +161,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltException("Failed post processing config nodes with errors ",
                 results.getErrors());
 
-        } else if (results.hasErrors() && logger.isDebugEnabled()) {
+        } else if (results.hasErrors() && logger.isLoggable(DEBUG)) {
             String errorMsg = ErrorsUtil.buildErrorMessage("Failed post processing config nodes with errors ",
                 results.getErrors());
-            logger.debug(errorMsg);
+            logger.log(DEBUG, errorMsg);
         }
 
         if (!results.hasResults()) {
@@ -181,9 +183,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltConfigurationException("Failed to load configs from source: " + source.name(), results.getErrors());
         }
 
-        if (results.hasErrors(ValidationLevel.WARN) && logger.isWarnEnabled()) {
+        if (results.hasErrors(ValidationLevel.WARN) && logger.isLoggable(WARNING)) {
             String errorMsg = ErrorsUtil.buildErrorMessage(results.getErrors());
-            logger.warn(errorMsg);
+            logger.log(WARNING, errorMsg);
         }
 
         if (!results.hasResults()) {
@@ -269,7 +271,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         try {
             return getConfigInternal(path, false, defaultVal, klass, tags);
         } catch (GestaltException e) {
-            logger.warn(e.getMessage());
+            logger.log(WARNING, e.getMessage());
         }
 
         return defaultVal;
@@ -306,7 +308,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             var results = getConfigInternal(path, false, null, klass, tags);
             return Optional.ofNullable(results);
         } catch (GestaltException e) {
-            logger.warn(e.getMessage());
+            logger.log(WARNING, e.getMessage());
         }
 
         return Optional.empty();
@@ -331,19 +333,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                     throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
                         results.getErrors());
                 } else {
-                    if (logger.isWarnEnabled()) {
+                    if (logger.isLoggable(WARNING)) {
                         String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + combinedPath +
                             ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
-                        logger.warn(errorMsg);
+                        logger.log(WARNING, errorMsg);
                     }
 
                     return defaultVal;
                 }
 
-            } else if (results.hasErrors() && logger.isInfoEnabled()) {
+            } else if (results.hasErrors() && logger.isLoggable(INFO)) {
                 String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + combinedPath +
                     ", for class: " + klass.getName(), results.getErrors());
-                logger.info(errorMsg);
+                logger.log(INFO, errorMsg);
             }
 
             if (results.hasResults()) {
@@ -351,10 +353,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
         }
 
-        if (logger.isInfoEnabled()) {
+        if (logger.isLoggable(INFO)) {
             String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
                 ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
-            logger.info(errorMsg);
+            logger.log(INFO, errorMsg);
         }
 
         if (failOnErrors) {

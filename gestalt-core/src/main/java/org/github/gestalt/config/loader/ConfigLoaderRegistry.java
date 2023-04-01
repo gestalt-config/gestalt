@@ -1,12 +1,12 @@
 package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.System.Logger.Level.WARNING;
 
 /**
  * ConfigLoaderRegistry.
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public class ConfigLoaderRegistry implements ConfigLoaderService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConfigLoaderRegistry.class.getName());
+    private static final System.Logger logger = System.getLogger(ConfigLoaderRegistry.class.getName());
 
     private List<ConfigLoader> configLoaders = new ArrayList<>();
 
@@ -54,7 +54,7 @@ public class ConfigLoaderRegistry implements ConfigLoaderService {
         if (matchingConfig.isEmpty()) {
             throw new GestaltConfigurationException("Unable to find a config loader to match: " + format);
         } else if (matchingConfig.size() > 1) {
-            logger.warn("Found more than one configuration loaderFor format: {}, found: {}", format, matchingConfig);
+            logger.log(WARNING, "Found more than one configuration loaderFor format: {0}, found: {1}", format, matchingConfig);
         }
         return matchingConfig.get(0);
     }

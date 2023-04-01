@@ -20,7 +20,3 @@ java {
         languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
     }
 }
-
-dependencies {
-    implementation(libs.slf4j.api)
-}

@@ -20,6 +20,7 @@ import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -38,6 +39,12 @@ import java.util.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GestaltSample {
+
+    @BeforeAll
+    public static void beforeAll()
+    {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @RegisterExtension
     static final S3MockExtension S3_MOCK =

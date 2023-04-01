@@ -29,6 +29,7 @@ import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
 import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -37,6 +38,12 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GestaltTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
+
     @Test
     public void test() throws GestaltException {
 

@@ -23,6 +23,7 @@ import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -33,6 +34,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 class GestaltBuilderTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     public void build() throws GestaltException {

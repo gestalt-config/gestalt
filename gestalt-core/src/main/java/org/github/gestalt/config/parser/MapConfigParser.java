@@ -14,8 +14,6 @@ import org.github.gestalt.config.utils.CollectionUtils;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +25,7 @@ import java.util.stream.IntStream;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class MapConfigParser implements ConfigParser {
-    private static final Logger logger = LoggerFactory.getLogger(MapConfigParser.class.getName());
+    private static final System.Logger logger = System.getLogger(MapConfigParser.class.getName());
 
     /**
      * Default constructor for the MapConfigParser.
@@ -148,9 +146,9 @@ public class MapConfigParser implements ConfigParser {
 
         // There should only be one node type for this group of config as we have already validated it
         if (configsValidateOf.isEmpty()) {
-            logger.warn("unable to parse tokens and create config node");
+            logger.log(System.Logger.Level.WARNING, "unable to parse tokens and create config node");
         } else if (configs.isEmpty()) {
-            logger.warn("No configs found");
+            logger.log(System.Logger.Level.WARNING, "No configs found");
         } else {
             Token token = configs.get(0).getFirst();
             ConfigNode result = null;

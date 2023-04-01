@@ -9,6 +9,7 @@ import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.ValidateOf;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -19,6 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MapConfigParserTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     public void testBuildConfigTree() {

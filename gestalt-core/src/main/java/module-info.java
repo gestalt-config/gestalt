@@ -8,8 +8,6 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.post.process.PostProcessor;
     uses org.github.gestalt.config.post.process.transform.Transformer;
 
-    requires org.slf4j;
-
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
     exports org.github.gestalt.config.builder;

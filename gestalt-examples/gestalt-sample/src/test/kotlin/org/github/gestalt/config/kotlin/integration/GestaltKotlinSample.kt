@@ -14,6 +14,7 @@ import org.github.gestalt.config.source.EnvironmentConfigSource
 import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.kodein.di.*
 import org.koin.dsl.koinApplication
@@ -21,6 +22,14 @@ import org.koin.dsl.module
 import kotlin.reflect.typeOf
 
 class GestaltKotlinSample {
+
+    companion object {
+        @BeforeAll
+        fun beforeAll() {
+            System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").path)
+        }
+    }
+
     @Test
     @kotlin.Throws(GestaltException::class)
     fun integrationTest() {
@@ -331,4 +340,5 @@ class GestaltKotlinSample {
         var port: Int = 0,
         var path: String? = null
     )
+
 }

@@ -10,6 +10,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.test.classes.*;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,11 @@ class ObjectDecoderTest {
     final SentenceLexer lexer = new PathLexer();
     ConfigNodeService configNodeService;
     DecoderRegistry registry;
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @BeforeEach
     void setup() throws GestaltConfigurationException {
