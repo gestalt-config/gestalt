@@ -23,11 +23,11 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.lang.System.Logger.Level.INFO;
+import static java.lang.System.Logger.Level.WARNING;
 
 /**
  * Builder to setup and create the Gestalt config class.
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class GestaltBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(GestaltBuilder.class.getName());
+    private static final System.Logger logger = System.getLogger(GestaltBuilder.class.getName());
     private final List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>();
     private final List<CoreReloadListener> coreCoreReloadListeners = new ArrayList<>();
     private ConfigLoaderService configLoaderService = new ConfigLoaderRegistry();
@@ -576,7 +576,7 @@ public class GestaltBuilder {
 
         if (!decoderMap.isEmpty()) {
             String duplicates = String.join(", ", decoderMap.keySet());
-            logger.warn("Found duplicate decoders {}", duplicates);
+            logger.log(WARNING, "Found duplicate decoders {0}", duplicates);
         }
 
         return decoders.stream().filter(CollectionUtils.distinctBy(Decoder::name)).collect(Collectors.toList());
@@ -598,7 +598,7 @@ public class GestaltBuilder {
 
         if (!configMap.isEmpty()) {
             String duplicates = String.join(", ", configMap.keySet());
-            logger.warn("Found duplicate config loaders {}", duplicates);
+            logger.log(WARNING, "Found duplicate config loaders {0}", duplicates);
         }
 
         return configLoaders.stream().filter(CollectionUtils.distinctBy(ConfigLoader::name)).collect(Collectors.toList());
@@ -619,13 +619,13 @@ public class GestaltBuilder {
 
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
-            logger.info("No decoders provided, using defaults");
+            logger.log(INFO, "No decoders provided, using defaults");
             addDefaultDecoders();
         }
 
         // setup the default path mappers, if there are none, add the default ones.
         if (pathMappers.isEmpty()) {
-            logger.info("No path mapper provided, using defaults");
+            logger.log(INFO, "No path mapper provided, using defaults");
             addDefaultPathMappers();
         }
 
@@ -642,12 +642,12 @@ public class GestaltBuilder {
 
         // Setup the config loaders.
         if (configLoaders.isEmpty()) {
-            logger.info("No decoders provided, using defaults");
+            logger.log(INFO, "No decoders provided, using defaults");
             addDefaultConfigLoaders();
         }
 
         if (postProcessors.isEmpty()) {
-            logger.info("No post processors provided, using defaults");
+            logger.log(INFO, "No post processors provided, using defaults");
             addDefaultPostProcessors();
         }
 

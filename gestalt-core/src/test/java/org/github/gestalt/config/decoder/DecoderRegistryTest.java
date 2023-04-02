@@ -17,6 +17,7 @@ import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,9 +28,13 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 
 class DecoderRegistryTest {
-
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @BeforeEach
     void setup() {

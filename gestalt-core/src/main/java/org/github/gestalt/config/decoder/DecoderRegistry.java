@@ -13,8 +13,6 @@ import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.CollectionUtils;
 import org.github.gestalt.config.utils.ValidateOf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class DecoderRegistry implements DecoderService {
-    private static final Logger logger = LoggerFactory.getLogger(GestaltCore.class.getName());
+    private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());
 
     private final ConfigNodeService configNodeService;
     private final SentenceLexer lexer;
@@ -126,7 +124,8 @@ public class DecoderRegistry implements DecoderService {
         if (classDecoder.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));
         } else if (classDecoder.size() > 1) {
-            logger.info("Found multiple decoders for {}, found: {}, using {}: ", klass, classDecoder, classDecoder.get(0));
+            logger.log(System.Logger.Level.INFO, "Found multiple decoders for {0}, found: {1}, using {2}: ",
+                klass, classDecoder, classDecoder.get(0));
         }
 
         return classDecoder.get(0).decode(path, configNode, klass, this);

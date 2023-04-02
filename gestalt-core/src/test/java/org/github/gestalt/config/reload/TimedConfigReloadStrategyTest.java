@@ -4,6 +4,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -11,6 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 class TimedConfigReloadStrategyTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     public void timedConfigReloadStrategyTest() throws InterruptedException {

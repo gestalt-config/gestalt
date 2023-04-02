@@ -13,6 +13,7 @@ A simple but powerful interface allows you to navigate to a path within your con
 - **Easy to use builder:** Easy to use builder can get you running quick, or be used to customize any part of the library.
 - **Receive all errors up front:** When there is an error with your config, you will receive multiple errors in a friendly log. So you can fix multiple errors at once instead of one at a time waiting for the next error. 
 - **Modular support for features** Only include what you need into your build, so if you dont need the Kotlin module, dont include it.
+- **Zero dependencies** The gestalt core library has Zero external dependencies. Include the features and dependencies you need with the provided modules. 
 - **Java 11 minimum** Requires Java 11 as a minimum version. 
 - **Java Modules** Java 9 modules supported with proper exports.  
 
@@ -548,6 +549,41 @@ app.uuid=${random:uuid}
 | dateDecoderFormat              | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
 | localDateTimeFormat            | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
 | localDateFormat                | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
+
+# Logging
+Gestalt leverages [System.logger](https://docs.oracle.com/javase/9/docs/api/java/lang/System.Logger.html), the jdk logging library to provide a logging facade. Many logging libraries provide backends for System Logger. 
+## log4j 2
+To use log4j2 as the logging backend for the system logger include these dependencies. This is supported in version 2.13.2 of log4j2. 
+
+In Maven:
+```xml
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-jpl</artifactId>
+    <version>${version}</version>
+    <scope>runtime</scope>
+</dependency>
+```
+Or in Gradle
+```kotlin
+implementation("org.apache.logging.log4j:log4j-jpl:${version}")
+```
+
+## logback
+To use logback as the logging backend for the system logger include these dependencies. This is supported in version 2+ or Logback. 
+
+In Maven:
+```xml
+<dependency>
+  <groupId>org.slf4j</groupId>
+  <artifactId>slf4j-jdk-platform-logging</artifactId> 
+  <version>${version}</version>
+</dependency>
+```
+Or in Gradle
+```kotlin
+implementation("org.slf4j:slf4j-jdk-platform-logging:${version}")
+```
 
 # Additional Modules
 

@@ -2,12 +2,18 @@ package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
 
 class ConfigLoaderRegistryTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     void testLoader() throws GestaltConfigurationException {

@@ -8,6 +8,7 @@ import org.github.gestalt.config.source.ClassPathConfigSource;
 import org.github.gestalt.config.source.FileConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -18,6 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 public class GestaltSampleJavaLatest {
+
+    @BeforeAll
+    public static void beforeAll()
+    {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     public void integrationTest() throws GestaltException {

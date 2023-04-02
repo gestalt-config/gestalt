@@ -4,8 +4,6 @@ import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.FileConfigSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -24,7 +22,7 @@ import java.util.concurrent.Executors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class FileChangeReloadStrategy extends ConfigReloadStrategy {
-    private static final Logger logger = LoggerFactory.getLogger(FileChangeReloadStrategy.class.getName());
+    private static final System.Logger logger = System.getLogger(FileChangeReloadStrategy.class.getName());
     private final Path path;
 
     private final WatchService watcher;
@@ -126,11 +124,13 @@ public class FileChangeReloadStrategy extends ConfigReloadStrategy {
                         break;
                     }
                 } catch (IOException | GestaltException e) {
-                    logger.error("Ignoring exception while watching for file " + path + ", message: " + e.getMessage(), e);
+                    logger.log(System.Logger.Level.ERROR,
+                        "Ignoring exception while watching for file " + path + ", message: " + e.getMessage(), e);
                 }
             }
         } catch (InterruptedException e) {
-            logger.error("Received a InterruptedException while watching file " + path.toString() + ", message: " + e.getMessage(), e);
+            logger.log(System.Logger.Level.ERROR,
+                "Received a InterruptedException while watching file " + path.toString() + ", message: " + e.getMessage(), e);
         }
     }
 }

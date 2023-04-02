@@ -9,12 +9,13 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
+
+import static java.lang.System.Logger.Level.INFO;
+import static java.lang.System.Logger.Level.WARNING;
 
 /**
  * Decode a class. This decoder is best suited for pojo style classes.
@@ -25,7 +26,7 @@ import java.util.function.Function;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class ObjectDecoder implements Decoder<Object> {
-    private static final Logger logger = LoggerFactory.getLogger(ObjectDecoder.class.getName());
+    private static final System.Logger logger = System.getLogger(ObjectDecoder.class.getName());
 
     private final Set<Class<?>> ignoreTypes;
 
@@ -83,7 +84,7 @@ public class ObjectDecoder implements Decoder<Object> {
                 String fieldName = field.getName();
 
                 if (Modifier.isStatic(modifiers)) {
-                    logger.info("Ignoring static field for class: " + klass.getName() + " field " + fieldName);
+                    logger.log(INFO, "Ignoring static field for class: " + klass.getName() + " field " + fieldName);
                     continue;
                 }
 
@@ -185,7 +186,7 @@ public class ObjectDecoder implements Decoder<Object> {
             try {
                 return method.get().invoke(obj);
             } catch (InvocationTargetException e) {
-                logger.warn("Failed to get value calling method " + methodName + ", on class " + klass.getSimpleName() +
+                logger.log(WARNING, "Failed to get value calling method " + methodName + ", on class " + klass.getSimpleName() +
                     ", for field " + field.getName());
             }
         }
@@ -266,7 +267,7 @@ public class ObjectDecoder implements Decoder<Object> {
             try {
                 setMethod.get().invoke(obj, value);
             } catch (InvocationTargetException e) {
-                logger.warn("unable to set field " + field.getName() + " using method " + methodName +
+                logger.log(WARNING, "unable to set field " + field.getName() + " using method " + methodName +
                     ", on class " + klass.getSimpleName() + ", for val: " + value + ", setting field directly");
 
                 field.setAccessible(true);

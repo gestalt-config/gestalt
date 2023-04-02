@@ -13,10 +13,8 @@ cdi = "3.0.0"
 weld = "3.1.0.Final"
 weldCore = "4.0.3.Final"
 
-slf4j = "2.0.7"
-
 hocon = "1.4.2"
-aws = "2.20.32"
+aws = "2.20.36"
 jgit = "6.5.0.202303070854-r"
 
 eddsa = "0.3.0"
@@ -39,16 +37,13 @@ pmd = "6.54.0"
 jmh = "1.36"
 gradleJmh = "0.7.0"
 
-gestalt = "0.20.0"
+gestalt = "0.20.1"
 
 gradleVersions = "0.46.0"
 gitVersions = "2.0.0"
 gradleErrorProne = "3.0.1"
 
 [libraries]
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-slf4j-Simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
-
 kotlin-Reflection = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-dokka = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "kotlin" }
 gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

@@ -5,6 +5,3 @@ plugins {
     id("gestalt.java-publish-conventions")
 }
 
-dependencies {
-    testImplementation(libs.slf4j.simple)
-}

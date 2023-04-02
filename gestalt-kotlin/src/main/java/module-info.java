@@ -4,6 +4,7 @@
 module org.github.gestalt.kotlin {
     requires org.github.gestalt.core;
     requires kotlin.reflect;
+    requires java.base;
 
     exports org.github.gestalt.config.kotlin;
     exports org.github.gestalt.config.kotlin.decoder;
