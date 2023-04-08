@@ -1011,6 +1011,49 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Unexpected closing token found when now substitution was open.
+     */
+    public static class UnexpectedClosingTokenTransform extends ValidationError {
+        private final String path;
+        private final String value;
+        private final String closingToken;
+        private final int location;
+
+        public UnexpectedClosingTokenTransform(String path, String value, String closingToken, int location) {
+            super(ValidationLevel.DEBUG);
+            this.path = path;
+            this.value = value;
+            this.closingToken = closingToken;
+            this.location = location;
+        }
+
+        @Override
+        public String description() {
+            return "Unexpected closing token: " + closingToken + " found in string: " + value +
+                ", at location: " + location + " on path: " + path;
+        }
+    }
+
+    /**
+     * Reached the end of a string with an unclosed substitution.
+     */
+    public static class UnclosedSubstitutionTransform extends ValidationError {
+        private final String path;
+        private final String value;
+
+        public UnclosedSubstitutionTransform(String path, String value) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.value = value;
+        }
+
+        @Override
+        public String description() {
+            return "Reached the end of a string " + value + " with an unclosed substitution on path: " + path;
+        }
+    }
+
     public static class NoMatchingTransformFound extends ValidationError {
         private final String path;
         private final String transformName;

@@ -1,5 +1,7 @@
 package org.github.gestalt.config.entity;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * Configuration for Gestalt.
  *
@@ -17,11 +19,18 @@ public class GestaltConfig {
     private boolean treatNullValuesInClassAsErrors = true;
 
     // Java date decoder format.
-    private String dateDecoderFormat = null;
+    private DateTimeFormatter dateDecoderFormat = DateTimeFormatter.ISO_DATE_TIME;
     // Java local date time decoder format.
-    private String localDateTimeFormat = null;
+    private DateTimeFormatter localDateTimeFormat = DateTimeFormatter.ISO_DATE_TIME;
     // Java local date decoder format.
-    private String localDateFormat = null;
+    private DateTimeFormatter localDateFormat = DateTimeFormatter.ISO_DATE_TIME;
+
+
+    // Token that represents the opening of a string substitution.
+    private String substitutionOpeningToken = "${";
+
+    // Token that represents the closing of a string substitution.
+    private String substitutionClosingToken = "}";
 
     /**
      * Treat all warnings as errors.
@@ -100,7 +109,7 @@ public class GestaltConfig {
      *
      * @return Java date decoder format
      */
-    public String getDateDecoderFormat() {
+    public DateTimeFormatter getDateDecoderFormat() {
         return dateDecoderFormat;
     }
 
@@ -109,7 +118,7 @@ public class GestaltConfig {
      *
      * @param dateDecoderFormat Java date decoder format
      */
-    public void setDateDecoderFormat(String dateDecoderFormat) {
+    public void setDateDecoderFormat(DateTimeFormatter dateDecoderFormat) {
         this.dateDecoderFormat = dateDecoderFormat;
     }
 
@@ -118,7 +127,7 @@ public class GestaltConfig {
      *
      * @return Java local date time decoder format.
      */
-    public String getLocalDateTimeFormat() {
+    public DateTimeFormatter getLocalDateTimeFormat() {
         return localDateTimeFormat;
     }
 
@@ -127,7 +136,7 @@ public class GestaltConfig {
      *
      * @param localDateTimeFormat Java local date time decoder format.
      */
-    public void setLocalDateTimeFormat(String localDateTimeFormat) {
+    public void setLocalDateTimeFormat(DateTimeFormatter localDateTimeFormat) {
         this.localDateTimeFormat = localDateTimeFormat;
     }
 
@@ -136,7 +145,7 @@ public class GestaltConfig {
      *
      * @return Java local date decoder format.
      */
-    public String getLocalDateFormat() {
+    public DateTimeFormatter getLocalDateFormat() {
         return localDateFormat;
     }
 
@@ -145,7 +154,43 @@ public class GestaltConfig {
      *
      * @param localDateFormat Java local date decoder format.
      */
-    public void setLocalDateFormat(String localDateFormat) {
+    public void setLocalDateFormat(DateTimeFormatter localDateFormat) {
         this.localDateFormat = localDateFormat;
+    }
+
+    /**
+     * Get the token that represents the opening of a string substitution.
+     *
+     * @return Token that represents the opening of a string substitution.
+     */
+    public String getSubstitutionOpeningToken() {
+        return substitutionOpeningToken;
+    }
+
+    /**
+     * Set the token that represents the opening of a string substitution.
+     *
+     * @param substitutionOpeningToken Token that represents the opening of a string substitution.
+     */
+    public void setSubstitutionOpeningToken(String substitutionOpeningToken) {
+        this.substitutionOpeningToken = substitutionOpeningToken;
+    }
+
+    /**
+     * Get the token that represents the closing of a string substitution.
+     *
+     * @return Token that represents the closing of a string substitution.
+     */
+    public String getSubstitutionClosingToken() {
+        return substitutionClosingToken;
+    }
+
+    /**
+     * Set the token that represents the opening of a string substitution.
+     *
+     * @param substitutionClosingToken Token that represents the closing of a string substitution.
+     */
+    public void setSubstitutionClosingToken(String substitutionClosingToken) {
+        this.substitutionClosingToken = substitutionClosingToken;
     }
 }

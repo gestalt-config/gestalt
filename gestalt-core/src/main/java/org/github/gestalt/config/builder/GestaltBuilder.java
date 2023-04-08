@@ -23,6 +23,8 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.CollectionUtils;
+
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,9 +71,15 @@ public class GestaltBuilder {
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatNullValuesInClassAsErrors = null;
 
-    private String dateDecoderFormat = null;
-    private String localDateTimeFormat = null;
-    private String localDateFormat = null;
+    private DateTimeFormatter dateDecoderFormat = null;
+    private DateTimeFormatter localDateTimeFormat = null;
+    private DateTimeFormatter localDateFormat = null;
+
+    // Token that represents the opening of a string substitution.
+    private String substitutionOpeningToken = null;
+
+    // Token that represents the closing of a string substitution.
+    private String substitutionClosingToken = null;
 
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
@@ -533,7 +541,7 @@ public class GestaltBuilder {
      * @param dateDecoderFormat a date decoder format
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setDateDecoderFormat(String dateDecoderFormat) {
+    public GestaltBuilder setDateDecoderFormat(DateTimeFormatter dateDecoderFormat) {
         this.dateDecoderFormat = dateDecoderFormat;
         return this;
     }
@@ -544,7 +552,7 @@ public class GestaltBuilder {
      * @param localDateTimeFormat a date decoder format
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setLocalDateTimeFormat(String localDateTimeFormat) {
+    public GestaltBuilder setLocalDateTimeFormat(DateTimeFormatter localDateTimeFormat) {
         this.localDateTimeFormat = localDateTimeFormat;
         return this;
     }
@@ -555,8 +563,30 @@ public class GestaltBuilder {
      * @param localDateFormat a local date decoder format
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setLocalDateFormat(String localDateFormat) {
+    public GestaltBuilder setLocalDateFormat(DateTimeFormatter localDateFormat) {
         this.localDateFormat = localDateFormat;
+        return this;
+    }
+
+    /**
+     * Set a Token that represents the opening of a string substitution.
+     *
+     * @param substitutionOpeningToken Token that represents the opening of a string substitution.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSubstitutionOpeningToken(String substitutionOpeningToken) {
+        this.substitutionOpeningToken = substitutionOpeningToken;
+        return this;
+    }
+
+    /**
+     * Token that represents the closing of a string substitution.
+     *
+     * @param substitutionClosingToken a token that represents the closing of a string substitution.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSubstitutionClosingToken(String substitutionClosingToken) {
+        this.substitutionClosingToken = substitutionClosingToken;
         return this;
     }
 
@@ -695,23 +725,20 @@ public class GestaltBuilder {
         newConfig.setTreatNullValuesInClassAsErrors(Objects.requireNonNullElseGet(treatNullValuesInClassAsErrors,
             () -> gestaltConfig.isTreatNullValuesInClassAsErrors()));
 
-        if (dateDecoderFormat != null) {
-            newConfig.setDateDecoderFormat(dateDecoderFormat);
-        } else {
-            newConfig.setDateDecoderFormat(gestaltConfig.getDateDecoderFormat());
-        }
+        newConfig.setDateDecoderFormat(Objects.requireNonNullElseGet(dateDecoderFormat,
+            () -> gestaltConfig.getDateDecoderFormat()));
 
-        if (localDateTimeFormat != null) {
-            newConfig.setLocalDateTimeFormat(localDateTimeFormat);
-        } else {
-            newConfig.setLocalDateTimeFormat(gestaltConfig.getLocalDateTimeFormat());
-        }
+        newConfig.setLocalDateTimeFormat(Objects.requireNonNullElseGet(localDateTimeFormat,
+            () -> gestaltConfig.getLocalDateTimeFormat()));
 
-        if (localDateFormat != null) {
-            newConfig.setLocalDateFormat(localDateFormat);
-        } else {
-            newConfig.setLocalDateFormat(gestaltConfig.getLocalDateFormat());
-        }
+        newConfig.setLocalDateFormat(Objects.requireNonNullElseGet(localDateFormat,
+            () -> gestaltConfig.getLocalDateFormat()));
+
+        newConfig.setSubstitutionOpeningToken(Objects.requireNonNullElseGet(substitutionOpeningToken,
+            () -> gestaltConfig.getSubstitutionOpeningToken()));
+
+        newConfig.setSubstitutionClosingToken(Objects.requireNonNullElseGet(substitutionClosingToken,
+            () -> gestaltConfig.getSubstitutionClosingToken()));
 
         return newConfig;
     }

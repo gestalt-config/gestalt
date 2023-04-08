@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -16,7 +17,7 @@ import java.time.format.DateTimeParseException;
  */
 public class LocalDateTimeDecoder extends LeafDecoder<LocalDateTime> {
 
-    private final DateTimeFormatter formatter;
+    private DateTimeFormatter formatter;
 
     /**
      * Default local date time decoder using ISO_DATE_TIME.
@@ -35,6 +36,13 @@ public class LocalDateTimeDecoder extends LeafDecoder<LocalDateTime> {
             this.formatter = DateTimeFormatter.ofPattern(formatter);
         } else {
             this.formatter = DateTimeFormatter.ISO_DATE_TIME;
+        }
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        if (config.getDateDecoderFormat() != null && this.formatter.equals(DateTimeFormatter.ISO_DATE_TIME)) {
+            this.formatter = config.getDateDecoderFormat();
         }
     }
 
