@@ -149,7 +149,7 @@ class TransformerPostProcessorTest {
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
         Assertions.assertTrue(validateNode.results().getValue().isPresent());
-        Assertions.assertEquals("\\${map:weather}", validateNode.results().getValue().get());
+        Assertions.assertEquals("${map:weather}", validateNode.results().getValue().get());
     }
 
     @Test
@@ -175,7 +175,7 @@ class TransformerPostProcessorTest {
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
         Assertions.assertTrue(validateNode.results().getValue().isPresent());
-        Assertions.assertEquals("hello Earth it is \\${map:weather} today", validateNode.results().getValue().get());
+        Assertions.assertEquals("hello Earth it is ${map:weather} today", validateNode.results().getValue().get());
     }
 
     @Test
