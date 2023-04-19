@@ -37,6 +37,10 @@ public class TransformerPostProcessor implements PostProcessor {
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
 
+    private static final int escapeChar = '\\';
+    private final Pattern patternReplaceOpen = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + "${"));
+    private final Pattern patternReplaceClose = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + "}"));
+
     /**
      * By default, use the service loader to load all Transformer classes.
      */
@@ -126,6 +130,10 @@ public class TransformerPostProcessor implements PostProcessor {
             newLeafValue.append(leafValue.subSequence(lastIndex, leafValue.length()));
         }
 
-        return ValidateOf.valid(new LeafNode(newLeafValue.toString()));
+        String newString = newLeafValue.toString();
+        newString = patternReplaceOpen.matcher(newString).replaceAll(Matcher.quoteReplacement("${"));
+        newString = patternReplaceClose.matcher(newString).replaceAll(Matcher.quoteReplacement("}"));
+
+        return ValidateOf.valid(new LeafNode(newString));
     }
 }
