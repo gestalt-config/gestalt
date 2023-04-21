@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -19,7 +20,7 @@ import java.util.Date;
  */
 public class DateDecoder extends LeafDecoder<Date> {
 
-    private final DateTimeFormatter formatter;
+    private DateTimeFormatter formatter;
 
     /**
      * Default date decoder using ISO_DATE_TIME.
@@ -38,6 +39,13 @@ public class DateDecoder extends LeafDecoder<Date> {
             this.formatter = DateTimeFormatter.ofPattern(formatter);
         } else {
             this.formatter = DateTimeFormatter.ISO_DATE_TIME;
+        }
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        if (config.getDateDecoderFormat() != null && this.formatter.equals(DateTimeFormatter.ISO_DATE_TIME)) {
+            this.formatter = config.getDateDecoderFormat();
         }
     }
 

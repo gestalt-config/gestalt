@@ -24,10 +24,12 @@ import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -142,10 +144,10 @@ class GestaltBuilderTest {
             .addSources(sources)
             .setTreatMissingArrayIndexAsError(true)
             .setTreatMissingValuesAsErrors(true)
-            .setDateDecoderFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .setLocalDateFormat("yyyy-MM-dd")
-            .setLocalDateTimeFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .build();
+            .setDateDecoderFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+                                                   .setLocalDateFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                                   .setLocalDateTimeFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+                                                   .build();
 
         gestalt.loadConfigs();
 
@@ -339,6 +341,36 @@ class GestaltBuilderTest {
         Assertions.assertEquals("value", gestalt.getConfig("db.password", String.class));
 
         Mockito.verify(configNodeService, Mockito.times(1)).navigateToNode(any(), any(), any());
+    }
+
+    @Test
+    @Disabled
+    public void buildDifferentStringSubstitutions() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "*(db.name)");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSource> sources = new ArrayList<>();
+        sources.add(new MapConfigSource(configs));
+        sources.add(new MapConfigSource(configs2));
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setSubstitutionClosingToken("*(")
+            .setSubstitutionClosingToken(")")
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
     }
 
     @Test

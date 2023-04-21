@@ -19,7 +19,6 @@
 
 package org.github.gestalt.config.utils;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -237,41 +236,6 @@ public final class ClassUtils {
             return false;
         }
         return toClass.isAssignableFrom(cls);
-    }
-
-    /**
-     * Returns whether the given {@code type} is a primitive wrapper ({@link Boolean}, {@link Byte}, {@link Character},
-     * {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
-     *
-     * @param type The class to query or null.
-     * @return true if the given {@code type} is a primitive wrapper ({@link Boolean}, {@link Byte}, {@link Character},
-     * {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
-     * @since 3.1
-     */
-    public static boolean isPrimitiveWrapper(final Class<?> type) {
-        return wrapperPrimitiveMap.containsKey(type);
-    }
-
-    /**
-     * Converts the specified array of primitive Class objects to an array of its corresponding wrapper Class objects.
-     *
-     * @param classes the class array to convert, may be null or empty
-     * @return an array which contains for each given class, the wrapper class or the original class if class is not a
-     *     primitive. {@code null} if null input. Empty array if an empty array passed in.
-     * @since 2.1
-     */
-    public static Class<?>[] primitivesToWrappers(final Class<?>... classes) {
-        if (classes == null) {
-            return null;
-        }
-
-        if (classes.length == 0) {
-            return classes;
-        }
-
-        final Class<?>[] convertedClasses = new Class[classes.length];
-        Arrays.setAll(convertedClasses, i -> primitiveToWrapper(classes[i]));
-        return convertedClasses;
     }
 
     /**

@@ -5,6 +5,8 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
+import org.github.gestalt.config.post.process.transform.substitution.SubstitutionNode;
+import org.github.gestalt.config.post.process.transform.substitution.SubstitutionTreeBuilder;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
@@ -31,15 +33,14 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  */
 public class TransformerPostProcessor implements PostProcessor {
     private static final Pattern pattern = Pattern.compile(
-        "(^|(?<=[^\\\\]))\\$\\{((?<transform>\\w+):)?(?<key>[\\w ,_.+=;:\"'`~!@#$%^&*()\\[\\]<>]+)}"
+        "((?<transform>\\w+):)?(?<key>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+)"
     );
 
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
 
-    private static final int escapeChar = '\\';
-    private final Pattern patternReplaceOpen = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + "${"));
-    private final Pattern patternReplaceClose = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + "}"));
+    private int maxRecursionDepth = 5;
+    private SubstitutionTreeBuilder substitutionTreeBuilder;
 
     /**
      * By default, use the service loader to load all Transformer classes.
@@ -69,12 +70,17 @@ public class TransformerPostProcessor implements PostProcessor {
             this.transformers = transformers.stream().collect(Collectors.toMap(Transformer::name, Function.identity()));
             this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformers, false);
         }
+        this.substitutionTreeBuilder = new SubstitutionTreeBuilder("${", "}");
     }
-
 
     @Override
     public void applyConfig(PostProcessorConfig config) {
         this.transformers.values().forEach(it -> it.applyConfig(config));
+
+        substitutionTreeBuilder = new SubstitutionTreeBuilder(config.getConfig().getSubstitutionOpeningToken(),
+            config.getConfig().getSubstitutionClosingToken());
+
+        this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
     }
 
     @Override
@@ -84,23 +90,76 @@ public class TransformerPostProcessor implements PostProcessor {
         }
 
         String leafValue = currentNode.getValue().get();
-        Matcher matcher = pattern.matcher(leafValue);
+
+        ValidateOf<List<SubstitutionNode>> substitutionNodes = substitutionTreeBuilder.build(path, leafValue);
+        if (substitutionNodes.hasResults()) {
+            var results = buildSubstitutedStringList(path, currentNode, substitutionNodes.results(), 0);
+            if (results.hasResults()) {
+                return ValidateOf.validateOf(new LeafNode(results.results()), results.getErrors());
+            } else {
+                return ValidateOf.inValid(results.getErrors());
+            }
+        } else {
+            return ValidateOf.inValid(substitutionNodes.getErrors());
+        }
+    }
+
+    private ValidateOf<String> buildSubstitutedStringList(String path, ConfigNode originalNode, List<SubstitutionNode> nodes, int depth) {
+        if (depth > maxRecursionDepth) {
+            return ValidateOf.inValid(new ValidationError.ExceededMaximumNestedSubstitutionDepth(path, depth, originalNode));
+        }
+
+        StringBuilder result = new StringBuilder();
+        List<ValidationError> errors = new ArrayList<>();
+        for (SubstitutionNode resolveNode : nodes) {
+            if (resolveNode instanceof SubstitutionNode.TextNode) {
+                result.append(((SubstitutionNode.TextNode) resolveNode).getText());
+            } else if (resolveNode instanceof SubstitutionNode.TransformNode) {
+                List<SubstitutionNode> nodes1 = ((SubstitutionNode.TransformNode) resolveNode).getSubNodes();
+
+                ValidateOf<String> recursiveResults = buildSubstitutedStringList(path, originalNode, nodes1, depth + 1);
+                errors.addAll(recursiveResults.getErrors());
+                if (recursiveResults.hasResults()) {
+                    ValidateOf<String> transformedString = transformString(path, recursiveResults.results());
+                    errors.addAll(transformedString.getErrors());
+                    if (transformedString.hasResults()) {
+                        ValidateOf<List<SubstitutionNode>> substitutionNodes =
+                            substitutionTreeBuilder.build(path, transformedString.results());
+
+                        errors.addAll(substitutionNodes.getErrors());
+                        if (substitutionNodes.hasResults()) {
+                            ValidateOf<String> nestedSub =
+                                buildSubstitutedStringList(path, originalNode, substitutionNodes.results(), depth + 1);
+                            errors.addAll(nestedSub.getErrors());
+                            if (nestedSub.hasResults()) {
+                                result.append(nestedSub.results());
+                            }
+                        }
+                    }
+                }
+            } else {
+                errors.add(new ValidationError.NotAValidSubstitutionNode(path, resolveNode));
+            }
+        }
+
+        return ValidateOf.validateOf(result.toString(), errors);
+    }
+
+    private ValidateOf<String> transformString(String path, String input) {
+        Matcher matcher = pattern.matcher(input);
         StringBuilder newLeafValue = new StringBuilder();
-        int lastIndex = 0;
+        boolean foundMatch = false;
         while (matcher.find()) {
             String transformName = matcher.group("transform");
             String key = matcher.group("key");
-            int startOfMatch = matcher.start();
-            int endOfMatch = matcher.end();
 
             // if we have a named transform look it up in the map.
             if (transformName != null) {
                 if (transformers.containsKey(transformName)) {
-                    ValidateOf<String> value = transformers.get(transformName).process(path, key);
-                    if (value.hasResults()) {
-                        newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
-                        lastIndex = endOfMatch;
-
+                    ValidateOf<String> transformValue = transformers.get(transformName).process(path, key);
+                    if (transformValue.hasResults()) {
+                        newLeafValue.append(transformValue.results());
+                        foundMatch = true;
                     } else {
                         return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
                     }
@@ -111,29 +170,25 @@ public class TransformerPostProcessor implements PostProcessor {
                 boolean foundTransformer = false;
                 // if the transform isn't named look for it in priority order.
                 for (Transformer transform : orderedDefaultTransformers) {
-                    ValidateOf<String> value = transform.process(path, key);
-                    if (value.hasResults()) {
-                        newLeafValue.append(leafValue.subSequence(lastIndex, startOfMatch)).append(value.results());
-                        lastIndex = endOfMatch;
+                    ValidateOf<String> transformValue = transform.process(path, key);
+                    if (transformValue.hasResults()) {
+                        newLeafValue.append(transformValue.results());
                         foundTransformer = true;
+                        foundMatch = true;
                         break;
                     }
                 }
 
                 if (!foundTransformer) {
-                    return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path));
+                    return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path, key));
                 }
             }
         }
-        // add any text at the end of the sentence
-        if (lastIndex < leafValue.length()) {
-            newLeafValue.append(leafValue.subSequence(lastIndex, leafValue.length()));
+
+        if (foundMatch) {
+            return ValidateOf.valid(newLeafValue.toString());
+        } else {
+            return ValidateOf.valid(input);
         }
-
-        String newString = newLeafValue.toString();
-        newString = patternReplaceOpen.matcher(newString).replaceAll(Matcher.quoteReplacement("${"));
-        newString = patternReplaceClose.matcher(newString).replaceAll(Matcher.quoteReplacement("}"));
-
-        return ValidateOf.valid(new LeafNode(newString));
     }
 }

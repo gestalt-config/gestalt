@@ -23,6 +23,9 @@ dependencies {
     jacocoAggregation(project(":gestalt-s3"))
     jacocoAggregation(project(":gestalt-toml"))
     jacocoAggregation(project(":gestalt-yaml"))
+
+    // include additional tests.
+    jacocoAggregation(project(":gestalt-test"))
 }
 
 reporting {
@@ -30,9 +33,14 @@ reporting {
         val testCodeCoverageReport by creating(JacocoCoverageReport::class) {
             testType.set(TestSuiteType.UNIT_TEST)
         }
+
+        val integrationTestCodeCoverageReport by creating(JacocoCoverageReport::class) {
+            testType.set(TestSuiteType.INTEGRATION_TEST)
+        }
     }
 }
 
 tasks.check {
     dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
+    dependsOn(tasks.named<JacocoReport>("integrationTestCodeCoverageReport"))
 }
