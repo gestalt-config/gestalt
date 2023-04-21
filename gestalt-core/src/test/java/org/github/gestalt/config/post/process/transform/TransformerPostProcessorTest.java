@@ -48,6 +48,22 @@ class TransformerPostProcessorTest {
     }
 
     @Test
+    void processTextWithoutTransform() {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("hello Earth!");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello Earth!", validateNode.results().getValue().get());
+    }
+
+    @Test
     void processTextWithMultipleTransform() {
 
         Map<String, String> customMap = new HashMap<>();
@@ -153,7 +169,7 @@ class TransformerPostProcessorTest {
     }
 
     @Test
-    void processEscapedTransformerSentance() {
+    void processEscapedTransformerSentence() {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("weather", "sunny");
         CustomMapTransformer customMapTransformer = new CustomMapTransformer(customMap);
@@ -200,8 +216,8 @@ class TransformerPostProcessorTest {
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
-        Assertions.assertEquals("Unable to find matching transform for test.path with the default transformers . " +
-                "make sure you registered all expected transforms",
+        Assertions.assertEquals("Unable to find matching transform for test.path with the default transformers. " +
+                "For key: noValue, make sure you registered all expected transforms",
             validateNode.getErrors().get(0).description());
         Assertions.assertEquals(ValidationLevel.ERROR, validateNode.getErrors().get(0).level());
     }
@@ -226,8 +242,8 @@ class TransformerPostProcessorTest {
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
-        Assertions.assertEquals("Unable to find matching transform for test.path with the default transformers . " +
-                "make sure you registered all expected transforms",
+        Assertions.assertEquals("Unable to find matching transform for test.path with the default transformers. " +
+                "For key: location, make sure you registered all expected transforms",
             validateNode.getErrors().get(0).description());
         Assertions.assertEquals(ValidationLevel.ERROR, validateNode.getErrors().get(0).level());
     }
@@ -258,6 +274,204 @@ class TransformerPostProcessorTest {
         Assertions.assertEquals("hello Earth it is sunny today", validateNode.results().getValue().get());
     }
 
+    @Test
+    void processNestedTransform() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("variable", "place");
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("hello ${map:${variable}} it is ${map:weather} today");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello world it is sunny today", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processTwoNestedTransform() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("variable", "place");
+        customMap.put("source", "map");
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("hello ${${source}:${variable}} it is ${map:weather} today");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello world it is sunny today", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processDoubleNestedTransform() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("variable1", "variable2");
+        customMap.put("variable2", "place");
+        customMap.put("source", "map");
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("hello ${${source}:${variable1}} it is ${map:weather} today");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello place it is sunny today", validateNode.results().getValue().get());
+    }
+    @Test
+    void processTripleNestedTransform() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("this.path", "location");
+        customMap.put("your.path.location", "greeting");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${my.path.${your.path.${this.path}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("good day", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processDeeplyNestedTransform() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("here", "there");
+        customMap.put("this.path.there", "location");
+        customMap.put("your.path.location", "greeting");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here}}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("good day", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processNestedTransformWithNestedTransforms() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("this.path", "greeting");
+        customMap.put("your.path", "${this.path}");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${my.path.${your.path}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("good day", validateNode.results().getValue().get());
+    }
+
+
+    @Test
+    void processNestedTransformWithNestedTransformsTimesTwo() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("that.path", "greeting");
+        customMap.put("this.path", "${that.path}");
+        customMap.put("your.path", "${this.path}");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${my.path.${your.path}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("good day", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processTooDeeplyNestedTransform() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("here", "there");
+        customMap.put("this.path.there", "location");
+        customMap.put("your.path.location", "greeting");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here.${their.${test}}}}}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertTrue(validateNode.hasErrors());
+        Assertions.assertEquals(6, validateNode.getErrors().size());
+        Assertions.assertEquals("Exceeded maximum nested substitution depth of 6 on path location for node: " +
+                "LeafNode{value='${my.path.${your.path.${this.path.${here.${their.${test}}}}}}'}",
+            validateNode.getErrors().get(0).description());
+    }
+
+    @Test
+    void processNestedTransformWithInfiniteLoop() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("this.path", "${your.path}");
+        customMap.put("your.path", "${this.path}");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${my.path.${your.path}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertTrue(validateNode.hasErrors());
+        Assertions.assertEquals(2, validateNode.getErrors().size());
+        Assertions.assertEquals("Exceeded maximum nested substitution depth of 6 on path location for node: " +
+                "LeafNode{value='${my.path.${your.path}}'}",
+            validateNode.getErrors().get(0).description());
+    }
+
+    @Test
+    void processEscapedNestedTransforms() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("this.path", "greeting");
+        customMap.put("your.path", "${this.path}");
+        customMap.put("my.path.greeting", "good day");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("\\${my.path.${your.path}.night\\}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("${my.path.greeting.night}", validateNode.results().getValue().get());
+    }
+
     @ConfigPriority(10)
     public static class CustomTransformer extends CustomMapTransformer {
         public CustomTransformer(Map<String, String> replacementVars) {
@@ -282,3 +496,4 @@ class TransformerPostProcessorTest {
     }
 
 }
+

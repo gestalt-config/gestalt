@@ -645,6 +645,64 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("usersTable", connection.getDbPath());
     }
 
+    @Test
+    public void testSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "hello ${place} it is ${weather} today");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(customMap))
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        Assertions.assertEquals("hello world it is sunny today", message);
+    }
+
+    @Test
+    public void testNestedSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("variable", "place");
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "hello ${${variable}} it is ${weather} today");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(customMap))
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        Assertions.assertEquals("hello world it is sunny today", message);
+    }
+
+    @Test
+    public void testEscapedSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "hello \\${place} it is ${weather} today");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new MapConfigSource(customMap))
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        Assertions.assertEquals("hello ${place} it is sunny today", message);
+    }
+
 
     public enum Role {
         LEVEL0, LEVEL1

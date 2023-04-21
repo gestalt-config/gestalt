@@ -81,6 +81,9 @@ public class GestaltBuilder {
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = null;
 
+    // the maximum nested substitution depth.
+    private Integer maxSubstitutionNestedDepth = null;
+
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
      *
@@ -591,6 +594,27 @@ public class GestaltBuilder {
     }
 
     /**
+     * Get the maximum string substitution nested depth.
+     * If you have nested or recursive substitutions that go deeper than this it will fail.
+     *
+     * @return the maximum string substitution nested depth.
+     */
+    public Integer getMaxSubstitutionNestedDepth() {
+        return maxSubstitutionNestedDepth;
+    }
+
+    /**
+     * Set the maximum string substitution nested depth.
+     * If you have nested or recursive substitutions that go deeper than this it will fail.
+     *
+     * @param maxSubstitutionNestedDepth the maximum string substitution nested depth.
+     */
+    public void setMaxSubstitutionNestedDepth(Integer maxSubstitutionNestedDepth) {
+        this.maxSubstitutionNestedDepth = maxSubstitutionNestedDepth;
+    }
+
+
+    /**
      * dedupe decoders and return the deduped list.
      *
      * @return deduped list of decoders.
@@ -739,6 +763,9 @@ public class GestaltBuilder {
 
         newConfig.setSubstitutionClosingToken(Objects.requireNonNullElseGet(substitutionClosingToken,
             () -> gestaltConfig.getSubstitutionClosingToken()));
+
+        newConfig.setMaxSubstitutionNestedDepth(Objects.requireNonNullElseGet(maxSubstitutionNestedDepth,
+            () -> gestaltConfig.getMaxSubstitutionNestedDepth()));
 
         return newConfig;
     }

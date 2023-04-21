@@ -382,6 +382,55 @@ user.block.message=You are blocked because \\${reason\\}
 ```
 
 
+### Nested Substitutions
+Gestalt supports nested and recursive substitutions. Where a substitution can happen inside another substitution and the results could trigger another substitution.
+Please use nested substitution sparingly, it can get very complex and confusing quickly. 
+Using these variables:
+
+Environment Variables:
+```properties
+DB_HOST=cloudHost
+environment=dev
+```
+
+System Variables:
+```properties
+DB_HOST=localHost
+environment=test
+```
+
+Map Variable:
+```properties
+DB_TRANSFORM=sys
+DB_PORT=13306
+```
+config source:
+```properties
+db.uri=jdbc:mysql://${${DB_TRANSFORM}:DB_HOST}:${map:DB_PORT}/${sys:environment}
+```
+
+This will resolve ${DB_TRANSFORM} => `sys`
+then resolve ${sys:DB_HOST} => `localHost`
+For a configuration value of `db.uri=jdbc:mysql://localHost:13306/test`
+
+
+Nested substitution resolving to a nested substitution.
+Given properties:
+```properties
+this.path = greeting
+your.path = ${this.path}
+my.path.greeting = good day
+```
+
+And a string to Substitute:
+`"${my.path.${your.path}}"`
+
+the result is `good day`
+
+`${your.path}` resolves to `${this.path}`
+`${this.path}` is then resolved to `greeting`
+And finally the path `my.path.greeting` is resolved to `good day`
+
 ### Provided Transformers
 | keyword | priority | source                                       |
 |---------|----------|----------------------------------------------|
@@ -572,17 +621,18 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
 | TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration |
 
 # Gestalt configuration
-| Configuration                  | default | Details                                                                                                                                                                                                                                                                                                          |
-|--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| treatWarningsAsErrors          | false   | if we treat warnings as errors Gestalt will fail on any warnings. When set to true it overrides the behaviour in the below configs.                                                                                                                                                                              |
-| treatMissingArrayIndexAsError  | false   | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead                                                                                                                                                                    |
-| treatMissingValuesAsErrors     | false   | By default Gestalt will not update values in classes not found in the config. Null values will be left null and values with defaults will keep their defaults. By enabling this you will get an exception if any value is missing.                                                                               |
-| treatNullValuesInClassAsErrors | true    | Prior to v0.20.0 null values and values not in the config but have a default in classes were treated the same. By enabling this you will get an exception if a value is null after decoding an object. If the value is missing but has a default this will be caught under the config treatMissingValuesAsErrors |
-| dateDecoderFormat              | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
-| localDateTimeFormat            | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
-| localDateFormat                | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
-| substitutionOpeningToken       | ${      | Customize what tokens gestalt looks for when starting replacing substrings                                                                                                                                                                                                                                        |
-| substitutionClosingToken       | }       | Customize what tokens gestalt looks for when ending replacing substrings                                                                                                                                                                                                                                          |
+| Configuration                  | default | Details                                                                                                                                                                                                                                                                                                               |
+|--------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| treatWarningsAsErrors          | false   | if we treat warnings as errors Gestalt will fail on any warnings. When set to true it overrides the behaviour in the below configs.                                                                                                                                                                                   |
+| treatMissingArrayIndexAsError  | false   | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead                                                                                                                                                                         |
+| treatMissingValuesAsErrors     | false   | By default Gestalt will not update values in classes not found in the config. Null values will be left null and values with defaults will keep their defaults. By enabling this you will get an exception if any value is missing.                                                                                    |
+| treatNullValuesInClassAsErrors | true    | Prior to v0.20.0 null values and values not in the config but have a default in classes were treated the same. By enabling this you will get an exception if a value is null after decoding an object. If the value is missing but has a default this will be caught under the config treatMissingValuesAsErrors      |
+| dateDecoderFormat              | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                                   |
+| localDateTimeFormat            | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                                   |
+| localDateFormat                | null    | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                                   |
+| substitutionOpeningToken       | ${      | Customize what tokens gestalt looks for when starting replacing substrings                                                                                                                                                                                                                                            |
+| substitutionClosingToken       | }       | Customize what tokens gestalt looks for when ending replacing substrings                                                                                                                                                                                                                                              |
+| maxSubstitutionNestedDepth     | 5       | Get the maximum string substitution nested depth. If you have nested or recursive substitutions that go deeper than this it will fail.                                                                                                                                                                                |
 
 
 # Logging

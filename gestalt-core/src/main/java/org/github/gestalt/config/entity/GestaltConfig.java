@@ -32,6 +32,9 @@ public class GestaltConfig {
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = "}";
 
+    // the maximum nested substitution depth.
+    private int maxSubstitutionNestedDepth = 5;
+
     /**
      * Treat all warnings as errors.
      *
@@ -192,5 +195,25 @@ public class GestaltConfig {
      */
     public void setSubstitutionClosingToken(String substitutionClosingToken) {
         this.substitutionClosingToken = substitutionClosingToken;
+    }
+
+    /**
+     * Get the maximum string substitution nested depth.
+     * If you have nested or recursive substitutions that go deeper than this it will fail.
+     *
+     * @return the maximum string substitution nested depth.
+     */
+    public int getMaxSubstitutionNestedDepth() {
+        return maxSubstitutionNestedDepth;
+    }
+
+    /**
+     * Set the maximum string substitution nested depth.
+     * If you have nested or recursive substitutions that go deeper than this it will fail.
+     *
+     * @param maxSubstitutionNestedDepth the maximum string substitution nested depth.
+     */
+    public void setMaxSubstitutionNestedDepth(int maxSubstitutionNestedDepth) {
+        this.maxSubstitutionNestedDepth = maxSubstitutionNestedDepth;
     }
 }

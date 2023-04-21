@@ -1,6 +1,7 @@
 package org.github.gestalt.config.entity;
 
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.post.process.transform.substitution.SubstitutionNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.token.Token;
 
@@ -1076,17 +1077,19 @@ public abstract class ValidationError {
      */
     public static class NoMatchingDefaultTransformFound extends ValidationError {
         private final String path;
+        private final String key;
 
 
-        public NoMatchingDefaultTransformFound(String path) {
+        public NoMatchingDefaultTransformFound(String path, String key) {
             super(ValidationLevel.ERROR);
             this.path = path;
+            this.key = key;
         }
 
         @Override
         public String description() {
-            return "Unable to find matching transform for " + path + " with the default transformers " +
-                ". make sure you registered all expected transforms";
+            return "Unable to find matching transform for " + path + " with the default transformers. " +
+                "For key: " + key + ", make sure you registered all expected transforms";
         }
     }
 
@@ -1109,6 +1112,47 @@ public abstract class ValidationError {
         public String description() {
             return "Unable to find matching key for transform " + transformName + " with key " + key +
                 " on path " + path;
+        }
+    }
+
+    /**
+     * Not a valid SubstitutionNode
+     */
+    public static class NotAValidSubstitutionNode extends ValidationError {
+        private final String path;
+        private final SubstitutionNode node;
+
+        public NotAValidSubstitutionNode(String path, SubstitutionNode node) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.node = node;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown SubstitutionNode " + node + " on path " + path;
+        }
+    }
+
+
+    /**
+     * Not a valid SubstitutionNode
+     */
+    public static class ExceededMaximumNestedSubstitutionDepth extends ValidationError {
+        private final String path;
+        private final ConfigNode node;
+        private final int depth;
+
+        public ExceededMaximumNestedSubstitutionDepth(String path, int depth, ConfigNode node) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.node = node;
+            this.depth = depth;
+        }
+
+        @Override
+        public String description() {
+            return "Exceeded maximum nested substitution depth of " + depth + " on path " + path + " for node: " + node.toString();
         }
     }
 
@@ -1446,3 +1490,4 @@ public abstract class ValidationError {
         }
     }
 }
+
