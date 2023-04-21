@@ -105,7 +105,7 @@ http.pool.maxPerRoute=50
     .addSource(new MapConfigSource(configs))
     .build();
 
-  // Loads and parses the configurations, this will thow exceptions if there are any errors. 
+  // Loads and parses the configurations, this will throw exceptions if there are any errors. 
   gestalt.loadConfigs();
 ```
 
@@ -147,18 +147,18 @@ You can add several ConfigSources to the builder and Gestalt, and they will be l
     .addSource(new EnvironmentConfigSource())
     .build();
 ```
-In the above example we first load a file defaults, then load a file devFileand overwrite any defaults, then overwrite any values from the Environment Variables.
+In the above example we first load a file defaults, then load a file devFile and overwrite any defaults, then overwrite any values from the Environment Variables.
 The priority will be Env Vars > devFile > defaults.
 
 
 
-# Retreiving a configuration
+# Retrieving a configuration
 
-To retreive a configuration from Gestalt we need the path to the configuration as well as what type of class.
+To retrieve a configuration from Gestalt we need the path to the configuration as well as what type of class.
 
 ### getConfig path options
 Gestalt is **not case sensitive**. Since Gestalt interops between Environment Variables and other sources with various cases, all strings in Gestalt are normalized to a lower case.
-By detault Gestalt uses dot notation and allows indexing into arrays using a '[0]'.  
+By default Gestalt uses dot notation and allows indexing into arrays using a '[0]'.  
 If you want to use a different path style you can provide your own SentenceLexer to Gestalt. The SentenceLexer is used to convert the path passed to the Gestalt getConfig interface into tokens that Gestalt can use to navigate to your sub node.
 
 ```java
@@ -189,7 +189,7 @@ There are multiple ways to get a configuration with either a default, an Optiona
 
 #### Tags
 The API also supports tagged configuration, where providing a tag will retrieve configs that match the specific tags or fallback to the default of no tags.
-You can implement profiles or enviroments using tags.
+You can implement profiles or environments using tags.
 
 ```java
  <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags);
@@ -309,7 +309,7 @@ The default accepts a string type and will be decoded into the property type usi
 
 
 # Searching for path while Decoding Objects
-When decoding a class, need to know what confiuration to lookup for each field. To generate the name of the configuration to lookup, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and searched for in order.
+When decoding a class, need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and searched for in order.
 
 ```java
 // With a class of 
@@ -374,8 +374,8 @@ db.uri=jdbc:mysql://${env:DB_HOST}:${map:DB_PORT}/${sys:environment}
 ```
 
 ### Escaping a Substitution
-You can escape the value with '\\' like `\\${my text\\}` to prevent the substitution.
-You need to escape both the opening token `\${` and the closing token `\}`, since we support nested substitutions it is not possible to always figure out what closing token goes with the escaped opening token.
+You can escape the value with '\' like `\${my text}` to prevent the substitution. In Java you need to write `\\` to escape the character in a normal string but not in a Text block
+In nested substitutions you should escape both the opening token `\${` and the closing token `\}` to be clear what is escaped, otherwise you may get undetermined results. 
 
 ```properties
 user.block.message=You are blocked because \\${reason\\}
@@ -386,7 +386,7 @@ user.block.message=You are blocked because \\${reason\\}
 | keyword | priority | source                                       |
 |---------|----------|----------------------------------------------|
 | env     | 100      | Environment Variables                        |
-| envVar  | 100      | **Depricated** Environment Variables         |
+| envVar  | 100      | **Deprecated** Environment Variables         |
 | sys     | 200      | Java System Properties                       |
 | map     | 400      | A custom map provided to the constructor     |
 | node    | 300      | map to another leaf node in the configuration tree |
@@ -797,7 +797,7 @@ Gestalt will use the ConfigLoaderService to find a ConfigLoader that will load t
 
 
 ### reload
-When a source needs to be reloaded, it will be passed into the reload function. The sources will then be converted into a Config node as in the loading. Then Gestalt will use the ConfigNodeService to reload the source. Since the ConfigNodeService holds onto the source ID with the ConfigNodeContainer we are able to determine with config node to reload then take all the config nodes and re-merge them in the same order to rebuild teh config tree with the newly loaded node.
+When a source needs to be reloaded, it will be passed into the reload function. The sources will then be converted into a Config node as in the loading. Then Gestalt will use the ConfigNodeService to reload the source. Since the ConfigNodeService holds onto the source ID with the ConfigNodeContainer we are able to determine with config node to reload then take all the config nodes and re-merge them in the same order to rebuild the config tree with the newly loaded node.
 
 
 # Post Processors
