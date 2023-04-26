@@ -370,7 +370,14 @@ You can specify the substitution in the format ${transform:key} or ${key}. If yo
 Unlike the rest of Gestalt, this is case-sensitive, and it does not tokenize the string (except the node transform). The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER, db.user or db_user will not match.
 
 ```properties
-db.uri=jdbc:mysql://${env:DB_HOST}:${map:DB_PORT}/${sys:environment}
+db.uri=jdbc:mysql://${DB_HOST}:${map:DB_PORT}/${sys:environment}
+```
+
+### Defaults for a Substitution
+You can provide a default for the substitution in the format ${transform:key:=default} or ${key:=default}. If you provide a default it will use the default value in the event that the key provided cant be found
+
+```properties
+db.uri=jdbc:mysql://${DB_HOST}:${map:DB_PORT:=3306}/${environment:=dev}
 ```
 
 ### Escaping a Substitution
