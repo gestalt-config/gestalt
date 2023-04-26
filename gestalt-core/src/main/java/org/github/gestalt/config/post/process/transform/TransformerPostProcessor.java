@@ -33,8 +33,8 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  */
 public class TransformerPostProcessor implements PostProcessor {
 
-    private static final String regexPattern =
-        "((?<transform>\\w+):)?(?<key>[\\w ,_.+;\"'`~!@#$%^&*()\\[\\]<>]+)(:=(?<default>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+))?";
+    public static final String defaultSubstitutionRegex =
+        "^((?<transform>\\w+):)?(?<key>[\\w ,_.+;\"'`~!@#$%^&*()\\[\\]<>]+)(:=(?<default>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+))?$";
     private Pattern pattern;
 
     private final Map<String, Transformer> transformers;
@@ -56,7 +56,7 @@ public class TransformerPostProcessor implements PostProcessor {
         });
 
         this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformersList, false);
-        this.pattern = Pattern.compile(regexPattern);
+        this.pattern = Pattern.compile(defaultSubstitutionRegex);
     }
 
     /**
@@ -74,7 +74,7 @@ public class TransformerPostProcessor implements PostProcessor {
         }
 
         this.substitutionTreeBuilder = new SubstitutionTreeBuilder("${", "}");
-        this.pattern = Pattern.compile(regexPattern);
+        this.pattern = Pattern.compile(defaultSubstitutionRegex);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class TransformerPostProcessor implements PostProcessor {
             config.getConfig().getSubstitutionClosingToken());
 
         this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
-        this.pattern = Pattern.compile(regexPattern);
+        this.pattern = Pattern.compile(defaultSubstitutionRegex);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class TransformerPostProcessor implements PostProcessor {
         if (foundMatch) {
             return ValidateOf.valid(newLeafValue.toString());
         } else {
-            return ValidateOf.valid(input);
+            return ValidateOf.inValid(new ValidationError.TransformDoesntMatchRegex(path, input));
         }
     }
 }

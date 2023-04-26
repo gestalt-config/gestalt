@@ -98,6 +98,45 @@ class TransformerPostProcessorTest {
     }
 
     @Test
+    void processTextWithMultipleDefaultsButHasValues() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("hello ${map:place:=earth} it is ${weather:=overcast} today");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello world it is sunny today", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processInvalidFormat() {
+        // not sure about this test, this isnt "intended" behaviour. It just happens to happen.
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("${map:place:world}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertTrue(validateNode.hasErrors());
+        Assertions.assertEquals(1, validateNode.getErrors().size());
+        Assertions.assertEquals("Transform doesnt match the expected format with value map:place:world on path location",
+            validateNode.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, validateNode.getErrors().get(0).level());
+
+    }
+
+    @Test
     void processNoValue() {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");

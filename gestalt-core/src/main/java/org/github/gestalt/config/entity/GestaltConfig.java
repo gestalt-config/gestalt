@@ -1,5 +1,7 @@
 package org.github.gestalt.config.entity;
 
+import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -37,8 +39,7 @@ public class GestaltConfig {
 
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
-    private String substitutionRegex =
-        "((?<transform>\\w+):)?(?<key>[\\w ,_.+;\"'`~!@#$%^&*()\\[\\]<>]+)(:=(?<default>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+))?";
+    private String substitutionRegex = TransformerPostProcessor.defaultSubstitutionRegex;
 
     /**
      * Treat all warnings as errors.
