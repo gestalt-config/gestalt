@@ -1,12 +1,12 @@
 [versions]
 java = "11"
 javaLatest = "19"
-kotlin = "1.8.20"
+kotlin = "1.8.21"
 kotlinDokka = "1.8.10"
 kodeinDI = "7.20.1"
 koinDI= "3.4.0"
 
-jackson = "2.14.2"
+jackson = "2.15.0"
 
 guice = "5.1.0"
 cdi = "3.0.0"
@@ -14,7 +14,7 @@ weld = "3.1.0.Final"
 weldCore = "4.0.3.Final"
 
 hocon = "1.4.2"
-aws = "2.20.48"
+aws = "2.20.52"
 jgit = "6.5.0.202303070854-r"
 
 eddsa = "0.3.0"
@@ -23,7 +23,7 @@ junit5 = "5.9.2"
 assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.5"
-koTestAssertions = "5.5.5"
+koTestAssertions = "5.6.1"
 awsMock = "2.11.0"
 
 errorprone = "2.18.0"
@@ -37,7 +37,7 @@ pmd = "6.54.0"
 jmh = "1.36"
 gradleJmh = "0.7.1"
 
-gestalt = "0.20.3"
+gestalt = "0.20.5"
 
 gradleVersions = "0.46.0"
 gitVersions = "2.0.0"

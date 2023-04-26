@@ -1116,6 +1116,25 @@ public abstract class ValidationError {
     }
 
     /**
+     * Transform doesnt match the regex
+     */
+    public static class TransformDoesntMatchRegex extends ValidationError {
+        private final String path;
+        private final String value;
+
+        public TransformDoesntMatchRegex(String path, String value) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.value = value;
+        }
+
+        @Override
+        public String description() {
+            return "Transform doesnt match the expected format with value " + value + " on path " + path;
+        }
+    }
+
+    /**
      * Not a valid SubstitutionNode
      */
     public static class NotAValidSubstitutionNode extends ValidationError {
