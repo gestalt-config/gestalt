@@ -374,7 +374,7 @@ db.uri=jdbc:mysql://${DB_HOST}:${map:DB_PORT}/${sys:environment}
 ```
 
 ### Defaults for a Substitution
-You can provide a default for the substitution in the format ${transform:key:=default} or ${key:=default}. If you provide a default it will use the default value in the event that the key provided cant be found
+You can provide a default for the substitution in the format `${transform:key:=default}` or `${key:=default}`. If you provide a default it will use the default value in the event that the key provided cant be found
 
 ```properties
 db.uri=jdbc:mysql://${DB_HOST}:${map:DB_PORT:=3306}/${environment:=dev}
