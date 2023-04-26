@@ -82,6 +82,22 @@ class TransformerPostProcessorTest {
     }
 
     @Test
+    void processTextWithMultipleDefaults() {
+
+        Map<String, String> customMap = new HashMap<>();
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("hello ${map:place:=world} it is ${weather:=sunny} today");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("hello world it is sunny today", validateNode.results().getValue().get());
+    }
+
+    @Test
     void processNoValue() {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");

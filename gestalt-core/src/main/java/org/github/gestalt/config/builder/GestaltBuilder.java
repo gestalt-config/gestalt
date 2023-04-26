@@ -84,6 +84,10 @@ public class GestaltBuilder {
     // the maximum nested substitution depth.
     private Integer maxSubstitutionNestedDepth = null;
 
+    // the regex used to parse string substitutions.
+    // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
+    private String substitutionRegex = null;
+
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
      *
@@ -613,6 +617,26 @@ public class GestaltBuilder {
         this.maxSubstitutionNestedDepth = maxSubstitutionNestedDepth;
     }
 
+    /**
+     * the regex used to parse string substitutions.
+     * Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
+     *
+     * @return the string substitution regex
+     */
+    public String getSubstitutionRegex() {
+        return substitutionRegex;
+    }
+
+    /**
+     * the regex used to parse string substitutions.
+     * Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
+     *
+     * @param substitutionRegex the string substitution regex
+     */
+    public void setSubstitutionRegex(String substitutionRegex) {
+        this.substitutionRegex = substitutionRegex;
+    }
+
 
     /**
      * dedupe decoders and return the deduped list.
@@ -766,6 +790,9 @@ public class GestaltBuilder {
 
         newConfig.setMaxSubstitutionNestedDepth(Objects.requireNonNullElseGet(maxSubstitutionNestedDepth,
             () -> gestaltConfig.getMaxSubstitutionNestedDepth()));
+
+        newConfig.setSubstitutionRegex(Objects.requireNonNullElseGet(substitutionRegex,
+            () -> gestaltConfig.getSubstitutionRegex()));
 
         return newConfig;
     }

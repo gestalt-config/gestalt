@@ -32,9 +32,10 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class TransformerPostProcessor implements PostProcessor {
-    private static final Pattern pattern = Pattern.compile(
-        "((?<transform>\\w+):)?(?<key>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+)"
-    );
+
+    private static final String regexPattern =
+        "((?<transform>\\w+):)?(?<key>[\\w ,_.+;\"'`~!@#$%^&*()\\[\\]<>]+)(:=(?<default>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+))?";
+    private Pattern pattern;
 
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
@@ -55,6 +56,7 @@ public class TransformerPostProcessor implements PostProcessor {
         });
 
         this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformersList, false);
+        this.pattern = Pattern.compile(regexPattern);
     }
 
     /**
@@ -70,7 +72,9 @@ public class TransformerPostProcessor implements PostProcessor {
             this.transformers = transformers.stream().collect(Collectors.toMap(Transformer::name, Function.identity()));
             this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformers, false);
         }
+
         this.substitutionTreeBuilder = new SubstitutionTreeBuilder("${", "}");
+        this.pattern = Pattern.compile(regexPattern);
     }
 
     @Override
@@ -81,6 +85,7 @@ public class TransformerPostProcessor implements PostProcessor {
             config.getConfig().getSubstitutionClosingToken());
 
         this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
+        this.pattern = Pattern.compile(regexPattern);
     }
 
     @Override
@@ -149,9 +154,11 @@ public class TransformerPostProcessor implements PostProcessor {
         Matcher matcher = pattern.matcher(input);
         StringBuilder newLeafValue = new StringBuilder();
         boolean foundMatch = false;
+
         while (matcher.find()) {
             String transformName = matcher.group("transform");
             String key = matcher.group("key");
+            String defaultValue = matcher.group("default");
 
             // if we have a named transform look it up in the map.
             if (transformName != null) {
@@ -161,7 +168,13 @@ public class TransformerPostProcessor implements PostProcessor {
                         newLeafValue.append(transformValue.results());
                         foundMatch = true;
                     } else {
-                        return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                        // if we have no results from the transform but a default value, use the default
+                        if (defaultValue != null) {
+                            foundMatch = true;
+                            newLeafValue.append(defaultValue);
+                        } else {
+                            return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                        }
                     }
                 } else {
                     return ValidateOf.inValid(new ValidationError.NoMatchingTransformFound(path, transformName));
@@ -180,7 +193,13 @@ public class TransformerPostProcessor implements PostProcessor {
                 }
 
                 if (!foundTransformer) {
-                    return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path, key));
+                    // if we have no results from the transform but a default value, use the default
+                    if (defaultValue != null) {
+                        foundMatch = true;
+                        newLeafValue.append(defaultValue);
+                    } else {
+                        return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path, key));
+                    }
                 }
             }
         }

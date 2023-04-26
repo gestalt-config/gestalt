@@ -35,6 +35,11 @@ public class GestaltConfig {
     // the maximum nested substitution depth.
     private int maxSubstitutionNestedDepth = 5;
 
+    // the regex used to parse string substitutions.
+    // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
+    private String substitutionRegex =
+        "((?<transform>\\w+):)?(?<key>[\\w ,_.+;\"'`~!@#$%^&*()\\[\\]<>]+)(:=(?<default>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+))?";
+
     /**
      * Treat all warnings as errors.
      *
@@ -215,5 +220,26 @@ public class GestaltConfig {
      */
     public void setMaxSubstitutionNestedDepth(int maxSubstitutionNestedDepth) {
         this.maxSubstitutionNestedDepth = maxSubstitutionNestedDepth;
+    }
+
+
+    /**
+     * the regex used to parse string substitutions.
+     * Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
+     *
+     * @return the string substitution regex
+     */
+    public String getSubstitutionRegex() {
+        return substitutionRegex;
+    }
+
+    /**
+     * the regex used to parse string substitutions.
+     * Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
+     *
+     * @param substitutionRegex the string substitution regex
+     */
+    public void setSubstitutionRegex(String substitutionRegex) {
+        this.substitutionRegex = substitutionRegex;
     }
 }
