@@ -836,7 +836,7 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                          .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
-                             " - level: WARN, message: Missing array index: 2");
+                             " - level: MISSING_VALUE, message: Missing array index: 2");
         }
 
         try {

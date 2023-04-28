@@ -455,9 +455,9 @@ class MapConfigParserTest {
         assertNotNull(validateOfResults.results());
         List<ValidationError> errors = validateOfResults.getErrors();
         assertEquals(2, errors.size());
-        assertEquals(ValidationLevel.WARN, errors.get(0).level());
+        assertEquals(ValidationLevel.MISSING_VALUE, errors.get(0).level());
         assertEquals("Missing array index: 1 for path: db.hosts", errors.get(0).description());
-        assertEquals(ValidationLevel.WARN, errors.get(1).level());
+        assertEquals(ValidationLevel.MISSING_VALUE, errors.get(1).level());
         assertEquals("Missing array index: 3 for path: db.hosts", errors.get(1).description());
 
         ConfigNode results = validateOfResults.results();

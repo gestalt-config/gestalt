@@ -19,6 +19,8 @@ public class GestaltConfig {
     private boolean treatMissingValuesAsErrors = false;
     //Treat null values in classes after decoding as errors.
     private boolean treatNullValuesInClassAsErrors = true;
+    //Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+    private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = System.Logger.Level.DEBUG;
 
     // Java date decoder format.
     private DateTimeFormatter dateDecoderFormat = DateTimeFormatter.ISO_DATE_TIME;
@@ -111,6 +113,25 @@ public class GestaltConfig {
      */
     public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
         this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
+    }
+
+
+    /**
+     * Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+     *
+     * @return Log level
+     */
+    public System.Logger.Level getLogLevelForMissingValuesWhenDefaultOrOptional() {
+        return logLevelForMissingValuesWhenDefaultOrOptional;
+    }
+
+    /**
+     * Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+     *
+     * @param logLevelForMissingValuesWhenDefaultOrOptional Log level
+     */
+    public void setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional) {
+        this.logLevelForMissingValuesWhenDefaultOrOptional = logLevelForMissingValuesWhenDefaultOrOptional;
     }
 
     /**

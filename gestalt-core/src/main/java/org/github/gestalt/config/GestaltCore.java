@@ -28,7 +28,6 @@ import java.util.*;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.Logger.Level.WARNING;
-import static java.lang.System.Logger.Level.INFO;
 
 import static org.github.gestalt.config.entity.ValidationLevel.ERROR;
 import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
@@ -333,19 +332,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                     throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
                         results.getErrors());
                 } else {
-                    if (logger.isLoggable(WARNING)) {
-                        String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting Optional config path: " + combinedPath +
+                    if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
+                        String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + combinedPath +
                             ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
-                        logger.log(WARNING, errorMsg);
+                        logger.log(DEBUG, errorMsg);
                     }
 
                     return defaultVal;
                 }
 
-            } else if (results.hasErrors() && logger.isLoggable(INFO)) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting Optional config path: " + combinedPath +
+            } else if (results.hasErrors() && logger.isLoggable(DEBUG)) {
+                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + combinedPath +
                     ", for class: " + klass.getName(), results.getErrors());
-                logger.log(INFO, errorMsg);
+                logger.log(DEBUG, errorMsg);
             }
 
             if (results.hasResults()) {
@@ -353,10 +352,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
         }
 
-        if (logger.isLoggable(INFO)) {
+        if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
             String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
                 ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
-            logger.log(INFO, errorMsg);
+            logger.log(DEBUG, errorMsg);
         }
 
         if (failOnErrors) {

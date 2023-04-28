@@ -71,6 +71,8 @@ public class GestaltBuilder {
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatNullValuesInClassAsErrors = null;
 
+    private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = null;
+
     private DateTimeFormatter dateDecoderFormat = null;
     private DateTimeFormatter localDateTimeFormat = null;
     private DateTimeFormatter localDateFormat = null;
@@ -554,6 +556,26 @@ public class GestaltBuilder {
     }
 
     /**
+     * Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+     *
+     * @return Log level
+     */
+    public System.Logger.Level getLogLevelForMissingValuesWhenDefaultOrOptional() {
+        return logLevelForMissingValuesWhenDefaultOrOptional;
+    }
+
+    /**
+     * Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+     *
+     * @param logLevelForMissingValuesWhenDefaultOrOptional log level
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional) {
+        this.logLevelForMissingValuesWhenDefaultOrOptional = logLevelForMissingValuesWhenDefaultOrOptional;
+        return this;
+    }
+
+    /**
      * Set a local date time format. Used to decode local date times.
      *
      * @param localDateTimeFormat a date decoder format
@@ -612,9 +634,11 @@ public class GestaltBuilder {
      * If you have nested or recursive substitutions that go deeper than this it will fail.
      *
      * @param maxSubstitutionNestedDepth the maximum string substitution nested depth.
+     * @return GestaltBuilder builder
      */
-    public void setMaxSubstitutionNestedDepth(Integer maxSubstitutionNestedDepth) {
+    public GestaltBuilder setMaxSubstitutionNestedDepth(Integer maxSubstitutionNestedDepth) {
         this.maxSubstitutionNestedDepth = maxSubstitutionNestedDepth;
+        return this;
     }
 
     /**
@@ -632,9 +656,11 @@ public class GestaltBuilder {
      * Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
      *
      * @param substitutionRegex the string substitution regex
+     * @return GestaltBuilder builder
      */
-    public void setSubstitutionRegex(String substitutionRegex) {
+    public GestaltBuilder setSubstitutionRegex(String substitutionRegex) {
         this.substitutionRegex = substitutionRegex;
+        return this;
     }
 
 
@@ -772,6 +798,9 @@ public class GestaltBuilder {
 
         newConfig.setTreatNullValuesInClassAsErrors(Objects.requireNonNullElseGet(treatNullValuesInClassAsErrors,
             () -> gestaltConfig.isTreatNullValuesInClassAsErrors()));
+
+        newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,
+            () -> gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional()));
 
         newConfig.setDateDecoderFormat(Objects.requireNonNullElseGet(dateDecoderFormat,
             () -> gestaltConfig.getDateDecoderFormat()));

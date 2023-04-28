@@ -283,13 +283,13 @@ public abstract class ValidationError {
         private final String path;
 
         public ArrayMissingIndex(long index) {
-            super(ValidationLevel.WARN);
+            super(ValidationLevel.MISSING_VALUE);
             this.index = index;
             this.path = null;
         }
 
         public ArrayMissingIndex(long index, String path) {
-            super(ValidationLevel.WARN);
+            super(ValidationLevel.MISSING_VALUE);
             this.index = index;
             this.path = path;
         }
@@ -1116,7 +1116,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Transform doesnt match the regex
+     * Transform doesnt match the regex.
      */
     public static class TransformDoesntMatchRegex extends ValidationError {
         private final String path;
@@ -1135,7 +1135,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Not a valid SubstitutionNode
+     * Not a valid SubstitutionNode.
      */
     public static class NotAValidSubstitutionNode extends ValidationError {
         private final String path;
@@ -1155,7 +1155,7 @@ public abstract class ValidationError {
 
 
     /**
-     * Not a valid SubstitutionNode
+     * Not a valid SubstitutionNode.
      */
     public static class ExceededMaximumNestedSubstitutionDepth extends ValidationError {
         private final String path;

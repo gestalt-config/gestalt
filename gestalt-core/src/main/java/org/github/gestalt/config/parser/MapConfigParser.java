@@ -127,6 +127,11 @@ public class MapConfigParser implements ConfigParser {
             errorList.addAll(recursiveErrors.get(ValidationLevel.WARN));
         }
 
+        // add all missing values errors to the current error list.
+        if (recursiveErrors.containsKey(ValidationLevel.MISSING_VALUE)) {
+            errorList.addAll(recursiveErrors.get(ValidationLevel.MISSING_VALUE));
+        }
+
         // if there are any error level return immediately unless we have treatErrorsAsWarnings enabled.
         if (recursiveErrors.containsKey(ValidationLevel.ERROR)) {
             errorList.addAll(recursiveErrors.get(ValidationLevel.ERROR));
