@@ -27,6 +27,5 @@ checkstyle {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = libs.versions.pmd.get()
     ruleSets = listOf(rootDir.path + "/config/pmd/custom_ruleset.xml")
 }

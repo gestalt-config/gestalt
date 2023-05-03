@@ -21,9 +21,6 @@ java {
 }
 
 dependencies {
-    //Kotlin
-    implementation(kotlin("stdlib-jdk8"))
-
     // Will apply the plugin to all dokka tasks
     dokkaHtmlPlugin(libs.kotlin.dokka)
 }

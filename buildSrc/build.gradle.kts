@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
     implementation(libs.gradle.ben.manes.versions)
+    implementation(libs.gradle.versions.update)
     implementation(libs.gradle.git.versions)
     implementation(libs.gradle.error.prone)
 

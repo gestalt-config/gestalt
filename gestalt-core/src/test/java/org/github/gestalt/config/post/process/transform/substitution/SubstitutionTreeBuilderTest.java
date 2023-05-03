@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 /**
+ * Substitution tree tests.
+ *
  * @author Colin Redmond (c) 2023.
  */
 public class SubstitutionTreeBuilderTest {
@@ -167,7 +169,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals("location",
             ((SubstitutionNode.TextNode) ((SubstitutionNode.TransformNode) result.results().get(1)).getSubNodes().get(0)).getText());
 
-        Assertions.assertEquals("}", ((SubstitutionNode.TextNode)result.results().get(2)).getText());
+        Assertions.assertEquals("}", ((SubstitutionNode.TextNode) result.results().get(2)).getText());
     }
 
     @Test
@@ -340,7 +342,8 @@ public class SubstitutionTreeBuilderTest {
                 result.results().get(1)).getSubNodes().get(0)).getText());
 
         Assertions.assertEquals(1,
-            ((SubstitutionNode.TransformNode) ((SubstitutionNode.TransformNode) result.results().get(1)).getSubNodes().get(1)).getSubNodes().size());
+            ((SubstitutionNode.TransformNode) ((SubstitutionNode.TransformNode) result.results().get(1)).getSubNodes().get(1))
+                .getSubNodes().size());
         Assertions.assertEquals("location",
             ((SubstitutionNode.TextNode) ((SubstitutionNode.TransformNode) ((SubstitutionNode.TransformNode)
                 result.results().get(1)).getSubNodes().get(1)).getSubNodes().get(0)).getText());

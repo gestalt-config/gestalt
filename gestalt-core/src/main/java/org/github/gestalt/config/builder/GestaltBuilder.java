@@ -24,6 +24,7 @@ import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.CollectionUtils;
 
+import java.lang.System.Logger.Level;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public class GestaltBuilder {
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatNullValuesInClassAsErrors = null;
 
-    private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = null;
+    private Level logLevelForMissingValuesWhenDefaultOrOptional = null;
 
     private DateTimeFormatter dateDecoderFormat = null;
     private DateTimeFormatter localDateTimeFormat = null;
@@ -560,7 +561,7 @@ public class GestaltBuilder {
      *
      * @return Log level
      */
-    public System.Logger.Level getLogLevelForMissingValuesWhenDefaultOrOptional() {
+    public Level getLogLevelForMissingValuesWhenDefaultOrOptional() {
         return logLevelForMissingValuesWhenDefaultOrOptional;
     }
 
@@ -570,7 +571,7 @@ public class GestaltBuilder {
      * @param logLevelForMissingValuesWhenDefaultOrOptional log level
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional) {
+    public GestaltBuilder setLogLevelForMissingValuesWhenDefaultOrOptional(Level logLevelForMissingValuesWhenDefaultOrOptional) {
         this.logLevelForMissingValuesWhenDefaultOrOptional = logLevelForMissingValuesWhenDefaultOrOptional;
         return this;
     }
@@ -799,7 +800,8 @@ public class GestaltBuilder {
         newConfig.setTreatNullValuesInClassAsErrors(Objects.requireNonNullElseGet(treatNullValuesInClassAsErrors,
             () -> gestaltConfig.isTreatNullValuesInClassAsErrors()));
 
-        newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,
+        newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(
+            Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,
             () -> gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional()));
 
         newConfig.setDateDecoderFormat(Objects.requireNonNullElseGet(dateDecoderFormat,
