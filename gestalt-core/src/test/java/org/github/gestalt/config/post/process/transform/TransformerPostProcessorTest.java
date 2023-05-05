@@ -388,6 +388,7 @@ class TransformerPostProcessorTest {
         Assertions.assertTrue(validateNode.results().getValue().isPresent());
         Assertions.assertEquals("hello place it is sunny today", validateNode.results().getValue().get());
     }
+
     @Test
     void processTripleNestedTransform() {
 

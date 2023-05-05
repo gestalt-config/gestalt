@@ -6,9 +6,10 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Triple;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A cache layer that stores configurations by path and type.
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
-    private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = new ConcurrentHashMap<>();
+    private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Constructor for the GestaltCache that accepts a delegate.
@@ -56,13 +57,11 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     @SuppressWarnings("unchecked")
     public <T> T getConfig(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
-        if (cache.containsKey(key)) {
+        if (cache.containsKey(key) && cache.get(key) != null) {
             return (T) cache.get(key);
         } else {
             T result = delegate.getConfig(path, klass, tags);
-            if (result != null) {
-                cache.put(key, result);
-            }
+            cache.put(key, result);
             return result;
         }
     }
@@ -91,7 +90,24 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     @SuppressWarnings("unchecked")
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
-        return (T) cache.computeIfAbsent(key, k -> delegate.getConfig(path, defaultVal, klass, tags));
+        if (cache.containsKey(key)) {
+            T result = (T) cache.get(key);
+            if (result == null) {
+                result = defaultVal;
+            }
+
+            return result;
+
+        } else {
+            Optional<T> resultOptional = delegate.getConfigOptional(path, klass, tags);
+            T result = resultOptional.orElse(null);
+            cache.put(key, result);
+            if (result != null) {
+                return result;
+            } else {
+                return defaultVal;
+            }
+        }
     }
 
     @Override
@@ -116,14 +132,13 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags) {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
         if (cache.containsKey(key)) {
-            return Optional.of((T) cache.get(key));
+            T result = (T) cache.get(key);
+            return Optional.ofNullable(result);
         } else {
-            Optional<T> result = delegate.getConfigOptional(path, klass, tags);
-            if (result != null && result.isPresent()) {
-                cache.put(key, result.get());
-            }
-
-            return result;
+            Optional<T> resultOptional = delegate.getConfigOptional(path, klass, tags);
+            T result = resultOptional.orElse(null);
+            cache.put(key, result);
+            return Optional.ofNullable(result);
         }
     }
 

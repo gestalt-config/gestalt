@@ -802,7 +802,7 @@ public class GestaltBuilder {
 
         newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(
             Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,
-            () -> gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional()));
+                () -> gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional()));
 
         newConfig.setDateDecoderFormat(Objects.requireNonNullElseGet(dateDecoderFormat,
             () -> gestaltConfig.getDateDecoderFormat()));
