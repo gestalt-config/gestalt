@@ -25,6 +25,7 @@ import java.util.Optional;
  * @author <a href="https://github.com/guhilling">Gunnar Hilling</a>
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023. (c) 2023.
  */
+@SuppressWarnings({"StringSplitter", "TypeParameterUnusedInFormals"})
 public final class GestaltConfigProducerUtil {
 
     private GestaltConfigProducerUtil() {

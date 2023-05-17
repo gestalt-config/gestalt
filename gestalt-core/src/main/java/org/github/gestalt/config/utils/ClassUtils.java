@@ -36,6 +36,7 @@ import java.util.Map;
  *
  * @since 2.0
  */
+@SuppressWarnings("EscapedEntity")
 public final class ClassUtils {
 
     /**

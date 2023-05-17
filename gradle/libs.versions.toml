@@ -7,7 +7,8 @@ kotlinDokka = "1.8.10"
 kodeinDI = "7.20.1"
 koinDI = "3.4.0"
 # Java DI
-guice = "5.1.0"
+# @pin
+guice = "6.0.0"
 # @pin
 cdi = "3.0.0"
 # @pin
@@ -18,7 +19,7 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.0"
 hocon = "1.4.2"
 # Cloud
-aws = "2.20.58"
+aws = "2.20.67"
 # Git support
 jgit = "6.5.0.202303070854-r"
 eddsa = "0.3.0"
@@ -27,10 +28,10 @@ junit5 = "5.9.3"
 assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.5"
-koTestAssertions = "5.6.1"
+koTestAssertions = "5.6.2"
 awsMock = "2.11.0"
 # static code analysis
-errorprone = "2.18.0"
+errorprone = "2.19.1"
 gradleErrorProne = "3.1.0"
 detekt = "1.22.0"
 gradleDetekt = "1.22.0"
@@ -42,7 +43,7 @@ gradleJmh = "0.7.1"
 gestalt = "0.20.6"
 # Gradle utility
 gradleVersions = "0.46.0"
-gitVersions = "2.0.0"
+gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.0"
 
 [libraries]
@@ -117,3 +118,4 @@ jackson = [
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version.ref = "gradleJmh" }
+gradle-ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }

@@ -114,7 +114,7 @@ public class YamlLoader implements ConfigLoader {
     }
 
     private String normalizeSentence(String sentence) {
-        return sentence.toLowerCase();
+        return sentence.toLowerCase(Locale.getDefault());
     }
 
     private ValidateOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {

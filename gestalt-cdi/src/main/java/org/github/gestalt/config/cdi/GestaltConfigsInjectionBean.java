@@ -99,6 +99,7 @@ public class GestaltConfigsInjectionBean<T> implements Bean<T> {
     }
 
 
+    @SuppressWarnings("UnusedNestedClass")
     private static class InjectConfigsLiteral extends AnnotationLiteral<InjectConfigs> implements InjectConfigs {
 
         @Override

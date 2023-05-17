@@ -14,6 +14,10 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
  * ./gradlew versionCatalogApplyUpdates
  * to get a list of dependencies that may need to be updated.
  *
+ *  To check for dependency updates on the BuildSrc project.
+ *  You need to run manually https://github.com/ben-manes/gradle-versions-plugin/issues/284
+ *  ./gradlew -p buildSrc dependencyUpdates
+ *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 plugins {

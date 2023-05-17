@@ -5,6 +5,7 @@ import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +47,7 @@ public abstract class SentenceLexer {
      * @return a normalized sentence.
      */
     public String normalizeSentence(String sentence) {
-        return sentence.toLowerCase();
+        return sentence.toLowerCase(Locale.getDefault());
     }
 
     /**

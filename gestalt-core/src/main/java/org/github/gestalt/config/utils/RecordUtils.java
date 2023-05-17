@@ -19,6 +19,7 @@ import static java.lang.invoke.MethodType.methodType;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
+@SuppressWarnings("LocalVariableName")
 public final class RecordUtils {
 
     private static final MethodHandle MH_IS_RECORD;

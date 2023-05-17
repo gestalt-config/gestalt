@@ -65,6 +65,7 @@ public class ConfigNodeManager implements ConfigNodeService {
     }
 
     @Override
+    @SuppressWarnings("ModifyCollectionInEnhancedForLoop")
     public ValidateOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException {
         if (postProcessors == null) {
             throw new GestaltException("No postProcessors provided");

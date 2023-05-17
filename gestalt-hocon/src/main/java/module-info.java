@@ -1,4 +1,4 @@
-/**
+/*
  * Module info definition for gestalt hocon integration
  */
 module org.github.gestalt.hocon {

@@ -1,4 +1,4 @@
-/**
+/*
  * Module info definition for gestalt yaml integration
  */
 module org.github.gestalt.yaml {

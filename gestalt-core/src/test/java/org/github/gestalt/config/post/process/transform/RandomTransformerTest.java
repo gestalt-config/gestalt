@@ -120,8 +120,10 @@ class RandomTransformerTest {
             Assertions.assertFalse(validateOfResults.hasErrors());
 
             Assertions.assertNotNull(validateOfResults.results());
-            int myValue = Integer.parseInt(validateOfResults.results());
-            Assertions.assertTrue(myValue >= Integer.MIN_VALUE && myValue <= Integer.MAX_VALUE);
+            int value = Integer.parseInt(validateOfResults.results());
+
+            // stupid test
+            Assertions.assertTrue(value != 0);
 
             Assertions.assertEquals(0, validateOfResults.getErrors().size());
         }
@@ -172,8 +174,9 @@ class RandomTransformerTest {
 
             Assertions.assertNotNull(validateOfResults.results());
             long myValue = Long.parseLong(validateOfResults.results());
-            Assertions.assertTrue(myValue >= Long.MIN_VALUE && myValue <= Long.MAX_VALUE);
 
+            // stupid test
+            Assertions.assertTrue(myValue != 0);
             Assertions.assertEquals(0, validateOfResults.getErrors().size());
         }
     }

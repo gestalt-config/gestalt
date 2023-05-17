@@ -1,4 +1,4 @@
-/**
+/*
  * Module info definition for gestalt json integration
  */
 module org.github.gestalt.json {

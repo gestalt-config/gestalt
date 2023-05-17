@@ -1,4 +1,4 @@
-/**
+/*
  * Module info definition for gestalt core
  */
 module org.github.gestalt.core {
