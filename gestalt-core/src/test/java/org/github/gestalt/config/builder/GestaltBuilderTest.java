@@ -13,7 +13,7 @@ import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
@@ -92,7 +92,7 @@ class GestaltBuilderTest {
                          .setPostProcessors(Collections.singletonList(
                              new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
                          .addPathMapper(new StandardPathMapper())
-                         .addPathMapper(List.of(new CamelCasePathMapper()))
+                         .addPathMapper(List.of(new DotNotationPathMapper()))
                          .setPathMappers(List.of(new StandardPathMapper()));
 
         Gestalt gestalt = builder.build();

@@ -68,8 +68,10 @@ module org.github.gestalt.core {
         org.github.gestalt.config.loader.PropertyLoader;
 
     provides org.github.gestalt.config.path.mapper.PathMapper with
+        org.github.gestalt.config.path.mapper.DotNotationPathMapper,
+        org.github.gestalt.config.path.mapper.KebabCasePathMapper,
         org.github.gestalt.config.path.mapper.StandardPathMapper,
-        org.github.gestalt.config.path.mapper.CamelCasePathMapper;
+        org.github.gestalt.config.path.mapper.SnakeCasePathMapper;
 
     provides org.github.gestalt.config.post.process.PostProcessor with
         org.github.gestalt.config.post.process.transform.TransformerPostProcessor;

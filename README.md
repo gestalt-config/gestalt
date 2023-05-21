@@ -309,7 +309,7 @@ The default accepts a string type and will be decoded into the property type usi
 
 
 # Searching for path while Decoding Objects
-When decoding a class, need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and searched for in order.
+When decoding a class, we need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and converted to Kebab case, Snake case and Dot Notation, then used to search for the configuration.
 
 ```java
 // With a class of 
@@ -323,15 +323,16 @@ public static class DBConnection {
 // Given a config of
 "users.host" => "myHost"
 "users.uri" => "myHost"
-"users.db.port" => "1234"
+"users.db_port" => "1234"
 "users.db.path" => "usersTable"
   
 // the uri will map to host
-// the dbPort will automatically map to db.port using camel case.
-// the dbPath will automatically map to db.path using camel case.   
+// the dbPort will automatically map to db_port using Kebab case.
+// the dbPath will automatically map to db.path using dot notation.     
 DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
 ```
 
+it is recommended you use kebab case, as excessive use of dot notation could potentially lead to issues while parsing the config tree.
 
 # Kotlin
 For Kotlin Gestalt includes several extension methods that allow easier use of Gestalt by way of reified functions to better capture the generic type information.
