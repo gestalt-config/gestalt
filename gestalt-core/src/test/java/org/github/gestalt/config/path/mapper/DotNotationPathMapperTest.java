@@ -12,11 +12,13 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-class CamelCasePathMapperTest {
+import static org.github.gestalt.config.entity.ValidationLevel.*;
+
+class DotNotationPathMapperTest {
 
     @Test
     void map() {
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "helloWorld", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
@@ -31,7 +33,7 @@ class CamelCasePathMapperTest {
 
     @Test
     void mapSingle() {
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "hello", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
@@ -44,7 +46,7 @@ class CamelCasePathMapperTest {
 
     @Test
     void mapCapital() {
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "HelloWorld", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
@@ -59,7 +61,7 @@ class CamelCasePathMapperTest {
 
     @Test
     void mapNumber() {
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "hello9World", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
@@ -74,7 +76,7 @@ class CamelCasePathMapperTest {
 
     @Test
     void mapMULTICapital() {
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "HelloWORLDTour", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
@@ -96,7 +98,7 @@ class CamelCasePathMapperTest {
         Mockito.when(mockLexer.scan("hello")).thenReturn(ValidateOf.valid(List.of(new ObjectToken("hello"))));
         Mockito.when(mockLexer.scan("World"))
                .thenReturn(ValidateOf.inValid(new ValidationError.FailedToTokenizeElement("World", "my.path")));
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "helloWorld", mockLexer);
 
         Assertions.assertFalse(results.hasResults());
@@ -112,7 +114,7 @@ class CamelCasePathMapperTest {
 
         Mockito.when(mockLexer.scan("hello")).thenReturn(ValidateOf.valid(List.of(new ObjectToken("hello"))));
         Mockito.when(mockLexer.scan("World")).thenReturn(ValidateOf.valid(null));
-        CamelCasePathMapper mapper = new CamelCasePathMapper();
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
         ValidateOf<List<Token>> results = mapper.map("my.path", "helloWorld", mockLexer);
 
         Assertions.assertFalse(results.hasResults());
@@ -122,5 +124,32 @@ class CamelCasePathMapperTest {
         Assertions.assertEquals("Unable to find node matching path: my.path, for class: MapNode, during decoding", results.getErrors()
                                                                                                                           .get(0)
                                                                                                                           .description());
+    }
+
+    @Test
+    void mapEmpty() {
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
+        ValidateOf<List<Token>> results = mapper.map("my.path", "", new PathLexer());
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(WARN, results.getErrors().get(0).level());
+        Assertions.assertEquals("empty path provided", results.getErrors().get(0).description());
+    }
+
+    @Test
+    void mapNull() {
+        DotNotationPathMapper mapper = new DotNotationPathMapper();
+        ValidateOf<List<Token>> results = mapper.map("my.path", null, new PathLexer());
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("Mapper: KebabCasePathMapper key was null on path: my.path",
+            results.getErrors().get(0).description());
     }
 }

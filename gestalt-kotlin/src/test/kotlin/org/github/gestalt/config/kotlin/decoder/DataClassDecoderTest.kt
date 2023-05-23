@@ -8,7 +8,6 @@ import org.github.gestalt.config.kotlin.test.classes.*
 import org.github.gestalt.config.lexer.PathLexer
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.*
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.junit.jupiter.api.Assertions

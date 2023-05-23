@@ -4,10 +4,6 @@ import org.github.gestalt.config.Gestalt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
-/**
- * @author Colin Redmond (c) 2023.
- */
 class ClassUtilsTest {
 
     @Test

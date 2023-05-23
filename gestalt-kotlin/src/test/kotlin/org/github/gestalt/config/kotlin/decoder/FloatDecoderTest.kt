@@ -7,7 +7,7 @@ import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.ConfigNodeService
 import org.github.gestalt.config.node.LeafNode
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper
+import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.utils.ValidateOf
@@ -53,7 +53,9 @@ internal class FloatDecoderTest {
             "db.timeout", LeafNode("124.5"), TypeCapture.of(
                 Float::class.java
             ),
-            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -69,7 +71,9 @@ internal class FloatDecoderTest {
             "db.timeout", LeafNode("124"), TypeCapture.of(
                 Float::class.java
             ),
-            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -85,7 +89,9 @@ internal class FloatDecoderTest {
             "db.timeout", LeafNode("12s4"), TypeCapture.of(
                 Float::class.java
             ),
-            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

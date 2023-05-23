@@ -408,6 +408,25 @@ public abstract class ValidationError {
     }
 
     /**
+     * While mapping a value the key was null.
+     */
+    public static class MappingValueNull extends ValidationError {
+        private final String path;
+        private final String mapper;
+
+        public MappingValueNull(String path, String mapper) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.mapper = mapper;
+        }
+
+        @Override
+        public String description() {
+            return "Mapper: " + mapper + " key was null on path: " + path;
+        }
+    }
+
+    /**
      * While decoding a leaf it is missing its value.
      */
     public static class DecodingLeafMissingValue extends ValidationError {

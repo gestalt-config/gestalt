@@ -7,7 +7,7 @@ import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.ConfigNodeService
 import org.github.gestalt.config.node.LeafNode
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper
+import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.utils.ValidateOf
@@ -53,7 +53,9 @@ internal class ShortDecoderTest {
             "db.port", LeafNode("124"), TypeCapture.of(
                 Short::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -69,7 +71,9 @@ internal class ShortDecoderTest {
             "db.port", LeafNode("12s4"), TypeCapture.of(
                 Short::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -90,7 +94,9 @@ internal class ShortDecoderTest {
         val validate: ValidateOf<Short> = decoder.decode(
             "db.port", LeafNode("12345678901234567890123456789012345678901234567890123456789"),
             TypeCapture.of(Short::class.java), DecoderRegistry(listOf(decoder), configNodeService, lexer,
-                listOf(StandardPathMapper(), CamelCasePathMapper()))
+                listOf(StandardPathMapper(),
+                    DotNotationPathMapper()
+                ))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

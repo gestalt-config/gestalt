@@ -8,7 +8,7 @@ import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.ConfigNodeService
 import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.node.MapNode
-import org.github.gestalt.config.path.mapper.CamelCasePathMapper
+import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.utils.ValidateOf
@@ -53,7 +53,9 @@ internal class StringAndLeafDecoderTest {
             "db.user", LeafNode("test"), TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -69,7 +71,9 @@ internal class StringAndLeafDecoderTest {
             "db.user", LeafNode(null), TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -90,7 +94,9 @@ internal class StringAndLeafDecoderTest {
             "db.user", MapNode(HashMap()), TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(), CamelCasePathMapper()))
+            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
+                DotNotationPathMapper()
+            ))
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
