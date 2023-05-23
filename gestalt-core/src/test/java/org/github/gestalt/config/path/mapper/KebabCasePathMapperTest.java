@@ -12,9 +12,6 @@ import java.util.List;
 import static org.github.gestalt.config.entity.ValidationLevel.ERROR;
 import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
 
-/**
- * @author Colin Redmond (c) 2023.
- */
 class KebabCasePathMapperTest {
 
     @Test
