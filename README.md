@@ -150,6 +150,32 @@ You can add several ConfigSources to the builder and Gestalt, and they will be l
 In the above example we first load a file defaults, then load a file devFile and overwrite any defaults, then overwrite any values from the Environment Variables.
 The priority will be Env Vars > devFile > defaults.
 
+# Config Tree
+The config files are loaded and merged into a config tree. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have both a node and a leaf at the same place.    
+
+Valid:
+```properties
+
+db.connectionTimeout=6000
+db.idleTimeout=600
+db.maxLifetime=60000.0
+
+http.pool.maxTotal=1000
+http.pool.maxPerRoute=50
+```
+
+Invalid:
+```properties
+
+db.connectionTimeout=6000
+db.idleTimeout=600
+db=userTable                #invalid the path db is both a node and a leaf. 
+
+http.pool.maxTotal=1000
+http.pool.maxPerRoute=50
+```
+
+All paths are converted to lower case as different sources have different naming conventions, Env Vars are typically Screaming Snake Case, properties are dot notation, json is camelCase. By normalizing them to lowercase it is easier to merge. 
 
 
 # Retrieving a configuration
@@ -310,7 +336,16 @@ The default accepts a string type and will be decoded into the property type usi
 
 # Searching for path while Decoding Objects
 When decoding a class, we need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and converted to Kebab case, Snake case and Dot Notation, then used to search for the configuration.
+The order is descending based on the priority of the mapper.
 
+| Casing                   | Priority | Class Name            |
+|--------------------------|----------|-----------------------|
+| Camel Case (exact match) | 1000     | StandardPathMapper    |
+| Kebab Case               | 600      | KebabCasePathMapper   |
+| Snake Case               | 550      | SnakeCasePathMapper   |
+| Dot Notation             | 500      | DotNotationPathMapper |
+
+Given the following class lets see how it is translated to the different casings:
 ```java
 // With a class of 
 public static class DBConnection {
@@ -319,20 +354,57 @@ public static class DBConnection {
     private int dbPort;
     private String dbPath;
 }
+```
 
+Kebab Case:
+All objects in Java use the standard Camel case, however in the config files you can use Kebab case, and if an exact match isnt found it will search for a config variable converting Camel case into Kebab case.
+Kebab case or an exact match are preferred as using dot notation could potentially cause some issues as it is parsed to a config tree. Using dot notation you would need to ensure that none of values break the tree rules.
+
+```java
 // Given a config of
 "users.host" => "myHost"
 "users.uri" => "myHost"
-"users.db_port" => "1234"
-"users.db.path" => "usersTable"
+"users.dbPort" => "1234"
+"users.db-path" => "usersTable"
   
 // the uri will map to host
-// the dbPort will automatically map to db_port using Kebab case.
-// the dbPath will automatically map to db.path using dot notation.     
+// the dbPort will map to dbPort using Camel case using exact match.
+// the dbPath will automatically map to db.path using Kebab case.     
 DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
 ```
 
-it is recommended you use kebab case, as excessive use of dot notation could potentially lead to issues while parsing the config tree.
+Snake Case:
+All objects in Java use the standard Camel case, however in the config files you can use Snake case, and if an exact match isnt found it will search for a config variable converting Camel case into snake case.
+
+```java
+// Given a config of
+"users.host" => "myHost"
+"users.uri" => "myHost"
+"users.dbPort" => "1234"
+"users.db_path" => "usersTable"
+  
+// the uri will map to host
+// the dbPort will map to dbPort using Camel case using exact match.
+// the dbPath will automatically map to db_path using snake case     
+DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
+```
+
+Dot Notation:
+All objects in Java use the standard Camel case, however in the config files you can use Dot Notation, and if an exact match isnt found it will search for a config variable converting Camel case into Dot Notation.
+Kebab case or an exact match are preferred as using dot notation could potentially cause some issues as it is parsed to a config tree. Using dot notation you would need to ensure that none of values break the tree rules.
+
+```java
+// Given a config of
+"users.host" => "myHost"
+"users.uri" => "myHost"
+"users.dbPort" => "1234"
+"users.db.path" => "usersTable"
+  
+// the uri will map to host
+// the dbPort will map to dbPort using Camel case using exact match.
+// the dbPath will automatically map to db.path using dot notation.     
+DBConnection connection = gestalt.getConfig("users", TypeCapture.of(DBConnection.class));
+```
 
 # Kotlin
 For Kotlin Gestalt includes several extension methods that allow easier use of Gestalt by way of reified functions to better capture the generic type information.
