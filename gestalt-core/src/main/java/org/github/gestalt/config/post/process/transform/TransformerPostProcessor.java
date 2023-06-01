@@ -34,7 +34,7 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
 public class TransformerPostProcessor implements PostProcessor {
 
     public static final String defaultSubstitutionRegex =
-        "^((?<transform>\\w+):)?(?<key>[\\w ,_.+;\"'`~!@#$%^&*()\\[\\]<>]+)(:=(?<default>[\\w ,_.+;:\"'`~!@#$%^&*()\\[\\]<>]+))?$";
+        "^((?<transform>\\w+):(?!=))?(?<key>.+?)(:=(?<default>.*))?$";
     private Pattern pattern;
 
     private final Map<String, Transformer> transformers;
@@ -163,7 +163,7 @@ public class TransformerPostProcessor implements PostProcessor {
             // if we have a named transform look it up in the map.
             if (transformName != null) {
                 if (transformers.containsKey(transformName)) {
-                    ValidateOf<String> transformValue = transformers.get(transformName).process(path, key);
+                    ValidateOf<String> transformValue = transformers.get(transformName).process(path, key, input);
                     if (transformValue.hasResults()) {
                         newLeafValue.append(transformValue.results());
                         foundMatch = true;
@@ -183,7 +183,7 @@ public class TransformerPostProcessor implements PostProcessor {
                 boolean foundTransformer = false;
                 // if the transform isn't named look for it in priority order.
                 for (Transformer transform : orderedDefaultTransformers) {
-                    ValidateOf<String> transformValue = transform.process(path, key);
+                    ValidateOf<String> transformValue = transform.process(path, key, input);
                     if (transformValue.hasResults()) {
                         newLeafValue.append(transformValue.results());
                         foundTransformer = true;

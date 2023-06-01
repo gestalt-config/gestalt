@@ -22,7 +22,7 @@ class RandomTransformerTest {
     @Test
     void processInvalidMatch() {
         RandomTransformer randomTransformer = new RandomTransformer();
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int;5;");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int;5;", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -36,7 +36,7 @@ class RandomTransformerTest {
     @Test
     void processUnsupported() {
         RandomTransformer randomTransformer = new RandomTransformer();
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "kitten");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "kitten", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -50,7 +50,7 @@ class RandomTransformerTest {
     @Test
     void processBadParameter() {
         RandomTransformer randomTransformer = new RandomTransformer();
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int(1.5)");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int(1.5)", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -65,7 +65,7 @@ class RandomTransformerTest {
     @Test
     void processByte() {
         RandomTransformer randomTransformer = new RandomTransformer();
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "byte");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "byte", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -80,7 +80,7 @@ class RandomTransformerTest {
     @Test
     void processByteWithParameter() {
         RandomTransformer randomTransformer = new RandomTransformer();
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "byte(3)");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "byte(3)", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -96,7 +96,7 @@ class RandomTransformerTest {
     @Test
     void processByteWithParameter2Error() {
         RandomTransformer randomTransformer = new RandomTransformer();
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "byte(3,5)");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "byte(3,5)", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -114,7 +114,7 @@ class RandomTransformerTest {
     void processInt() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -133,7 +133,7 @@ class RandomTransformerTest {
     void processIntWith1param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int(100)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int(100)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -150,7 +150,7 @@ class RandomTransformerTest {
     void processIntWith2param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int(-10, 100)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "int(-10, 100)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -167,7 +167,7 @@ class RandomTransformerTest {
     void processLong() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "long");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "long", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -185,7 +185,7 @@ class RandomTransformerTest {
     void processLongWith1param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "long(100)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "long(100)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -202,7 +202,7 @@ class RandomTransformerTest {
     void processLongWith2param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "long(-10, 100)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "long(-10, 100)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -219,7 +219,7 @@ class RandomTransformerTest {
     void processFloat() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "float");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "float", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -236,7 +236,7 @@ class RandomTransformerTest {
     void processFloatWith1param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "float(1.1)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "float(1.1)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -253,7 +253,7 @@ class RandomTransformerTest {
     void processFloatWith2param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "float(-1.1, 1.4)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "float(-1.1, 1.4)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -270,7 +270,7 @@ class RandomTransformerTest {
     void processDouble() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "double");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "double", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -287,7 +287,7 @@ class RandomTransformerTest {
     void processDoubleWith1param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "double(1.1)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "double(1.1)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -304,7 +304,7 @@ class RandomTransformerTest {
     void processDoubleWith2param() {
         RandomTransformer randomTransformer = new RandomTransformer();
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "double(-1.1, 1.4)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "double(-1.1, 1.4)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -322,7 +322,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
         float trueCount = 0;
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "boolean");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "boolean", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -342,7 +342,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
 
 
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "boolean(5)");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "boolean(5)", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -358,7 +358,7 @@ class RandomTransformerTest {
     void processStringError() {
         RandomTransformer randomTransformer = new RandomTransformer();
 
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "string");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "string", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -373,7 +373,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
 
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "string(50)");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "string(50)", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -387,7 +387,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
 
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "char");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "char", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -401,7 +401,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
 
 
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "char(5)");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "char(5)", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -418,7 +418,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
 
         for (int i = 0; i < LOOPS; i++) {
-            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "uuid");
+            ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "uuid", "");
 
             Assertions.assertTrue(validateOfResults.hasResults());
             Assertions.assertFalse(validateOfResults.hasErrors());
@@ -432,7 +432,7 @@ class RandomTransformerTest {
         RandomTransformer randomTransformer = new RandomTransformer();
 
 
-        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "uuid(5)");
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "uuid(5)", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());

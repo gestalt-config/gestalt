@@ -15,7 +15,7 @@ class EnvironmentVariablesTransformerTest {
     @Test
     void process() {
         EnvironmentVariablesTransformer transformer = new EnvironmentVariablesTransformer();
-        ValidateOf<String> validateOfResults = transformer.process("hello", "DB_IDLETIMEOUT");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "DB_IDLETIMEOUT", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -27,7 +27,7 @@ class EnvironmentVariablesTransformerTest {
     @Test
     void processMissing() {
         EnvironmentVariablesTransformer transformer = new EnvironmentVariablesTransformer();
-        ValidateOf<String> validateOfResults = transformer.process("hello", "NO_EXIST");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "NO_EXIST", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());

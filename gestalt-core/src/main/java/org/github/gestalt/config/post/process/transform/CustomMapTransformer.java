@@ -38,7 +38,7 @@ public class CustomMapTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key) {
+    public ValidateOf<String> process(String path, String key, String rawValue) {
         if (!replacementVars.containsKey(key)) {
             return ValidateOf.inValid(new ValidationError.NoCustomPropertyFoundPostProcess(path, key));
         } else {

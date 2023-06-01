@@ -33,7 +33,7 @@ public class NodeTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key) {
+    public ValidateOf<String> process(String path, String key, String rawValue) {
         if (config == null) {
             return ValidateOf.inValid(new ValidationError.NodePostProcessingConfigMissing(path, key));
         }

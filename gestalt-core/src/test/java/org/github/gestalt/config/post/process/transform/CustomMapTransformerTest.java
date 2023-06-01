@@ -20,7 +20,7 @@ class CustomMapTransformerTest {
     void defaultCustomTransformer() {
         CustomMapTransformer transformer = new CustomMapTransformer();
 
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -35,7 +35,7 @@ class CustomMapTransformerTest {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -49,7 +49,7 @@ class CustomMapTransformerTest {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
-        ValidateOf<String> validateOfResults = transformer.process("hello", "noExist");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "noExist", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());

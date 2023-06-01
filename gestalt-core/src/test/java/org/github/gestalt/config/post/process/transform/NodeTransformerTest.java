@@ -49,7 +49,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -60,7 +60,7 @@ class NodeTransformerTest {
     @Test
     void processNoConfig() {
         NodeTransformer transformer = new NodeTransformer();
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -78,7 +78,7 @@ class NodeTransformerTest {
             .thenReturn(ValidateOf.inValid(new ValidationError.FailedToTokenizeElement("hello", "test")));
 
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -96,7 +96,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
 
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -117,7 +117,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -140,7 +140,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -161,7 +161,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
@@ -181,7 +181,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());

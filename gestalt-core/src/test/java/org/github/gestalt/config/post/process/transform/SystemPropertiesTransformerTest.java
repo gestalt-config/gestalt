@@ -16,7 +16,7 @@ class SystemPropertiesTransformerTest {
     void process() {
         System.getProperties().put("test", "value");
         SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
-        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "test", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -29,7 +29,7 @@ class SystemPropertiesTransformerTest {
     void processMissing() {
         System.getProperties().put("test", "value");
         SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
-        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "no-exist");
+        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "no-exist", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
