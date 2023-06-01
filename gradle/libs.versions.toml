@@ -5,7 +5,7 @@ kotlin = "1.8.21"
 kotlinDokka = "1.8.10"
 # Kotlin DI
 kodeinDI = "7.20.1"
-koinDI = "3.4.0"
+koinDI = "3.4.1"
 # Java DI
 # @pin
 guice = "6.0.0"
@@ -16,10 +16,10 @@ weld = "3.1.0.Final"
 # @pin
 weldCore = "4.0.3.Final"
 #encoding/decoding
-jackson = "2.15.0"
+jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-aws = "2.20.67"
+aws = "2.20.75"
 # Git support
 jgit = "6.5.0.202303070854-r"
 eddsa = "0.3.0"
@@ -33,14 +33,14 @@ awsMock = "2.11.0"
 # static code analysis
 errorprone = "2.19.1"
 gradleErrorProne = "3.1.0"
-detekt = "1.22.0"
-gradleDetekt = "1.22.0"
+detekt = "1.23.0"
+gradleDetekt = "1.23.0"
 checkStyle = "10.10.0"
 # benchmarking
 jmh = "1.36"
 gradleJmh = "0.7.1"
 # gestalt for integration tests.
-gestalt = "0.20.6"
+gestalt = "0.21.0"
 # Gradle utility
 gradleVersions = "0.46.0"
 gitVersions = "3.0.0"

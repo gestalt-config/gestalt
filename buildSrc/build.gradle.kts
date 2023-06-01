@@ -8,6 +8,10 @@ plugins {
     alias(libs.plugins.gradle.ben.manes.versions)
 }
 
+kotlin {
+  jvmToolchain(libs.versions.java.get().toInt())
+}
+
 dependencies {
     implementation(libs.gradle.ben.manes.versions)
     implementation(libs.gradle.versions.update)
@@ -19,5 +23,3 @@ dependencies {
     implementation(libs.gradle.detekt)
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
-
-
