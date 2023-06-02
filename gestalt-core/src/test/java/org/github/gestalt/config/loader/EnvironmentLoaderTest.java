@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -383,6 +384,26 @@ class EnvironmentLoaderTest {
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
         Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
+    }
+
+    @Test
+    void loadSourceBadSource() throws GestaltException {
+
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+
+        // create our class to be tested
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+
+        StringConfigSource source = new StringConfigSource(
+            "path : ${DB_IDLETIMEOUT}", "conf");
+
+        try {
+            environmentVarsLoader.loadSource(source);
+            Assertions.fail("should not reach here");
+        } catch (Exception e) {
+            Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
+        }
     }
 
 }

@@ -1387,6 +1387,69 @@ public abstract class ValidationError {
     }
 
     /**
+     * Invalid string received while doing post-processing string substitution.
+     */
+    public static class InvalidStringSubstitutionPostProcess extends ValidationError {
+        private final String path;
+        private final String value;
+        private final String transformer;
+
+        public InvalidStringSubstitutionPostProcess(String path, String value, String transformer) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.value = value;
+            this.transformer = transformer;
+        }
+
+        @Override
+        public String description() {
+            return "Invalid string: " + value + ", on path: " + path + " in transformer: " + transformer;
+        }
+    }
+
+    /**
+     * Invalid Base 64 decode string.
+     */
+    public static class InvalidBase64DecodeString extends ValidationError {
+        private final String path;
+        private final String value;
+        private final String errorMsg;
+
+        public InvalidBase64DecodeString(String path, String value, String errorMsg) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.value = value;
+            this.errorMsg = errorMsg;
+        }
+
+        @Override
+        public String description() {
+            return "Invalid base 64 value: " + value + ", on path: " + path + " in with error: " + errorMsg;
+        }
+    }
+
+    /**
+     * Invalid Base 64 decode string.
+     */
+    public static class ExceptionReadingFileDuringTransform extends ValidationError {
+        private final String path;
+        private final String file;
+        private final String errorMsg;
+
+        public ExceptionReadingFileDuringTransform(String path, String file, String errorMsg) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.file = file;
+            this.errorMsg = errorMsg;
+        }
+
+        @Override
+        public String description() {
+            return "Exception transforming file while reading file: " + file + ", on path: " + path + " in with error: " + errorMsg;
+        }
+    }
+
+    /**
      * No Configuration found for Node Post Processing.
      */
     public static class NodePostProcessingConfigMissing extends ValidationError {

@@ -48,7 +48,11 @@ public class RandomTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key) {
+    public ValidateOf<String> process(String path, String key, String rawValue) {
+
+        if (key == null) {
+            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+        }
 
         ValidateOf<String> result;
 

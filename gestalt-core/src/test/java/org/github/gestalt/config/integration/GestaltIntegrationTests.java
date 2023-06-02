@@ -348,6 +348,51 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    @Test
+    public void integrationTestPostProcessorMulti() throws GestaltException {
+
+        URL employeeURL = GestaltIntegrationTests.class.getClassLoader().getResource("employee");
+        File testFile = new File(employeeURL.getFile());
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        configs.put("employee.user", "${file:" + testFile.getAbsolutePath() + "}");
+
+        /*
+        Expects the following system properties variables
+            DB_IDLETIMEOUT: 123
+            SUBSERVICE_BOOKING_ISENABLED: true
+            SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.booking.host.name
+            SUBSERVICE_BOOKING_SERVICE_PORT: 443
+         */
+
+        System.getProperties().put("DB_IDLETIMEOUT", "123");
+        System.getProperties().put("SUBSERVICE_BOOKING_ISENABLED", "true");
+        System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_HOST", "https://dev.booking.host.name");
+        System.getProperties().put("SUBSERVICE_BOOKING_SERVICE_PORT", "443");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/defaultMulti.properties"))
+            .addSource(new ClassPathConfigSource("integration.properties"))
+            .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
     private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 

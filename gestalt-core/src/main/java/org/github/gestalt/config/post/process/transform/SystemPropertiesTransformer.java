@@ -18,8 +18,10 @@ public class SystemPropertiesTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key) {
-        if (!System.getProperties().containsKey(key)) {
+    public ValidateOf<String> process(String path, String key, String rawValue) {
+        if (key == null) {
+            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+        } else if (!System.getProperties().containsKey(key)) {
             return ValidateOf.inValid(new ValidationError.NoSystemPropertyFoundPostProcess(path, key));
         } else {
             return ValidateOf.valid(System.getProperties().get(key).toString());

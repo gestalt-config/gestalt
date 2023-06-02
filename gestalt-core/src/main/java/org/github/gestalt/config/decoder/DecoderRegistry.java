@@ -124,7 +124,7 @@ public class DecoderRegistry implements DecoderService {
         if (classDecoder.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));
         } else if (classDecoder.size() > 1) {
-            logger.log(System.Logger.Level.INFO, "Found multiple decoders for {0}, found: {1}, using {2}: ",
+            logger.log(System.Logger.Level.TRACE, "Found multiple decoders for {0}, found: {1}, using {2}: ",
                 klass, classDecoder, classDecoder.get(0));
         }
 

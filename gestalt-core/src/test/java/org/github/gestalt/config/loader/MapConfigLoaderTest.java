@@ -10,6 +10,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -333,5 +334,21 @@ class MapConfigLoaderTest {
         ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
+    }
+
+    @Test
+    void loadSourceBadSource() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource(
+            "path : ${DB_IDLETIMEOUT}", "conf");
+
+        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+
+        try {
+            mapConfigLoader.loadSource(source);
+            Assertions.fail("should not reach here");
+        } catch (Exception e) {
+            Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
+        }
     }
 }

@@ -29,8 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.System.Logger.Level.INFO;
-import static java.lang.System.Logger.Level.WARNING;
+import static java.lang.System.Logger.Level.*;      //NOPMD
 
 /**
  * Builder to setup and create the Gestalt config class.
@@ -724,13 +723,13 @@ public class GestaltBuilder {
 
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
-            logger.log(INFO, "No decoders provided, using defaults");
+            logger.log(DEBUG, "No decoders provided, using defaults");
             addDefaultDecoders();
         }
 
         // setup the default path mappers, if there are none, add the default ones.
         if (pathMappers.isEmpty()) {
-            logger.log(INFO, "No path mapper provided, using defaults");
+            logger.log(DEBUG, "No path mapper provided, using defaults");
             addDefaultPathMappers();
         }
 
@@ -747,12 +746,12 @@ public class GestaltBuilder {
 
         // Setup the config loaders.
         if (configLoaders.isEmpty()) {
-            logger.log(INFO, "No decoders provided, using defaults");
+            logger.log(DEBUG, "No decoders provided, using defaults");
             addDefaultConfigLoaders();
         }
 
         if (postProcessors.isEmpty()) {
-            logger.log(INFO, "No post processors provided, using defaults");
+            logger.log(DEBUG, "No post processors provided, using defaults");
             addDefaultPostProcessors();
         }
 

@@ -16,7 +16,7 @@ class SystemPropertiesTransformerTest {
     void process() {
         System.getProperties().put("test", "value");
         SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
-        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "test");
+        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "test", "");
 
         Assertions.assertTrue(validateOfResults.hasResults());
         Assertions.assertFalse(validateOfResults.hasErrors());
@@ -29,13 +29,27 @@ class SystemPropertiesTransformerTest {
     void processMissing() {
         System.getProperties().put("test", "value");
         SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
-        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "no-exist");
+        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", "no-exist", "");
 
         Assertions.assertFalse(validateOfResults.hasResults());
         Assertions.assertTrue(validateOfResults.hasErrors());
 
         Assertions.assertEquals(1, validateOfResults.getErrors().size());
         Assertions.assertEquals("No System Property found for: no-exist, on path: hello during post process",
+            validateOfResults.getErrors().get(0).description());
+    }
+
+    @Test
+    void processNull() {
+        System.getProperties().put("test", "value");
+        SystemPropertiesTransformer systemPropertiesTransformer = new SystemPropertiesTransformer();
+        ValidateOf<String> validateOfResults = systemPropertiesTransformer.process("hello", null, "");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("Invalid string: , on path: hello in transformer: sys",
             validateOfResults.getErrors().get(0).description());
     }
 }

@@ -77,9 +77,15 @@ module org.github.gestalt.core {
         org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 
     provides org.github.gestalt.config.post.process.transform.Transformer with
+        org.github.gestalt.config.post.process.transform.Base64DecoderTransformer,
+        org.github.gestalt.config.post.process.transform.Base64EncoderTransformer,
+        org.github.gestalt.config.post.process.transform.ClasspathTransformer,
         org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer,
         org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformerOld,
+        org.github.gestalt.config.post.process.transform.FileTransformer,
         org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer,
         org.github.gestalt.config.post.process.transform.NodeTransformer,
-        org.github.gestalt.config.post.process.transform.RandomTransformer;
+        org.github.gestalt.config.post.process.transform.RandomTransformer,
+        org.github.gestalt.config.post.process.transform.URLDecoderTransformer,
+        org.github.gestalt.config.post.process.transform.URLEncoderTransformer;
 }

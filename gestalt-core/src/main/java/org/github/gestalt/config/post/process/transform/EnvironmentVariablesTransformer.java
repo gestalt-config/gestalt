@@ -18,8 +18,10 @@ public class EnvironmentVariablesTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key) {
-        if (System.getenv(key) == null) {
+    public ValidateOf<String> process(String path, String key, String rawValue) {
+        if (key == null) {
+            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+        } else if (System.getenv(key) == null) {
             return ValidateOf.inValid(new ValidationError.NoEnvironmentVariableFoundPostProcess(path, key));
         } else {
             return ValidateOf.valid(System.getenv(key));

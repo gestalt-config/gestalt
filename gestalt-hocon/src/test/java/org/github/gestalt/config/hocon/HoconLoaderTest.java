@@ -1,17 +1,19 @@
-package org.github.gestalt.config.json;
+package org.github.gestalt.config.hocon;
 
 import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigSyntax;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.hocon.HoconLoader;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class HoconLoaderTest {
 
@@ -155,6 +157,22 @@ class HoconLoaderTest {
     }
 
     @Test
+    void loadSourceEmpty() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("", "conf");
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals(0, result.size());
+    }
+
+    @Test
     void loadSourceEmptyArray() throws GestaltException {
 
         StringConfigSource source = new StringConfigSource("{\n" +
@@ -246,5 +264,21 @@ class HoconLoaderTest {
 
         ConfigNode result = resultContainer.results().get(0).getConfigNode();
         Assertions.assertEquals("123", result.getKey("path").get().getValue().get());
+    }
+
+    @Test
+    void loadSourceBadSource() {
+
+        Map<String, String> configs = new HashMap<>();
+        MapConfigSource source = new MapConfigSource(configs);
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        try {
+            hoconLoader.loadSource(source);
+            Assertions.fail("should not reach here");
+        } catch (Exception e) {
+            Assertions.assertEquals("HOCON Config source: mapConfig does not have a stream to load.", e.getMessage());
+        }
     }
 }

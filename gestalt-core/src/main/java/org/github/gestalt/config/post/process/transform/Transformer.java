@@ -24,9 +24,10 @@ public interface Transformer {
      *
      * @param path the current path
      * @param key the key to lookup int this transform.
+     * @param rawValue the whole raw value of the current string to transform.
      * @return the value to replace the ${name:key}
      */
-    ValidateOf<String> process(String path, String key);
+    ValidateOf<String> process(String path, String key, String rawValue);
 
     /**
      * Apply the PostProcessorConfig to the Transformer. Needed when building via the ServiceLoader

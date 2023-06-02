@@ -512,14 +512,20 @@ the result is `good day`
 And finally the path `my.path.greeting` is resolved to `good day`
 
 ### Provided Transformers
-| keyword | priority | source                                       |
-|---------|----------|----------------------------------------------|
-| env     | 100      | Environment Variables                        |
-| envVar  | 100      | **Deprecated** Environment Variables         |
-| sys     | 200      | Java System Properties                       |
-| map     | 400      | A custom map provided to the constructor     |
-| node    | 300      | map to another leaf node in the configuration tree |
-| random  | n/a      | provides a random value                      |
+| keyword      | priority | source                                                                   |
+|--------------|----------|--------------------------------------------------------------------------|
+| env          | 100      | Environment Variables                                                    |
+| envVar       | 100      | **Deprecated** Environment Variables                                     |
+| sys          | 200      | Java System Properties                                                   |
+| map          | 400      | A custom map provided to the constructor                                 |
+| node         | 300      | map to another leaf node in the configuration tree                       |
+| random       | n/a      | provides a random value                                                  |
+| base64Decode | n/a      | decode a base 64 encoded string                                          |
+| base64Encode | n/a      | encode a base 64 encoded string                                          |
+| classpath    | n/a      | load the contents of a file on the classpath into a string substitution. |
+| file         | n/a      | load the contents of a file into a string substitution                   |
+| urlDecode    | n/a      | URL decode a string                                                      |
+| urlEncode    | n/a      | URL encode a string                                                      |
 
 
 ### Random String Substitution
