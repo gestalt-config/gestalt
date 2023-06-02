@@ -34,6 +34,20 @@ class RandomTransformerTest {
     }
 
     @Test
+    void processNull() {
+        RandomTransformer randomTransformer = new RandomTransformer();
+        ValidateOf<String> validateOfResults = randomTransformer.process("test.path", null, "random:int");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("Invalid string: random:int, on path: test.path in transformer: random",
+            validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(ERROR, validateOfResults.getErrors().get(0).level());
+    }
+
+    @Test
     void processUnsupported() {
         RandomTransformer randomTransformer = new RandomTransformer();
         ValidateOf<String> validateOfResults = randomTransformer.process("test.path", "kitten", "");

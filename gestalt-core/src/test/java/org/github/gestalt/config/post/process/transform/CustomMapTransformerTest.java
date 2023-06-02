@@ -58,4 +58,19 @@ class CustomMapTransformerTest {
         Assertions.assertEquals("No custom Property found for: noExist, on path: hello during post process",
             validateOfResults.getErrors().get(0).description());
     }
+
+    @Test
+    void processNull() {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("test", "value");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+        ValidateOf<String> validateOfResults = transformer.process("hello", null, "map:");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("No custom Property found for: null, on path: hello during post process",
+            validateOfResults.getErrors().get(0).description());
+    }
 }

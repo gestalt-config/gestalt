@@ -36,6 +36,8 @@ public class NodeTransformer implements Transformer {
     public ValidateOf<String> process(String path, String key, String rawValue) {
         if (config == null) {
             return ValidateOf.inValid(new ValidationError.NodePostProcessingConfigMissing(path, key));
+        } else if (key == null) {
+            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
 
         String normalizedPath = config.getLexer().normalizeSentence(key);

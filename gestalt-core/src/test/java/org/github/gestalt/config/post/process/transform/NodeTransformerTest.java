@@ -71,6 +71,26 @@ class NodeTransformerTest {
     }
 
     @Test
+    void processNull() {
+        List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
+        Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
+        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
+               .thenReturn(ValidateOf.valid(new LeafNode("new value")));
+
+        NodeTransformer transformer = new NodeTransformer();
+        transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
+        ValidateOf<String> validateOfResults = transformer.process("hello", null, "node:");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals("Invalid string: node:, on path: hello in transformer: node",
+            validateOfResults.getErrors().get(0).description());
+    }
+
+    @Test
     void processErrorTokenizing() {
         NodeTransformer transformer = new NodeTransformer();
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");

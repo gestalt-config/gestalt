@@ -50,6 +50,10 @@ public class RandomTransformer implements Transformer {
     @Override
     public ValidateOf<String> process(String path, String key, String rawValue) {
 
+        if (key == null) {
+            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+        }
+
         ValidateOf<String> result;
 
         Matcher matcher = randomPattern.matcher(key.replace(" ", ""));
