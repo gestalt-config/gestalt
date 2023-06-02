@@ -1,4 +1,4 @@
-package org.github.gestalt.config.json;
+package org.github.gestalt.config.hocon;
 
 import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigSyntax;
@@ -155,6 +155,22 @@ class HoconLoaderTest {
         ConfigNode result = resultContainer.results().get(0).getConfigNode();
         Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
         Assertions.assertEquals("", result.getKey("age").get().getValue().get());
+    }
+
+    @Test
+    void loadSourceEmpty() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("", "conf");
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals(0, result.size());
     }
 
     @Test
