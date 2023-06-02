@@ -4,7 +4,6 @@ import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigSyntax;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.hocon.HoconLoader;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
