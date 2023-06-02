@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -21,7 +22,9 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.ArgumentMatchers.*;
@@ -343,5 +346,25 @@ class PropertyLoaderTest {
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
         Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
+    }
+
+    @Test
+    void loadSourceBadSource() {
+
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+
+        Map<String, String> configs = new HashMap<>();
+        MapConfigSource source = new MapConfigSource(configs);
+
+        // create our class to be tested
+        PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
+
+        try {
+            propsLoader.loadSource(source);
+            Assertions.fail("should not reach here");
+        } catch (Exception e) {
+            Assertions.assertEquals("Config source: mapConfig does not have a stream to load.", e.getMessage());
+        }
     }
 }
