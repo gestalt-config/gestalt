@@ -10,12 +10,26 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+dependencies {
+  testImplementation(project(mapOf("path" to ":gestalt-google-cloud")))
+}
 
 
 testing {
   suites {
     val test by getting(JvmTestSuite::class) {
       useJUnitJupiter()
+      targets {
+        all {
+          testTask.configure {
+            options {
+              val junitOptions = this as JUnitPlatformOptions;
+              junitOptions.excludeTags = setOf("cloud")
+            }
+          }
+        }
+      }
+
       testType.set(TestSuiteType.UNIT_TEST)
       dependencies {
         implementation(project(":gestalt-core"))
@@ -25,6 +39,8 @@ testing {
         implementation(project(":gestalt-toml"))
         implementation(project(":gestalt-yaml"))
         implementation(project(":gestalt-s3"))
+
+        implementation(project(":gestalt-google-cloud"))
 
 
         implementation(project(":gestalt-kodein-di"))
@@ -39,45 +55,9 @@ testing {
         implementation(libs.guice)
       }
     }
-
-    val integrationTest by registering(JvmTestSuite::class) {
-      useJUnitJupiter()
-      testType.set(TestSuiteType.INTEGRATION_TEST)
-      dependencies {
-        implementation(libs.gestalt.core)
-        implementation(libs.gestalt.hocon)
-        implementation(libs.gestalt.kotlin)
-        implementation(libs.gestalt.json)
-        implementation(libs.gestalt.toml)
-        implementation(libs.gestalt.yaml)
-        implementation(libs.gestalt.s3)
-
-        implementation(libs.gestalt.kodein.di)
-        implementation(libs.kodein.di)
-
-        implementation(libs.gestalt.koin.di)
-        implementation(libs.koin.di)
-
-        implementation(libs.aws.mock)
-
-        implementation(libs.gestalt.guice)
-        implementation(libs.guice)
-      }
-
-      targets {
-        all {
-          testTask.configure {
-            shouldRunAfter(test)
-          }
-        }
-      }
-    }
   }
 }
 
-tasks.named("check") {
-  dependsOn(testing.suites.named("integrationTest"))
-}
 
 tasks.jar {
     manifest {

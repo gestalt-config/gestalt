@@ -14,6 +14,7 @@ dependencies {
     jacocoAggregation(project(":gestalt-cdi"))
     jacocoAggregation(project(":gestalt-core"))
     jacocoAggregation(project(":gestalt-git"))
+    jacocoAggregation(project(":gestalt-google-cloud"))
     jacocoAggregation(project(":gestalt-guice"))
     jacocoAggregation(project(":gestalt-hocon"))
     jacocoAggregation(project(":gestalt-json"))

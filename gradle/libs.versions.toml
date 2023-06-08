@@ -20,6 +20,7 @@ jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
 aws = "2.20.75"
+gcp = "26.16.0"
 # Git support
 jgit = "6.5.0.202303070854-r"
 eddsa = "0.3.0"
@@ -40,7 +41,7 @@ checkStyle = "10.10.0"
 jmh = "1.36"
 gradleJmh = "0.7.1"
 # gestalt for integration tests.
-gestalt = "0.21.0"
+gestalt = "0.21.1"
 # Gradle utility
 gradleVersions = "0.46.0"
 gitVersions = "3.0.0"
@@ -71,6 +72,7 @@ jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-y
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 # Cloud
 aws-S3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+google-storage = { module = "com.google.cloud:google-cloud-storage",   version.ref = "gcp"}
 # Git Support
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }

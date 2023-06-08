@@ -9,6 +9,7 @@ import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.google.storage.GCSConfigSource;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
@@ -19,10 +20,7 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -564,6 +562,35 @@ public class GestaltSample {
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Tag("cloud")
+    @Test
+    public void integrationTestGoogleCloud() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new GCSConfigSource("gestalt-test", "dev.properties"))
+            .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
 
         validateResults(gestalt);
