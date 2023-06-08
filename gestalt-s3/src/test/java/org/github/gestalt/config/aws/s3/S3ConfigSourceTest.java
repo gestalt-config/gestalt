@@ -42,6 +42,12 @@ class S3ConfigSourceTest {
     }
 
     @Test
+    void idTest() throws GestaltException {
+        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, "test");
+        Assertions.assertNotNull(source.id());
+    }
+
+    @Test
     void loadS3ClientNull() {
         GestaltException exception = Assertions.assertThrows(GestaltException.class,
             () -> new S3ConfigSource(null, BUCKET_NAME, UPLOAD_FILE_NAME));
@@ -70,6 +76,13 @@ class S3ConfigSourceTest {
         S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, UPLOAD_FILE_NAME);
 
         Assertions.assertEquals("properties", source.format());
+    }
+
+    @Test
+    void fileTypeEmpty() throws GestaltException {
+        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, "src/test/resources/default");
+
+        Assertions.assertEquals("", source.format());
     }
 
     @Test
