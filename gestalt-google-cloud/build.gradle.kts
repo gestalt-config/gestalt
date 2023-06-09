@@ -10,6 +10,7 @@ dependencies {
     implementation(platform("com.google.cloud:libraries-bom:" + libs.versions.gcpLibraryBOM.get()))
     implementation("com.google.cloud:google-cloud-storage")
     implementation("com.google.cloud:google-cloud-secretmanager")
+
 }
 
 tasks.jar {

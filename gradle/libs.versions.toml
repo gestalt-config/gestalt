@@ -72,6 +72,7 @@ jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-y
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 # Cloud
 aws-S3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+google-storage = { module = "com.google.cloud:google-cloud-storage",   version.ref = "gcp"}
 # Git Support
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }

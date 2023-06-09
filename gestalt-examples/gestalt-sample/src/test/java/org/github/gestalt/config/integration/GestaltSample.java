@@ -616,6 +616,7 @@ public class GestaltSample {
 
         validateResults(gestalt);
 
+
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
         Assertions.assertTrue(booking.isEnabled());
         Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
