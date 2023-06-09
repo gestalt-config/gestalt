@@ -578,6 +578,27 @@ public class GestaltSample {
         configs.put("db.idleTimeout", "123");
 
         // Load the default property files from resources.
+        // Contents of the dev.properties on GCP Storage, note the use of ${gcpSecret:bank-host}
+        // the secrets "bank-host" value is "booking.host.name"
+        /*
+        db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb
+        db.hosts[1].url=jdbc:postgresql://dev.host.name2:5432/mydb
+        db.hosts[2].url=jdbc:postgresql://dev.host.name3:5432/mydb
+        db.connectionTimeout=600
+
+        http.pool.maxTotal=1000
+        http.pool.maxPerRoute=50
+
+        subservice.booking.service.isEnabled=true
+        subservice.booking.service.host=https://dev.${gcpSecret:bank-host}
+        subservice.booking.service.port=443
+        subservice.booking.service.path=booking
+
+        subservice.search.service.isEnabled=false
+
+        admin.user=Peter, Kim, Steve
+        admin.overrideEnabled=true
+         */
 
 
         // using the builder to layer on the configuration files.
@@ -594,6 +615,12 @@ public class GestaltSample {
         gestalt.loadConfigs();
 
         validateResults(gestalt);
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
     private void validateResults(Gestalt gestalt) throws GestaltException {

@@ -181,7 +181,7 @@ class TransformerPostProcessorTest {
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
-        Assertions.assertEquals("Unable to find matching key for transform map with key place:world on path location",
+        Assertions.assertEquals("No custom Property found for: place:world, on path: location during post process",
             validateNode.getErrors().get(0).description());
         Assertions.assertEquals(ValidationLevel.ERROR, validateNode.getErrors().get(0).level());
 
@@ -219,7 +219,7 @@ class TransformerPostProcessorTest {
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
-        Assertions.assertEquals("Unable to find matching key for transform map with key noValue on path test.path",
+        Assertions.assertEquals("No custom Property found for: noValue, on path: test.path during post process",
             validateNode.getErrors().get(0).description());
         Assertions.assertEquals(ValidationLevel.ERROR, validateNode.getErrors().get(0).level());
     }
