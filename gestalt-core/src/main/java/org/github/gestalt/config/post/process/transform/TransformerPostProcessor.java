@@ -173,7 +173,11 @@ public class TransformerPostProcessor implements PostProcessor {
                             foundMatch = true;
                             newLeafValue.append(defaultValue);
                         } else {
-                            return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                            if (transformValue.hasErrors()) {
+                                return transformValue;
+                            } else {
+                                return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                            }
                         }
                     }
                 } else {
