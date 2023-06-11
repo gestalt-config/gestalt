@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
+import org.github.gestalt.config.aws.builder.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -22,7 +23,10 @@ import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -38,20 +42,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GestaltSample {
 
-    @BeforeAll
-    public static void beforeAll()
-    {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
-    }
-
     @RegisterExtension
     static final S3MockExtension S3_MOCK =
         S3MockExtension.builder().silent().withSecureConnection(false).build();
-
     private static final String BUCKET_NAME = "testbucket";
     private static final String UPLOAD_FILE_NAME = "src/test/resources/default.properties";
-
     private final S3Client s3Client = S3_MOCK.createS3ClientV2();
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+    }
 
     @Test
     public void integrationTest() throws GestaltException {
@@ -578,7 +579,7 @@ public class GestaltSample {
         configs.put("db.idleTimeout", "123");
 
         // Load the default property files from resources.
-        // Contents of the dev.properties on GCP Storage, note the use of ${gcpSecret:bank-host}
+        // Contents of the dev.properties on GCP Storage, note the use of ${gcpSecret:booking-host}
         // the secrets "bank-host" value is "booking.host.name"
         /*
         db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb
@@ -609,6 +610,69 @@ public class GestaltSample {
             .addSource(new GCSConfigSource("gestalt-test", "dev.properties"))
             .addSource(new MapConfigSource(configs))
             .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        // Load the configurations, this will thow exceptions if there are any errors.
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    //@Tag("cloud")
+    @Test
+    public void integrationTestAws() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+        // Contents of the dev.properties on aws Storage, note the use of ${awsSecret:booking-host:host}
+        // the secrets "booking-host:host" value is "booking.host.name"
+        /*
+        db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb
+        db.hosts[1].url=jdbc:postgresql://dev.host.name2:5432/mydb
+        db.hosts[2].url=jdbc:postgresql://dev.host.name3:5432/mydb
+        db.connectionTimeout=600
+
+        http.pool.maxTotal=1000
+        http.pool.maxPerRoute=50
+
+        subservice.booking.service.isEnabled=true
+        subservice.booking.service.host=https://dev.${awsSecret:booking-host:host}
+        subservice.booking.service.port=443
+        subservice.booking.service.path=booking
+
+        subservice.search.service.isEnabled=false
+
+        admin.user=Peter, Kim, Steve
+        admin.overrideEnabled=true
+         */
+        S3Client s3Client = S3Client.builder()
+                                    .credentialsProvider(DefaultCredentialsProvider.create())
+                                    .region(Region.US_EAST_1)
+                                    .httpClient(UrlConnectionHttpClient.builder().build())
+                                    .build();
+
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new S3ConfigSource(s3Client, "gestalt-test", "dev.properties"))
+            .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
+            .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -663,7 +727,8 @@ public class GestaltSample {
         Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", OptionalInt.class).getAsInt());
         Assertions.assertEquals(600L, gestalt.getConfig("db.connectionTimeout", OptionalLong.class).getAsLong());
         Assertions.assertEquals(600D, gestalt.getConfig("db.connectionTimeout", OptionalDouble.class).getAsDouble());
-        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", new TypeCapture<Optional<Integer>>() {}).get());
+        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", new TypeCapture<Optional<Integer>>() {
+        }).get());
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -786,7 +851,8 @@ public class GestaltSample {
         Assertions.assertEquals(0, noHosts.size());
 
         List<HostOpt> hostsOpt = gestalt.getConfig("db.hosts", Collections.emptyList(),
-            new TypeCapture<>() { });
+            new TypeCapture<>() {
+            });
         Assertions.assertEquals(3, hostsOpt.size());
         Assertions.assertEquals("credmond", hostsOpt.get(0).getUser().get());
         Assertions.assertEquals("1234", hostsOpt.get(0).getPassword().get());
@@ -802,7 +868,8 @@ public class GestaltSample {
         Assertions.assertFalse(hostsOpt.get(2).getPort().isPresent());
 
         List<HostOptionalInt> hostOptionalInt = gestalt.getConfig("db.hosts", Collections.emptyList(),
-            new TypeCapture<>() { });
+            new TypeCapture<>() {
+            });
         Assertions.assertEquals(3, hostOptionalInt.size());
         Assertions.assertEquals("credmond", hostOptionalInt.get(0).getUser().get());
         Assertions.assertEquals(1234, hostOptionalInt.get(0).getPassword().getAsInt());
@@ -1059,6 +1126,38 @@ public class GestaltSample {
         LEVEL0, LEVEL1
     }
 
+    public interface IHostDefault {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        default int getPort() {
+            return 10;
+        }
+    }
+
+    public interface IHost {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+    }
+
+    public interface IHostAnnotations {
+        @Config(path = "user")
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        @Config(defaultVal = "customers")
+        String getTable();
+    }
+
     public static class TestReloadListener implements CoreReloadListener {
 
         int count = 0;
@@ -1080,39 +1179,6 @@ public class GestaltSample {
         public HttpPool() {
 
         }
-    }
-
-    public interface IHostDefault {
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-
-        default int getPort() {
-            return 10;
-        }
-    }
-
-
-    public interface IHost {
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-    }
-
-    public interface IHostAnnotations {
-        @Config(path = "user")
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-
-        @Config(defaultVal = "customers" )
-        String getTable();
     }
 
     public static class HostAnnotations implements IHost {
@@ -1143,10 +1209,12 @@ public class GestaltSample {
             return secret;
         }
 
-        public String getTable() {return table;}
+        public String getTable() {
+            return table;
+        }
     }
 
-    public static class HostMethodAnnotations{
+    public static class HostMethodAnnotations {
         private String user;
         private String url;
         private String secret;
@@ -1166,7 +1234,9 @@ public class GestaltSample {
         }
 
         @Config(defaultVal = "customers")
-        public String getTable() {return table;}
+        public String getTable() {
+            return table;
+        }
     }
 
     public static class HostOpt {

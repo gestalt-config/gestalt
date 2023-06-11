@@ -1,8 +1,8 @@
 rootProject.name = "gestalt"
 include(
-    "gestalt-cdi", "gestalt-core", "gestalt-hocon", "gestalt-json", "gestalt-git",
-    "gestalt-google-cloud", "gestalt-guice", "gestalt-kotlin", "gestalt-kodein-di",
-    "gestalt-koin-di", "gestalt-s3", "gestalt-toml", "gestalt-yaml"
+  "gestalt-aws", "gestalt-cdi", "gestalt-core", "gestalt-hocon", "gestalt-json", "gestalt-git",
+  "gestalt-google-cloud", "gestalt-guice", "gestalt-kotlin", "gestalt-kodein-di",
+  "gestalt-koin-di", "gestalt-toml", "gestalt-yaml"
 )
 
 // testing utility projects
