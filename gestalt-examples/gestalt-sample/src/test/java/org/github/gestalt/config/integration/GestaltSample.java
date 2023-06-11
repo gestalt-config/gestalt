@@ -625,7 +625,7 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
-    //@Tag("cloud")
+    @Tag("cloud")
     @Test
     public void integrationTestAws() throws GestaltException {
         // Create a map of configurations we wish to inject.
