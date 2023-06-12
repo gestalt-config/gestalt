@@ -66,6 +66,36 @@ class AWSSecretTransformerTest {
     }
 
     @Test
+    void processWithSecretClientProvided() {
+
+        AWSModuleConfig AWSModuleConfig = new AWSModuleConfig();
+        AWSModuleConfig.setSecretsClient(secretsManagerClient);
+
+        AWSSecretTransformer transform = new AWSSecretTransformer();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.registerModuleConfig(AWSModuleConfig);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        transform.applyConfig(config);
+
+        GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
+                                                                  .secretId("secret")
+                                                                  .build();
+
+        GetSecretValueResponse getSecretValueResponse = GetSecretValueResponse.builder()
+                                                                              .secretString("{\"mySecret\" : \"hello world\"}")
+                                                                              .build();
+        Mockito.when(secretsManagerClient.getSecretValue(valueRequest)).thenReturn(getSecretValueResponse);
+
+        var results = transform.process("test", "secret:mySecret", "awsSecret:secret:mySecret");
+
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals("hello world", results.results());
+
+    }
+
+    @Test
     void processInvalidSecretKeyFormat() {
         try (MockedStatic<SecretsManagerClient> secretClient = Mockito.mockStatic(SecretsManagerClient.class)) {
             secretClient.when(SecretsManagerClient::builder).thenReturn(secretsManagerClientBuilder);

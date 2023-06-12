@@ -40,11 +40,15 @@ public class AWSSecretTransformer implements Transformer {
                 "if you wish to use the aws module with string substitution ${awsSecret:key} " +
                 "then you must register an AWSConfigExtension config extension using the builder");
         } else {
-            secretsClient = SecretsManagerClient.builder()
-                                                .region(Region.of(extension.getRegion()))
-                                                .credentialsProvider(ProfileCredentialsProvider.create())
-                                                .httpClient(UrlConnectionHttpClient.builder().build())
-                                                .build();
+            if (extension.hasSecretsClient()) {
+                secretsClient = extension.getSecretsClient();
+            } else {
+                secretsClient = SecretsManagerClient.builder()
+                                                    .region(Region.of(extension.getRegion()))
+                                                    .credentialsProvider(ProfileCredentialsProvider.create())
+                                                    .httpClient(UrlConnectionHttpClient.builder().build())
+                                                    .build();
+            }
         }
     }
 
