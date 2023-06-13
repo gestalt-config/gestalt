@@ -16,7 +16,7 @@ public class AWSModuleConfig implements GestaltModuleConfig {
 
     private SecretsManagerClient secretsClient;
 
-    public AWSModuleConfig() {
+    AWSModuleConfig() {
     }
 
     public AWSModuleConfig(String region) {
@@ -29,7 +29,7 @@ public class AWSModuleConfig implements GestaltModuleConfig {
     }
 
     /**
-     * Region to use for aws
+     * Region to use for aws.
      *
      * @return Region to use for aws
      */
@@ -38,7 +38,8 @@ public class AWSModuleConfig implements GestaltModuleConfig {
     }
 
     /**
-     * Set region to use for aws
+     * Set region to use for aws.
+     *
      * @param region region to use for aws
      */
     public void setRegion(String region) {

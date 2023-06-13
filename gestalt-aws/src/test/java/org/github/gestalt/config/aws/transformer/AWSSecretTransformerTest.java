@@ -1,8 +1,10 @@
 package org.github.gestalt.config.aws.transformer;
 
+import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.config.AWSModuleConfig;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,14 +68,16 @@ class AWSSecretTransformerTest {
     }
 
     @Test
-    void processWithSecretClientProvided() {
+    void processWithSecretClientProvided() throws GestaltConfigurationException {
 
-        AWSModuleConfig AWSModuleConfig = new AWSModuleConfig();
-        AWSModuleConfig.setSecretsClient(secretsManagerClient);
+        AWSBuilder awsConfigExtension = AWSBuilder.builder();
+        awsConfigExtension.setRegion("usa");
+        AWSModuleConfig awsModuleConfig = awsConfigExtension.build();
+        awsModuleConfig.setSecretsClient(secretsManagerClient);
 
         AWSSecretTransformer transform = new AWSSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
-        gestaltConfig.registerModuleConfig(AWSModuleConfig);
+        gestaltConfig.registerModuleConfig(awsModuleConfig);
         PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
         transform.applyConfig(config);
 
@@ -94,6 +98,8 @@ class AWSSecretTransformerTest {
         Assertions.assertEquals("hello world", results.results());
 
     }
+
+
 
     @Test
     void processInvalidSecretKeyFormat() {
@@ -182,8 +188,10 @@ class AWSSecretTransformerTest {
 
         Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
-        Assertions.assertEquals("AWSConfigExtension has not been registered. If you wish to use the aws module " +
-            "with string substitution ${awsSecret:secret:myKey} on the path: test", results.getErrors().get(0).description());
+        Assertions.assertEquals("AWSModuleConfig has not been registered. " +
+            "Register by creating a AWSBuilder then registering the AWSBuilder.build() results with the Gestalt Builder.addModuleConfig(). " +
+            "If you wish to use the aws module with string substitution ${awsSecret:secret:myKey} on the path: test",
+            results.getErrors().get(0).description());
     }
 
 
@@ -222,10 +230,12 @@ class AWSSecretTransformerTest {
     }
 
     @Test
-    void awsConfigExtension() {
-        AWSModuleConfig awsConfigExtension = new AWSModuleConfig();
+    void awsConfigExtension() throws GestaltConfigurationException {
+        AWSBuilder awsConfigExtension = AWSBuilder.builder();
         awsConfigExtension.setRegion("usa");
         Assertions.assertEquals("usa", awsConfigExtension.getRegion());
-        Assertions.assertEquals("aws", awsConfigExtension.name());
+        AWSModuleConfig awsModuleConfig = awsConfigExtension.build();
+        Assertions.assertEquals("usa", awsModuleConfig.getRegion());
+        Assertions.assertEquals("aws", awsModuleConfig.name());
     }
 }

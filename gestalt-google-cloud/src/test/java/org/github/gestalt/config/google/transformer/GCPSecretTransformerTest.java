@@ -8,7 +8,10 @@ import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretPayload;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
 import com.google.protobuf.ByteString;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.google.config.GoogleModuleConfig;
+import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,8 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import static org.mockito.Mockito.times;
 
 class GCPSecretTransformerTest {
 
@@ -38,6 +43,9 @@ class GCPSecretTransformerTest {
     @Test
     void process() throws IOException {
 
+        GestaltConfig config = new GestaltConfig();
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
             secretClient.when(SecretManagerServiceClient::create).thenReturn(secretManagerServiceClient);
@@ -49,6 +57,7 @@ class GCPSecretTransformerTest {
             Mockito.when(secretPayload.getData()).thenReturn(ByteString.copyFrom("hello world".getBytes(StandardCharsets.UTF_8)));
 
             GCPSecretTransformer gcpSecretTransformer = new GCPSecretTransformer();
+            gcpSecretTransformer.applyConfig(postProcessorConfig);
             var results = gcpSecretTransformer.process("db.connection", "gestalt-secret", "gcpSecret:gestalt-secret");
 
             Assertions.assertTrue(results.hasResults());
@@ -59,8 +68,75 @@ class GCPSecretTransformerTest {
     }
 
     @Test
+    void processConfigNoProjectSet() throws IOException {
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(new GoogleModuleConfig());
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+
+        try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
+             MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
+            secretClient.when(SecretManagerServiceClient::create).thenReturn(secretManagerServiceClient);
+            serviceOptions.when(ServiceOptions::getDefaultProjectId).thenReturn("testProject");
+
+            SecretVersionName secretVersionName = SecretVersionName.of("testProject", "gestalt-secret", "latest");
+            Mockito.when(secretManagerServiceClient.accessSecretVersion(secretVersionName)).thenReturn(accessSecretVersionResponse);
+            Mockito.when(accessSecretVersionResponse.getPayload()).thenReturn(secretPayload);
+            Mockito.when(secretPayload.getData()).thenReturn(ByteString.copyFrom("hello world".getBytes(StandardCharsets.UTF_8)));
+
+            GCPSecretTransformer gcpSecretTransformer = new GCPSecretTransformer();
+            gcpSecretTransformer.applyConfig(postProcessorConfig);
+            var results = gcpSecretTransformer.process("db.connection", "gestalt-secret", "gcpSecret:gestalt-secret");
+
+            Assertions.assertTrue(results.hasResults());
+            Assertions.assertFalse(results.hasErrors());
+
+            Assertions.assertEquals("hello world", results.results());
+
+            serviceOptions.verify(ServiceOptions::getDefaultProjectId);
+        }
+    }
+
+    @Test
+    void processConfigProjectSet() throws IOException {
+        GoogleModuleConfig googleModuleConfig = new GoogleModuleConfig("myProject");
+        googleModuleConfig.setProjectId("myProject");
+
+        Assertions.assertEquals("google", googleModuleConfig.name());
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(googleModuleConfig);
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+
+        try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
+             MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
+            secretClient.when(SecretManagerServiceClient::create).thenReturn(secretManagerServiceClient);
+            serviceOptions.when(ServiceOptions::getDefaultProjectId).thenReturn("testProject");
+
+            SecretVersionName secretVersionName = SecretVersionName.of("myProject", "gestalt-secret", "latest");
+            Mockito.when(secretManagerServiceClient.accessSecretVersion(secretVersionName)).thenReturn(accessSecretVersionResponse);
+            Mockito.when(accessSecretVersionResponse.getPayload()).thenReturn(secretPayload);
+            Mockito.when(secretPayload.getData()).thenReturn(ByteString.copyFrom("hello world".getBytes(StandardCharsets.UTF_8)));
+
+            GCPSecretTransformer gcpSecretTransformer = new GCPSecretTransformer();
+            gcpSecretTransformer.applyConfig(postProcessorConfig);
+            var results = gcpSecretTransformer.process("db.connection", "gestalt-secret", "gcpSecret:gestalt-secret");
+
+            Assertions.assertTrue(results.hasResults());
+            Assertions.assertFalse(results.hasErrors());
+
+            Assertions.assertEquals("hello world", results.results());
+
+            serviceOptions.verify(ServiceOptions::getDefaultProjectId, times(0));
+        }
+    }
+
+    @Test
     void processError() throws IOException {
 
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(new GoogleModuleConfig());
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
             secretClient.when(SecretManagerServiceClient::create).thenReturn(secretManagerServiceClient);
@@ -72,6 +148,7 @@ class GCPSecretTransformerTest {
 
 
             GCPSecretTransformer gcpSecretTransformer = new GCPSecretTransformer();
+            gcpSecretTransformer.applyConfig(postProcessorConfig);
             var results = gcpSecretTransformer.process("db.connection", "gestalt-secret", "gcpSecret:gestalt-secret");
 
             Assertions.assertFalse(results.hasResults());

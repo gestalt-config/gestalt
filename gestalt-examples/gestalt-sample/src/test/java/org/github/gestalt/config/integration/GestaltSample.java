@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
-import org.github.gestalt.config.aws.builder.AWSBuilder;
+import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;

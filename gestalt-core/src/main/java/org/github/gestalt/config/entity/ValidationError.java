@@ -1429,7 +1429,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Invalid Base 64 decode string.
+     * Invalid file while reading for transform.
      */
     public static class ExceptionReadingFileDuringTransform extends ValidationError {
         private final String path;

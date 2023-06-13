@@ -9,7 +9,6 @@ module org.github.gestalt.aws {
     requires software.amazon.awssdk.http.urlconnection;
     requires com.fasterxml.jackson.databind;
 
-    exports org.github.gestalt.config.aws.builder;
     exports org.github.gestalt.config.aws.config;
     exports org.github.gestalt.config.aws.errors;
     exports org.github.gestalt.config.aws.s3;

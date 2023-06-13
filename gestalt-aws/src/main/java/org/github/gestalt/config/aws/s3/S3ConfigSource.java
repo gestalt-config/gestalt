@@ -88,7 +88,7 @@ public class S3ConfigSource implements ConfigSource {
             return objectBytes.asInputStream();
 
         } catch (S3Exception e) {
-            throw new GestaltException("Exception loading S3 key: " + keyName + ", bucket: " + bucketName + ", with error:" +
+            throw new GestaltException("Exception loading S3 key: " + keyName + ", bucket: " + bucketName + ", with error: " +
                 e.awsErrorDetails().errorMessage(), e);
         }
     }

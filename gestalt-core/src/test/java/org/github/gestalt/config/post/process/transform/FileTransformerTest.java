@@ -31,6 +31,20 @@ class FileTransformerTest {
     }
 
     @Test
+    void processFileDoesntExist() {
+
+        FileTransformer transformer = new FileTransformer();
+        var validateOfResults = transformer.process("db", "^&ASD*A&N&*A^BD(*&", "file:^&ASD*A&N&*A^BD(*&");
+
+        Assertions.assertFalse(validateOfResults.hasResults());
+        Assertions.assertTrue(validateOfResults.hasErrors());
+
+        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertTrue(validateOfResults.getErrors().get(0).description()
+                                               .startsWith("Exception transforming file while reading file"));
+    }
+
+    @Test
     void processNull() {
         FileTransformer transformer = new FileTransformer();
         var validateOfResults = transformer.process("db", null, "file:");

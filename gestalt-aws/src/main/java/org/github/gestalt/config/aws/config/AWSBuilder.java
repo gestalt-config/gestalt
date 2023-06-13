@@ -1,6 +1,6 @@
-package org.github.gestalt.config.aws.builder;
+package org.github.gestalt.config.aws.config;
 
-import org.github.gestalt.config.aws.config.AWSModuleConfig;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 /**
@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
  *
  * @author Colin Redmond (c) 2023.
  */
-final public class AWSBuilder {
+public final class AWSBuilder {
     private String region;
     private SecretsManagerClient secretsClient;
 
@@ -29,16 +29,7 @@ final public class AWSBuilder {
     }
 
     /**
-     * Set region to use for aws
-     * @param region region to use for aws
-     */
-    public AWSBuilder setRegion(String region) {
-        this.region = region;
-        return this;
-    }
-
-    /**
-     * Region to use for aws
+     * Region to use for aws.
      *
      * @return Region to use for aws
      */
@@ -46,8 +37,28 @@ final public class AWSBuilder {
         return region;
     }
 
-    public AWSModuleConfig build() {
-        return new AWSModuleConfig(region);
+    /**
+     * Set region to use for aws.
+     *
+     * @param region region to use for aws
+     * @return the builder
+     */
+    public AWSBuilder setRegion(String region) {
+        this.region = region;
+        return this;
+    }
+
+    public AWSModuleConfig build() throws GestaltConfigurationException {
+        if (region == null && secretsClient == null) {
+            throw new GestaltConfigurationException("AWSModuleConfig was built but one of the secret client " +
+                "or the region must be provided");
+        }
+
+        AWSModuleConfig awsModuleConfig = new AWSModuleConfig();
+        awsModuleConfig.setRegion(region);
+        awsModuleConfig.setSecretsClient(secretsClient);
+
+        return awsModuleConfig;
     }
 
     /**

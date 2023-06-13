@@ -33,21 +33,24 @@ public class AWSSecretTransformer implements Transformer {
 
     @Override
     public void applyConfig(PostProcessorConfig config) {
-        AWSModuleConfig extension = config.getConfig().getModuleConfig(AWSModuleConfig.class);
+        AWSModuleConfig moduleConfig = config.getConfig().getModuleConfig(AWSModuleConfig.class);
 
-        if (extension == null) {
-            logger.log(System.Logger.Level.WARNING, "AWSConfigExtension has not been registered. " +
+        if (moduleConfig == null) {
+            logger.log(System.Logger.Level.WARNING, "AWSModuleConfig has not been registered. " +
                 "if you wish to use the aws module with string substitution ${awsSecret:key} " +
-                "then you must register an AWSConfigExtension config extension using the builder");
+                "then you must register an AWSModuleConfig config moduleConfig using the builder");
         } else {
-            if (extension.hasSecretsClient()) {
-                secretsClient = extension.getSecretsClient();
-            } else {
+            if (moduleConfig.hasSecretsClient()) {
+                secretsClient = moduleConfig.getSecretsClient();
+            } else if (moduleConfig.getRegion() != null) {
                 secretsClient = SecretsManagerClient.builder()
-                                                    .region(Region.of(extension.getRegion()))
+                                                    .region(Region.of(moduleConfig.getRegion()))
                                                     .credentialsProvider(ProfileCredentialsProvider.create())
                                                     .httpClient(UrlConnectionHttpClient.builder().build())
                                                     .build();
+            } else {
+                logger.log(System.Logger.Level.ERROR, "AWSModuleConfig was registered but neither the secret client " +
+                    "nor the region was provided");
             }
         }
     }
@@ -66,7 +69,7 @@ public class AWSSecretTransformer implements Transformer {
                 String secretKey = secretParts[1];
 
                 if (secretsClient == null) {
-                    return ValidateOf.inValid(new AWSValidationErrors.AWSExtensionConfigNotSet(path, rawValue));
+                    return ValidateOf.inValid(new AWSValidationErrors.AWSModuleConfigNotSet(path, rawValue));
                 }
 
                 GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()

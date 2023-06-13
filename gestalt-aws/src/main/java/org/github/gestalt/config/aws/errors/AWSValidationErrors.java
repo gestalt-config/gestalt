@@ -12,11 +12,11 @@ import java.util.Arrays;
  */
 public class AWSValidationErrors {
 
-    public static class AWSExtensionConfigNotSet extends ValidationError {
+    public static class AWSModuleConfigNotSet extends ValidationError {
         private final String path;
         private final String rawSubstitution;
 
-        public AWSExtensionConfigNotSet(String path, String rawSubstitution) {
+        public AWSModuleConfigNotSet(String path, String rawSubstitution) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.rawSubstitution = rawSubstitution;
@@ -24,7 +24,9 @@ public class AWSValidationErrors {
 
         @Override
         public String description() {
-            return "AWSConfigExtension has not been registered. If you wish to use the aws module with string substitution " +
+            return "AWSModuleConfig has not been registered. Register by creating a AWSBuilder " +
+                "then registering the AWSBuilder.build() results with the Gestalt Builder.addModuleConfig(). " +
+                "If you wish to use the aws module with string substitution " +
                 "${" + rawSubstitution + "} on the path: " + path;
         }
     }
