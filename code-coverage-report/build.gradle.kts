@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    jacocoAggregation(project(":gestalt-aws"))
     jacocoAggregation(project(":gestalt-cdi"))
     jacocoAggregation(project(":gestalt-core"))
     jacocoAggregation(project(":gestalt-git"))
@@ -21,7 +22,6 @@ dependencies {
     jacocoAggregation(project(":gestalt-kodein-di"))
     jacocoAggregation(project(":gestalt-koin-di"))
     jacocoAggregation(project(":gestalt-kotlin"))
-    jacocoAggregation(project(":gestalt-s3"))
     jacocoAggregation(project(":gestalt-toml"))
     jacocoAggregation(project(":gestalt-yaml"))
 

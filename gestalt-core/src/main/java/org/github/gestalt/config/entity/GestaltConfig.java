@@ -3,6 +3,8 @@ package org.github.gestalt.config.entity;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration for Gestalt.
@@ -38,6 +40,8 @@ public class GestaltConfig {
 
     // the maximum nested substitution depth.
     private int maxSubstitutionNestedDepth = 5;
+
+    private final Map<Class, GestaltModuleConfig> modulesConfig = new HashMap<>();
 
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
@@ -263,5 +267,18 @@ public class GestaltConfig {
      */
     public void setSubstitutionRegex(String substitutionRegex) {
         this.substitutionRegex = substitutionRegex;
+    }
+
+    public void registerModuleConfig(GestaltModuleConfig module) {
+        modulesConfig.put(module.getClass(), module);
+    }
+
+    public void registerModuleConfig(Map<Class, GestaltModuleConfig> module) {
+        modulesConfig.putAll(module);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends GestaltModuleConfig> T getModuleConfig(Class<T> klass) {
+        return (T) modulesConfig.get(klass);
     }
 }

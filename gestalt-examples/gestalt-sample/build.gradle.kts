@@ -32,13 +32,13 @@ testing {
 
       testType.set(TestSuiteType.UNIT_TEST)
       dependencies {
+        implementation(project(":gestalt-aws"))
         implementation(project(":gestalt-core"))
         implementation(project(":gestalt-hocon"))
         implementation(project(":gestalt-kotlin"))
         implementation(project(":gestalt-json"))
         implementation(project(":gestalt-toml"))
         implementation(project(":gestalt-yaml"))
-        implementation(project(":gestalt-s3"))
 
         implementation(project(":gestalt-google-cloud"))
 

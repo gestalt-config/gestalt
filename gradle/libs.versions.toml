@@ -72,6 +72,8 @@ jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-y
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 # Cloud
 aws-S3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+aws-secret = { module = "software.amazon.awssdk:secretsmanager", version.ref = "aws" }
+aws-url-client = { module = "software.amazon.awssdk:url-connection-client", version.ref = "aws" }
 google-storage = { module = "com.google.cloud:google-cloud-storage",   version.ref = "gcpLibraryBOM"}
 # Git Support
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
@@ -105,7 +107,7 @@ gestalt-kotlin = { module = "com.github.gestalt-config:gestalt-kotlin", version.
 gestalt-json = { module = "com.github.gestalt-config:gestalt-json", version.ref = "gestalt" }
 gestalt-toml = { module = "com.github.gestalt-config:gestalt-toml", version.ref = "gestalt" }
 gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
-gestalt-s3 = { module = "com.github.gestalt-config:gestalt-s3", version.ref = "gestalt" }
+gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
 gestalt-kodein-di = { module = "com.github.gestalt-config:gestalt-kodein-di", version.ref = "gestalt" }
 gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", version.ref = "gestalt" }
 

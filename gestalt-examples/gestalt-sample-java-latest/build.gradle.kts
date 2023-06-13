@@ -22,47 +22,18 @@ testing {
       useJUnitJupiter()
       testType.set(TestSuiteType.UNIT_TEST)
       dependencies {
+        implementation(project(":gestalt-aws"))
         implementation(project(":gestalt-core"))
         implementation(project(":gestalt-hocon"))
         implementation(project(":gestalt-kotlin"))
         implementation(project(":gestalt-json"))
         implementation(project(":gestalt-toml"))
         implementation(project(":gestalt-yaml"))
-        implementation(project(":gestalt-s3"))
 
         implementation(libs.aws.mock)
-      }
-    }
-
-    val integrationTestLatest by registering(JvmTestSuite::class) {
-      useJUnitJupiter()
-      testType.set(TestSuiteType.INTEGRATION_TEST)
-      dependencies {
-        implementation(libs.gestalt.core)
-        implementation(libs.gestalt.hocon)
-        implementation(libs.gestalt.kotlin)
-        implementation(libs.gestalt.json)
-        implementation(libs.gestalt.toml)
-        implementation(libs.gestalt.yaml)
-        implementation(libs.gestalt.s3)
-
-        implementation(libs.aws.mock)
-
-      }
-
-      targets {
-        all {
-          testTask.configure {
-            shouldRunAfter(test)
-          }
-        }
       }
     }
   }
-}
-
-tasks.named("check") {
-  dependsOn(testing.suites.named("integrationTestLatest"))
 }
 
 tasks.jar {

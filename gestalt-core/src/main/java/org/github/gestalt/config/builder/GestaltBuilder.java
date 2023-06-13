@@ -7,6 +7,7 @@ import org.github.gestalt.config.decoder.Decoder;
 import org.github.gestalt.config.decoder.DecoderRegistry;
 import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.entity.GestaltConfig;
+import org.github.gestalt.config.entity.GestaltModuleConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -63,6 +64,7 @@ public class GestaltBuilder {
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<PostProcessor> postProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
+    private final Map<Class, GestaltModuleConfig> modules = new HashMap<>();
 
     private boolean useCacheDecorator = true;
 
@@ -489,6 +491,11 @@ public class GestaltBuilder {
         return this;
     }
 
+    public GestaltBuilder addModuleConfig(GestaltModuleConfig extension) {
+        modules.put(extension.getClass(), extension);
+        return this;
+    }
+
     /**
      * Treat warnings as errors.
      *
@@ -720,6 +727,7 @@ public class GestaltBuilder {
         }
 
         gestaltConfig = rebuildConfig();
+        gestaltConfig.registerModuleConfig(modules);
 
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
