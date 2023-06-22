@@ -16,6 +16,17 @@
 
 package org.github.gestalt.config.cdi;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.*;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Provider;
+import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.GestaltCore;
+import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.reflect.TypeCapture;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -23,22 +34,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import jakarta.enterprise.context.Dependent;
-import jakarta.enterprise.context.spi.CreationalContext;
-import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.spi.Annotated;
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.InjectionPoint;
-import jakarta.enterprise.inject.spi.PassivationCapable;
-import jakarta.enterprise.util.AnnotationLiteral;
-import jakarta.inject.Provider;
-
-import org.github.gestalt.config.Gestalt;
-import org.github.gestalt.config.GestaltCore;
-import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.reflect.TypeCapture;
 
 /**
  * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi

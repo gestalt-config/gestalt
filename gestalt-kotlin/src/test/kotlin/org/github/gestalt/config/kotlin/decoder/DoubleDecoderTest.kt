@@ -53,9 +53,12 @@ internal class DoubleDecoderTest {
             "db.port", LeafNode("124.5"), TypeCapture.of(
                 Double::class.java
             ),
-            DecoderRegistry(listOf(doubleDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(doubleDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,9 +74,12 @@ internal class DoubleDecoderTest {
             "db.port",
             LeafNode("124.5"),
             object : TypeCapture<Double?>() {},
-            DecoderRegistry(listOf(doubleDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(doubleDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -89,9 +95,12 @@ internal class DoubleDecoderTest {
             "db.port", LeafNode("124"), TypeCapture.of(
                 Double::class.java
             ),
-            DecoderRegistry(listOf(doubleDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(doubleDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -107,9 +116,12 @@ internal class DoubleDecoderTest {
             "db.port", LeafNode("12s4"), TypeCapture.of(
                 Double::class.java
             ),
-            DecoderRegistry(listOf(doubleDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(doubleDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

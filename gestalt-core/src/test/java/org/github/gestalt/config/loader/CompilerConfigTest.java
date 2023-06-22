@@ -64,26 +64,6 @@ class CompilerConfigTest {
 
     }
 
-    private static class MapConfigSourceWarn extends MapConfigSource {
-
-        private final boolean failOnErrors;
-
-        /**
-         * takes a map of configs.
-         *
-         * @param customConfig map of configs.
-         */
-        public MapConfigSourceWarn(Map<String, String> customConfig, boolean failOnErrors) {
-            super(customConfig);
-            this.failOnErrors = failOnErrors;
-        }
-
-        @Override
-        public boolean failOnErrors() {
-            return failOnErrors;
-        }
-    }
-
     @Test
     void loadSourceWithRealDependenciesErrorTokenizingDontFail() throws GestaltException {
 
@@ -134,5 +114,25 @@ class CompilerConfigTest {
         Assertions.assertEquals(1, validateOfResults.getErrors().size());
         Assertions.assertEquals("Mismatched path lengths received for path: db, this could be because a node is both a leaf " +
             "and an object", validateOfResults.getErrors().get(0).description());
+    }
+
+    private static class MapConfigSourceWarn extends MapConfigSource {
+
+        private final boolean failOnErrors;
+
+        /**
+         * takes a map of configs.
+         *
+         * @param customConfig map of configs.
+         */
+        public MapConfigSourceWarn(Map<String, String> customConfig, boolean failOnErrors) {
+            super(customConfig);
+            this.failOnErrors = failOnErrors;
+        }
+
+        @Override
+        public boolean failOnErrors() {
+            return failOnErrors;
+        }
     }
 }

@@ -60,7 +60,6 @@ class ClassPathConfigSourceTest {
     }
 
 
-
     @Test
     void noFileType() throws GestaltException {
         ClassPathConfigSource classPathConfigSource = new ClassPathConfigSource("/test");

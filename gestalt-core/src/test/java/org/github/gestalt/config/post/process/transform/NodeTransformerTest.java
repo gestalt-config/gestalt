@@ -45,7 +45,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-            .thenReturn(ValidateOf.valid(new LeafNode("new value")));
+               .thenReturn(ValidateOf.valid(new LeafNode("new value")));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
@@ -95,7 +95,7 @@ class NodeTransformerTest {
         NodeTransformer transformer = new NodeTransformer();
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test"))
-            .thenReturn(ValidateOf.inValid(new ValidationError.FailedToTokenizeElement("hello", "test")));
+               .thenReturn(ValidateOf.inValid(new ValidationError.FailedToTokenizeElement("hello", "test")));
 
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
         ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
@@ -133,7 +133,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-            .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", MapNode.class, "post processing")));
+               .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", MapNode.class, "post processing")));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
@@ -156,7 +156,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-            .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
+               .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
@@ -177,7 +177,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-            .thenReturn(ValidateOf.valid(new MapNode(new HashMap<>())));
+               .thenReturn(ValidateOf.valid(new MapNode(new HashMap<>())));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
@@ -197,7 +197,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-            .thenReturn(ValidateOf.valid(new LeafNode(null)));
+               .thenReturn(ValidateOf.valid(new LeafNode(null)));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));

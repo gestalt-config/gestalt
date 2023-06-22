@@ -55,15 +55,15 @@ class HoconLoaderTest {
         Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
         Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
         Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
-            .get().getValue().get());
+                                              .get().getValue().get());
         Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(0).get().getValue().get());
+                                                .get().getIndex(0).get().getValue().get());
         Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(1).get().getValue().get());
+                                               .get().getIndex(1).get().getValue().get());
         Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(2).get().getValue().get());
+                                                 .get().getIndex(2).get().getValue().get());
         Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(3).isPresent());
+                                     .get().getIndex(3).isPresent());
     }
 
     @Test
@@ -90,15 +90,15 @@ class HoconLoaderTest {
         Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
         Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
         Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
-            .get().getValue().get());
+                                              .get().getValue().get());
         Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(0).get().getValue().get());
+                                                .get().getIndex(0).get().getValue().get());
         Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(1).get().getValue().get());
+                                               .get().getIndex(1).get().getValue().get());
         Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(2).get().getValue().get());
+                                                 .get().getIndex(2).get().getValue().get());
         Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(3).isPresent());
+                                     .get().getIndex(3).isPresent());
     }
 
     @Test
@@ -125,15 +125,15 @@ class HoconLoaderTest {
         Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
         Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
         Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
-            .get().getValue().get());
+                                              .get().getValue().get());
         Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(0).get().getValue().get());
+                                                .get().getIndex(0).get().getValue().get());
         Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(1).get().getValue().get());
+                                               .get().getIndex(1).get().getValue().get());
         Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(2).get().getValue().get());
+                                                 .get().getIndex(2).get().getValue().get());
         Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
-            .get().getIndex(3).isPresent());
+                                     .get().getIndex(3).isPresent());
     }
 
     @Test

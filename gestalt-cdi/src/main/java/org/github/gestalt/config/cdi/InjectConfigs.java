@@ -18,12 +18,12 @@ public @interface InjectConfigs {
 
         private final String prefix;
 
-        public static Literal of(String prefix) {  //NOPMD
-            return new Literal(prefix);
-        }
-
         private Literal(String prefix) {
             this.prefix = prefix;
+        }
+
+        public static Literal of(String prefix) {  //NOPMD
+            return new Literal(prefix);
         }
 
         @Override

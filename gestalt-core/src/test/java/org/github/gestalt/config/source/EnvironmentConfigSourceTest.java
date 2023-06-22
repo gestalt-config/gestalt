@@ -1,7 +1,5 @@
 package org.github.gestalt.config.source;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
@@ -13,6 +11,7 @@ import org.mockito.MockedStatic;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mockStatic;
 
 class EnvironmentConfigSourceTest {

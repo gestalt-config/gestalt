@@ -53,9 +53,12 @@ internal class CharDecoderTest {
             "db.port", LeafNode("a"), TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,9 +74,12 @@ internal class CharDecoderTest {
             "db.port", LeafNode("aaa"), TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -94,9 +100,12 @@ internal class CharDecoderTest {
             "db.port", LeafNode(""), TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

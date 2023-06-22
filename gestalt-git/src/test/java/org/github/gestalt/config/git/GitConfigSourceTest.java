@@ -9,7 +9,6 @@ import org.eclipse.jgit.util.FS;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -87,7 +86,7 @@ class GitConfigSourceTest {
     }
 
     @Test
-    @Disabled
+        //@Disabled
     void hasStreamWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
@@ -113,7 +112,7 @@ class GitConfigSourceTest {
     }
 
     @Test
-    @Disabled
+        //@Disabled
     void hasStreamSSHWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
@@ -127,7 +126,7 @@ class GitConfigSourceTest {
         SshdSessionFactoryBuilder sshdBuilder = new SshdSessionFactoryBuilder()
             .setKeyPasswordProvider((cp) -> new KeyPasswordProvider() {
                 @Override
-                public char[] getPassphrase(URIish uri, int attempt)  {
+                public char[] getPassphrase(URIish uri, int attempt) {
                     return password.toCharArray();
                 }
 

@@ -153,13 +153,13 @@ public class ProxyDecoder implements Decoder<Object> {
                 return result;
             } else if (isDefault) {
                 return MethodHandles.lookup()
-                             .findSpecial(
-                                 method.getDeclaringClass(),
-                                 methodName,
-                                 MethodType.methodType(type, new Class[0]),
-                                 method.getDeclaringClass())
-                             .bindTo(proxy)
-                             .invokeWithArguments(args);
+                                    .findSpecial(
+                                        method.getDeclaringClass(),
+                                        methodName,
+                                        MethodType.methodType(type, new Class[0]),
+                                        method.getDeclaringClass())
+                                    .bindTo(proxy)
+                                    .invokeWithArguments(args);
             } else {
                 throw new GestaltException("Failed to get proxy config while calling method: " + methodName +
                     " in path: " + path + ".");

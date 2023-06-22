@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
  * Members Injector for Gestalt.
  *
  * @param <T> type of the field.
- *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class GestaltConfigMemberInjector<T> implements MembersInjector<T> {

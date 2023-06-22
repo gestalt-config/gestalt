@@ -16,11 +16,9 @@ import java.util.regex.Pattern;
  */
 public class SubstitutionTreeBuilder {
 
+    private static final int escapeChar = '\\';
     private final String openingToken;
     private final String closingToken;
-
-    private static final int escapeChar = '\\';
-
     private final int firstOpeningToken;
     private final int openingTokenLength;
     private final int firstClosingToken;

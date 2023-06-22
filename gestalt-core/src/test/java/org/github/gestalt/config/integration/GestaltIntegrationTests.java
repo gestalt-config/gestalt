@@ -422,7 +422,8 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", OptionalInt.class).getAsInt());
         Assertions.assertEquals(600L, gestalt.getConfig("db.connectionTimeout", OptionalLong.class).getAsLong());
         Assertions.assertEquals(600D, gestalt.getConfig("db.connectionTimeout", OptionalDouble.class).getAsDouble());
-        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", new TypeCapture<Optional<Integer>>() {}).get());
+        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", new TypeCapture<Optional<Integer>>() {
+        }).get());
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
         Assertions.assertNull(db.isEnabled);
@@ -432,7 +433,8 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
         // index into the path of an array.
         Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
-        Optional<String> optUser = gestalt.getConfig("db.hosts[0].user", new TypeCapture<>() { });
+        Optional<String> optUser = gestalt.getConfig("db.hosts[0].user", new TypeCapture<>() {
+        });
         Assertions.assertTrue(optUser.isPresent());
         Assertions.assertEquals("credmond", optUser.get());
         Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
@@ -557,7 +559,8 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("customers", hostsMethodAnnotations.get(2).getTable());
 
         List<HostOpt> hostsOpt = gestalt.getConfig("db.hosts", Collections.emptyList(),
-            new TypeCapture<>() { });
+            new TypeCapture<>() {
+            });
         Assertions.assertEquals(3, hostsOpt.size());
         Assertions.assertEquals("credmond", hostsOpt.get(0).getUser().get());
         Assertions.assertEquals("1234", hostsOpt.get(0).getPassword().get());
@@ -573,7 +576,8 @@ public class GestaltIntegrationTests {
         Assertions.assertFalse(hostsOpt.get(2).getPort().isPresent());
 
         List<HostOptionalInt> hostOptionalInt = gestalt.getConfig("db.hosts", Collections.emptyList(),
-            new TypeCapture<>() { });
+            new TypeCapture<>() {
+            });
         Assertions.assertEquals(3, hostOptionalInt.size());
         Assertions.assertEquals("credmond", hostOptionalInt.get(0).getUser().get());
         Assertions.assertEquals(1234, hostOptionalInt.get(0).getPassword().getAsInt());
@@ -587,7 +591,6 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(9012, hostOptionalInt.get(2).getPassword().getAsInt());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostOptionalInt.get(2).getUrl().get());
         Assertions.assertFalse(hostOptionalInt.get(2).getPort().isPresent());
-
 
 
         List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {

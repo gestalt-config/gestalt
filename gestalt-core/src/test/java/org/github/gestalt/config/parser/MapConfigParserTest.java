@@ -138,14 +138,14 @@ class MapConfigParserTest {
         assertEquals("password", results.getKey("db").flatMap(db -> db.getKey("password")).flatMap(ConfigNode::getValue).get());
 
         assertEquals("host1", results.getKey("db").flatMap(db -> db.getKey("hosts")).get()
-            .getIndex(0).get().getKey("name").get().getValue().get());
+                                     .getIndex(0).get().getKey("name").get().getValue().get());
         assertEquals("11", results.getKey("db").flatMap(db -> db.getKey("hosts")).get()
-            .getIndex(0).get().getKey("port").get().getValue().get());
+                                  .getIndex(0).get().getKey("port").get().getValue().get());
 
         assertEquals("host2", results.getKey("db").flatMap(db -> db.getKey("hosts")).get()
-            .getIndex(1).get().getKey("name").get().getValue().get());
+                                     .getIndex(1).get().getKey("name").get().getValue().get());
         assertEquals("12", results.getKey("db").flatMap(db -> db.getKey("hosts")).get()
-            .getIndex(1).get().getKey("port").get().getValue().get());
+                                  .getIndex(1).get().getKey("port").get().getValue().get());
 
 
         assertEquals("101", results.getKey("redis").flatMap(db -> db.getKey("port")).flatMap(ConfigNode::getValue).get());
@@ -190,14 +190,14 @@ class MapConfigParserTest {
         assertEquals("password", results.getKey("db").flatMap(db -> db.getKey("password")).flatMap(ConfigNode::getValue).get());
 
         assertEquals("host1", results.getKey("db").flatMap(db -> db.getKey("hosts")).get().getIndex(0).get()
-            .getIndex(0).get().getKey("name").get().getValue().get());
+                                     .getIndex(0).get().getKey("name").get().getValue().get());
         assertEquals("11", results.getKey("db").flatMap(db -> db.getKey("hosts")).get().getIndex(0).get()
-            .getIndex(1).get().getKey("port").get().getValue().get());
+                                  .getIndex(1).get().getKey("port").get().getValue().get());
 
         assertEquals("host2", results.getKey("db").flatMap(db -> db.getKey("hosts")).get().getIndex(1).get()
-            .getIndex(0).get().getKey("name").get().getValue().get());
+                                     .getIndex(0).get().getKey("name").get().getValue().get());
         assertEquals("12", results.getKey("db").flatMap(db -> db.getKey("hosts")).get().getIndex(1).get()
-            .getIndex(1).get().getKey("port").get().getValue().get());
+                                  .getIndex(1).get().getKey("port").get().getValue().get());
 
         assertEquals("101", results.getKey("redis").flatMap(db -> db.getKey("port")).flatMap(ConfigNode::getValue).get());
     }
@@ -225,7 +225,7 @@ class MapConfigParserTest {
         assertEquals("test", results.getKey("db").flatMap(db -> db.getKey("user")).flatMap(ConfigNode::getValue).get());
         assertEquals("password", results.getKey("db").flatMap(db -> db.getKey("password")).flatMap(ConfigNode::getValue).get());
         assertEquals("host1", results.getKey("db").flatMap(db -> db.getKey("hosts"))
-            .flatMap(configNode -> configNode.getIndex(0)).get().getKey("name").get().getValue().get());
+                                     .flatMap(configNode -> configNode.getIndex(0)).get().getKey("name").get().getValue().get());
     }
 
     @Test

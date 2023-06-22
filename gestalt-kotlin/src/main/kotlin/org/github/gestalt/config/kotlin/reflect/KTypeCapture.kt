@@ -1,7 +1,6 @@
 package org.github.gestalt.config.kotlin.reflect
 
 import org.github.gestalt.config.reflect.TypeCapture
-import java.lang.reflect.ParameterizedType
 import java.util.stream.Collectors
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -67,9 +66,9 @@ class KTypeCapture<T> private constructor(val kType: KType) : TypeCapture<Any>(k
      * @return list of all generic parameter types.
      */
     override fun getParameterTypes(): List<TypeCapture<*>?>? {
-        return  if (kType.arguments.isNotEmpty()) {
+        return if (kType.arguments.isNotEmpty()) {
             kType.arguments.stream()
-                .filter {it.type != null}
+                .filter { it.type != null }
                 .map { of<Any>(it.type!!) }
                 .collect(Collectors.toList())
         } else {

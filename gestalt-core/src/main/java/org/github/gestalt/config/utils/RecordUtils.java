@@ -58,7 +58,7 @@ public final class RecordUtils {
             MH_getGenericType = LOOKUP.findVirtual(c, "getGenericType", methodType(Type.class))
                                       .asType(methodType(Type.class, Object.class));
             MH_getDeclaredAnnotation = LOOKUP.findVirtual(c, "getDeclaredAnnotations", methodType(Annotation[].class))
-                                     .asType(methodType(Annotation[].class, Object.class));
+                                             .asType(methodType(Annotation[].class, Object.class));
             MH_getAccessor = LOOKUP.findVirtual(c, "getAccessor", methodType(Method.class))
                                    .asType(methodType(Method.class, Object.class));
         } catch (ClassNotFoundException | NoSuchMethodException e) {

@@ -53,9 +53,12 @@ internal class StringAndLeafDecoderTest {
             "db.user", LeafNode("test"), TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(stringDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,9 +74,12 @@ internal class StringAndLeafDecoderTest {
             "db.user", LeafNode(null), TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(stringDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -94,9 +100,12 @@ internal class StringAndLeafDecoderTest {
             "db.user", MapNode(HashMap()), TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(listOf(stringDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(stringDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

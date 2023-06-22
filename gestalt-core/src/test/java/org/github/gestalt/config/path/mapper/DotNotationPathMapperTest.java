@@ -12,7 +12,8 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.github.gestalt.config.entity.ValidationLevel.*;
+import static org.github.gestalt.config.entity.ValidationLevel.ERROR;
+import static org.github.gestalt.config.entity.ValidationLevel.WARN;
 
 class DotNotationPathMapperTest {
 

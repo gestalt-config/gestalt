@@ -1,16 +1,16 @@
 package org.github.gestalt.config.cdi;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Set;
-
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.spi.Annotated;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.enterprise.util.AnnotationLiteral;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Set;
 
 class MetadataInjectionPoint implements InjectionPoint {
     @Override

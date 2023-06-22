@@ -5,13 +5,7 @@ import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ClassPathConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,52 +18,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public abstract class Benchmarks {
-
-    @State(Scope.Benchmark)
-    public static class BenchmarkState {
-        private Gestalt gestalt;
-        private Gestalt gestaltNoCache;
-
-        @Setup
-        public void setup() throws GestaltException {
-            // Create a map of configurations we wish to inject.
-            Map<String, String> configs = new HashMap<>();
-            configs.put("db.hosts[0].password", "1234");
-            configs.put("db.hosts[1].password", "5678");
-            configs.put("db.hosts[2].password", "9012");
-            configs.put("db.idleTimeout", "123");
-
-            // using the builder to layer on the configuration files.
-            // The later ones layer on and over write any values in the previous
-            GestaltBuilder builder = new GestaltBuilder();
-            gestalt = builder
-                .addSource(new ClassPathConfigSource("/default.properties"))
-                .addSource(new ClassPathConfigSource("/dev.properties"))
-                .addSource(new MapConfigSource(configs))
-                .build();
-
-            // Load the configurations, this will throw exceptions if there are any errors.
-            gestalt.loadConfigs();
-
-            GestaltBuilder builderNoCache = new GestaltBuilder();
-            gestaltNoCache = builderNoCache
-                .addSource(new ClassPathConfigSource("/default.properties"))
-                .addSource(new ClassPathConfigSource("/dev.properties"))
-                .addSource(new MapConfigSource(configs))
-                .useCacheDecorator(false)
-                .build();
-
-            // Load the configurations, this will thow exceptions if there are any errors.
-            gestaltNoCache.loadConfigs();
-        }
-    }
-
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public static class Avgt extends Benchmarks {}
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    public static class Thrpt extends Benchmarks {}
 
     @Benchmark
     public String GestaltConfig_String(BenchmarkState state) throws GestaltException {
@@ -116,6 +64,54 @@ public abstract class Benchmarks {
         return gestalt;
     }
 
+    @State(Scope.Benchmark)
+    public static class BenchmarkState {
+        private Gestalt gestalt;
+        private Gestalt gestaltNoCache;
+
+        @Setup
+        public void setup() throws GestaltException {
+            // Create a map of configurations we wish to inject.
+            Map<String, String> configs = new HashMap<>();
+            configs.put("db.hosts[0].password", "1234");
+            configs.put("db.hosts[1].password", "5678");
+            configs.put("db.hosts[2].password", "9012");
+            configs.put("db.idleTimeout", "123");
+
+            // using the builder to layer on the configuration files.
+            // The later ones layer on and over write any values in the previous
+            GestaltBuilder builder = new GestaltBuilder();
+            gestalt = builder
+                .addSource(new ClassPathConfigSource("/default.properties"))
+                .addSource(new ClassPathConfigSource("/dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .build();
+
+            // Load the configurations, this will throw exceptions if there are any errors.
+            gestalt.loadConfigs();
+
+            GestaltBuilder builderNoCache = new GestaltBuilder();
+            gestaltNoCache = builderNoCache
+                .addSource(new ClassPathConfigSource("/default.properties"))
+                .addSource(new ClassPathConfigSource("/dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .useCacheDecorator(false)
+                .build();
+
+            // Load the configurations, this will thow exceptions if there are any errors.
+            gestaltNoCache.loadConfigs();
+        }
+    }
+
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public static class Avgt extends Benchmarks {
+    }
+
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    public static class Thrpt extends Benchmarks {
+    }
 
     public static class HttpPool {
 

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 public class FileTransformer implements Transformer {
 
     private final int prefixLength = (name() + ":").length();       // NOPMD
+
     @Override
     public String name() {
         return "file";

@@ -53,9 +53,12 @@ internal class ShortDecoderTest {
             "db.port", LeafNode("124"), TypeCapture.of(
                 Short::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,9 +74,12 @@ internal class ShortDecoderTest {
             "db.port", LeafNode("12s4"), TypeCapture.of(
                 Short::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -93,10 +99,13 @@ internal class ShortDecoderTest {
         val decoder = ShortDecoder()
         val validate: ValidateOf<Short> = decoder.decode(
             "db.port", LeafNode("12345678901234567890123456789012345678901234567890123456789"),
-            TypeCapture.of(Short::class.java), DecoderRegistry(listOf(decoder), configNodeService, lexer,
-                listOf(StandardPathMapper(),
+            TypeCapture.of(Short::class.java), DecoderRegistry(
+                listOf(decoder), configNodeService, lexer,
+                listOf(
+                    StandardPathMapper(),
                     DotNotationPathMapper()
-                ))
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

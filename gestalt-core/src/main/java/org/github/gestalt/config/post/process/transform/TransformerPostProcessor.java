@@ -35,11 +35,9 @@ public class TransformerPostProcessor implements PostProcessor {
 
     public static final String defaultSubstitutionRegex =
         "^((?<transform>\\w+):(?!=))?(?<key>.+?)(:=(?<default>.*))?$";
-    private Pattern pattern;
-
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
-
+    private Pattern pattern;
     private int maxRecursionDepth = 5;
     private SubstitutionTreeBuilder substitutionTreeBuilder;
 

@@ -2,11 +2,11 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 

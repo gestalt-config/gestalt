@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class GestaltConfig {
 
+    private final Map<Class, GestaltModuleConfig> modulesConfig = new HashMap<>();
     // Treat all warnings as errors
     private boolean treatWarningsAsErrors = false;
     // Treat missing array index's as errors. If false it will inject null values for missing array index's.
@@ -23,26 +24,18 @@ public class GestaltConfig {
     private boolean treatNullValuesInClassAsErrors = true;
     //Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
     private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = System.Logger.Level.DEBUG;
-
     // Java date decoder format.
     private DateTimeFormatter dateDecoderFormat = DateTimeFormatter.ISO_DATE_TIME;
     // Java local date time decoder format.
     private DateTimeFormatter localDateTimeFormat = DateTimeFormatter.ISO_DATE_TIME;
     // Java local date decoder format.
     private DateTimeFormatter localDateFormat = DateTimeFormatter.ISO_DATE_TIME;
-
-
     // Token that represents the opening of a string substitution.
     private String substitutionOpeningToken = "${";
-
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = "}";
-
     // the maximum nested substitution depth.
     private int maxSubstitutionNestedDepth = 5;
-
-    private final Map<Class, GestaltModuleConfig> modulesConfig = new HashMap<>();
-
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = TransformerPostProcessor.defaultSubstitutionRegex;

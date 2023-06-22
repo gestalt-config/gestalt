@@ -53,9 +53,12 @@ internal class FloatDecoderTest {
             "db.timeout", LeafNode("124.5"), TypeCapture.of(
                 Float::class.java
             ),
-            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(floatDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,9 +74,12 @@ internal class FloatDecoderTest {
             "db.timeout", LeafNode("124"), TypeCapture.of(
                 Float::class.java
             ),
-            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(floatDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -89,9 +95,12 @@ internal class FloatDecoderTest {
             "db.timeout", LeafNode("12s4"), TypeCapture.of(
                 Float::class.java
             ),
-            DecoderRegistry(listOf(floatDecoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(floatDecoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

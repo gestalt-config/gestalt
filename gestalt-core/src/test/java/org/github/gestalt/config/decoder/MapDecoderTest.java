@@ -12,12 +12,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class MapDecoderTest {
 
-    ConfigNodeService configNodeService;
     final SentenceLexer lexer = new PathLexer();
+    ConfigNodeService configNodeService;
     DecoderRegistry registry;
 
     @BeforeEach

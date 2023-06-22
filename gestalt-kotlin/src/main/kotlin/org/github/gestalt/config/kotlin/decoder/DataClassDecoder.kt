@@ -17,7 +17,6 @@ import org.github.gestalt.config.utils.PathUtil
 import org.github.gestalt.config.utils.ValidateOf
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
@@ -75,7 +74,7 @@ class DataClassDecoder : Decoder<Any> {
 
 
                         // if we have an annotation, use that for the path instead of the name.
-                        val configAnnotation: Config? =  props?.javaField?.getAnnotation(Config::class.java)
+                        val configAnnotation: Config? = props?.javaField?.getAnnotation(Config::class.java)
                         if (configAnnotation?.path?.isNotEmpty() == true) {
                             paramName = configAnnotation.path
                         }

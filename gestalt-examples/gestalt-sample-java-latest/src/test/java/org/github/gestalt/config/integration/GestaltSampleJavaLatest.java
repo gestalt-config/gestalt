@@ -21,8 +21,7 @@ import java.util.Map;
 public class GestaltSampleJavaLatest {
 
     @BeforeAll
-    public static void beforeAll()
-    {
+    public static void beforeAll() {
         System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
     }
 
@@ -142,7 +141,7 @@ public class GestaltSampleJavaLatest {
     }
 
     public record HttpPool(short maxTotal, long maxPerRoute, int validateAfterInactivity, double keepAliveTimeoutMs,
-                                  int idleTimeoutSec, float defaultWait) {
+                           int idleTimeoutSec, float defaultWait) {
     }
 
 

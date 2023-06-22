@@ -96,17 +96,17 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertFalse(user.overrideEnabled)
         Assertions.assertEquals(
             "active", gestalt.getConfig(
-            "serviceMode", TypeCapture.of(
-            String::class.java
-        )
-        )
+                "serviceMode", TypeCapture.of(
+                    String::class.java
+                )
+            )
         )
         Assertions.assertEquals(
             'a', gestalt.getConfig(
-            "serviceMode", TypeCapture.of(
-            Char::class.java
-        )
-        )
+                "serviceMode", TypeCapture.of(
+                    Char::class.java
+                )
+            )
         )
     }
 
@@ -138,10 +138,12 @@ class KotlinGestaltIntegrationTests {
         try {
             gestalt.getConfig<Long>("http.pool.notExist")
             Assertions.fail("Should not reach this")
-        } catch (e:GestaltException) {
-            Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
-                " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
-                "during navigating to next node", e.message)
+        } catch (e: GestaltException) {
+            Assertions.assertEquals(
+                "Failed getting config path: http.pool.notExist, for class: long\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                    "during navigating to next node", e.message
+            )
         }
 
     }
@@ -175,10 +177,12 @@ class KotlinGestaltIntegrationTests {
         try {
             gestalt.getConfig<Long>("http.pool.notExist")
             Assertions.fail("Should not reach this")
-        } catch (e:GestaltException) {
-            Assertions.assertEquals("Failed getting config path: http.pool.notExist, for class: long\n" +
-                " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
-                "during navigating to next node", e.message)
+        } catch (e: GestaltException) {
+            Assertions.assertEquals(
+                "Failed getting config path: http.pool.notExist, for class: long\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: http.pool.notExist, for class: ObjectToken, " +
+                    "during navigating to next node", e.message
+            )
         }
 
     }
@@ -303,22 +307,22 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertFalse(user.overrideEnabled)
         Assertions.assertEquals(
             "active", gestalt.getConfig(
-            "serviceMode", TypeCapture.of(
-            String::class.java
-        )
-        )
+                "serviceMode", TypeCapture.of(
+                    String::class.java
+                )
+            )
         )
         Assertions.assertEquals(
             'a', gestalt.getConfig(
-            "serviceMode", TypeCapture.of(
-            Char::class.java
-        )
-        )
+                "serviceMode", TypeCapture.of(
+                    Char::class.java
+                )
+            )
         )
         val booking = gestalt.getConfig(
             "subservice.booking", TypeCapture.of(
-            SubService::class.java
-        )
+                SubService::class.java
+            )
         )
         Assertions.assertTrue(booking.isEnabled)
         Assertions.assertEquals("https://dev.booking.host.name", booking.service!!.host)

@@ -248,7 +248,7 @@ public final class ClassUtils {
      *
      * @param cls the class to convert, may be null
      * @return the wrapper class for {@code cls} or {@code cls} if {@code cls} is not a primitive. {@code null} if null
-     *     input.
+     * input.
      * @since 2.1
      */
     public static Class<?> primitiveToWrapper(final Class<?> cls) {

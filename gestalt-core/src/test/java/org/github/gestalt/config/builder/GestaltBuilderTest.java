@@ -150,9 +150,9 @@ class GestaltBuilderTest {
             .setTreatMissingArrayIndexAsError(true)
             .setTreatMissingValuesAsErrors(true)
             .setDateDecoderFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-                                                   .setLocalDateFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                                                   .setLocalDateTimeFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-                                                   .build();
+            .setLocalDateFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            .setLocalDateTimeFormat(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+            .build();
 
         gestalt.loadConfigs();
 
@@ -161,9 +161,9 @@ class GestaltBuilderTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                .hasMessage("Failed getting config path: admin[1], for class: java.lang.String\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
-                    "during navigating to next node");
+                         .hasMessage("Failed getting config path: admin[1], for class: java.lang.String\n" +
+                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
+                             "during navigating to next node");
         }
     }
 

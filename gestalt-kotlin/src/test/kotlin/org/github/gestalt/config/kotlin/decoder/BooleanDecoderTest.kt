@@ -57,9 +57,12 @@ internal class BooleanDecoderTest {
             "db.enabled", LeafNode("true"), TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -74,9 +77,12 @@ internal class BooleanDecoderTest {
             "db.enabled", LeafNode("false"), TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -91,9 +97,12 @@ internal class BooleanDecoderTest {
             "db.enabled", LeafNode(null), TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(listOf(decoder), configNodeService, lexer, listOf(StandardPathMapper(),
-                DotNotationPathMapper()
-            ))
+            DecoderRegistry(
+                listOf(decoder), configNodeService, lexer, listOf(
+                    StandardPathMapper(),
+                    DotNotationPathMapper()
+                )
+            )
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

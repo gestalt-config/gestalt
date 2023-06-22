@@ -8,7 +8,6 @@ import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.ClassPathConfigSource
 import org.github.gestalt.config.source.EnvironmentConfigSource
-import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.MapConfigSource
 import org.junit.jupiter.api.Assertions.*
 import kotlin.reflect.typeOf

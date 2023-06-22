@@ -50,7 +50,7 @@ class MapConfigSourceTest {
         Assertions.assertNotNull(configs);
         Assertions.assertEquals(2, configs.size());
         assertThat(configs).contains(new Pair<>("db.name", "test"))
-            .contains(new Pair<>("db.port", "3306"));
+                           .contains(new Pair<>("db.port", "3306"));
     }
 
     @Test

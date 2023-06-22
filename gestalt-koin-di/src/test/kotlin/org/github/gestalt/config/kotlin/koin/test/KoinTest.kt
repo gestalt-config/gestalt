@@ -3,7 +3,6 @@ package org.github.gestalt.config.kotlin.koin.test
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.kotlin.koin.gestalt
-import org.github.gestalt.config.kotlin.koin.gestalt
 import org.github.gestalt.config.source.ClassPathConfigSource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll

@@ -6,7 +6,6 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;

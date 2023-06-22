@@ -30,7 +30,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.System.Logger.Level.*;      //NOPMD
+import static java.lang.System.Logger.Level.DEBUG;
+import static java.lang.System.Logger.Level.WARNING;
 
 /**
  * Builder to setup and create the Gestalt config class.
@@ -54,6 +55,7 @@ public class GestaltBuilder {
     private static final System.Logger logger = System.getLogger(GestaltBuilder.class.getName());
     private final List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>();
     private final List<CoreReloadListener> coreCoreReloadListeners = new ArrayList<>();
+    private final Map<Class, GestaltModuleConfig> modules = new HashMap<>();
     private ConfigLoaderService configLoaderService = new ConfigLoaderRegistry();
     private DecoderService decoderService;
     private SentenceLexer sentenceLexer = new PathLexer();
@@ -64,8 +66,6 @@ public class GestaltBuilder {
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<PostProcessor> postProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
-    private final Map<Class, GestaltModuleConfig> modules = new HashMap<>();
-
     private boolean useCacheDecorator = true;
 
     private Boolean treatWarningsAsErrors = null;

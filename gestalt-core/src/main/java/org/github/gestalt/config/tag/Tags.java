@@ -12,9 +12,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class Tags {
-    private final Set<Tag> tags;
-
     private static final Tags defaultTags = new Tags(Set.of());
+    private final Set<Tag> tags;
 
     private Tags(Set<Tag> tags) {
         this.tags = new HashSet<>(tags);

@@ -5,7 +5,8 @@ import org.github.gestalt.config.Gestalt;
 public final class GestaltConfigProvider {
     private static volatile Gestalt gestalt = null;
 
-    private GestaltConfigProvider() { }
+    private GestaltConfigProvider() {
+    }
 
     public static void registerGestalt(Gestalt regGestalt) {
         if (gestalt == null) {  // NOPMD

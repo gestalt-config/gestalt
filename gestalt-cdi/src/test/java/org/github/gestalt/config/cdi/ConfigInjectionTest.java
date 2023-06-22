@@ -88,6 +88,12 @@ class ConfigInjectionTest {
         assertEquals(Color.RED, configBean.getColorEnum());
     }
 
+    enum Color {
+        RED,
+        GREEN,
+        BLUE
+    }
+
     @ApplicationScoped
     static class ConfigBean {
 
@@ -228,11 +234,5 @@ class ConfigInjectionTest {
         public Color getColorEnum() {
             return colorEnum;
         }
-    }
-
-    enum Color {
-        RED,
-        GREEN,
-        BLUE
     }
 }

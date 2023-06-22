@@ -6,17 +6,6 @@ import org.junit.jupiter.api.Test;
 
 public class AnnotationTest {
 
-    private static class TestClass {
-        @Config(path = "value", defaultVal = "10")
-        public int myVal = 100;
-
-        @Config(defaultVal = "20")
-        public int myVal2 = 200;
-
-        @Config(path = "value3")
-        public int myVal3 = 300;
-    }
-
     @Test
 
     public void testAnnotation() throws NoSuchFieldException {
@@ -39,5 +28,16 @@ public class AnnotationTest {
 
         Assertions.assertEquals("value3", annotation.path());
         Assertions.assertEquals("", annotation.defaultVal());
+    }
+
+    private static class TestClass {
+        @Config(path = "value", defaultVal = "10")
+        public int myVal = 100;
+
+        @Config(defaultVal = "20")
+        public int myVal2 = 200;
+
+        @Config(path = "value3")
+        public int myVal3 = 300;
     }
 }

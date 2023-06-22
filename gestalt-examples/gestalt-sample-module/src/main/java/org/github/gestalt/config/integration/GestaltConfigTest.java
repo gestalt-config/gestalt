@@ -17,6 +17,7 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +25,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-
-import org.junit.jupiter.api.Assertions;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -745,6 +744,39 @@ public class GestaltConfigTest {
         LEVEL0, LEVEL1
     }
 
+    public interface IHostDefault {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        // disable default interface methods for now.
+        //default int getPort() {
+        //    return 10;
+        //}
+    }
+
+    public interface IHost {
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+    }
+
+    public interface IHostAnnotations {
+        @Config(path = "user")
+        String getUser();
+
+        String getUrl();
+
+        String getPassword();
+
+        @Config(defaultVal = "customers")
+        String getTable();
+    }
+
     public static class TestReloadListener implements CoreReloadListener {
 
         int count = 0;
@@ -766,40 +798,6 @@ public class GestaltConfigTest {
         public HttpPool() {
 
         }
-    }
-
-    public interface IHostDefault {
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-
-        // disable default interface methods for now.
-        //default int getPort() {
-        //    return 10;
-        //}
-    }
-
-
-    public interface IHost {
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-    }
-
-    public interface IHostAnnotations {
-        @Config(path = "user")
-        String getUser();
-
-        String getUrl();
-
-        String getPassword();
-
-        @Config(defaultVal = "customers" )
-        String getTable();
     }
 
     public static class HostAnnotations implements IHost {
@@ -830,10 +828,12 @@ public class GestaltConfigTest {
             return secret;
         }
 
-        public String getTable() {return table;}
+        public String getTable() {
+            return table;
+        }
     }
 
-    public static class HostMethodAnnotations{
+    public static class HostMethodAnnotations {
         private String user;
         private String url;
         private String secret;
@@ -853,7 +853,9 @@ public class GestaltConfigTest {
         }
 
         @Config(defaultVal = "customers")
-        public String getTable() {return table;}
+        public String getTable() {
+            return table;
+        }
     }
 
     public static class Host implements IHost {

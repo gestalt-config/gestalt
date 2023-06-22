@@ -7,17 +7,21 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
-import org.github.gestalt.config.test.classes.*;   // NOPMD
+import org.github.gestalt.config.test.classes.*;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.*;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class RecordDecoderTest {
 
-    ConfigNodeService configNodeService;
     final SentenceLexer lexer = new PathLexer();
+    ConfigNodeService configNodeService;
     DecoderRegistry registry;
 
     @BeforeEach

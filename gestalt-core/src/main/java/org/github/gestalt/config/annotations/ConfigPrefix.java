@@ -3,7 +3,7 @@ package org.github.gestalt.config.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -11,7 +11,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-@Target(value = { TYPE })
+@Target(value = {TYPE})
 @Retention(value = RUNTIME)
 public @interface ConfigPrefix {
     String prefix();

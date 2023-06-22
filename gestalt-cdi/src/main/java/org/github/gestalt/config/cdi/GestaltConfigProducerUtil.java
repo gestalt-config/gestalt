@@ -38,7 +38,6 @@ public final class GestaltConfigProducerUtil {
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
      * @param config the current {@link InjectConfig} instance.
      * @param <T> type of class to get.
-     *
      * @return the converted configuration value.
      */
     public static <T> T getValue(InjectionPoint injectionPoint, Gestalt config) {

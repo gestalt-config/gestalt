@@ -22,4 +22,4 @@ module org.github.gestalt.kotlin {
         org.github.gestalt.config.kotlin.decoder.LongDecoder,
         org.github.gestalt.config.kotlin.decoder.ShortDecoder,
         org.github.gestalt.config.kotlin.decoder.StringDecoder;
-    }
+}

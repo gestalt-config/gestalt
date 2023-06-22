@@ -239,7 +239,7 @@ class ProxyDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
-                " during navigating to next node", validate.getErrors().get(0).description());
+            " during navigating to next node", validate.getErrors().get(0).description());
 
         DBPoolInterface results = (DBPoolInterface) validate.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -294,7 +294,7 @@ class ProxyDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-                "during navigating to next node", validate.getErrors().get(0).description());
+            "during navigating to next node", validate.getErrors().get(0).description());
 
         IDBInfoAnnotations results = (IDBInfoAnnotations) validate.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -317,9 +317,9 @@ class ProxyDecoderTest {
 
         Assertions.assertEquals(2, validate.getErrors().size());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-                "during navigating to next node", validate.getErrors().get(0).description());
+            "during navigating to next node", validate.getErrors().get(0).description());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
-                "attempting to decode Integer",  validate.getErrors().get(1).description());
+            "attempting to decode Integer", validate.getErrors().get(1).description());
 
         IDBInfoBadAnnotations results = (IDBInfoBadAnnotations) validate.results();
         Assertions.assertEquals("pass", results.getPassword());
