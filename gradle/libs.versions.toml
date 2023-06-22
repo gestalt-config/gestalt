@@ -19,10 +19,11 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-aws = "2.20.81"
-gcpLibraryBOM = "26.16.0"
+aws = "2.20.90"
+gcpStorage = "2.23.0"
+gcpSecret = "2.19.0"
 # Git support
-jgit = "6.5.0.202303070854-r"
+jgit = "6.6.0.202305301015-r"
 eddsa = "0.3.0"
 # testing
 junit5 = "5.9.3"
@@ -30,9 +31,9 @@ assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.5"
 koTestAssertions = "5.6.2"
-awsMock = "2.12.2"
+awsMock = "2.13.0"
 # static code analysis
-errorprone = "2.19.1"
+errorprone = "2.20.0"
 gradleErrorProne = "3.1.0"
 detekt = "1.23.0"
 gradleDetekt = "1.23.0"
@@ -43,7 +44,7 @@ gradleJmh = "0.7.1"
 # gestalt for integration tests.
 gestalt = "0.21.1"
 # Gradle utility
-gradleVersions = "0.46.0"
+gradleVersions = "0.47.0"
 gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.0"
 
@@ -74,7 +75,8 @@ hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 aws-S3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
 aws-secret = { module = "software.amazon.awssdk:secretsmanager", version.ref = "aws" }
 aws-url-client = { module = "software.amazon.awssdk:url-connection-client", version.ref = "aws" }
-google-storage = { module = "com.google.cloud:google-cloud-storage",   version.ref = "gcpLibraryBOM"}
+google-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "gcpStorage" }
+google-secret = { module = "com.google.cloud:google-cloud-secretmanager", version.ref = "gcpSecret" }
 # Git Support
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }
