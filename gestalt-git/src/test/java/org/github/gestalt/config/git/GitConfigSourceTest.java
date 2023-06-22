@@ -86,7 +86,7 @@ class GitConfigSourceTest {
     }
 
     @Test
-        //@Disabled
+    @Disabled
     void hasStreamWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
@@ -112,7 +112,7 @@ class GitConfigSourceTest {
     }
 
     @Test
-        //@Disabled
+    @Disabled
     void hasStreamSSHWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
