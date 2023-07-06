@@ -55,7 +55,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      *
      * @param configLoaderService configLoaderService to hold all config loaders
      * @param sources sources we wish to load the configs from. We load the sources in the order they are provided.
-     * Overriding older values with new one where needed
+     *     Overriding older values with new one where needed
      * @param decoderService decoderService to hold all decoders
      * @param sentenceLexer sentenceLexer to parse the configuration paths when doing searches.
      * @param gestaltConfig configuration for the Gestalt

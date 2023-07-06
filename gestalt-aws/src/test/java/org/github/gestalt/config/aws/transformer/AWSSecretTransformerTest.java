@@ -188,8 +188,9 @@ class AWSSecretTransformerTest {
         Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
         Assertions.assertEquals("AWSModuleConfig has not been registered. " +
-                "Register by creating a AWSBuilder then registering the AWSBuilder.build() results with the Gestalt Builder.addModuleConfig(). " +
-                "If you wish to use the aws module with string substitution ${awsSecret:secret:myKey} on the path: test",
+                "Register by creating a AWSBuilder then registering the AWSBuilder.build() results with the Gestalt " +
+                "Builder.addModuleConfig(). If you wish to use the aws module with string substitution ${awsSecret:secret:myKey} " +
+                "on the path: test",
             results.getErrors().get(0).description());
     }
 

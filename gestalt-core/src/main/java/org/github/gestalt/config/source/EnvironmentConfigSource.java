@@ -47,7 +47,7 @@ public class EnvironmentConfigSource implements ConfigSource {
      * constructor for EnvironmentConfigSource.
      *
      * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     * are often uncontrolled and may not follow expected conventions of this library.
+     *     are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource(boolean failOnErrors) {
         this("", false, failOnErrors, Tags.of());
@@ -80,7 +80,7 @@ public class EnvironmentConfigSource implements ConfigSource {
      * @param prefix only use the Environment variables that have a prefix.
      * @param removePrefix If you should remove the prefix from the output
      * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     * are often uncontrolled and may not follow expected conventions of this library.
+     *     are often uncontrolled and may not follow expected conventions of this library.
      * @param tags set of tags associated with this source.
      */
     public EnvironmentConfigSource(String prefix, boolean removePrefix, boolean failOnErrors, Tags tags) {

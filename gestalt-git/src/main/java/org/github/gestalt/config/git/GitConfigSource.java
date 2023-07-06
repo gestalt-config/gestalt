@@ -45,7 +45,7 @@ public class GitConfigSource implements ConfigSource {
      * @param branch the branch you want to pull from git
      * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
      * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     * The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     *     The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @throws GestaltException if there is a badly configured git repo
      */
     public GitConfigSource(String repoURI, Path localRepoDirectory, String configFilePath, String branch, CredentialsProvider credentials,
@@ -62,7 +62,7 @@ public class GitConfigSource implements ConfigSource {
      * @param branch the branch you want to pull from git
      * @param credentials If authenticating with credentials, the CredentialsProvider such as UsernamePasswordCredentialsProvider
      * @param sshSessionFactory If using sshd the SshSessionFactory, this uses  apache mina-sshd.
-     * The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
+     *     The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @param tags tags associated with the source
      * @throws GestaltException if there is a badly configured git repo
      */

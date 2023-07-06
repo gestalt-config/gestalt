@@ -44,7 +44,7 @@ public class SystemPropertiesConfigSource implements ConfigSource {
      * constructor for SystemPropertiesConfigSource.
      *
      * @param failOnErrors treat Errors while loading as warnings since System Properties
-     * are often uncontrolled and may not follow expected conventions of this library.
+     *     are often uncontrolled and may not follow expected conventions of this library.
      */
     public SystemPropertiesConfigSource(boolean failOnErrors) {
         this(failOnErrors, Tags.of());
@@ -63,7 +63,7 @@ public class SystemPropertiesConfigSource implements ConfigSource {
      * constructor for SystemPropertiesConfigSource.
      *
      * @param failOnErrors treat Errors while loading as warnings since System Properties
-     * are often uncontrolled and may not follow expected conventions of this library.
+     *     are often uncontrolled and may not follow expected conventions of this library.
      * @param tags tags associated with the source
      */
     public SystemPropertiesConfigSource(boolean failOnErrors, Tags tags) {
