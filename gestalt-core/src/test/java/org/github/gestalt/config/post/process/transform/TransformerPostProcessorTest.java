@@ -599,6 +599,60 @@ class TransformerPostProcessorTest {
         Assertions.assertEquals("${my.path.greeting.night}", validateNode.results().getValue().get());
     }
 
+    @Test
+    void processNestedDefaults() {
+
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("path1", "sunny");
+        customMap.put("path2", "cloudy");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("the weather is sunny", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processNestedDefaultsFallback() {
+
+        Map<String, String> customMap = new HashMap<>();
+        //customMap.put("path1", "sunny");
+        customMap.put("path2", "cloudy");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("the weather is cloudy", validateNode.results().getValue().get());
+    }
+
+    @Test
+    void processNestedDefaultsFallbackDefault() {
+
+        Map<String, String> customMap = new HashMap<>();
+        //customMap.put("path1", "sunny");
+        //customMap.put("path2", "cloudy");
+        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
+        LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
+        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("the weather is rainy", validateNode.results().getValue().get());
+    }
+
     @ConfigPriority(10)
     public static class CustomTransformer extends CustomMapTransformer {
         public CustomTransformer(Map<String, String> replacementVars) {

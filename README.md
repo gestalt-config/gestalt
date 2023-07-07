@@ -453,6 +453,13 @@ You can provide a default for the substitution in the format `${transform:key:=d
 db.uri=jdbc:mysql://${DB_HOST}:${map:DB_PORT:=3306}/${environment:=dev}
 ```
 
+Using nested substitution, you can have a chain of defaults. Where you can fall back from one source to another. 
+
+```properties
+test.duration=${sys:duration:=${env:TEST_DURATION:=120}}
+```
+In this example, it will first try the system variable `duration`, then the Environment Variable `TEST_DURATION` and finally if none of those are found, it will use the default `120`
+
 ### Escaping a Substitution
 You can escape the value with '\' like `\${my text}` to prevent the substitution. In Java you need to write `\\` to escape the character in a normal string but not in a Text block
 In nested substitutions you should escape both the opening token `\${` and the closing token `\}` to be clear what is escaped, otherwise you may get undetermined results. 
