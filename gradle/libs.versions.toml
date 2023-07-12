@@ -42,7 +42,7 @@ checkStyle = "10.10.0"
 jmh = "1.36"
 gradleJmh = "0.7.1"
 # gestalt for integration tests.
-gestalt = "0.21.1"
+gestalt = "0.22.0"
 # Gradle utility
 gradleVersions = "0.47.0"
 gitVersions = "3.0.0"

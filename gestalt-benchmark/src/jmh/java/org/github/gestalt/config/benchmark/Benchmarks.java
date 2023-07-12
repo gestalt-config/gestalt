@@ -10,6 +10,11 @@ import org.openjdk.jmh.annotations.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.*;
 
 /*
  * Benchmark of basic Gestalt configuration.
@@ -58,7 +63,7 @@ public abstract class Benchmarks {
             .addSource(new MapConfigSource(configs))
             .build();
 
-        // Load the configurations, this will thow exceptions if there are any errors.
+        // Load the configurations, this will throw exceptions if there are any errors.
         gestalt.loadConfigs();
 
         return gestalt;
@@ -71,6 +76,16 @@ public abstract class Benchmarks {
 
         @Setup
         public void setup() throws GestaltException {
+            System.setProperty("cacheSize", "100");
+
+            // disable all logging.
+            LogManager.getLogManager().reset();
+            Logger rootLogger = LogManager.getLogManager().getLogger("");
+            rootLogger.setLevel(OFF);
+            for (Handler h : rootLogger.getHandlers()) {
+                h.setLevel(OFF);
+            }
+
             // Create a map of configurations we wish to inject.
             Map<String, String> configs = new HashMap<>();
             configs.put("db.hosts[0].password", "1234");
@@ -100,6 +115,7 @@ public abstract class Benchmarks {
 
             // Load the configurations, this will thow exceptions if there are any errors.
             gestaltNoCache.loadConfigs();
+
         }
     }
 

@@ -21,7 +21,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(19))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -38,9 +38,10 @@ jmh {
     // Benchmarks
     fork.set(2)
     iterations.set(5)
-    timeOnIteration.set("30s")
+    timeOnIteration.set("5s")
 
     jvmArgs.set(listOf("-Xmx1G", "-Xms1G", "-XX:+UseG1GC"))
+
 }
 
 // to view results https://jmh.morethan.io/
