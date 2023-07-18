@@ -30,8 +30,8 @@ apply(plugin = "jacoco")
 
 tasks.withType<JacocoReport> {
     reports {
-        xml.required.set(false)
-        html.required.set(false)
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
 

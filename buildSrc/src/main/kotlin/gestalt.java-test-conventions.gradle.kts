@@ -34,7 +34,7 @@ tasks.test {
 
 tasks.jacocoTestReport {
     reports {
-        xml.required.set(false)
+        xml.required.set(true)
         html.required.set(true)
     }
 }
