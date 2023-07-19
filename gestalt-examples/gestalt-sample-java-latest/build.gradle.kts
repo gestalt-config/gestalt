@@ -17,23 +17,20 @@ java {
 }
 
 testing {
-  suites {
-    val test by getting(JvmTestSuite::class) {
-      useJUnitJupiter()
-      testType.set(TestSuiteType.UNIT_TEST)
-      dependencies {
-        implementation(project(":gestalt-aws"))
-        implementation(project(":gestalt-core"))
-        implementation(project(":gestalt-hocon"))
-        implementation(project(":gestalt-kotlin"))
-        implementation(project(":gestalt-json"))
-        implementation(project(":gestalt-toml"))
-        implementation(project(":gestalt-yaml"))
-
-        implementation(libs.aws.mock)
-      }
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            testType.set(TestSuiteType.UNIT_TEST)
+            dependencies {
+                implementation(project(":gestalt-core"))
+                implementation(project(":gestalt-hocon"))
+                implementation(project(":gestalt-kotlin"))
+                implementation(project(":gestalt-json"))
+                implementation(project(":gestalt-toml"))
+                implementation(project(":gestalt-yaml"))
+            }
+        }
     }
-  }
 }
 
 tasks.jar {

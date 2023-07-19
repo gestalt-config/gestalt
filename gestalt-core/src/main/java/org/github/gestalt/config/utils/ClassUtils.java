@@ -275,4 +275,33 @@ public final class ClassUtils {
     public static Class<?> wrapperToPrimitive(final Class<?> cls) {
         return wrapperPrimitiveMap.get(cls);
     }
+
+    /**
+     * Returns whether the given {@code type} is a primitive or primitive wrapper ({@link Boolean}, {@link Byte},
+     * {@link Character}, {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     *
+     * @param type The class to query or null.
+     * @return true if the given {@code type} is a primitive or primitive wrapper ({@link Boolean}, {@link Byte},
+     *         {@link Character}, {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     * @since 3.1
+     */
+    public static boolean isPrimitiveOrWrapper(final Class<?> type) {
+        if (type == null) {
+            return false;
+        }
+        return type.isPrimitive() || isPrimitiveWrapper(type);
+    }
+
+    /**
+     * Returns whether the given {@code type} is a primitive wrapper ({@link Boolean}, {@link Byte}, {@link Character},
+     * {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     *
+     * @param type The class to query or null.
+     * @return true if the given {@code type} is a primitive wrapper ({@link Boolean}, {@link Byte}, {@link Character},
+     *         {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     * @since 3.1
+     */
+    public static boolean isPrimitiveWrapper(final Class<?> type) {
+        return wrapperPrimitiveMap.containsKey(type);
+    }
 }

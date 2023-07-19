@@ -1,65 +1,26 @@
 package org.github.gestalt.config.aws.s3;
 
-import com.adobe.testing.s3mock.junit5.S3MockExtension;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import software.amazon.awssdk.core.sync.RequestBody;
+import org.mockito.Mockito;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
-
-class S3ConfigSourceTest {
-
-    @RegisterExtension
-    static final S3MockExtension S3_MOCK =
-        S3MockExtension.builder().silent().withSecureConnection(false).build();
+@Testcontainers
+class S3ConfigSourceMockTest {
 
     private static final String BUCKET_NAME = "testbucket";
-    private static final String BUCKET_NAME_2 = "testbucket2";
+
     private static final String UPLOAD_FILE_NAME = "src/test/resources/default.properties";
 
-    private final S3Client s3Client = S3_MOCK.createS3ClientV2();
 
-    @Test
-    void loadFile() throws GestaltException {
+    private final S3Client s3Client = Mockito.mock();
 
-        final File uploadFile = new File(UPLOAD_FILE_NAME);
-
-        s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
-        s3Client.putObject(
-            PutObjectRequest.builder().bucket(BUCKET_NAME).key(uploadFile.getName()).build(),
-            RequestBody.fromFile(uploadFile));
-
-
-        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, uploadFile.getName());
-
-        Assertions.assertTrue(source.hasStream());
-        Assertions.assertNotNull(source.loadStream());
-    }
-
-    @Test
-    void loadFileDoesNotExist() throws GestaltException {
-
-        final File uploadFile = new File(UPLOAD_FILE_NAME);
-
-        s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME_2).build());
-        s3Client.putObject(
-            PutObjectRequest.builder().bucket(BUCKET_NAME_2).key(uploadFile.getName()).build(),
-            RequestBody.fromFile(uploadFile));
-
-
-        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME_2, uploadFile.getName() + ".noMatch");
-
-        Assertions.assertTrue(source.hasStream());
-        GestaltException ex = Assertions.assertThrows(GestaltException.class, source::loadStream);
-
-        Assertions.assertEquals("Exception loading S3 key: default.properties.noMatch, bucket: testbucket2, " +
-            "with error: The specified key does not exist.", ex.getMessage());
+    @BeforeEach
+    void setUp() {
     }
 
     @Test

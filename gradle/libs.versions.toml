@@ -19,9 +19,8 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-aws = "2.20.99"
-gcpStorage = "2.23.0"
-gcpSecret = "2.20.0"
+awsBom = "2.20.56"
+gcpLibraries = "26.18.0"
 # Git support
 jgit = "6.6.0.202305301015-r"
 eddsa = "0.3.0"
@@ -31,7 +30,9 @@ assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.5"
 koTestAssertions = "5.6.2"
+# @pin last version to support jdk 11
 awsMock = "2.17.0"
+testcontainers = "1.18.3"
 # static code analysis
 errorprone = "2.20.0"
 gradleErrorProne = "3.1.0"
@@ -72,11 +73,13 @@ jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-t
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 # Cloud
-aws-S3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
-aws-secret = { module = "software.amazon.awssdk:secretsmanager", version.ref = "aws" }
-aws-url-client = { module = "software.amazon.awssdk:url-connection-client", version.ref = "aws" }
-google-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "gcpStorage" }
-google-secret = { module = "com.google.cloud:google-cloud-secretmanager", version.ref = "gcpSecret" }
+aws-bom = { module = "software.amazon.awssdk:bom", version.ref = "awsBom" }
+aws-S3 = { module = "software.amazon.awssdk:s3" }
+aws-secret = { module = "software.amazon.awssdk:secretsmanager" }
+aws-url-client = { module = "software.amazon.awssdk:url-connection-client" }
+google-libraries = { module = "com.google.cloud:libraries-bom", version.ref = "gcpLibraries" }
+google-storage = { module = "com.google.cloud:google-cloud-storage" }
+google-secret = { module = "com.google.cloud:google-cloud-secretmanager" }
 # Git Support
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }
@@ -88,7 +91,8 @@ assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
 mockito = { module = "org.mockito:mockito-inline", version.ref = "mockito" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 koTestAssertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "koTestAssertions" }
-aws-Mock = { module = "com.adobe.testing:s3mock-junit5", version.ref = "awsMock" }
+aws-Mock = { module = "com.adobe.testing:s3mock-testcontainers", version.ref = "awsMock" }
+testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 # Benchmarking
 jmh = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
 jmh-annotations = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
@@ -115,11 +119,11 @@ gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", versio
 
 [bundles]
 jackson = [
-    "jackson-core",
-    "jackson-databind",
-    "jackson-dataformat-yaml",
-    "jackson-java8",
-    "jackson-jsr310",
+  "jackson-core",
+  "jackson-databind",
+  "jackson-dataformat-yaml",
+  "jackson-java8",
+  "jackson-jsr310",
 ]
 
 [plugins]

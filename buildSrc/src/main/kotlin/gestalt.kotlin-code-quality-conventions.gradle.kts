@@ -14,7 +14,7 @@ dependencies {
 
 detekt {
     toolVersion = libs.versions.detekt.get()
-    config = files(project.rootDir.resolve("config/detekt/config.yml"))
+    config.setFrom("$rootDir/config/detekt/config.yml")
     debug = false
     parallel = false
 }
@@ -25,7 +25,7 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
     exclude(".*/build/.*")
 
     reports {
-        xml.required.set(false)
-        html.required.set(false)
+        xml.required.set(true)
+        html.required.set(true)
     }
 }

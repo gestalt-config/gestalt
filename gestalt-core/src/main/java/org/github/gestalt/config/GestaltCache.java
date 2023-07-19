@@ -57,7 +57,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     @SuppressWarnings("unchecked")
     public <T> T getConfig(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
-        if (cache.containsKey(key) && cache.get(key) != null) {
+        if (cache.get(key) != null) {
             return (T) cache.get(key);
         } else {
             T result = delegate.getConfig(path, klass, tags);

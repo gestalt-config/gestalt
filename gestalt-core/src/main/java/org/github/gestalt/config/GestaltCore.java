@@ -334,7 +334,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                     if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
                         String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + combinedPath +
                             ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
-                        logger.log(DEBUG, errorMsg);
+                        logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
                     }
 
                     return defaultVal;
@@ -354,7 +354,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
             String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
                 ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
-            logger.log(DEBUG, errorMsg);
+            logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
         }
 
         if (failOnErrors) {

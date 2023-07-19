@@ -1,6 +1,7 @@
 package org.github.gestalt.config.integration;
 
-import com.adobe.testing.s3mock.junit5.S3MockExtension;
+
+import com.adobe.testing.s3mock.testcontainers.S3MockContainer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.github.gestalt.config.Gestalt;
@@ -22,32 +23,71 @@ import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.utils.AttributeMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES;
 
+@Testcontainers
 public class GestaltSample {
 
-    @RegisterExtension
-    static final S3MockExtension S3_MOCK =
-        S3MockExtension.builder().silent().withSecureConnection(false).build();
     private static final String BUCKET_NAME = "testbucket";
+    private static final String BUCKET_NAME_2 = "testbucket2";
+
+    private static final String S3MOCK_VERSION = System.getProperty("s3mock.version", "latest");
+    private static final Collection<String> INITIAL_BUCKET_NAMES = asList(BUCKET_NAME, BUCKET_NAME_2);
+    private static final String TEST_ENC_KEYREF =
+        "arn:aws:kms:us-east-1:1234567890:key/valid-test-key-ref";
+
     private static final String UPLOAD_FILE_NAME = "src/test/resources/default.properties";
-    private final S3Client s3Client = S3_MOCK.createS3ClientV2();
+
+    private S3Client s3Client;
+
+    @Container
+    private static final S3MockContainer s3Mock =
+        new S3MockContainer(S3MOCK_VERSION)
+            .withValidKmsKeys(TEST_ENC_KEYREF)
+            .withInitialBuckets(String.join(",", INITIAL_BUCKET_NAMES));
+
+    @BeforeEach
+    void setUp() {
+        // Must create S3Client after S3MockContainer is started, otherwise we can't request the random
+        // locally mapped port for the endpoint
+        var endpoint = s3Mock.getHttpsEndpoint();
+        s3Client = createS3ClientV2(endpoint);
+    }
+
+    protected S3Client createS3ClientV2(String endpoint) {
+        return S3Client.builder()
+            .region(Region.of("us-east-1"))
+            .credentialsProvider(
+                StaticCredentialsProvider.create(AwsBasicCredentials.create("foo", "bar")))
+            .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+            .endpointOverride(URI.create(endpoint))
+            .httpClient(UrlConnectionHttpClient.builder().buildWithDefaults(
+                AttributeMap.builder().put(TRUST_ALL_CERTIFICATES, Boolean.TRUE).build()))
+            .build();
+    }
 
     @BeforeAll
     public static void beforeAll() {
@@ -543,7 +583,6 @@ public class GestaltSample {
 
         final File uploadFile = new File(UPLOAD_FILE_NAME);
 
-        s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
         s3Client.putObject(
             PutObjectRequest.builder().bucket(BUCKET_NAME).key(uploadFile.getName()).build(),
             RequestBody.fromFile(uploadFile));
@@ -703,6 +742,21 @@ public class GestaltSample {
         Assertions.assertEquals(60000D, pool.keepAliveTimeoutMs);
         Assertions.assertEquals(25, pool.idleTimeoutSec);
         Assertions.assertEquals(33.0F, pool.defaultWait);
+
+        Map<String, Integer> httpPoolMap = gestalt.getConfig("http.pool", new TypeCapture<>() { });
+
+        Assertions.assertEquals(50, httpPoolMap.get("maxperroute"));
+        Assertions.assertEquals(6000, httpPoolMap.get("validateafterinactivity"));
+        Assertions.assertEquals(60000, httpPoolMap.get("keepalivetimeoutms"));
+        Assertions.assertEquals(25, httpPoolMap.get("idletimeoutsec"));
+
+        Map<String, Integer> poolMap = gestalt.getConfig("http", new TypeCapture<>() { });
+
+        Assertions.assertEquals(50, poolMap.get("pool.maxperroute"));
+        Assertions.assertEquals(6000, poolMap.get("pool.validateafterinactivity"));
+        Assertions.assertEquals(60000, poolMap.get("pool.keepalivetimeoutms"));
+        Assertions.assertEquals(25, poolMap.get("pool.idletimeoutsec"));
+
 
         long startTime = System.nanoTime();
         gestalt.getConfig("db", DataBase.class);
