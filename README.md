@@ -1,6 +1,7 @@
 # Gestalt
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.gestalt-config/gestalt-core?label=MavenCentral&logo=apache-maven)](https://search.maven.org/artifact/com.github.gestalt-config/gestalt-core)
 [![License](https://img.shields.io/github/license/gestalt-config/gestalt.svg)](LICENSE)
+[![codecov](https://codecov.io/gh/gestalt-config/gestalt/branch/main/graph/badge.svg?token=R6I0XILN82)](https://codecov.io/gh/gestalt-config/gestalt)
 
 A Java configuration library that allows you to build your configurations from multiple sources, merges them and convert them into an easy-to-use typesafe configuration class.
 A simple but powerful interface allows you to navigate to a path within your configurations and retrieve a configuration object, list, or a primitive value.
