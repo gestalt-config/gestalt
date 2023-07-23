@@ -35,6 +35,7 @@ class ClassUtilsTest {
         Assertions.assertTrue(ClassUtils.isAssignable(double.class, double.class));
         Assertions.assertFalse(ClassUtils.isAssignable(Double.class, int.class));
         Assertions.assertTrue(ClassUtils.isAssignable(Character.class, int.class));
+
         Assertions.assertTrue(ClassUtils.isAssignable(Character.class, double.class));
         Assertions.assertTrue(ClassUtils.isAssignable(Character.class, float.class));
         Assertions.assertTrue(ClassUtils.isAssignable(Character.class, long.class));
@@ -54,6 +55,43 @@ class ClassUtilsTest {
         Assertions.assertFalse(ClassUtils.isAssignable(Integer.class, Gestalt.class));
         Assertions.assertFalse(ClassUtils.isAssignable(Gestalt.class, int.class));
         Assertions.assertFalse(ClassUtils.isAssignable(Gestalt.class, Integer.class));
+
+        Assertions.assertTrue(ClassUtils.isAssignable(int.class, long.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(int.class, float.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(int.class, double.class, false));
+
+        Assertions.assertTrue(ClassUtils.isAssignable(long.class, float.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(long.class, double.class, false));
+
+        Assertions.assertTrue(ClassUtils.isAssignable(char.class, int.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(char.class, long.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(char.class, float.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(char.class, double.class, false));
+
+        Assertions.assertTrue(ClassUtils.isAssignable(byte.class, short.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(byte.class, int.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(byte.class, long.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(byte.class, float.class, false));
+        Assertions.assertTrue(ClassUtils.isAssignable(byte.class, double.class, false));
+        Assertions.assertFalse(ClassUtils.isAssignable(Integer.class, int.class, false));
+    }
+
+    @Test
+    void isPrimitiveWrapper() {
+        Assertions.assertTrue(ClassUtils.isPrimitiveOrWrapper(Integer.class));
+        Assertions.assertTrue(ClassUtils.isPrimitiveOrWrapper(Double.class));
+        Assertions.assertTrue(ClassUtils.isPrimitiveOrWrapper(int.class));
+        Assertions.assertFalse(ClassUtils.isPrimitiveOrWrapper(String.class));
+        Assertions.assertFalse(ClassUtils.isPrimitiveOrWrapper(null));
+    }
+
+    @Test
+    void primitiveToWrapper() {
+        Assertions.assertEquals(ClassUtils.primitiveToWrapper(int.class), Integer.class);
+        Assertions.assertEquals(ClassUtils.primitiveToWrapper(long.class), Long.class);
+        Assertions.assertEquals(ClassUtils.primitiveToWrapper(Integer.class), Integer.class);
+
+        Assertions.assertEquals(ClassUtils.primitiveToWrapper(null), null);
     }
 }
 

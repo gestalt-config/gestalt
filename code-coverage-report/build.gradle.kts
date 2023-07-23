@@ -27,6 +27,8 @@ dependencies {
 
     // include additional tests.
     jacocoAggregation(project(":gestalt-test"))
+    jacocoAggregation(project(":gestalt-examples:gestalt-sample"))
+    jacocoAggregation(project(":gestalt-examples:gestalt-sample-java-latest"))
 }
 
 reporting {
