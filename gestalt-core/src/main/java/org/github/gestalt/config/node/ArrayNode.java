@@ -11,6 +11,7 @@ import java.util.Optional;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class ArrayNode implements ConfigNode {
+
     private final List<ConfigNode> values;
 
     /**
@@ -39,6 +40,15 @@ public class ArrayNode implements ConfigNode {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * get the underlying array for the node.
+     *
+     * @return the underlying array
+     */
+    public List<ConfigNode> getArray() {
+        return values;
     }
 
     @Override
