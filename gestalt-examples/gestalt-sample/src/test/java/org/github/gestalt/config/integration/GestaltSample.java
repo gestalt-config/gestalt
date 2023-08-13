@@ -4,12 +4,17 @@ package org.github.gestalt.config.integration;
 import com.adobe.testing.s3mock.testcontainers.S3MockContainer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.response.LogicalResponse;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.google.storage.GCSConfigSource;
 import org.github.gestalt.config.guice.GestaltModule;
@@ -22,9 +27,12 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.vault.config.VaultBuilder;
+import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.vault.VaultContainer;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -68,6 +76,34 @@ public class GestaltSample {
         new S3MockContainer(S3MOCK_VERSION)
             .withValidKmsKeys(TEST_ENC_KEYREF)
             .withInitialBuckets(String.join(",", INITIAL_BUCKET_NAMES));
+
+    private static final String VAULT_TOKEN = "my-root-token";
+    @Container
+    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.13.0").withVaultToken(VAULT_TOKEN);
+
+    private static Vault vault;
+
+    @BeforeAll
+    public static void setupVault() throws VaultException {
+        vaultContainer.start();
+
+        final VaultConfig config = new VaultConfig()
+            .address("http://" + vaultContainer.getHost() + ":" + vaultContainer.getFirstMappedPort())
+            .token(VAULT_TOKEN)
+            .build();
+
+        vault = Vault.create(config);
+
+        final Map<String, Object> secrets = new HashMap<>();
+        secrets.put("timeout", "123");
+        secrets.put("bookingIsEnabled", "true");
+        secrets.put("bookingHost", "https://dev.booking.host.name");
+        secrets.put("bookingPort", "443");
+
+        // Write operation
+        final LogicalResponse writeResponse = vault.logical().write("secret/path", secrets);
+        Assertions.assertEquals(200, writeResponse.getRestResponse().getStatus());
+    }
 
     @BeforeEach
     void setUp() {
@@ -1091,6 +1127,38 @@ public class GestaltSample {
         Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
         Assertions.assertEquals(443, booking.getService().getPort());
         Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    @Test
+    public void integrationTestPostProcessorVault() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        VaultModuleConfig vaultModuleConfig = VaultBuilder.builder().setVault(vault).build();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/defaultPPVault.properties"))
+            .addSource(new ClassPathConfigSource("/integration.properties"))
+            .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
+            .addModuleConfig(vaultModuleConfig)
+            .build();
+
+        gestalt.loadConfigs();
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+
+        validateResults(gestalt);
+
+
     }
 
     @Test
