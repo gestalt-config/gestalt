@@ -5,7 +5,7 @@ kotlin = "1.8.22"
 kotlinDokka = "1.8.20"
 # Kotlin DI
 kodeinDI = "7.20.2"
-koinDI = "3.4.2"
+koinDI = "3.4.3"
 # Java DI
 # @pin
 guice = "6.0.0"
@@ -19,13 +19,15 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-awsBom = "2.20.56"
-gcpLibraries = "26.18.0"
+awsBom = "2.20.125"
+gcpLibraries = "26.22.0"
+# vault
+vault = "6.0.0"
 # Git support
 jgit = "6.6.0.202305301015-r"
 eddsa = "0.3.0"
 # testing
-junit5 = "5.9.3"
+junit5 = "5.10.0"
 assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.5"
@@ -34,20 +36,20 @@ koTestAssertions = "5.6.2"
 awsMock = "2.17.0"
 testcontainers = "1.18.3"
 # static code analysis
-errorprone = "2.20.0"
+errorprone = "2.21.1"
 gradleErrorProne = "3.1.0"
-detekt = "1.23.0"
-gradleDetekt = "1.23.0"
+detekt = "1.23.1"
+gradleDetekt = "1.23.1"
 checkStyle = "10.10.0"
 # benchmarking
-jmh = "1.36"
+jmh = "1.37"
 gradleJmh = "0.7.1"
 # gestalt for integration tests.
 gestalt = "0.22.0"
 # Gradle utility
 gradleVersions = "0.47.0"
 gitVersions = "3.0.0"
-gradleVersionsUpdate = "0.8.0"
+gradleVersionsUpdate = "0.8.1"
 
 [libraries]
 # Kotlin
@@ -72,6 +74,8 @@ jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr
 jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
+# vault
+vault = { module = "io.github.jopenlibs:vault-java-driver", version.ref = "vault" }
 # Cloud
 aws-bom = { module = "software.amazon.awssdk:bom", version.ref = "awsBom" }
 aws-S3 = { module = "software.amazon.awssdk:s3" }
@@ -93,6 +97,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 koTestAssertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "koTestAssertions" }
 aws-Mock = { module = "com.adobe.testing:s3mock-testcontainers", version.ref = "awsMock" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-vault = { module = "org.testcontainers:vault", version.ref = "testcontainers" }
 # Benchmarking
 jmh = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
 jmh-annotations = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
@@ -119,13 +124,14 @@ gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", versio
 
 [bundles]
 jackson = [
-  "jackson-core",
-  "jackson-databind",
-  "jackson-dataformat-yaml",
-  "jackson-java8",
-  "jackson-jsr310",
+    "jackson-core",
+    "jackson-databind",
+    "jackson-dataformat-yaml",
+    "jackson-java8",
+    "jackson-jsr310",
 ]
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version.ref = "gradleJmh" }
 gradle-ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
+

@@ -16,6 +16,7 @@ dependencies {
     testImplementation(libs.aws.s3)
     testImplementation(libs.aws.secret)
     testImplementation(libs.aws.url.client)
+    testImplementation(libs.testcontainers.vault)
 }
 
 testing {
@@ -41,6 +42,7 @@ testing {
                 implementation(project(":gestalt-kotlin"))
                 implementation(project(":gestalt-json"))
                 implementation(project(":gestalt-toml"))
+                implementation(project(":gestalt-vault"))
                 implementation(project(":gestalt-yaml"))
 
                 implementation(project(":gestalt-google-cloud"))
@@ -58,6 +60,8 @@ testing {
                 implementation(project(":gestalt-guice"))
                 implementation(libs.guice)
                 implementation(libs.testcontainers.junit5)
+
+                implementation(libs.vault)
             }
         }
     }
