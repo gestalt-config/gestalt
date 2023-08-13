@@ -23,6 +23,7 @@ dependencies {
     jacocoAggregation(project(":gestalt-koin-di"))
     jacocoAggregation(project(":gestalt-kotlin"))
     jacocoAggregation(project(":gestalt-toml"))
+    jacocoAggregation(project(":gestalt-vault"))
     jacocoAggregation(project(":gestalt-yaml"))
 
     // include additional tests.
