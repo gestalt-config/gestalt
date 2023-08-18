@@ -111,16 +111,21 @@ gradle-ben-manes-versions = { module = "com.github.ben-manes:gradle-versions-plu
 gradle-versions-update = { module = "nl.littlerobots.vcu:plugin", version.ref = "gradleVersionsUpdate" }
 gradle-error-prone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
 # Gestalt for integration tests
+gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
+gestalt-cdi = { module = "com.github.gestalt-config:gestalt-cdi", version.ref = "gestalt" }
 gestalt-core = { module = "com.github.gestalt-config:gestalt-core", version.ref = "gestalt" }
+gestalt-git = { module = "com.github.gestalt-config:gestalt-git", version.ref = "gestalt" }
+gestalt-google = { module = "com.github.gestalt-config:gestalt-google-cloud", version.ref = "gestalt" }
 gestalt-guice = { module = "com.github.gestalt-config:gestalt-guice", version.ref = "gestalt" }
 gestalt-hocon = { module = "com.github.gestalt-config:gestalt-hocon", version.ref = "gestalt" }
-gestalt-kotlin = { module = "com.github.gestalt-config:gestalt-kotlin", version.ref = "gestalt" }
 gestalt-json = { module = "com.github.gestalt-config:gestalt-json", version.ref = "gestalt" }
-gestalt-toml = { module = "com.github.gestalt-config:gestalt-toml", version.ref = "gestalt" }
-gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
-gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
 gestalt-kodein-di = { module = "com.github.gestalt-config:gestalt-kodein-di", version.ref = "gestalt" }
 gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", version.ref = "gestalt" }
+gestalt-kotlin = { module = "com.github.gestalt-config:gestalt-kotlin", version.ref = "gestalt" }
+gestalt-toml = { module = "com.github.gestalt-config:gestalt-toml", version.ref = "gestalt" }
+gestalt-vault = { module = "com.github.gestalt-config:gestalt-vault", version.ref = "gestalt" }
+gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
+
 
 [bundles]
 jackson = [
