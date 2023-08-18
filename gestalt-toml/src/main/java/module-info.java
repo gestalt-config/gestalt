@@ -3,8 +3,8 @@
  */
 module org.github.gestalt.toml {
     requires org.github.gestalt.core;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.dataformat.toml;
+    requires transitive com.fasterxml.jackson.databind;
+    requires transitive com.fasterxml.jackson.dataformat.toml;
 
     exports org.github.gestalt.config.toml;
 

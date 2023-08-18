@@ -38,6 +38,8 @@ testing {
             dependencies {
                 implementation(project(":gestalt-aws"))
                 implementation(project(":gestalt-core"))
+                implementation(project(":gestalt-git"))
+                implementation(project(":gestalt-google-cloud"))
                 implementation(project(":gestalt-hocon"))
                 implementation(project(":gestalt-kotlin"))
                 implementation(project(":gestalt-json"))
@@ -45,23 +47,15 @@ testing {
                 implementation(project(":gestalt-vault"))
                 implementation(project(":gestalt-yaml"))
 
-                implementation(project(":gestalt-google-cloud"))
-
-
                 implementation(project(":gestalt-kodein-di"))
-                implementation(libs.kodein.di)
 
                 implementation(project(":gestalt-koin-di"))
-                implementation(libs.koin.di)
 
                 implementation(libs.aws.mock)
 
 
                 implementation(project(":gestalt-guice"))
-                implementation(libs.guice)
                 implementation(libs.testcontainers.junit5)
-
-                implementation(libs.vault)
             }
         }
     }

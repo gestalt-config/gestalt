@@ -19,10 +19,10 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-awsBom = "2.20.125"
+awsBom = "2.20.129"
 gcpLibraries = "26.22.0"
 # vault
-vault = "6.0.0"
+vault = "6.1.0"
 # Git support
 jgit = "6.6.0.202305301015-r"
 eddsa = "0.3.0"
@@ -30,7 +30,7 @@ eddsa = "0.3.0"
 junit5 = "5.10.0"
 assertJ = "3.24.2"
 mockito = "5.2.0"
-mockk = "1.13.5"
+mockk = "1.13.7"
 koTestAssertions = "5.6.2"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
@@ -126,7 +126,6 @@ gestalt-toml = { module = "com.github.gestalt-config:gestalt-toml", version.ref 
 gestalt-vault = { module = "com.github.gestalt-config:gestalt-vault", version.ref = "gestalt" }
 gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
 
-
 [bundles]
 jackson = [
     "jackson-core",
@@ -139,4 +138,3 @@ jackson = [
 [plugins]
 jmh = { id = "me.champeau.jmh", version.ref = "gradleJmh" }
 gradle-ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
-

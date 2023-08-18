@@ -7,8 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(libs.jgit)
-    implementation(libs.jgit.apache.ssh)
-    implementation(libs.eddsa)
+    api(libs.jgit)
+    api(libs.jgit.apache.ssh)
+    api(libs.eddsa)
 }
 

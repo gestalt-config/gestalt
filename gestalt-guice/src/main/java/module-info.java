@@ -3,7 +3,7 @@
  */
 module org.github.gestalt.guice {
     requires org.github.gestalt.core;
-    requires com.google.guice;
+    requires transitive com.google.guice;
 
     exports org.github.gestalt.config.guice;
 }

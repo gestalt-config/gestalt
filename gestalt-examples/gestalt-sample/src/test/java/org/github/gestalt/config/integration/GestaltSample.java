@@ -16,6 +16,8 @@ import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.git.GitConfigSource;
+import org.github.gestalt.config.git.GitConfigSourceBuilder;
 import org.github.gestalt.config.google.storage.GCSConfigSource;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
@@ -599,6 +601,41 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(new FileConfigSource(defaultFile))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
+    public void integrationGitTest() throws GestaltException, IOException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        Path configDirectory = Files.createTempDirectory("gitConfigIntegration");
+        configDirectory.toFile().deleteOnExit();
+
+
+        GitConfigSourceBuilder gitBuilder = new GitConfigSourceBuilder()
+            .setRepoURI("https://github.com/gestalt-config/gestalt.git")
+            .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
+            .setLocalRepoDirectory(configDirectory);
+        GitConfigSource source = gitBuilder.build();
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
+        File devFile = new File(devFileURL.getFile());
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(source)
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .setTreatNullValuesInClassAsErrors(false)

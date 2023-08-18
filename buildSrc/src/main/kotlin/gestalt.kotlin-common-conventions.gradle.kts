@@ -34,8 +34,3 @@ tasks.dokkaJavadoc.configure {
 tasks.withType<Javadoc>().configureEach {
     enabled = false
 }
-
-// needed for the java module system to work.  https://github.com/gradle/gradle/issues/17271
-val compileKotlin: KotlinCompile by tasks
-val compileJava: JavaCompile by tasks
-compileKotlin.destinationDirectory.set(compileJava.destinationDirectory)

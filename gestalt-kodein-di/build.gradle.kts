@@ -8,7 +8,7 @@ plugins {
 dependencies {
     implementation(project(":gestalt-core"))
     implementation(project(":gestalt-kotlin"))
-    implementation(libs.kodein.di)
+    api(libs.kodein.di)
 }
 
 tasks.jar {

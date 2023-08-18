@@ -1,4 +1,4 @@
-package org.github.gestalt.config.kotlin.integration
+package org.github.gestalt.config.integration
 
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.annotations.Config

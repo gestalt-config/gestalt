@@ -7,5 +7,5 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(libs.hocon)
+    api(libs.hocon)
 }

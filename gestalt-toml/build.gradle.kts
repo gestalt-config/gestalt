@@ -7,8 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(libs.bundles.jackson)
-    implementation(libs.jackson.toml)
+    api(libs.bundles.jackson)
+    api(libs.jackson.toml)
 }
 
 

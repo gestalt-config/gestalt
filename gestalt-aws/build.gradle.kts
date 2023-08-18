@@ -7,11 +7,11 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(platform(libs.aws.bom))
+    api(platform(libs.aws.bom))
     api(libs.aws.s3)
     api(libs.aws.secret)
     api(libs.aws.url.client)
-    implementation(libs.jackson.databind)
+    api(libs.jackson.databind)
     testImplementation(libs.aws.mock)
     testImplementation(libs.testcontainers.junit5)
 }
