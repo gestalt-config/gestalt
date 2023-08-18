@@ -7,9 +7,9 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(platform(libs.google.libraries))
-    implementation(libs.google.storage)
-    implementation(libs.google.secret)
+    api(platform(libs.google.libraries))
+    api(libs.google.storage)
+    api(libs.google.secret)
 }
 
 tasks.jar {

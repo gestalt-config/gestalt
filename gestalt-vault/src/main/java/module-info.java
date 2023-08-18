@@ -3,7 +3,7 @@
  */
 module org.github.gestalt.vault {
     requires org.github.gestalt.core;
-    requires vault.java.driver;
+    requires transitive vault.java.driver;
 
     exports org.github.gestalt.config.vault;
     exports org.github.gestalt.config.vault.config;

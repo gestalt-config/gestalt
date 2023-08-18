@@ -50,6 +50,7 @@ class DataClassDecoder : Decoder<Any> {
         return false
     }
 
+    @Suppress("LongMethod")
     override fun decode(path: String, node: ConfigNode, type: TypeCapture<*>, decoderService: DecoderService): ValidateOf<Any> {
         if (node !is MapNode) {
             return ValidateOf.inValid(ValidationError.DecodingExpectedMapNodeType(path, node))

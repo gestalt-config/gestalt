@@ -7,6 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(libs.guice)
+    api(libs.guice)
 }
 

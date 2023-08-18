@@ -1,9 +1,9 @@
 /**
  * Module info definition for gestalt kotlin integration
  */
-module org.github.gestalt.kotlin {
+module org.github.gestalt.config.kotlin {
     requires org.github.gestalt.core;
-    requires kotlin.reflect;
+    requires transitive kotlin.reflect;
     requires java.base;
 
     exports org.github.gestalt.config.kotlin;
