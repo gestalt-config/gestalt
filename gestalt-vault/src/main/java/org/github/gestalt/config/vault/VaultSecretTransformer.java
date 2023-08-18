@@ -7,7 +7,7 @@ import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.Transformer;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
-import org.github.gestalt.config.vault.errors.errors.VaultValidationErrors;
+import org.github.gestalt.config.vault.errors.VaultValidationErrors;
 
 /**
  * Allows you to substitute a vault secret using ${vault:secretPath:secretKey}.

@@ -1,4 +1,4 @@
-package org.github.gestalt.config.vault.errors.errors;
+package org.github.gestalt.config.vault.errors;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;

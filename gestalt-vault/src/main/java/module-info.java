@@ -6,4 +6,6 @@ module org.github.gestalt.vault {
     requires vault.java.driver;
 
     exports org.github.gestalt.config.vault;
+    exports org.github.gestalt.config.vault.config;
+    exports org.github.gestalt.config.vault.errors;
 }
