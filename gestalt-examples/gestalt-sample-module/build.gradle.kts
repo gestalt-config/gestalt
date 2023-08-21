@@ -11,21 +11,32 @@ repositories {
 }
 
 dependencies {
+    implementation(libs.gestalt.aws)
     implementation(libs.gestalt.core)
+    implementation(libs.gestalt.git)
+    implementation(libs.gestalt.google)
+    implementation(libs.gestalt.guice)
     implementation(libs.gestalt.hocon)
     implementation(libs.gestalt.kotlin)
     implementation(libs.gestalt.json)
     implementation(libs.gestalt.toml)
+    implementation(libs.gestalt.vault)
     implementation(libs.gestalt.yaml)
 
-    implementation(libs.gestalt.guice)
-    implementation(libs.guice)
-
     implementation(libs.junitAPI)
+    implementation(libs.aws.mock)
+    implementation(libs.guice)
 }
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(libs.versions.javaLatest.get()))
     }
+}
+
+tasks.named("compileJava", JavaCompile::class.java) {
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
+        listOf("--patch-module", "org.github.gestalt.config.integration=${sourceSets["main"].output.asPath}")
+    })
 }

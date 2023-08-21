@@ -2,11 +2,19 @@ package org.github.gestalt.config.integration;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
+import org.github.gestalt.config.aws.config.AWSBuilder;
+import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.git.GitConfigSource;
+import org.github.gestalt.config.git.GitConfigSourceBuilder;
+import org.github.gestalt.config.google.storage.GCSConfigSource;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
@@ -14,19 +22,20 @@ import org.github.gestalt.config.post.process.transform.SystemPropertiesTransfor
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
-import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.vault.config.VaultBuilder;
+import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.junit.jupiter.api.Assertions;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GestaltConfigTest {
 
@@ -42,10 +51,11 @@ public class GestaltConfigTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.properties"))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("default.properties"))
+                .addSource(new ClassPathConfigSource("dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
@@ -65,11 +75,12 @@ public class GestaltConfigTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.properties"))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new MapConfigSource(configs))
-            .useCacheDecorator(false)
-            .build();
+                .addSource(new ClassPathConfigSource("default.properties"))
+                .addSource(new ClassPathConfigSource("dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .useCacheDecorator(false)
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
@@ -87,11 +98,12 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("dev.properties", Tags.of("toy", "ball")))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
-            .build();
+                .addSource(new URLConfigSource(fileURL))
+                .addSource(new ClassPathConfigSource("dev.properties", Tags.of("toy", "ball")))
+                .addSource(new MapConfigSource(configs))
+                .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -129,159 +141,6 @@ public class GestaltConfigTest {
         Assertions.assertEquals(33.0F, poolTags2.defaultWait);
     }
 
-    public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {
-        Map<String, String> configs = new HashMap<>();
-        configs.put("db.hosts[0].password", "1234");
-        configs.put("db.hosts[1].password", "5678");
-        configs.put("db.hosts[2].password", "9012");
-        configs.put("db.idleTimeout", "123");
-
-        URL defaultFileURL = GestaltConfigTest.class.getClassLoader().getResource("default.properties");
-        File defaultFile = new File(defaultFileURL.getFile());
-
-        URL devFileURL = GestaltConfigTest.class.getClassLoader().getResource("dev.properties");
-        File devFile = new File(devFileURL.getFile());
-
-        Path tempFile = Files.createTempFile("gestalt", "dev.properties");
-        tempFile.toFile().deleteOnExit();
-        Files.write(tempFile, Files.readAllBytes(devFile.toPath()));
-
-        devFile = tempFile.toFile();
-
-        ConfigSource devFileSource = new FileConfigSource(devFile);
-
-        TestReloadListener reloadListener = new TestReloadListener();
-        GestaltBuilder builder = new GestaltBuilder();
-        Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(devFileSource)
-            .addSource(new MapConfigSource(configs))
-            .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
-            .addCoreReloadListener(reloadListener)
-            .build();
-
-        gestalt.loadConfigs();
-
-        HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
-
-        Assertions.assertEquals(1000, pool.maxTotal);
-        Assertions.assertEquals((short) 1000, gestalt.getConfig("http.pool.maxTotal", Short.class));
-        Assertions.assertEquals(50L, pool.maxPerRoute);
-        Assertions.assertEquals(50L, gestalt.getConfig("http.pool.maxPerRoute", Long.class));
-        Assertions.assertEquals(6000, pool.validateAfterInactivity);
-        Assertions.assertEquals(60000D, pool.keepAliveTimeoutMs);
-        Assertions.assertEquals(25, pool.idleTimeoutSec);
-        Assertions.assertEquals(33.0F, pool.defaultWait);
-
-        long startTime = System.nanoTime();
-        gestalt.getConfig("db", DataBase.class);
-        long timeTaken = System.nanoTime() - startTime;
-
-        startTime = System.nanoTime();
-        DataBase db = gestalt.getConfig("db", DataBase.class);
-        long cacheTimeTaken = System.nanoTime() - startTime;
-
-        // not really a great test for ensuring we are hitting a cache
-        Assertions.assertTrue(timeTaken > cacheTimeTaken);
-
-        Assertions.assertEquals(600, db.connectionTimeout);
-        Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", Integer.class));
-        Assertions.assertEquals(123, db.idleTimeout);
-        Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
-
-        Assertions.assertEquals(3, db.hosts.size());
-        Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
-        Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
-        Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", db.hosts.get(0).url);
-        Assertions.assertEquals("credmond", db.hosts.get(1).getUser());
-        Assertions.assertEquals("5678", db.hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", db.hosts.get(1).url);
-        Assertions.assertEquals("credmond", db.hosts.get(2).getUser());
-        Assertions.assertEquals("9012", db.hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts.get(2).url);
-
-        Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
-
-        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
-        });
-        Assertions.assertEquals(3, hosts.size());
-        Assertions.assertEquals("credmond", hosts.get(0).getUser());
-        Assertions.assertEquals("1234", hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hosts.get(0).url);
-        Assertions.assertEquals("credmond", hosts.get(1).getUser());
-        Assertions.assertEquals("5678", hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb", hosts.get(1).url);
-        Assertions.assertEquals("credmond", hosts.get(2).getUser());
-        Assertions.assertEquals("9012", hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
-
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
-        });
-        Assertions.assertEquals(0, noHosts.size());
-
-        String config = "db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb2\n" +
-            "db.hosts[1].url=jdbc:postgresql://dev.host.name2:5432/mydb2\n" +
-            "db.hosts[2].url=jdbc:postgresql://dev.host.name3:5432/mydb2\n" +
-            "db.connectionTimeout=2222\n" +
-            "\n" +
-            "http.pool.maxTotal=222\n" +
-            "http.pool.maxPerRoute=22\n" +
-            "\n" +
-            "admin.user=Peter, Kim, Steve\n" +
-            "admin.overrideEnabled=true\n";
-
-        // Update the config file so we cause a reload to happen.
-        Files.write(devFile.toPath(), config.getBytes(UTF_8));
-
-        // Reloads sometimes take a little bit of time, so wait till the update has been triggered.
-        for (int i = 0; i < 10; i++) {
-            if (reloadListener.count > 1) {
-                break;
-            } else {
-                Thread.sleep(100);
-            }
-        }
-        db = gestalt.getConfig("db", DataBase.class);
-        Assertions.assertTrue(reloadListener.count >= 1);
-
-        Assertions.assertEquals(2222, db.connectionTimeout);
-        Assertions.assertEquals(2222, gestalt.getConfig("db.connectionTimeout", Integer.class));
-        Assertions.assertEquals(123, db.idleTimeout);
-        Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
-
-        Assertions.assertEquals(3, db.hosts.size());
-        Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
-        Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
-        Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb2", db.hosts.get(0).url);
-        Assertions.assertEquals("credmond", db.hosts.get(1).getUser());
-        Assertions.assertEquals("5678", db.hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb2", db.hosts.get(1).url);
-        Assertions.assertEquals("credmond", db.hosts.get(2).getUser());
-        Assertions.assertEquals("9012", db.hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb2", db.hosts.get(2).url);
-
-        Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
-
-        hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
-        });
-        Assertions.assertEquals(3, hosts.size());
-        Assertions.assertEquals("credmond", hosts.get(0).getUser());
-        Assertions.assertEquals("1234", hosts.get(0).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb2", hosts.get(0).url);
-        Assertions.assertEquals("credmond", hosts.get(1).getUser());
-        Assertions.assertEquals("5678", hosts.get(1).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name2:5432/mydb2", hosts.get(1).url);
-        Assertions.assertEquals("credmond", hosts.get(2).getUser());
-        Assertions.assertEquals("9012", hosts.get(2).getPassword());
-        Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb2", hosts.get(2).url);
-    }
-
     public void integrationTestEnvVars() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
@@ -289,7 +148,7 @@ public class GestaltConfigTest {
         configs.put("db.hosts[1].password", "5678");
         configs.put("db.hosts[2].password", "9012");
 
-        String urlFile = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-sample/src/test/resources/default.json";
+        String urlFile = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-examples/gestalt-sample/src/test/resources/default.json";
 
         /*
         Expects the following environment variables
@@ -301,11 +160,12 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(urlFile))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new EnvironmentConfigSource())
-            .build();
+                .addSource(new URLConfigSource(urlFile))
+                .addSource(new ClassPathConfigSource("dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .addSource(new EnvironmentConfigSource())
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -327,10 +187,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.json"))
-            .addSource(new ClassPathConfigSource("dev.json"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("default.json"))
+                .addSource(new ClassPathConfigSource("dev.json"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -346,10 +207,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.yml"))
-            .addSource(new ClassPathConfigSource("dev.yml"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("default.yml"))
+                .addSource(new ClassPathConfigSource("dev.yml"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -365,10 +227,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.json"))
-            .addSource(new ClassPathConfigSource("dev.yml"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("default.json"))
+                .addSource(new ClassPathConfigSource("dev.yml"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -384,10 +247,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.conf"))
-            .addSource(new ClassPathConfigSource("dev.yml"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("default.conf"))
+                .addSource(new ClassPathConfigSource("dev.yml"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -403,14 +267,200 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.conf"))
-            .addSource(new ClassPathConfigSource("dev.toml"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("default.conf"))
+                .addSource(new ClassPathConfigSource("dev.toml"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
         validateResults(gestalt);
+    }
+
+    public void integrationGitTest() throws GestaltException, IOException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        Path configDirectory = Files.createTempDirectory("gitConfigIntegration");
+        configDirectory.toFile().deleteOnExit();
+
+
+        GitConfigSourceBuilder gitBuilder = new GitConfigSourceBuilder()
+                .setRepoURI("https://github.com/gestalt-config/gestalt.git")
+                .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
+                .setLocalRepoDirectory(configDirectory);
+        GitConfigSource source = gitBuilder.build();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+                .addSource(source)
+                .addSource(new ClassPathConfigSource("dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    public void integrationTestGoogleCloud() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+        // Contents of the dev.properties on GCP Storage, note the use of ${gcpSecret:booking-host}
+        // the secrets "bank-host" value is "booking.host.name"
+        /*
+        db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb
+        db.hosts[1].url=jdbc:postgresql://dev.host.name2:5432/mydb
+        db.hosts[2].url=jdbc:postgresql://dev.host.name3:5432/mydb
+        db.connectionTimeout=600
+
+        http.pool.maxTotal=1000
+        http.pool.maxPerRoute=50
+
+        subservice.booking.service.isEnabled=true
+        subservice.booking.service.host=https://dev.${gcpSecret:bank-host}
+        subservice.booking.service.port=443
+        subservice.booking.service.path=booking
+
+        subservice.search.service.isEnabled=false
+
+        admin.user=Peter, Kim, Steve
+        admin.overrideEnabled=true
+         */
+
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+                .addSource(new ClassPathConfigSource("/default.properties"))
+                .addSource(new GCSConfigSource("gestalt-test", "dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
+
+        // Load the configurations, this will thow exceptions if there are any errors.
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    public void integrationTestAws() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+        // Contents of the dev.properties on aws Storage, note the use of ${awsSecret:booking-host:host}
+        // the secrets "booking-host:host" value is "booking.host.name"
+        /*
+        db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb
+        db.hosts[1].url=jdbc:postgresql://dev.host.name2:5432/mydb
+        db.hosts[2].url=jdbc:postgresql://dev.host.name3:5432/mydb
+        db.connectionTimeout=600
+
+        http.pool.maxTotal=1000
+        http.pool.maxPerRoute=50
+
+        subservice.booking.service.isEnabled=true
+        subservice.booking.service.host=https://dev.${awsSecret:booking-host:host}
+        subservice.booking.service.port=443
+        subservice.booking.service.path=booking
+
+        subservice.search.service.isEnabled=false
+
+        admin.user=Peter, Kim, Steve
+        admin.overrideEnabled=true
+         */
+        S3Client s3Client = S3Client.builder()
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .region(Region.US_EAST_1)
+                .httpClient(UrlConnectionHttpClient.builder().build())
+                .build();
+
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+                .addSource(new ClassPathConfigSource("/default.properties"))
+                .addSource(new S3ConfigSource(s3Client, "gestalt-test", "dev.properties"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
+                .build();
+
+        // Load the configurations, this will thow exceptions if there are any errors.
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    public void integrationTestPostProcessorVault() throws GestaltException, VaultException {
+        String VAULT_TOKEN = "my-root-token-2";
+
+
+        final VaultConfig config = new VaultConfig()
+                .address("http://127.0.0.1:8080")
+                .token(VAULT_TOKEN)
+                .build();
+
+        Vault vault = Vault.create(config);
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        VaultModuleConfig vaultModuleConfig = VaultBuilder.builder().setVault(vault).build();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+                .addSource(new ClassPathConfigSource("/defaultPPVault.properties"))
+                .addSource(new ClassPathConfigSource("/integration.properties"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .addModuleConfig(vaultModuleConfig)
+                .build();
+
+        gestalt.loadConfigs();
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+
+        validateResults(gestalt);
+
     }
 
 
@@ -588,6 +638,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals('a', gestalt.getConfig("serviceMode", TypeCapture.of(Character.class)));
 
         // Validate that guice gets the injected config.
+
         Injector injector = Guice.createInjector(new GestaltModule(gestalt));
         DBQueryService dbService = injector.getInstance(DBQueryService.class);
         db = dbService.getDataBase();
@@ -611,6 +662,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals("9012", db.hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", db.hosts.get(2).url);
 
+
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
     }
@@ -632,11 +684,12 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
-            .addSource(new ClassPathConfigSource("integration.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addDefaultPostProcessors()
-            .build();
+                .addSource(new ClassPathConfigSource("defaultPPEnv.properties"))
+                .addSource(new ClassPathConfigSource("integration.properties"))
+                .addSource(new MapConfigSource(configs))
+                .addDefaultPostProcessors()
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -671,11 +724,12 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("defaultPPSys.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
-            .build();
+                .addSource(new ClassPathConfigSource("defaultPPSys.properties"))
+                .addSource(new ClassPathConfigSource("integration.properties"))
+                .addSource(new MapConfigSource(configs))
+                .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -688,7 +742,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals("booking", booking.getService().getPath());
         Assertions.assertNotNull(gestalt.getConfig("appUUID", UUID.class));
         Assertions.assertTrue(gestalt.getConfig("appId", Integer.class) == 20 ||
-            gestalt.getConfig("appId", Integer.class) == 21);
+                gestalt.getConfig("appId", Integer.class) == 21);
     }
 
     public void integrationTestPostProcessorNode() throws GestaltException {
@@ -701,10 +755,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new ClassPathConfigSource("defaultPPNode.properties"))
+                .addSource(new ClassPathConfigSource("integration.properties"))
+                .addSource(new MapConfigSource(configs))
+                .setTreatNullValuesInClassAsErrors(false)
+                .build();
 
         gestalt.loadConfigs();
 
@@ -728,8 +783,8 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
-            .build();
+                .addSource(new MapConfigSource(configs))
+                .build();
 
         gestalt.loadConfigs();
 

@@ -12,6 +12,16 @@ module org.github.gestalt.config.integration {
     requires com.google.guice;
     requires org.junit.jupiter.api;
     requires kotlin.stdlib;
+    requires software.amazon.awssdk.http;
+    requires software.amazon.awssdk.services.s3;
+    requires org.github.gestalt.git;
+    requires jakarta.inject;
+    requires org.github.gestalt.google;
+    requires software.amazon.awssdk.auth;
+    requires software.amazon.awssdk.regions;
+    requires software.amazon.awssdk.http.urlconnection;
+    requires org.github.gestalt.aws;
+    requires org.github.gestalt.vault;
 
     exports org.github.gestalt.config.integration;
 
