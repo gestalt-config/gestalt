@@ -11,17 +11,21 @@ repositories {
 }
 
 dependencies {
+    implementation(libs.gestalt.aws)
     implementation(libs.gestalt.core)
+    implementation(libs.gestalt.git)
+    implementation(libs.gestalt.google)
+    implementation(libs.gestalt.guice)
     implementation(libs.gestalt.hocon)
     implementation(libs.gestalt.kotlin)
     implementation(libs.gestalt.json)
     implementation(libs.gestalt.toml)
+    implementation(libs.gestalt.vault)
     implementation(libs.gestalt.yaml)
 
-    implementation(libs.gestalt.guice)
-    implementation(libs.guice)
-
     implementation(libs.junitAPI)
+    implementation(libs.aws.mock)
+    implementation(libs.guice)
 }
 
 java {

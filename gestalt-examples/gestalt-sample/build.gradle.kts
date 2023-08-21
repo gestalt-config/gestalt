@@ -12,10 +12,6 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform(libs.aws.bom))
-    testImplementation(libs.aws.s3)
-    testImplementation(libs.aws.secret)
-    testImplementation(libs.aws.url.client)
     testImplementation(libs.testcontainers.vault)
 }
 
