@@ -35,5 +35,10 @@ public class MainClass {
         if( Boolean.parseBoolean(System.getenv("GESTALT_VAULT_TEST"))) {
             configTest.integrationTestPostProcessorVault();
         }
+
+        var kotlinTests = new GestaltKotlinTest();
+        kotlinTests.integrationTest();
+        kotlinTests.integrationTestEnvVars();
+        kotlinTests.integrationTestWithTypeOf();
     }
 }

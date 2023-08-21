@@ -26,6 +26,7 @@ class GestaltKotlinTest {
             .addSource(ClassPathConfigSource("default.properties"))
             .addSource(ClassPathConfigSource("dev.properties"))
             .addSource(MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)
@@ -43,6 +44,7 @@ class GestaltKotlinTest {
             .addSource(ClassPathConfigSource("dev.properties"))
             .addSource(MapConfigSource(configs))
             .addSource(EnvironmentConfigSource())
+            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)
@@ -67,6 +69,7 @@ class GestaltKotlinTest {
             .addSource(ClassPathConfigSource("default.properties"))
             .addSource(ClassPathConfigSource("dev.properties"))
             .addSource(MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool", KTypeCapture.of<HttpPool>(typeOf<HttpPool>())) as HttpPool

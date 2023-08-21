@@ -33,3 +33,10 @@ java {
         languageVersion.set(JavaLanguageVersion.of(libs.versions.javaLatest.get()))
     }
 }
+
+tasks.named("compileJava", JavaCompile::class.java) {
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
+        listOf("--patch-module", "org.github.gestalt.config.integration=${sourceSets["main"].output.asPath}")
+    })
+}
