@@ -11,7 +11,7 @@ import java.util.OptionalInt;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class OptionalIntDecoder implements Decoder<OptionalInt> {
+public final class OptionalIntDecoder implements Decoder<OptionalInt> {
 
     @Override
     public Priority priority() {

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class PatternDecoder extends LeafDecoder<Pattern> {
+public final class PatternDecoder extends LeafDecoder<Pattern> {
 
     @Override
     public Priority priority() {

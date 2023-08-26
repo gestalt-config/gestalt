@@ -18,7 +18,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class FileConfigSource implements ConfigSource {
+public final class FileConfigSource implements ConfigSource {
     private static final System.Logger logger = System.getLogger(FileConfigSource.class.getName());
 
     private final Path path;
@@ -126,7 +126,7 @@ public class FileConfigSource implements ConfigSource {
      * @param path the name of the file
      * @return the extension of the file
      */
-    protected String format(Path path) {
+    private String format(Path path) {
         String fileName = path.getFileName().toString();
         int index = fileName.lastIndexOf('.');
         if (index > 0) {

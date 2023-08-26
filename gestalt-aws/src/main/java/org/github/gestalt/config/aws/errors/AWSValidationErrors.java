@@ -10,7 +10,7 @@ import java.util.Arrays;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class AWSValidationErrors {
+public final class AWSValidationErrors {
 
     public static class AWSModuleConfigNotSet extends ValidationError {
         private final String path;

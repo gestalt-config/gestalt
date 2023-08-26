@@ -12,7 +12,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class UUIDDecoder extends LeafDecoder<UUID> {
+public final class UUIDDecoder extends LeafDecoder<UUID> {
 
     @Override
     public Priority priority() {

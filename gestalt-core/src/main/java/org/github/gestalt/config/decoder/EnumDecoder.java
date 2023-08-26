@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
+public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 
     @Override
     public Priority priority() {

@@ -13,7 +13,7 @@ import java.math.BigInteger;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class BigIntegerDecoder extends LeafDecoder<BigInteger> {
+public final class BigIntegerDecoder extends LeafDecoder<BigInteger> {
 
     @Override
     public Priority priority() {

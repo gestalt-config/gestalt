@@ -12,7 +12,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  */
 @ConfigPriority(100)
 @Deprecated
-public class EnvironmentVariablesTransformerOld implements Transformer {
+public final class EnvironmentVariablesTransformerOld implements Transformer {
     @Override
     public String name() {
         return "envVar";

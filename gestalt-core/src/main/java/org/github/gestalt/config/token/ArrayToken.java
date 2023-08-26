@@ -8,7 +8,7 @@ import java.util.Objects;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ArrayToken extends Token {
+public final class ArrayToken extends Token {
     private final int index;
 
     /**

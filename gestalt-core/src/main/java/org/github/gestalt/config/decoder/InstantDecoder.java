@@ -13,7 +13,7 @@ import java.time.format.DateTimeParseException;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class InstantDecoder extends LeafDecoder<Instant> {
+public final class InstantDecoder extends LeafDecoder<Instant> {
 
     @Override
     public Priority priority() {

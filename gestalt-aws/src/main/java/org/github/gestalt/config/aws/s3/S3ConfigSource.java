@@ -21,7 +21,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class S3ConfigSource implements ConfigSource {
+public final class S3ConfigSource implements ConfigSource {
 
     private final S3Client s3;
     private final String keyName;
@@ -114,7 +114,7 @@ public class S3ConfigSource implements ConfigSource {
      * @param fileName the name of the file
      * @return the extension of the file
      */
-    protected String format(String fileName) {
+    private String format(String fileName) {
         int index = fileName.lastIndexOf('.');
         if (index > 0) {
             return fileName.substring(index + 1);

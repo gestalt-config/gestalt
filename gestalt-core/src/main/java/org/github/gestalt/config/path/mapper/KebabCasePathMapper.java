@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(600)
-public class KebabCasePathMapper implements PathMapper {
+public final class KebabCasePathMapper implements PathMapper {
     private final Pattern regex = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 
     @SuppressWarnings("StringSplitter")

@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class HoconLoader implements ConfigLoader {
+public final class HoconLoader implements ConfigLoader {
 
     private final ConfigParseOptions configParseOptions;
 

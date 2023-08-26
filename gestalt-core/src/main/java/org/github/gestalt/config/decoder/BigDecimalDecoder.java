@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
+public final class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
 
     @Override
     public Priority priority() {

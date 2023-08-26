@@ -10,7 +10,7 @@ import java.util.Arrays;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class VaultValidationErrors {
+public final class VaultValidationErrors {
 
     public static class VaultModuleConfigNotSet extends ValidationError {
         private final String path;

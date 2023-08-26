@@ -24,7 +24,7 @@ import java.util.*;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class YamlLoader implements ConfigLoader {
+public final class YamlLoader implements ConfigLoader {
 
     private final ObjectMapper objectMapper;
 

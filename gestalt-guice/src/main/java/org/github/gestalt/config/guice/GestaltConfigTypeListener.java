@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-class GestaltConfigTypeListener implements TypeListener {
+public final class GestaltConfigTypeListener implements TypeListener {
 
     private final Gestalt gestalt;
 

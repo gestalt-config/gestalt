@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class PropertyLoader implements ConfigLoader {
+public final class PropertyLoader implements ConfigLoader {
 
     private final ConfigParser parser;
     private final SentenceLexer lexer;

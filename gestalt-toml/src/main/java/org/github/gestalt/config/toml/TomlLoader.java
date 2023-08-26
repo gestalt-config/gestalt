@@ -24,7 +24,7 @@ import java.util.*;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class TomlLoader implements ConfigLoader {
+public final class TomlLoader implements ConfigLoader {
 
     private final ObjectMapper objectMapper;
 

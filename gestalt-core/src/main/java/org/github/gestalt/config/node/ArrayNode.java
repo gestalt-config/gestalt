@@ -10,7 +10,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ArrayNode implements ConfigNode {
+public final class ArrayNode implements ConfigNode {
 
     private final List<ConfigNode> values;
 

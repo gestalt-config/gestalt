@@ -11,7 +11,7 @@ import java.util.OptionalLong;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class OptionalLongDecoder implements Decoder<OptionalLong> {
+public final class OptionalLongDecoder implements Decoder<OptionalLong> {
 
     @Override
     public Priority priority() {

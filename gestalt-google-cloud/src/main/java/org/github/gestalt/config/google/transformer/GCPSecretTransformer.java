@@ -16,7 +16,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class GCPSecretTransformer implements Transformer {
+public final class GCPSecretTransformer implements Transformer {
 
     private String projectId;
 

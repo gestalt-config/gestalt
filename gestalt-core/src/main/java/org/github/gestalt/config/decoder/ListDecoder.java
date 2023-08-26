@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ListDecoder extends CollectionDecoder<List<?>> {
+public final class ListDecoder extends CollectionDecoder<List<?>> {
 
     @Override
     public String name() {

@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ProxyDecoder implements Decoder<Object> {
+public final class ProxyDecoder implements Decoder<Object> {
 
     private String getConfigName(String methodName, Type returnType) {
         String name = methodName;

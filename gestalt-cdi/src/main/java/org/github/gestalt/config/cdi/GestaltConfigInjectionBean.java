@@ -41,7 +41,7 @@ import java.util.Set;
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
+public final class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
 
     private static final Set<Annotation> QUALIFIERS = new HashSet<>();
 

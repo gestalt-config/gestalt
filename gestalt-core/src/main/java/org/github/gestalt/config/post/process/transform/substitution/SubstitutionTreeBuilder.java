@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class SubstitutionTreeBuilder {
+public final class SubstitutionTreeBuilder {
 
     private static final int escapeChar = '\\';
     private final String openingToken;

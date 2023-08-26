@@ -12,7 +12,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class GitConfigSourceBuilder {
+public final class GitConfigSourceBuilder {
     private String repoURI;
     private Path localRepoDirectory;
     private String configFilePath;

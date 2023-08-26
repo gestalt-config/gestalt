@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class GestaltConfigurationException extends GestaltException {
+public final class GestaltConfigurationException extends GestaltException {
     /**
      * Create a GestaltConfigurationException with a message and a list of ValidationError.
      *

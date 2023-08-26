@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(500)
-public class DotNotationPathMapper implements PathMapper {
+public final class DotNotationPathMapper implements PathMapper {
     private final Pattern regex = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 
     @SuppressWarnings("StringSplitter")

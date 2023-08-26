@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class EnvironmentVarsLoader implements ConfigLoader {
+public final class EnvironmentVarsLoader implements ConfigLoader {
 
     private final ConfigParser parser;
     private final SentenceLexer lexer;

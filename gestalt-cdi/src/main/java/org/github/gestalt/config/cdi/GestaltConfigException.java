@@ -1,6 +1,6 @@
 package org.github.gestalt.config.cdi;
 
-public class GestaltConfigException extends RuntimeException {
+public final class GestaltConfigException extends RuntimeException {
     private final String configPropertyName;
 
     public GestaltConfigException(String message) {

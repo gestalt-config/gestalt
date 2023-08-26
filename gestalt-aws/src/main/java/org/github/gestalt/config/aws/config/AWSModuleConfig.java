@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class AWSModuleConfig implements GestaltModuleConfig {
+public final class AWSModuleConfig implements GestaltModuleConfig {
 
     private String region;
 

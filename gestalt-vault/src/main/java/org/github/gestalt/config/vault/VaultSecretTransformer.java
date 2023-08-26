@@ -14,7 +14,7 @@ import org.github.gestalt.config.vault.errors.VaultValidationErrors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class VaultSecretTransformer implements Transformer {
+public final class VaultSecretTransformer implements Transformer {
 
     private static final System.Logger logger = System.getLogger(VaultSecretTransformer.class.getName());
 

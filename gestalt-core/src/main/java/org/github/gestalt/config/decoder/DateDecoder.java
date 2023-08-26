@@ -18,7 +18,7 @@ import java.util.Date;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class DateDecoder extends LeafDecoder<Date> {
+public final class DateDecoder extends LeafDecoder<Date> {
 
     private DateTimeFormatter formatter;
 

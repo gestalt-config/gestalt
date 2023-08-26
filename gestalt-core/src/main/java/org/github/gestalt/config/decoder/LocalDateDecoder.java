@@ -15,7 +15,7 @@ import java.time.format.DateTimeParseException;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class LocalDateDecoder extends LeafDecoder<LocalDate> {
+public final class LocalDateDecoder extends LeafDecoder<LocalDate> {
 
     private DateTimeFormatter formatter;
 

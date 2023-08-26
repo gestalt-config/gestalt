@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class SetDecoder extends CollectionDecoder<Set<?>> {
+public final class SetDecoder extends CollectionDecoder<Set<?>> {
 
     @Override
     public Priority priority() {

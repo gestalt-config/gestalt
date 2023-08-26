@@ -10,7 +10,7 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class VaultModuleConfig implements GestaltModuleConfig {
+public final class VaultModuleConfig implements GestaltModuleConfig {
 
     private final Vault vault;
 

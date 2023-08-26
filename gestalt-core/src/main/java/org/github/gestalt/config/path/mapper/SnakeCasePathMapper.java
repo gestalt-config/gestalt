@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(550)
-public class SnakeCasePathMapper implements PathMapper {
+public final class SnakeCasePathMapper implements PathMapper {
     private final Pattern regex = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 
     @SuppressWarnings("StringSplitter")

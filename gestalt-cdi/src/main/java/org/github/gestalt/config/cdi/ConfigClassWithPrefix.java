@@ -2,7 +2,7 @@ package org.github.gestalt.config.cdi;
 
 import java.util.Objects;
 
-public class ConfigClassWithPrefix {
+public final class ConfigClassWithPrefix {
     private final Class<?> klass;
     private final String prefix;
 

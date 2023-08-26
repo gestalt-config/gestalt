@@ -8,7 +8,7 @@ import java.util.Objects;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class TagToken extends Token {
+public final class TagToken extends Token {
     private final String tag;
     private final String value;
 

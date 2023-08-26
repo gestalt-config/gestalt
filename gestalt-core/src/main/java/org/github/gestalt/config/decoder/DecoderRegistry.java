@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class DecoderRegistry implements DecoderService {
+public final class DecoderRegistry implements DecoderService {
     private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());
 
     private final ConfigNodeService configNodeService;
@@ -103,7 +103,7 @@ public class DecoderRegistry implements DecoderService {
      * @return a list of decoders that match the class
      */
     @SuppressWarnings("rawtypes")
-    protected <T> List<Decoder> getDecoderForClass(TypeCapture<T> klass) {
+    <T> List<Decoder> getDecoderForClass(TypeCapture<T> klass) {
         return decoders
             .stream()
             .filter(decoder -> decoder.matches(klass))

@@ -13,7 +13,7 @@ import java.util.List;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(1000)
-public class StandardPathMapper implements PathMapper {
+public final class StandardPathMapper implements PathMapper {
     @Override
     public ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
         return lexer.scan(sentence);

@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ConfigNodeContainer {
+public final class ConfigNodeContainer {
     private final ConfigNode configNode;
     private final ConfigSource source;
 
