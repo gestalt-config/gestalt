@@ -40,14 +40,6 @@ import java.util.Map;
 public final class ClassUtils {
 
     /**
-     * The package separator character: {@code '&#x2e;' == {@value}}.
-     */
-    public static final char PACKAGE_SEPARATOR_CHAR = '.';
-    /**
-     * The inner class separator character: {@code '$' == {@value}}.
-     */
-    public static final char INNER_CLASS_SEPARATOR_CHAR = '$';
-    /**
      * Maps names of primitives to their corresponding primitive {@link Class}es.
      */
     private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<>();
