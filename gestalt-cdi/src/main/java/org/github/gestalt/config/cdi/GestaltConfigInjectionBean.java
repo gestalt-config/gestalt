@@ -101,7 +101,7 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
                 }
             } else {
                 Class<?> annotatedTypeClass = (Class<?>) annotated.getBaseType();
-                if (defaultValue.length() == 0) {
+                if (defaultValue.isEmpty()) {
                     return (T) getConfig().getConfig(key, annotatedTypeClass);
                 } else {
                     Optional<T> optionalValue = (Optional<T>) getConfig().getConfigOptional(key, annotatedTypeClass);

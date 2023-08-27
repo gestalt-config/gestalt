@@ -175,7 +175,7 @@ public final class ObjectDecoder implements Decoder<Object> {
     private Object getObject(Object obj, Field field, Class<?> klass) throws IllegalAccessException {
 
         String methodName;
-        if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.TYPE)) {
+        if (field.getType().equals(boolean.class)) {
             methodName = "is" + field.getName();
         } else {
             methodName = "get" + field.getName();

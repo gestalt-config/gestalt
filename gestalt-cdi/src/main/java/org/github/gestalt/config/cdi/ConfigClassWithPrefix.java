@@ -25,14 +25,12 @@ public final class ConfigClassWithPrefix {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (!(o instanceof ConfigClassWithPrefix)) {
-            ConfigClassWithPrefix that = (ConfigClassWithPrefix) o;
-            return this.klass.equals(that.klass) && this.prefix.equals(that.prefix);
-        } else {
+        if (this == o) return true;
+        if (!(o instanceof ConfigClassWithPrefix)) {
             return false;
         }
+        ConfigClassWithPrefix that = (ConfigClassWithPrefix) o;
+        return Objects.equals(klass, that.klass) && Objects.equals(prefix, that.prefix);
     }
 
     @Override

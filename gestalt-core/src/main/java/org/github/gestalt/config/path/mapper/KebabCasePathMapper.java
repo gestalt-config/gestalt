@@ -35,13 +35,12 @@ public final class KebabCasePathMapper implements PathMapper {
                                  .map(it -> it.toLowerCase(Locale.getDefault()))
                                  .collect(Collectors.joining("-"));
 
-        List<Token> tokens = new ArrayList<>();
         ValidateOf<List<Token>> lexedValidateOf = lexer.scan(kebebCase);
 
         if (!lexedValidateOf.hasResults()) {
             return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "Kebab case path mapping"));
         }
-        tokens.addAll(lexedValidateOf.results());
+        List<Token> tokens = new ArrayList<>(lexedValidateOf.results());
 
         return ValidateOf.validateOf(tokens, lexedValidateOf.getErrors());
     }

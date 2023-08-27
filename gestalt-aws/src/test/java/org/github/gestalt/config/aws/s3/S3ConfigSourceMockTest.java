@@ -3,7 +3,6 @@ package org.github.gestalt.config.aws.s3;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -18,10 +17,6 @@ class S3ConfigSourceMockTest {
 
 
     private final S3Client s3Client = Mockito.mock();
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void idTest() throws GestaltException {

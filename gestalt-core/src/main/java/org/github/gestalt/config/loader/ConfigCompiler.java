@@ -33,14 +33,12 @@ public final class ConfigCompiler {
      * @param failOnErrors if we want to fail on errors or try and recover. Results can be unpredictable if it continues
      * @param lexer the SentenceLexer used to tokenize the configs.
      * @param parser ConfigParser to parse the tokens into a config node.
-     * @param sourceName name of the source.
      * @param configs the configuration to parse.
      * @return the ValidateOf of the config node with the results or errors.
      */
     public static ValidateOf<ConfigNode> analyze(boolean failOnErrors,
                                                  SentenceLexer lexer,
                                                  ConfigParser parser,
-                                                 String sourceName,
                                                  List<Pair<String, String>> configs) {
         List<ValidationError> errorMessage = new ArrayList<>();
 
@@ -71,7 +69,7 @@ public final class ConfigCompiler {
             .stream()
             .filter(validatedToken -> !validatedToken.getFirst().hasErrors() &&
                 validatedToken.getFirst().hasResults() &&
-                validatedToken.getFirst().results().size() > 0)
+                    !validatedToken.getFirst().results().isEmpty())
             .map(validatedToken ->
                 new Pair<>(validatedToken.getFirst().results(), new ConfigValue(validatedToken.getSecond())))
             .collect(Collectors.toList());

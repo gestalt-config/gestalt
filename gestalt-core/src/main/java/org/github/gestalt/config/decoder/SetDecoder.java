@@ -19,11 +19,6 @@ import java.util.Set;
 public final class SetDecoder extends CollectionDecoder<Set<?>> {
 
     @Override
-    public Priority priority() {
-        return Priority.MEDIUM;
-    }
-
-    @Override
     public String name() {
         return "Set";
     }

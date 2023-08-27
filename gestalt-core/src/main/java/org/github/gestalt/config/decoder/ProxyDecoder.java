@@ -142,7 +142,7 @@ public final class ProxyDecoder implements Decoder<Object> {
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable, GestaltException {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String methodName = method.getName();
             boolean isDefault = method.isDefault();
             Class<?> type = method.getReturnType();

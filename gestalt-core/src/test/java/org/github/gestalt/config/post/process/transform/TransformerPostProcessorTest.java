@@ -639,8 +639,6 @@ class TransformerPostProcessorTest {
     void processNestedDefaultsFallbackDefault() {
 
         Map<String, String> customMap = new HashMap<>();
-        //customMap.put("path1", "sunny");
-        //customMap.put("path2", "cloudy");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));

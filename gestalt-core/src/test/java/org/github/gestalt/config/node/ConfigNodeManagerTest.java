@@ -1883,7 +1883,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
+        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -1929,7 +1929,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc")));
+        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
         Assertions.assertTrue(validateOf.hasErrors());
         Assertions.assertTrue(validateOf.hasResults());
         Assertions.assertNotNull(validateOf.results());
@@ -2016,7 +2016,7 @@ class ConfigNodeManagerTest {
         public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
                 return ValidateOf.validateOf(currentNode,
-                    Arrays.asList(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
+                        List.of(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
             }
             return ValidateOf.valid(currentNode);
         }

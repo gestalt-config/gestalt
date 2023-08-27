@@ -91,7 +91,7 @@ class ClassUtilsTest {
         Assertions.assertEquals(ClassUtils.primitiveToWrapper(long.class), Long.class);
         Assertions.assertEquals(ClassUtils.primitiveToWrapper(Integer.class), Integer.class);
 
-        Assertions.assertEquals(ClassUtils.primitiveToWrapper(null), null);
+        Assertions.assertNull(ClassUtils.primitiveToWrapper(null));
     }
 }
 

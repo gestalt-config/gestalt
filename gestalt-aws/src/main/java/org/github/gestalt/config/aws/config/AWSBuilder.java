@@ -72,7 +72,7 @@ public final class AWSBuilder {
 
     /**
      * Set the SecretsManagerClient to use to communicate with AWS.
-     * If this is not set, then you must provide the region and
+     * If this is not set, then you must provide the region, and
      * it will be constructed using defaults.
      *
      * @param secretsClient Set the SecretsManagerClient to use to communicate with AWS.

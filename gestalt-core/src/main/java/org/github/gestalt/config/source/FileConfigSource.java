@@ -76,7 +76,7 @@ public final class FileConfigSource implements ConfigSource {
             throw new GestaltException("Path is not a regular file: " + path);
         } else if (!Files.isReadable(path)) {
             throw new GestaltException("Path is not a readable: " + path);
-        } else if ("".equals(format(path))) {
+        } else if (format(path).isEmpty()) {
             logger.log(System.Logger.Level.DEBUG, "Unable to find a format for the file: {0}", path);
         }
         return path;

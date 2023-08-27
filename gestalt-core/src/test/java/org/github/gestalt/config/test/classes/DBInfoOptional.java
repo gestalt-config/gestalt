@@ -12,7 +12,7 @@ public class DBInfoOptional {
     }
 
     public void setPort(int port) {
-        this.port = Optional.ofNullable(port);
+        this.port = Optional.of(port);
     }
 
     public Optional<String> getUri() {

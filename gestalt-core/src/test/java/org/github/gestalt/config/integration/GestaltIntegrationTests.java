@@ -523,7 +523,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("credmond", ihostAnnotations.get(2).getUser());
         Assertions.assertEquals("9012", ihostAnnotations.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", ihostAnnotations.get(2).getUrl());
-        Assertions.assertEquals("customers", ihostAnnotations.get(02).getTable());
+        Assertions.assertEquals("customers", ihostAnnotations.get(2).getTable());
 
         List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });

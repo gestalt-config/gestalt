@@ -100,7 +100,7 @@ public final class PathLexer extends SentenceLexer {
         String arrayIndex = matcher.group("index");
 
         @SuppressWarnings("rawtypes") ValidateOf results;
-        if (array != null && arrayIndex != null && !arrayIndex.equals("")) {
+        if (array != null && arrayIndex != null && !arrayIndex.isEmpty()) {
             if (StringUtils.isInteger(arrayIndex)) {
                 int index = Integer.parseInt(arrayIndex);
                 if (index >= 0) {

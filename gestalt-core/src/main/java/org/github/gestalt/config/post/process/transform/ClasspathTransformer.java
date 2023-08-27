@@ -23,10 +23,12 @@ public final class ClasspathTransformer implements Transformer {
 
     @Override
     public ValidateOf<String> process(String path, String key, String rawValue) {
+        ValidateOf<String> result;
         if (key != null) {
+            InputStream is = null;
             try {
                 String resource = rawValue.substring(prefixLength);
-                InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
+                is = getClass().getClassLoader().getResourceAsStream(resource);
                 if (is == null) {
                     is = ClasspathTransformer.class.getResourceAsStream(resource);
                     if (is == null) {
@@ -35,12 +37,22 @@ public final class ClasspathTransformer implements Transformer {
                     }
                 }
                 var fileBytes = is.readAllBytes();
-                return ValidateOf.valid(new String(fileBytes, Charset.defaultCharset()));
+                result = ValidateOf.valid(new String(fileBytes, Charset.defaultCharset()));
             } catch (IOException e) {
-                return ValidateOf.inValid(new ValidationError.ExceptionReadingFileDuringTransform(path, key, e.getMessage()));
+                result = ValidateOf.inValid(new ValidationError.ExceptionReadingFileDuringTransform(path, key, e.getMessage()));
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        result = ValidateOf.inValid(new ValidationError.ExceptionReadingFileDuringTransform(path, key, e.getMessage()));
+                    }
+                }
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            result = ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
+
+        return result;
     }
 }

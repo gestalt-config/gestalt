@@ -58,7 +58,7 @@ public abstract class SentenceLexer {
      */
     public ValidateOf<List<Token>> scan(String sentence) {
 
-        if (sentence == null || sentence.equals("")) {
+        if (sentence == null || sentence.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.EmptyPath());
         }
 
