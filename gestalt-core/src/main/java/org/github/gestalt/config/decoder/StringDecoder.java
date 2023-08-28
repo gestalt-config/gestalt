@@ -9,7 +9,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class StringDecoder extends LeafDecoder<String> {
+public final class StringDecoder extends LeafDecoder<String> {
 
     @Override
     public Priority priority() {

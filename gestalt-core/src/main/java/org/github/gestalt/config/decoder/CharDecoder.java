@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class CharDecoder extends LeafDecoder<Character> {
+public final class CharDecoder extends LeafDecoder<Character> {
 
     @Override
     public Priority priority() {
@@ -36,7 +36,7 @@ public class CharDecoder extends LeafDecoder<Character> {
         List<ValidationError> error = new ArrayList<>();
 
         String value = node.getValue().orElse("");
-        if (value.length() > 0) {
+        if (!value.isEmpty()) {
             results = value.charAt(0);
         }
 

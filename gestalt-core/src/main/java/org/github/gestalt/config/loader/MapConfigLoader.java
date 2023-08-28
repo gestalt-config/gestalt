@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class MapConfigLoader implements ConfigLoader {
+public final class MapConfigLoader implements ConfigLoader {
 
     private final ConfigParser parser;
     private final SentenceLexer lexer;
@@ -63,7 +63,7 @@ public class MapConfigLoader implements ConfigLoader {
             throw new GestaltException("Config source: " + source.name() + " does not have a list to load.");
         }
 
-        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
+        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
 
         List<ValidationError> errors = new ArrayList<>();
         if (loadedNode.hasErrors()) {

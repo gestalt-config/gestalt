@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @param <T> type of array
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ArrayDecoder<T> implements Decoder<T[]> {
+public final class ArrayDecoder<T> implements Decoder<T[]> {
 
     @Override
     public Priority priority() {
@@ -76,7 +76,7 @@ public class ArrayDecoder<T> implements Decoder<T[]> {
      * @return ValidateOf array built from the config node
      */
     @SuppressWarnings("unchecked")
-    protected ValidateOf<T[]> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
+    private ValidateOf<T[]> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
         List<ValidationError> errors = new ArrayList<>();
         T[] results = (T[]) Array.newInstance(klass.getComponentType(), node.size());
 

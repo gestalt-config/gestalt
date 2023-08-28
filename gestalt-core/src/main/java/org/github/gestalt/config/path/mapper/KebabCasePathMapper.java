@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(600)
-public class KebabCasePathMapper implements PathMapper {
+public final class KebabCasePathMapper implements PathMapper {
     private final Pattern regex = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 
     @SuppressWarnings("StringSplitter")
@@ -35,13 +35,12 @@ public class KebabCasePathMapper implements PathMapper {
                                  .map(it -> it.toLowerCase(Locale.getDefault()))
                                  .collect(Collectors.joining("-"));
 
-        List<Token> tokens = new ArrayList<>();
         ValidateOf<List<Token>> lexedValidateOf = lexer.scan(kebebCase);
 
         if (!lexedValidateOf.hasResults()) {
             return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "Kebab case path mapping"));
         }
-        tokens.addAll(lexedValidateOf.results());
+        List<Token> tokens = new ArrayList<>(lexedValidateOf.results());
 
         return ValidateOf.validateOf(tokens, lexedValidateOf.getErrors());
     }

@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class RecordDecoder implements Decoder<Object> {
+public final class RecordDecoder implements Decoder<Object> {
 
     @Override
     public Priority priority() {

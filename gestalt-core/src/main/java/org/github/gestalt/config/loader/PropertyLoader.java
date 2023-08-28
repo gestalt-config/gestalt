@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class PropertyLoader implements ConfigLoader {
+public final class PropertyLoader implements ConfigLoader {
 
     private final ConfigParser parser;
     private final SentenceLexer lexer;
@@ -86,7 +86,7 @@ public class PropertyLoader implements ConfigLoader {
                                                        .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
                                                        .collect(Collectors.toList());
 
-        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, source.name(), configs);
+        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
 
         List<ValidationError> errors = new ArrayList<>();
         if (loadedNode.hasErrors()) {

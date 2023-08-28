@@ -7,7 +7,7 @@ import java.util.Objects;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ObjectToken extends Token {
+public final class ObjectToken extends Token {
     private final String name;
 
     /**

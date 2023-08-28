@@ -31,7 +31,7 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class TransformerPostProcessor implements PostProcessor {
+public final class TransformerPostProcessor implements PostProcessor {
 
     public static final String defaultSubstitutionRegex =
         "^((?<transform>\\w+):(?!=))?(?<key>.+?)(:=(?<default>.*))?$";

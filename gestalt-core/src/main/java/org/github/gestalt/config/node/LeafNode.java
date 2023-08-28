@@ -8,7 +8,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class LeafNode implements ConfigNode {
+public final class LeafNode implements ConfigNode {
     private final String value;
 
     /**

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class EnvironmentConfigSource implements ConfigSource {
+public final class EnvironmentConfigSource implements ConfigSource {
 
     /**
      * Format for the EnvironmentConfigSource.

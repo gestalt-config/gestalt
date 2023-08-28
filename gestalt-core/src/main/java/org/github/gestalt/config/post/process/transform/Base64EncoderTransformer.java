@@ -11,7 +11,7 @@ import java.util.Base64;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class Base64EncoderTransformer implements Transformer {
+public final class Base64EncoderTransformer implements Transformer {
     @Override
     public String name() {
         return "base64Encode";

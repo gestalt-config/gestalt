@@ -21,6 +21,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.path.mapper;
     exports org.github.gestalt.config.post.process;
     exports org.github.gestalt.config.post.process.transform;
+    exports org.github.gestalt.config.post.process.transform.substitution;
     exports org.github.gestalt.config.reflect;
     exports org.github.gestalt.config.reload;
     exports org.github.gestalt.config.source;
@@ -89,3 +90,4 @@ module org.github.gestalt.core {
         org.github.gestalt.config.post.process.transform.URLDecoderTransformer,
         org.github.gestalt.config.post.process.transform.URLEncoderTransformer;
 }
+

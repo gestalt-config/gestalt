@@ -10,7 +10,7 @@ import org.github.gestalt.config.Gestalt;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class GestaltModule extends AbstractModule {
+public final class GestaltModule extends AbstractModule {
     private final Gestalt gestalt;
 
     public GestaltModule(Gestalt gestalt) {

@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ByteDecoder extends LeafDecoder<Byte> {
+public final class ByteDecoder extends LeafDecoder<Byte> {
 
     @Override
     public Priority priority() {

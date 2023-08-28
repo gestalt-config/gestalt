@@ -5,6 +5,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.TestMapConfigSource;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -116,7 +117,7 @@ class CompilerConfigTest {
             "and an object", validateOfResults.getErrors().get(0).description());
     }
 
-    private static class MapConfigSourceWarn extends MapConfigSource {
+    private static class MapConfigSourceWarn extends TestMapConfigSource {
 
         private final boolean failOnErrors;
 

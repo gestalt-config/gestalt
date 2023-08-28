@@ -13,7 +13,7 @@ import java.time.Duration;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class DurationDecoder extends LeafDecoder<Duration> {
+public final class DurationDecoder extends LeafDecoder<Duration> {
 
     @Override
     public Priority priority() {

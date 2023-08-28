@@ -8,7 +8,7 @@ import org.github.gestalt.config.entity.ValidationLevel;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class ExceptionProcessingGCPSecret extends ValidationError {
+public final class ExceptionProcessingGCPSecret extends ValidationError {
     private final String path;
     private final String secret;
     private final String transformer;

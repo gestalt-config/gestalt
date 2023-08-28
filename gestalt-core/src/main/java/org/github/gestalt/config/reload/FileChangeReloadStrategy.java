@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class FileChangeReloadStrategy extends ConfigReloadStrategy {
+public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
     private static final System.Logger logger = System.getLogger(FileChangeReloadStrategy.class.getName());
     private final Path path;
 

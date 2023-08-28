@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class AWSSecretTransformer implements Transformer {
+public final class AWSSecretTransformer implements Transformer {
 
     private static final System.Logger logger = System.getLogger(AWSSecretTransformer.class.getName());
     private final ObjectMapper mapper = new ObjectMapper();

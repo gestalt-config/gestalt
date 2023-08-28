@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public final class MapConfigSource implements ConfigSource {
+public class TestMapConfigSource implements ConfigSource {
 
     /**
      * Format for the MapConfigSource.
@@ -36,7 +36,7 @@ public final class MapConfigSource implements ConfigSource {
      *
      * @param customConfig map of configs.
      */
-    public MapConfigSource(Map<String, String> customConfig) {
+    public TestMapConfigSource(Map<String, String> customConfig) {
         this(customConfig, Tags.of());
     }
 
@@ -46,7 +46,7 @@ public final class MapConfigSource implements ConfigSource {
      * @param customConfig map of configs.
      * @param tags tags associated with the source
      */
-    public MapConfigSource(Map<String, String> customConfig, Tags tags) {
+    public TestMapConfigSource(Map<String, String> customConfig, Tags tags) {
         this.customConfig = customConfig;
         this.tags = tags;
     }
@@ -105,10 +105,10 @@ public final class MapConfigSource implements ConfigSource {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MapConfigSource)) {
+        if (!(o instanceof TestMapConfigSource)) {
             return false;
         }
-        MapConfigSource that = (MapConfigSource) o;
+        TestMapConfigSource that = (TestMapConfigSource) o;
         return Objects.equals(id, that.id);
     }
 

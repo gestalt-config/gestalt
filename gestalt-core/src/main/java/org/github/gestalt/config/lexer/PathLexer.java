@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class PathLexer extends SentenceLexer {
+public final class PathLexer extends SentenceLexer {
 
     /**
      * default pattern to represent a path.
@@ -100,7 +100,7 @@ public class PathLexer extends SentenceLexer {
         String arrayIndex = matcher.group("index");
 
         @SuppressWarnings("rawtypes") ValidateOf results;
-        if (array != null && arrayIndex != null && !arrayIndex.equals("")) {
+        if (array != null && arrayIndex != null && !arrayIndex.isEmpty()) {
             if (StringUtils.isInteger(arrayIndex)) {
                 int index = Integer.parseInt(arrayIndex);
                 if (index >= 0) {

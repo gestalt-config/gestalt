@@ -11,7 +11,7 @@ import java.nio.charset.Charset;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class URLDecoderTransformer implements Transformer {
+public final class URLDecoderTransformer implements Transformer {
     @Override
     public String name() {
         return "urlDecode";

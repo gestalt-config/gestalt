@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class RandomTransformer implements Transformer {
+public final class RandomTransformer implements Transformer {
 
     private static final Pattern randomPattern = Pattern.compile(
         "^(?<type>[A-Za-z]+)(\\((?<p1>[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)),?(?<p2>[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))?\\))?$");

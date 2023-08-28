@@ -1,6 +1,5 @@
 package org.github.gestalt.config.post.process.transform;
 
-import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -12,14 +11,13 @@ import java.util.Map;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-@ConfigPriority(400)
-public final class CustomMapTransformer implements Transformer {
+public class TestCustomMapTransformer implements Transformer {
     private final Map<String, String> replacementVars;
 
     /**
      * Default CustomMapTransformer that will not replace any values as it will have an empty map.
      */
-    public CustomMapTransformer() {
+    public TestCustomMapTransformer() {
         this.replacementVars = new HashMap<>();
     }
 
@@ -28,7 +26,7 @@ public final class CustomMapTransformer implements Transformer {
      *
      * @param replacementVars values to replace
      */
-    public CustomMapTransformer(Map<String, String> replacementVars) {
+    public TestCustomMapTransformer(Map<String, String> replacementVars) {
         this.replacementVars = replacementVars;
     }
 

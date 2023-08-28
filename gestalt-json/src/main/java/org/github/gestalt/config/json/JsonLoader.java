@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class JsonLoader implements ConfigLoader {
+public final class JsonLoader implements ConfigLoader {
 
     private final ObjectMapper objectMapper;
 

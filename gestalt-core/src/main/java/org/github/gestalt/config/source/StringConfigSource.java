@@ -16,7 +16,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class StringConfigSource implements ConfigSource {
+public final class StringConfigSource implements ConfigSource {
     private final String config;
     private final String format;
     private final UUID id = UUID.randomUUID();

@@ -19,7 +19,7 @@ import java.util.List;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(300)
-public class NodeTransformer implements Transformer {
+public final class NodeTransformer implements Transformer {
     private PostProcessorConfig config;
 
     @Override

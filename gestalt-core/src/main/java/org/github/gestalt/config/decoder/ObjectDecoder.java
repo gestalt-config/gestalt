@@ -25,7 +25,7 @@ import static java.lang.System.Logger.Level.WARNING;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ObjectDecoder implements Decoder<Object> {
+public final class ObjectDecoder implements Decoder<Object> {
     private static final System.Logger logger = System.getLogger(ObjectDecoder.class.getName());
 
     private final Set<Class<?>> ignoreTypes;
@@ -175,7 +175,7 @@ public class ObjectDecoder implements Decoder<Object> {
     private Object getObject(Object obj, Field field, Class<?> klass) throws IllegalAccessException {
 
         String methodName;
-        if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.TYPE)) {
+        if (field.getType().equals(boolean.class)) {
             methodName = "is" + field.getName();
         } else {
             methodName = "get" + field.getName();

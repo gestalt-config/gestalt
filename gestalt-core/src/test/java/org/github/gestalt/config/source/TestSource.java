@@ -1,6 +1,5 @@
 package org.github.gestalt.config.source;
 
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
@@ -40,7 +39,7 @@ public class TestSource implements ConfigSource {
     }
 
     @Override
-    public InputStream loadStream() throws GestaltException {
+    public InputStream loadStream() {
         return null;
     }
 
@@ -50,7 +49,7 @@ public class TestSource implements ConfigSource {
     }
 
     @Override
-    public List<Pair<String, String>> loadList() throws GestaltException {
+    public List<Pair<String, String>> loadList() {
         return null;
     }
 

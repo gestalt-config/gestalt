@@ -12,7 +12,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class FileTransformer implements Transformer {
+public final class FileTransformer implements Transformer {
 
     private final int prefixLength = (name() + ":").length();       // NOPMD
 

@@ -14,7 +14,6 @@ import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
-import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSource;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
@@ -322,7 +321,7 @@ public class GestaltSample {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
@@ -335,7 +334,7 @@ public class GestaltSample {
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(0, noHosts.size());
 
@@ -385,7 +384,7 @@ public class GestaltSample {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
@@ -892,7 +891,7 @@ public class GestaltSample {
         Assertions.assertEquals("9012", dbPrefix.hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", dbPrefix.hosts.get(2).url);
 
-        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
         Assertions.assertEquals("credmond", hosts.get(0).getUser());
@@ -905,7 +904,7 @@ public class GestaltSample {
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hosts.get(2).url);
 
-        List<IHost> ihosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<IHost>>() {
+        List<IHost> ihosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, ihosts.size());
         Assertions.assertEquals("credmond", ihosts.get(0).getUser());
@@ -918,7 +917,7 @@ public class GestaltSample {
         Assertions.assertEquals("9012", ihosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", ihosts.get(2).getUrl());
 
-        List<IHostDefault> ihostsDefault = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<IHostDefault>>() {
+        List<IHostDefault> ihostsDefault = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, ihostsDefault.size());
         Assertions.assertEquals("credmond", ihostsDefault.get(0).getUser());
@@ -939,9 +938,9 @@ public class GestaltSample {
         Assertions.assertEquals("credmond", iHostAnnotations.get(2).getUser());
         Assertions.assertEquals("9012", iHostAnnotations.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", iHostAnnotations.get(2).getUrl());
-        Assertions.assertEquals("customers", iHostAnnotations.get(02).getTable());
+        Assertions.assertEquals("customers", iHostAnnotations.get(2).getTable());
 
-        List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<HostAnnotations>>() {
+        List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hostsAnnotations.size());
         Assertions.assertEquals("credmond", hostsAnnotations.get(0).getUser());
@@ -957,7 +956,7 @@ public class GestaltSample {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsAnnotations.get(2).getUrl());
         Assertions.assertEquals("customers", hostsAnnotations.get(2).getTable());
 
-        List<HostMethodAnnotations> hostsMethodAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<List<HostMethodAnnotations>>() {
+        List<HostMethodAnnotations> hostsMethodAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hostsMethodAnnotations.size());
         Assertions.assertEquals("credmond", hostsMethodAnnotations.get(0).getUser());
@@ -973,7 +972,7 @@ public class GestaltSample {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsMethodAnnotations.get(2).getUrl());
         Assertions.assertEquals("customers", hostsMethodAnnotations.get(2).getTable());
 
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<List<Host>>() {
+        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(0, noHosts.size());
 
@@ -1011,7 +1010,7 @@ public class GestaltSample {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostOptionalInt.get(2).getUrl().get());
         Assertions.assertFalse(hostOptionalInt.get(2).getPort().isPresent());
 
-        User admin = gestalt.getConfig("admin", new TypeCapture<User>() {
+        User admin = gestalt.getConfig("admin", new TypeCapture<>() {
         });
         Assertions.assertEquals(3, admin.user.length);
         Assertions.assertEquals("Peter", admin.user[0]);
@@ -1020,7 +1019,7 @@ public class GestaltSample {
         Assertions.assertEquals(Role.LEVEL0, admin.accessRole);
         Assertions.assertTrue(admin.overrideEnabled);
 
-        User user = gestalt.getConfig("employee", new TypeCapture<User>() {
+        User user = gestalt.getConfig("employee", new TypeCapture<>() {
         });
         Assertions.assertEquals(1, user.user.length);
         Assertions.assertEquals("Janice", user.user[0]);

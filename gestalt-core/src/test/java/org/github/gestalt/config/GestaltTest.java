@@ -98,7 +98,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 
@@ -151,7 +151,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 
@@ -173,7 +173,7 @@ class GestaltTest {
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class),
             Tags.of("toys", "ball")));
 
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }, Tags.of("toys", "ball")));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), Tags.of("toys", "ball")));
 
@@ -226,7 +226,7 @@ class GestaltTest {
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class), Tags.of("toys", "ball")));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class),
             Tags.of("toys", "ball")));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }, Tags.of("toys", "ball")));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class), Tags.of("toys", "ball")));
 
@@ -656,18 +656,18 @@ class GestaltTest {
         Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", String.class, Tags.of()));
         Assertions.assertEquals("Scott", gestalt.getConfig("admin[3]", "Scott", String.class, Tags.of()));
 
-        Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", new TypeCapture<String>() {
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", new TypeCapture<>() {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", "aaa", TypeCapture.of(String.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", 1, new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", 1, new TypeCapture<>() {
         }));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", 1, TypeCapture.of(Integer.class)));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", 2L, TypeCapture.of(Long.class)));
-        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", 2L, new TypeCapture<Long>() {
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", 2L, new TypeCapture<>() {
         }));
 
         Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, new TypeCapture<Integer>() {
+        Assertions.assertEquals(123, gestalt.getConfig("redis.port", 123, new TypeCapture<>() {
         }));
         Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", TypeCapture.of(String.class)));
         Assertions.assertEquals("redis.io", gestalt.getConfig("redis.uri", "redis.io", TypeCapture.of(String.class)));
@@ -843,7 +843,7 @@ class GestaltTest {
             config.setTreatWarningsAsErrors(false);
             config.setTreatMissingArrayIndexAsError(false);
             config.setTreatMissingValuesAsErrors(false);
-            List<String> test = gestalt.getConfig("admin.user", new TypeCapture<List<String>>() {
+            List<String> test = gestalt.getConfig("admin.user", new TypeCapture<>() {
             });
 
             Assertions.assertEquals("John", test.get(0));
@@ -1369,7 +1369,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 
@@ -1427,7 +1427,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 
@@ -1525,7 +1525,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 
@@ -1594,7 +1594,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 
@@ -1659,7 +1659,7 @@ class GestaltTest {
         }));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", TypeCapture.of(String.class)));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Integer.class)));
-        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<Integer>() {
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", new TypeCapture<>() {
         }));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", TypeCapture.of(Long.class)));
 

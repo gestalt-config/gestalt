@@ -13,7 +13,7 @@ import static java.lang.System.Logger.Level.WARNING;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ConfigLoaderRegistry implements ConfigLoaderService {
+public final class ConfigLoaderRegistry implements ConfigLoaderService {
 
     private static final System.Logger logger = System.getLogger(ConfigLoaderRegistry.class.getName());
 

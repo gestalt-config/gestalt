@@ -17,7 +17,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class URLConfigSource implements ConfigSource {
+public final class URLConfigSource implements ConfigSource {
     private final String sourceURL;
     private final URL source;
     private final UUID id = UUID.randomUUID();
@@ -96,7 +96,7 @@ public class URLConfigSource implements ConfigSource {
      * @param url the name of the file at a url
      * @return the extension of the file
      */
-    protected String format(String url) {
+    private String format(String url) {
         int index = url.lastIndexOf('.');
         if (index > 0) {
             return url.substring(index + 1);

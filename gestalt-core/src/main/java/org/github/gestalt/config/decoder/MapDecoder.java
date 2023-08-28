@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class MapDecoder implements Decoder<Map<?, ?>> {
+public final class MapDecoder implements Decoder<Map<?, ?>> {
 
     @Override
     public Priority priority() {

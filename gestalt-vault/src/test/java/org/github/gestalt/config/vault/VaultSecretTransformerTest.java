@@ -189,7 +189,7 @@ class VaultSecretTransformerTest {
     }
 
     @Test
-    void noVaultApplyConfigNoModule() throws GestaltConfigurationException {
+    void noVaultApplyConfigNoModule() {
 
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
@@ -199,7 +199,7 @@ class VaultSecretTransformerTest {
     }
 
     @Test
-    void noVaultApplyConfigNoVault() throws GestaltConfigurationException {
+    void noVaultApplyConfigNoVault() {
 
         VaultModuleConfig vaultModuleConfig = new VaultModuleConfig(null);
 

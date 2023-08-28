@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class RecComponent {
+public final class RecComponent {
     private final String name;
     private final Type type;
     private final Class<?> klass;

@@ -639,8 +639,6 @@ class TransformerPostProcessorTest {
     void processNestedDefaultsFallbackDefault() {
 
         Map<String, String> customMap = new HashMap<>();
-        //customMap.put("path1", "sunny");
-        //customMap.put("path2", "cloudy");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
@@ -654,7 +652,7 @@ class TransformerPostProcessorTest {
     }
 
     @ConfigPriority(10)
-    public static class CustomTransformer extends CustomMapTransformer {
+    public static class CustomTransformer extends TestCustomMapTransformer {
         public CustomTransformer(Map<String, String> replacementVars) {
             super(replacementVars);
         }
@@ -665,7 +663,7 @@ class TransformerPostProcessorTest {
         }
     }
 
-    public static class CustomTransformerNoPriority extends CustomMapTransformer {
+    public static class CustomTransformerNoPriority extends TestCustomMapTransformer {
         public CustomTransformerNoPriority(Map<String, String> replacementVars) {
             super(replacementVars);
         }

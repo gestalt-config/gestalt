@@ -11,7 +11,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 @ConfigPriority(100)
-public class EnvironmentVariablesTransformer implements Transformer {
+public final class EnvironmentVariablesTransformer implements Transformer {
     @Override
     public String name() {
         return "env";

@@ -10,7 +10,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class MapNode implements ConfigNode {
+public final class MapNode implements ConfigNode {
 
     private final Map<String, ConfigNode> mapNode;
 

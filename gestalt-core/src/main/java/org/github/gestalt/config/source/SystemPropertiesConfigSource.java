@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class SystemPropertiesConfigSource implements ConfigSource {
+public final class SystemPropertiesConfigSource implements ConfigSource {
 
     /**
      * Format for the SystemPropertiesConfigSource.

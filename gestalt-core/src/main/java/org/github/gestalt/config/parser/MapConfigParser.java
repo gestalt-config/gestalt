@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class MapConfigParser implements ConfigParser {
+public final class MapConfigParser implements ConfigParser {
     private static final System.Logger logger = System.getLogger(MapConfigParser.class.getName());
 
     /**
@@ -48,7 +48,7 @@ public class MapConfigParser implements ConfigParser {
      * @param failOnErrors Results can be unpredictable if it continues
      * @return the ConfigNode root for the configurations at this point.
      */
-    protected ValidateOf<ConfigNode> buildConfigTree(List<Pair<List<Token>, ConfigValue>> tokens, int index,
+    ValidateOf<ConfigNode> buildConfigTree(List<Pair<List<Token>, ConfigValue>> tokens, int index,
                                                      boolean failOnErrors) {
 
         if (tokens == null || tokens.isEmpty()) {

@@ -22,7 +22,7 @@ class EnvironmentConfigSourceTest {
 
         Assertions.assertTrue(envConfig.hasList());
         Assertions.assertNotNull(envConfig.loadList());
-        Assertions.assertTrue(envConfig.loadList().size() > 0);
+        Assertions.assertFalse(envConfig.loadList().isEmpty());
     }
 
     @Test

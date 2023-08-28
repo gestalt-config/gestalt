@@ -21,7 +21,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class KubernetesSecretConfigSource implements ConfigSource {
+public final class KubernetesSecretConfigSource implements ConfigSource {
     public static final String K8_SECRET_CONFIG = "k8Secret";
 
     private final Path path;

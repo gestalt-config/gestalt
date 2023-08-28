@@ -8,7 +8,7 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
  *
  * @author Colin Redmond (c) 2023.
  */
-public class GoogleModuleConfig implements GestaltModuleConfig {
+public final class GoogleModuleConfig implements GestaltModuleConfig {
 
     private String projectId;
 

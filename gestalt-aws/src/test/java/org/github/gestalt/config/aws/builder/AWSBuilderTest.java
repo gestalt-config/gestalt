@@ -35,7 +35,7 @@ class AWSBuilderTest {
     }
 
     @Test
-    public void createAWSConfigEmpty() throws GestaltConfigurationException {
+    public void createAWSConfigEmpty() {
 
         AWSBuilder builder = AWSBuilder.builder();
 

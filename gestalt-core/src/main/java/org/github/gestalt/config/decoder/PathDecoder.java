@@ -12,7 +12,7 @@ import java.nio.file.Paths;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class PathDecoder extends LeafDecoder<Path> {
+public final class PathDecoder extends LeafDecoder<Path> {
 
     @Override
     public Priority priority() {

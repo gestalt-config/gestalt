@@ -23,7 +23,7 @@ import static org.github.gestalt.config.utils.ValidateOf.validateOf;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ConfigNodeManager implements ConfigNodeService {
+public final class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
     // We store the node roots by tags. The default will be an empty Tags.
     private final Map<Tags, ConfigNode> roots = new HashMap<>();

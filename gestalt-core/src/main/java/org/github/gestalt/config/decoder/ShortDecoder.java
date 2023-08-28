@@ -11,7 +11,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ShortDecoder extends LeafDecoder<Short> {
+public final class ShortDecoder extends LeafDecoder<Short> {
 
     @Override
     public Priority priority() {
