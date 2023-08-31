@@ -29,3 +29,11 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
         html.required.set(true)
     }
 }
+
+configurations.detekt {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion("1.9.10") // Add the appropriate Kotlin version here
+        }
+    }
+}
