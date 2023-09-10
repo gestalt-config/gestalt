@@ -1,8 +1,8 @@
 [versions]
 java = "11"
 javaLatest = "19"
-kotlin = "1.8.22"
-kotlinDokka = "1.8.20"
+kotlin = "1.9.10"
+kotlinDokka = "1.9.0"
 # Kotlin DI
 kodeinDI = "7.20.2"
 koinDI = "3.4.3"
@@ -19,22 +19,22 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-awsBom = "2.20.129"
+awsBom = "2.20.144"
 gcpLibraries = "26.22.0"
 # vault
 vault = "6.1.0"
 # Git support
-jgit = "6.6.0.202305301015-r"
+jgit = "6.7.0.202309050840-r"
 eddsa = "0.3.0"
 # testing
 junit5 = "5.10.0"
 assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.7"
-koTestAssertions = "5.6.2"
+koTestAssertions = "5.7.2"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.18.3"
+testcontainers = "1.19.0"
 # static code analysis
 errorprone = "2.21.1"
 gradleErrorProne = "3.1.0"
@@ -45,9 +45,9 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.1"
 # gestalt for integration tests.
-gestalt = "0.23.0"
+gestalt = "0.23.1"
 # Gradle utility
-gradleVersions = "0.47.0"
+gradleVersions = "0.48.0"
 gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.1"
 

@@ -50,6 +50,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final List<ValidationError> loadErrors = new ArrayList<>();
 
+    private final Tags defaultTags;
+
     /**
      * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
      *
@@ -62,10 +64,11 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param configNodeService configNodeService core functionality to manage nodes
      * @param reloadStrategy reloadStrategy holds all reload listeners
      * @param postProcessor postProcessor list of post processors
+     * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSource> sources, DecoderService decoderService,
                        SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService,
-                       CoreReloadStrategy reloadStrategy, List<PostProcessor> postProcessor) {
+                       CoreReloadStrategy reloadStrategy, List<PostProcessor> postProcessor, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sources = sources;
         this.decoderService = decoderService;
@@ -74,6 +77,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.configNodeService = configNodeService;
         this.coreReloadStrategy = reloadStrategy;
         this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
+        this.defaultTags = defaultTags;
     }
 
     List<ValidationError> getLoadErrors() {
@@ -222,7 +226,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     @Override
     public <T> T getConfig(String path, TypeCapture<T> klass) throws GestaltException {
-        return getConfig(path, klass, Tags.of());
+        return getConfig(path, klass, defaultTags);
     }
 
     @Override
@@ -256,7 +260,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     @Override
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
-        return getConfig(path, defaultVal, klass, Tags.of());
+        return getConfig(path, defaultVal, klass, defaultTags);
     }
 
     @Override
@@ -293,7 +297,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
         Objects.requireNonNull(klass);
 
-        return getConfigOptional(path, klass, Tags.of());
+        return getConfigOptional(path, klass, defaultTags);
     }
 
     @Override

@@ -78,6 +78,59 @@ public final class Tags {
         return tags;
     }
 
+
+    /**
+     * Create and return a new tag of type profile with value
+     * @param value the profile
+     * @return tags with the profile
+     */
+    public static Tags profile(String value) {
+        return Tags.of(Tag.of("profile", value));
+    }
+
+    /**
+     * Create and return a new tag of type profile with value
+     * @param value the profiles
+     * @return tags with the profiles
+     */
+    public static Tags profiles(String... value) {
+        if (value.length == 1) {
+            return profile(value[0]);
+        } else {
+            return Tags.of(
+                Arrays.stream(value)
+                    .map(it -> Tag.of("profile", it))
+                    .collect(Collectors.toList())
+            );
+        }
+    }
+
+    /**
+     * Create and return a new tag of type environment with value
+     * @param value the environment
+     * @return tags with the environment
+     */
+    public static Tags environment(String value) {
+        return Tags.of(Tag.of("environment", value));
+    }
+
+    /**
+     * Create and return a new tag of type environment with value
+     * @param value the environments
+     * @return tags with the environments
+     */
+    public static Tags environments(String... value) {
+        if (value.length == 1) {
+            return environment(value[0]);
+        } else {
+            return Tags.of(
+                Arrays.stream(value)
+                    .map(it -> Tag.of("environment", it))
+                    .collect(Collectors.toList())
+            );
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

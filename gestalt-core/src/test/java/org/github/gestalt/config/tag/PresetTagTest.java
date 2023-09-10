@@ -11,29 +11,29 @@ class PresetTagTest {
 
     @Test
     void profile() throws GestaltException {
-        Assertions.assertEquals(Tags.of("profile", "test"), PresetTag.profile("test"));
+        Assertions.assertEquals(Tags.of("profile", "test"), Tags.profile("test"));
     }
 
     @Test
     void profiles() throws GestaltException {
         Assertions.assertEquals(Tags.of("profile", "test"),
-            PresetTag.profiles("test"));
+            Tags.profiles("test"));
 
         Assertions.assertEquals(Tags.of("profile", "test", "profile", "cloud"),
-            PresetTag.profiles("test", "cloud"));
+            Tags.profiles("test", "cloud"));
     }
 
     @Test
     void environment() throws GestaltException {
-        Assertions.assertEquals(Tags.of("environment", "dev"), PresetTag.environment("dev"));
+        Assertions.assertEquals(Tags.of("environment", "dev"), Tags.environment("dev"));
     }
 
     @Test
     void environments() throws GestaltException {
         Assertions.assertEquals(Tags.of("environment", "dev"),
-            PresetTag.environments("dev"));
+            Tags.environments("dev"));
 
         Assertions.assertEquals(Tags.of("environment", "dev", "environment", "stage"),
-            PresetTag.environments("dev", "stage"));
+            Tags.environments("dev", "stage"));
     }
 }
