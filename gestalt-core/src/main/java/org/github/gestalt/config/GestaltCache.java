@@ -20,14 +20,17 @@ import java.util.Optional;
 public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
+    private final Tags defaultTags;
 
     /**
      * Constructor for the GestaltCache that accepts a delegate.
      *
      * @param delegate real Gestalt to call for configs to cache.
+     * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
-    public GestaltCache(Gestalt delegate) {
+    public GestaltCache(Gestalt delegate, Tags defaultTags) {
         this.delegate = delegate;
+        this.defaultTags = defaultTags;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
 
     @Override
     public <T> T getConfig(String path, TypeCapture<T> klass) throws GestaltException {
-        return getConfig(path, klass, Tags.of());
+        return getConfig(path, klass, defaultTags);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     @Override
 
     public <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass) {
-        return getConfig(path, defaultVal, klass, Tags.of());
+        return getConfig(path, defaultVal, klass, defaultTags);
     }
 
     @Override
@@ -123,7 +126,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
 
     @Override
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass) {
-        return getConfigOptional(path, klass, Tags.of());
+        return getConfigOptional(path, klass, defaultTags);
     }
 
     @Override

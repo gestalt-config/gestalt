@@ -20,6 +20,7 @@ import org.github.gestalt.config.post.process.transform.TransformerPostProcessor
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -230,7 +231,7 @@ class GestaltBuilderTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
 
         gestalt.loadConfigs();
 
@@ -349,7 +350,6 @@ class GestaltBuilderTest {
     }
 
     @Test
-    @Disabled
     public void buildDifferentStringSubstitutions() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -370,8 +370,36 @@ class GestaltBuilderTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(sources)
-            .setSubstitutionClosingToken("*(")
+            .setSubstitutionOpeningToken("*(")
             .setSubstitutionClosingToken(")")
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class));
+    }
+
+    @Test
+    public void buildDefaultTags() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSource> sources = new ArrayList<>();
+        sources.add(new MapConfigSource(configs, Tags.profile("test")));
+        sources.add(new MapConfigSource(configs2, Tags.profile("test")));
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setDefaultTags(Tags.profile("test"))
             .build();
 
         gestalt.loadConfigs();

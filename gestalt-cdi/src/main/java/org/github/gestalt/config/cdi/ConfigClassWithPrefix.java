@@ -25,7 +25,10 @@ public final class ConfigClassWithPrefix {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
+
         if (!(o instanceof ConfigClassWithPrefix)) {
             return false;
         }

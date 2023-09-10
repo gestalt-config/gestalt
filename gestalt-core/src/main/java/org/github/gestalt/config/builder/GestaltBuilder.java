@@ -23,6 +23,7 @@ import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
 
 import java.lang.System.Logger.Level;
@@ -91,6 +92,10 @@ public class GestaltBuilder {
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = null;
+
+
+    // Default set of tags to apply to all calls to get a configuration where tags are not provided.
+    private Tags defaultTags = Tags.of();
 
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
@@ -672,6 +677,27 @@ public class GestaltBuilder {
 
 
     /**
+     * Get default tags to apply to all calls to get a configuration when tags are not provided.
+     *
+     * @return default tags
+     */
+    public Tags getDefaultTags() {
+        return defaultTags;
+    }
+
+    /**
+     * Set default tags to apply to all calls to get a configuration when tags are not provided.
+     *
+     * @param defaultTags Set of default tags to apply to all calls to get a configuration when tags are not provided.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setDefaultTags(Tags defaultTags) {
+        this.defaultTags = defaultTags;
+        return this;
+    }
+
+
+    /**
      * dedupe decoders and return the deduped list.
      *
      * @return deduped list of decoders.
@@ -772,7 +798,7 @@ public class GestaltBuilder {
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig,
-            configNodeService, coreReloadStrategy, postProcessors);
+            configNodeService, coreReloadStrategy, postProcessors, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
@@ -780,7 +806,7 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadStrategy::registerListener);
 
         if (useCacheDecorator) {
-            GestaltCache gestaltCache = new GestaltCache(gestaltCore);
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.
