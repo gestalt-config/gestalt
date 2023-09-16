@@ -118,6 +118,13 @@ http.pool.maxPerRoute=50
    Using the Gestalt Interface you can load sub nodes with dot notation into a wide variety of classes.
    For non-generic classes you can pass in the class with `getConfig("db.port", Integer.class)` or for classes with generic types we need to use a special TypeCapture wrapper that captures the generic type at runtime. This allows us to construct generic classes with such as List<String> using  `new TypeCapture<List<String>>() {}`
 
+```java
+Short myShortWrapper = gestalt.getConfig("http.pool.maxTotal", Short.class);
+HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
+List<HttpPool> httpPoolList = gestalt.getConfig("http.pools", new TypeCapture<>() { });
+var httpPoolList = gestalt.getConfig("http.pools", new TypeCapture<List<HttpPool>>() { });
+```
+
 The API to retrieve configurations:
 ```java
   /**
@@ -209,6 +216,43 @@ If you want to use a different path style you can provide your own SentenceLexer
   String password = gestalt.getConfig("db.hosts[2].password", String.class);
 ```
 
+
+### Retrieving Primitive and boxed types
+Getting primitive and boxed types involves calling Gestalt and providing the class of the type you are trying to retrieve. 
+
+```java
+Short myShortWrapper = gestalt.getConfig("http.pool.maxTotal", Short.class);
+short myShort = gestalt.getConfig("http.pool.maxTotal", short.class);
+String serviceMode = gestalt.getConfig("serviceMode", String.class);
+```
+
+Gestalt will automatically decode and provide the value in the type you requested. 
+
+### Retrieving complex objects
+To get a complex object you need to pass in the class for gestalt to return. 
+Gestalt will automatically use reflection to create the object, determine all the fields in the class requested, then lookup the values in the configurations to inject into the object.
+It will attempt to use the setter fields first then fallback to directly setting the fields. 
+
+```java
+HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
+```
+
+### Retrieving Interfaces
+To get an interface you need to pass in the interface class for gestalt to return.
+Gestalt will use a proxy object when requesting an interface. When you call a method on the proxy it will look up the similarly named property, decode and return it. 
+
+```java
+iHttpPool pool = gestalt.getConfig("http.pool", iHttpPool.class);
+```
+
+### Retrieving Generic objects
+To get an interface you need to pass in a TypeCapture with the Generic value of the class for gestalt to return.
+Gestalt supports getting Generic objects such as Lists or Maps. However, due to type erasure we need to capture the type using the TypeCapture class. The Generic can be any type Gestalt supports decoding such as a primitive wrapper or an Object.    
+
+```java
+List<HttpPool> httpPoolList = gestalt.getConfig("http.pool", new TypeCapture<>() { });
+var httpPoolMap = gestalt.getConfig("http.pool", new TypeCapture<Map<String, HttpPool>>() { });
+```
 
 #### Config Data Type
 For non-generic classes you can use the interface that accepts a class `HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);`, for Generic classes you need to use the interface that accepts a TypeCapture `List<HttpPool> pools = gestalt.getConfig("http.pools", Collections.emptyList(),
