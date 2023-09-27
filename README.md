@@ -3,24 +3,41 @@
 [![License](https://img.shields.io/github/license/gestalt-config/gestalt.svg)](LICENSE)
 [![codecov](https://codecov.io/gh/gestalt-config/gestalt/branch/main/graph/badge.svg)](https://codecov.io/gh/gestalt-config/gestalt)
 
-A Java configuration library that allows you to build your configurations from multiple sources, merges them and convert them into an easy-to-use typesafe configuration class.
-A simple but powerful interface allows you to navigate to a path within your configurations and retrieve a configuration object, list, or a primitive value.
+Gestalt is a powerful Java configuration library designed to simplify the way you handle and manage configurations in your software projects. In the rapidly evolving landscape of software development, having a flexible and reliable configuration management system is essential for ensuring the smooth operation of your applications.
 
+Gestalt offers a comprehensive solution to the challenges of configuration management. It allows you to source configuration data from multiple inputs, merge them intelligently, and present them in a structured, type-safe manner. Whether you're working with Java beans, lists, sets, or primitive data types, Gestalt's automatic decoding based on data types simplifies the process.
+
+This documentation will guide you through the key features of Gestalt, demonstrate how to get started quickly, and provide detailed insights into its capabilities. Whether you're a seasoned Java developer or just beginning your journey, Gestalt will empower you to manage your application configurations effectively and efficiently.
+
+Let's dive in and explore how Gestalt can streamline your configuration management workflow and help you build more robust and adaptable software.
 
 # Features
-- **Automatic decoding based on type:** support decoding into bean classes, lists, sets or primitive types.
-- **Java Records:** Full support for Java Records. Will construct the Java record from the configuration using the Records Canonical Constructor
-- **Supports Multiple formats:** Load your configurations from Environment Variables, Property files, an in memory map or more.
-- **Read sub-sections of your config:** Navigate to a path using dot notation within your configurations and load a sub section.
-- **Kotlin interface:** Full support for Kotlin with an easy to use kotlin-esk interface that makes it easy to integrate into any kotlin project.
-- **Merge Multiple Sources:** Merge multiple config sources together by layering on your configurations.
-- **Flexible and configurable:** Library is a collection of lego pieces with well-defined interfaces, so you can add to or modify any part of it.
-- **Easy to use builder:** Easy to use builder can get you running quick, or be used to customize any part of the library.
-- **Receive all errors up front:** When there is an error with your config, you will receive multiple errors in a friendly log. So you can fix multiple errors at once instead of one at a time waiting for the next error.
-- **Modular support for features** Only include what you need into your build, so if you dont need the Kotlin module, dont include it.
-- **Zero dependencies** The gestalt core library has Zero external dependencies. Include the features and dependencies you need with the provided modules.
-- **Java 11 minimum** Requires Java 11 as a minimum version.
-- **Java Modules** Java 9 modules supported with proper exports.
+- **Automatic decoding based on type:** Supports decoding into bean classes, lists, sets, or primitive types. This simplifies configuration retrieval.
+
+- **Java Records:** Full support for Java Records, constructing records from configuration using the Records Canonical Constructor.
+
+- **Supports Multiple Formats:** Load configurations from various sources, including Environment Variables, Property files, an in-memory map, and more.
+
+- **Read Sub-sections of Your Config:** Easily navigate to specific sub-sections within configurations using dot notation.
+
+- **Kotlin interface:** Full support for Kotlin with an easy-to-use Kotlin-esque interface, ideal for Kotlin projects.
+
+- **Merge Multiple Sources:** Seamlessly merge configurations from different sources to create comprehensive settings.
+
+- **Flexible and Configurable:** The library offers well-defined interfaces, allowing customization and extension.
+
+- **Easy-to-Use Builder:** Get started quickly with a user-friendly builder, or customize specific aspects of the library.
+
+- **Receive All Errors Up Front:** In case of configuration errors, receive multiple errors in a user-friendly log for efficient debugging.
+
+- **Modular Support for Features:** Include only the required features and dependencies in your build, keeping your application lightweight.
+
+- **Zero Dependencies:** The core library has zero external dependencies; add features and dependencies as needed.
+
+- **Java 11 Minimum:** Requires a minimum of Java 11 for compatibility with modern Java versions.
+
+- **Java Modules:** Supports Java 9 modules with proper exports.
+
 
 
 # Getting Started
