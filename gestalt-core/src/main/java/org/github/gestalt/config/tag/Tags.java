@@ -80,7 +80,8 @@ public final class Tags {
 
 
     /**
-     * Create and return a new tag of type profile with value
+     * Create and return a new tag of type profile with value.
+     *
      * @param value the profile
      * @return tags with the profile
      */
@@ -89,7 +90,8 @@ public final class Tags {
     }
 
     /**
-     * Create and return a new tag of type profile with value
+     * Create and return a new tag of type profile with value.
+     *
      * @param value the profiles
      * @return tags with the profiles
      */
@@ -106,7 +108,8 @@ public final class Tags {
     }
 
     /**
-     * Create and return a new tag of type environment with value
+     * Create and return a new tag of type environment with value.
+     *
      * @param value the environment
      * @return tags with the environment
      */
@@ -115,7 +118,8 @@ public final class Tags {
     }
 
     /**
-     * Create and return a new tag of type environment with value
+     * Create and return a new tag of type environment with value.
+     *
      * @param value the environments
      * @return tags with the environments
      */
