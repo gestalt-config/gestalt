@@ -20,9 +20,11 @@ public class GestaltConfig {
     private boolean treatMissingArrayIndexAsError = false;
     // Treat missing object values as errors. If false it will leave the default values or null.
     private boolean treatMissingValuesAsErrors = false;
-    //Treat null values in classes after decoding as errors.
+    // Treat null values in classes after decoding as errors.
     private boolean treatNullValuesInClassAsErrors = true;
-    //Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+    // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
+    private boolean dontCacheProxyValues = false;
+    // Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
     private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = System.Logger.Level.DEBUG;
     // Java date decoder format.
     private DateTimeFormatter dateDecoderFormat = DateTimeFormatter.ISO_DATE_TIME;
@@ -110,6 +112,24 @@ public class GestaltConfig {
      */
     public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
         this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
+    }
+
+    /**
+     * Get For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
+     *
+     * @return if we should use a cached value or call gestalt for the most recent value.
+     */
+    public boolean isDontCacheProxyValues() {
+        return dontCacheProxyValues;
+    }
+
+    /**
+     * Set For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
+     *
+     * @param dontCacheProxyValues if we should use a cached value or call gestalt for the most recent value.
+     */
+    public void setDontCacheProxyValues(boolean dontCacheProxyValues) {
+        this.dontCacheProxyValues = dontCacheProxyValues;
     }
 
 

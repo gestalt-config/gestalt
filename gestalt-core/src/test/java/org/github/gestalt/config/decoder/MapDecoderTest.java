@@ -18,12 +18,12 @@ class MapDecoderTest {
 
     final SentenceLexer lexer = new PathLexer();
     ConfigNodeService configNodeService;
-    DecoderRegistry registry;
+    DecoderRegistry decoderService;
 
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        registry = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+        decoderService = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
             new ObjectDecoder(), new FloatDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
@@ -70,8 +70,7 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<Map<String, Integer>>() {
-            },
-            registry);
+            }, new DecoderContext(decoderService, null) );
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -93,7 +92,7 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<Map<Integer, Integer>>() {},
-            registry);
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -151,7 +150,7 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<Map<String, User>>() {},
-            registry);
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -180,7 +179,7 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<Map<String, Integer>>() {},
-            registry);
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -210,7 +209,7 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<Map<String, Integer>>() {},
-            registry);
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -233,7 +232,7 @@ class MapDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs),
-            new TypeCapture<Map<String, String>>() {}, registry);
+            new TypeCapture<Map<String, String>>() {}, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -259,7 +258,7 @@ class MapDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs),
-            new TypeCapture<Map<String, String>>() {}, registry);
+            new TypeCapture<Map<String, String>>() {}, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -283,7 +282,7 @@ class MapDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs),
-            new TypeCapture<Map<String, String>>() {}, registry);
+            new TypeCapture<Map<String, String>>() {}, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -304,7 +303,7 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new LeafNode("mysql.com"),
-            new TypeCapture<Map<String, String>>() {}, registry);
+            new TypeCapture<Map<String, String>>() {}, new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -323,7 +322,8 @@ class MapDecoderTest {
 
         MapDecoder decoder = new MapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<List<String>>() {}, registry);
+        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(configs), new TypeCapture<List<String>>() {},
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -337,7 +337,8 @@ class MapDecoderTest {
     void decodeMapNodeNullInside() {
         MapDecoder decoder = new MapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(null), new TypeCapture<List<String>>() {}, registry);
+        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", new MapNode(null), new TypeCapture<List<String>>() {},
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -351,8 +352,7 @@ class MapDecoderTest {
     void decodeNullNode() {
         MapDecoder decoder = new MapDecoder();
         ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", null, new TypeCapture<List<String>>() {
-            },
-            registry);
+            }, new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 

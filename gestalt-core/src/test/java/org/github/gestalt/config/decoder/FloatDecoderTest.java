@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -20,11 +21,15 @@ class FloatDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderService decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+
+        decoderService = new DecoderRegistry(Collections.singletonList(new FloatDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -59,8 +64,7 @@ class FloatDecoderTest {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("124.5"), TypeCapture.of(Float.class),
-            new DecoderRegistry(Collections.singletonList(floatDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124.5f, validate.results());
@@ -72,8 +76,7 @@ class FloatDecoderTest {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("124"), TypeCapture.of(Float.class),
-            new DecoderRegistry(Collections.singletonList(floatDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null) );
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124, validate.results());
@@ -85,8 +88,7 @@ class FloatDecoderTest {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("12s4"), TypeCapture.of(Float.class),
-            new DecoderRegistry(Collections.singletonList(floatDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null) );
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

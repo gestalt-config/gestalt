@@ -61,7 +61,7 @@ public final class ObjectDecoder implements Decoder<Object> {
     }
 
     @Override
-    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
             return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
@@ -98,13 +98,14 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                 // check if there is a node in the map for this field.
                 String nextPath = PathUtil.pathForKey(path, name);
-                ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
+                ValidateOf<ConfigNode> configNode = decoderContext.getDecoderService().getNextNode(nextPath, name, node);
 
                 errors.addAll(configNode.getErrors());
                 if (configNode.hasResults()) {
                     // if the map node has a value for the field.
                     //decode the field node.
-                    ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(), fieldType);
+                    ValidateOf<?> fieldValidateOf = decoderContext.getDecoderService()
+                        .decodeNode(nextPath, configNode.results(), fieldType, decoderContext);
 
                     errors.addAll(fieldValidateOf.getErrors());
                     if (fieldValidateOf.hasResults()) {
@@ -127,7 +128,8 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                     if (!defaultValue.isEmpty()) {
                         // if we have a default value in the annotation attempt to decode it as a leaf of the field type.
-                        ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(defaultValue), fieldType);
+                        ValidateOf<?> defaultValidateOf = decoderContext.getDecoderService()
+                            .decodeNode(nextPath, new LeafNode(defaultValue), fieldType, decoderContext);
 
                         errors.addAll(defaultValidateOf.getErrors());
                         // if the default value decoded to the expected field type set the field to the default value.
@@ -146,7 +148,8 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                         // even though we have default value in the annotation lets try to decode the field,
                         // as it may be an optional that can support null values.
-                        ValidateOf<?> decodedResults = decoderService.decodeNode(nextPath, configNode.results(), fieldType);
+                        ValidateOf<?> decodedResults = decoderContext.getDecoderService()
+                            .decodeNode(nextPath, configNode.results(), fieldType, decoderContext);
 
                         // if the decoder supported nullable types (such as optional) set the field to the value.
                         if (decodedResults.hasResults()) {

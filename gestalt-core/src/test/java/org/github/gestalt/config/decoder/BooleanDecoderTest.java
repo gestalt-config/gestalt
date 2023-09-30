@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -21,11 +22,14 @@ class BooleanDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderRegistry decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new BooleanDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -61,8 +65,7 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("true"), TypeCapture.of(Boolean.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertTrue(validate.results());
@@ -73,8 +76,7 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("false"), TypeCapture.of(Boolean.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertFalse(validate.results());
@@ -85,8 +87,7 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode(null), TypeCapture.of(Boolean.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null) );
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

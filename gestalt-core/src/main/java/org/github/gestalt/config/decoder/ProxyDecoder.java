@@ -1,12 +1,15 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -26,8 +29,14 @@ import java.util.*;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class ProxyDecoder implements Decoder<Object> {
+    private boolean dontCacheProxyValues = false;
 
-    private String getConfigName(String methodName, Type returnType) {
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        dontCacheProxyValues = config.isDontCacheProxyValues();
+    }
+
+    private static String getConfigName(String methodName, Type returnType) {
         String name = methodName;
         if (methodName.startsWith("get")) {
             name = methodName.substring(3);
@@ -66,7 +75,7 @@ public final class ProxyDecoder implements Decoder<Object> {
     }
 
     @Override
-    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
             return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, node));
         }
@@ -78,6 +87,8 @@ public final class ProxyDecoder implements Decoder<Object> {
         List<ValidationError> errors = new ArrayList<>();
 
         Method[] classMethods = klass.getMethods();
+
+        DecoderService decoderService = decoderContext.getDecoderService();
 
         // for each method, we want to get the corresponding bean value. ie if it is getCar, the bean value would be car.
         // Then get the configuration for the bean value and decode it.
@@ -107,7 +118,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                 if (configAnnotation != null && configAnnotation.defaultVal() != null &&
                     !configAnnotation.defaultVal().isEmpty()) {
                     ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
-                        TypeCapture.of(returnType));
+                        TypeCapture.of(returnType), decoderContext);
 
                     errors.addAll(defaultValidateOf.getErrors());
                     if (defaultValidateOf.hasResults()) {
@@ -116,7 +127,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                 }
             } else {
                 ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(),
-                    TypeCapture.of(returnType));
+                    TypeCapture.of(returnType), decoderContext);
 
                 errors.addAll(fieldValidateOf.getErrors());
                 if (fieldValidateOf.hasResults()) {

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -20,11 +21,14 @@ class DoubleDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderRegistry decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new DoubleDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -61,8 +65,7 @@ class DoubleDecoderTest {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", new LeafNode("124.5"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124.5f, validate.results());
@@ -74,8 +77,7 @@ class DoubleDecoderTest {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", new LeafNode("124.5"), new TypeCapture<Double>() {
-        }, new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
-            List.of(new StandardPathMapper())));
+        }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124.5f, validate.results());
@@ -87,8 +89,7 @@ class DoubleDecoderTest {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124, validate.results());
@@ -100,8 +101,7 @@ class DoubleDecoderTest {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Double.class),
-            new DecoderRegistry(Collections.singletonList(doubleDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

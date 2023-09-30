@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class CoreReloadStrategy {
+public class CoreReloadListenersContainer {
     /**
      * Listeners for the core reload.
      */
@@ -17,7 +17,7 @@ public class CoreReloadStrategy {
     /**
      * Default constructor for CoreReloadStrategy.
      */
-    public CoreReloadStrategy() {
+    public CoreReloadListenersContainer() {
     }
 
     /**

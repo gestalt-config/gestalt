@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -22,10 +23,14 @@ class EnumDecoderTest {
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
 
+    DecoderRegistry decoderService;
+
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new EnumDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -59,8 +64,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("RED"), TypeCapture.of(Colours.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null) );
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(Colours.RED, validate.results());
@@ -73,8 +77,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("pink"), TypeCapture.of(Colours.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertEquals(1, validate.getErrors().size());
@@ -89,8 +92,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("pink"), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertEquals(1, validate.getErrors().size());

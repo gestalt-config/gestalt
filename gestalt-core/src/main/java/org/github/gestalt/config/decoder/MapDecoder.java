@@ -38,7 +38,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
     }
 
     @Override
-    public ValidateOf<Map<?, ?>> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<Map<?, ?>> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<Map<?, ?>> results;
         if (node instanceof MapNode) {
             MapNode mapNode = (MapNode) node;
@@ -68,8 +68,10 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                     }
 
                     String nextPath = PathUtil.pathForKey(path, key);
-                    ValidateOf<Object> keyValidate = decoderService.decodeNode(nextPath, new LeafNode(key), (TypeCapture<Object>) keyType);
-                    ValidateOf<Object> valueValidate = decoderService.decodeNode(nextPath, it.getValue(), (TypeCapture<Object>) valueType);
+                    ValidateOf<Object> keyValidate = decoderContext.getDecoderService()
+                        .decodeNode(nextPath, new LeafNode(key), (TypeCapture<Object>) keyType, decoderContext);
+                    ValidateOf<Object> valueValidate = decoderContext.getDecoderService()
+                        .decodeNode(nextPath, it.getValue(), (TypeCapture<Object>) valueType, decoderContext);
 
                     errors.addAll(keyValidate.getErrors());
                     errors.addAll(valueValidate.getErrors());

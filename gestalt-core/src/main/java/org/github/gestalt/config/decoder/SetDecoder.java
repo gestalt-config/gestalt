@@ -29,7 +29,7 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
     }
 
     @Override
-    protected ValidateOf<Set<?>> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
+    protected ValidateOf<Set<?>> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderContext decoderContext) {
         List<ValidationError> errors = new ArrayList<>();
         Set<Object> results = new HashSet<>(node.size());
 
@@ -37,7 +37,8 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
                 String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, klass.getFirstParameterType());
+                ValidateOf<?> validateOf = decoderContext.getDecoderService()
+                    .decodeNode(nextPath, currentNode, klass.getFirstParameterType(), decoderContext);
 
                 errors.addAll(validateOf.getErrors());
                 if (validateOf.hasResults()) {

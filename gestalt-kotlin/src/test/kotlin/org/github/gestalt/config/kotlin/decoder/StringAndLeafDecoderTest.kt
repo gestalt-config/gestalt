@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
@@ -21,11 +22,18 @@ import java.util.*
 internal class StringAndLeafDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer? = null
+    var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     fun setup() {
         configNodeService = Mockito.mock(ConfigNodeService::class.java)
         lexer = Mockito.mock(SentenceLexer::class.java)
+        decoderService = DecoderRegistry(
+            listOf(BooleanDecoder()), configNodeService, lexer, listOf(
+                StandardPathMapper(),
+                DotNotationPathMapper()
+            )
+        )
     }
 
     @Test
@@ -50,15 +58,11 @@ internal class StringAndLeafDecoderTest {
     fun decode() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
-            "db.user", LeafNode("test"), TypeCapture.of(
+            "db.user", LeafNode("test"),
+            TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(
-                listOf(stringDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,15 +75,11 @@ internal class StringAndLeafDecoderTest {
     fun `invalid Leaf Node`() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
-            "db.user", LeafNode(null), TypeCapture.of(
+            "db.user", LeafNode(null),
+            TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(
-                listOf(stringDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -97,15 +97,11 @@ internal class StringAndLeafDecoderTest {
     fun `decode Invalid Node`() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
-            "db.user", MapNode(HashMap()), TypeCapture.of(
+            "db.user", MapNode(HashMap()),
+            TypeCapture.of(
                 String::class.java
             ),
-            DecoderRegistry(
-                listOf(stringDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

@@ -73,7 +73,7 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("id", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -90,7 +90,7 @@ class RecordDecoderTest {
         configs.put("id", new LeafNode("52"));
         configs.put("name", new LeafNode("tim"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -107,7 +107,7 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("id", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person2.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person2.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -126,7 +126,7 @@ class RecordDecoderTest {
         configs.put("address", new LeafNode("home"));
         configs.put("phone", new LeafNode("12345"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -145,7 +145,7 @@ class RecordDecoderTest {
         configs.put("address", new LeafNode("home"));
         configs.put("phone", new LeafNode("12345"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), new DecoderContext(registry, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -165,7 +165,7 @@ class RecordDecoderTest {
         configs.put("address", new LeafNode("home"));
         configs.put("phone", new LeafNode("12345"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(Person.class), new DecoderContext(registry, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -183,7 +183,7 @@ class RecordDecoderTest {
     void decodePersonWrongNode() {
         RecordDecoder decoder = new RecordDecoder();
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new LeafNode("12345"), TypeCapture.of(Person.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new LeafNode("12345"), TypeCapture.of(Person.class), new DecoderContext(registry, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -202,7 +202,7 @@ class RecordDecoderTest {
         configs.put("identity", new LeafNode("52"));
 
         ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs),
-            TypeCapture.of(PersonAnnotations.class), registry);
+            TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -219,7 +219,7 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
 
         ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs),
-            TypeCapture.of(PersonAnnotations.class), registry);
+            TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -241,7 +241,7 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
 
         ValidateOf<Object> validate =
-            decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class), registry);
+            decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class), new DecoderContext(registry, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -264,7 +264,7 @@ class RecordDecoderTest {
         configs.put("identity", new MapNode(Map.of("user", new LeafNode("52"))));
 
         ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs),
-            TypeCapture.of(PersonAnnotationsLong.class), registry);
+            TypeCapture.of(PersonAnnotationsLong.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -281,7 +281,7 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("id", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonOptional.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -297,7 +297,7 @@ class RecordDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("name", new LeafNode("tim"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonOptional.class), registry);
+        ValidateOf<Object> validate = decoder.decode("user.admin", new MapNode(configs), TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 

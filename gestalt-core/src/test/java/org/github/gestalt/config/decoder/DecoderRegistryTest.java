@@ -185,7 +185,8 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("value");
 
-        ValidateOf<String> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(String.class));
+        ValidateOf<String> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(String.class),
+            new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -199,7 +200,8 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("100");
 
-        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class));
+        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class),
+            new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -214,7 +216,8 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("100");
 
-        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class));
+        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class),
+            new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -30,24 +31,26 @@ public interface DecoderService {
     /**
      * Decode a node and return the ValidateOf with the results.
      *
-     * @param path Current path we are decoding, used for logging
+     * @param <T>        The generic type of the node we are decoding.
+     * @param path       Current path we are decoding, used for logging
      * @param configNode the current node we are decoding
-     * @param klass the TypeCapture of the node we are decoding
-     * @param <T> The generic type of the node we are decoding.
+     * @param klass      the TypeCapture of the node we are decoding
+     * @param decoderContext The context for the decoder
      * @return ValidateOf the code we are decoding.
      */
-    <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass);
+    <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass, DecoderContext decoderContext);
 
     /**
      * Decode a node and return the ValidateOf with the results.
      *
-     * @param path Current path we are decoding, used for logging
+     * @param <T>        The generic type of the node we are decoding.
+     * @param path       Current path we are decoding, used for logging
      * @param configNode the current node we are decoding
-     * @param klass the TypeCapture of the node we are decoding
-     * @param <T> The generic type of the node we are decoding.
+     * @param klass      the TypeCapture of the node we are decoding
+     * @param decoderContext The context for the decoder
      * @return ValidateOf the code we are decoding.
      */
-    <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass);
+    <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass, DecoderContext decoderContext);
 
     /**
      * Add decoders to the service.

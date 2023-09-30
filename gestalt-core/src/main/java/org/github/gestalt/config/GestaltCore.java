@@ -1,6 +1,7 @@
 package org.github.gestalt.config;
 
 import org.github.gestalt.config.annotations.ConfigPrefix;
+import org.github.gestalt.config.decoder.DecoderContext;
 import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
@@ -16,7 +17,8 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
-import org.github.gestalt.config.reload.CoreReloadStrategy;
+import org.github.gestalt.config.reload.CoreReloadListener;
+import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
@@ -45,12 +47,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private final SentenceLexer sentenceLexer;
     private final GestaltConfig gestaltConfig;
     private final ConfigNodeService configNodeService;
-    private final CoreReloadStrategy coreReloadStrategy;
+    private final CoreReloadListenersContainer coreReloadListenersContainer;
     private final List<PostProcessor> postProcessors;
 
     private final List<ValidationError> loadErrors = new ArrayList<>();
 
     private final Tags defaultTags;
+
+    private final DecoderContext decoderContext;
 
     /**
      * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
@@ -68,16 +72,17 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSource> sources, DecoderService decoderService,
                        SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService,
-                       CoreReloadStrategy reloadStrategy, List<PostProcessor> postProcessor, Tags defaultTags) {
+                       CoreReloadListenersContainer reloadStrategy, List<PostProcessor> postProcessor, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sources = sources;
         this.decoderService = decoderService;
         this.sentenceLexer = sentenceLexer;
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
-        this.coreReloadStrategy = reloadStrategy;
+        this.coreReloadListenersContainer = reloadStrategy;
         this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
         this.defaultTags = defaultTags;
+        this.decoderContext = new DecoderContext(decoderService, this);
     }
 
     List<ValidationError> getLoadErrors() {
@@ -86,6 +91,24 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     public DecoderService getDecoderService() {
         return decoderService;
+    }
+
+    /**
+     * register a core event listener.
+     *
+     * @param listener to register
+     */
+    public void registerListener(CoreReloadListener listener) {
+        coreReloadListenersContainer.registerListener(listener);
+    }
+
+    /**
+     * remove a core event listener.
+     *
+     * @param listener to remove
+     */
+    public void removeListener(CoreReloadListener listener) {
+        coreReloadListenersContainer.removeListener(listener);
     }
 
     @Override
@@ -153,7 +176,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             postProcessConfigs();
         }
 
-        coreReloadStrategy.reload();
+        coreReloadListenersContainer.reload();
     }
 
     void postProcessConfigs() throws GestaltException {
@@ -374,7 +397,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         if (!node.hasErrors() || node.hasErrors(MISSING_VALUE)) {
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
-            ValidateOf<T> decodedResults = decoderService.decodeNode(path, node.results(), klass);
+            ValidateOf<T> decodedResults = decoderService.decodeNode(path, node.results(), klass, decoderContext);
 
             // if we don't have a result and we received missing node errors.
             // return the errors from the call to navigate to node.

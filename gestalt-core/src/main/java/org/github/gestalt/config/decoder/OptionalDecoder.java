@@ -29,9 +29,10 @@ public final class OptionalDecoder implements Decoder<Optional<?>> {
     }
 
     @Override
-    public ValidateOf<Optional<?>> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<Optional<?>> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
-        ValidateOf<?> optionalValue = decoderService.decodeNode(path, node, type.getFirstParameterType());
+        ValidateOf<?> optionalValue = decoderContext.getDecoderService()
+            .decodeNode(path, node, type.getFirstParameterType(), decoderContext);
 
         return ValidateOf.validateOf(Optional.ofNullable(optionalValue.results()), optionalValue.getErrors());
     }

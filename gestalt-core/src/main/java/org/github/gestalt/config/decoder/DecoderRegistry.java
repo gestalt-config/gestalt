@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
@@ -112,13 +113,13 @@ public final class DecoderRegistry implements DecoderService {
 
 
     @Override
-    public <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass) {
-        return decodeNode(path, new LeafNode(configNode), klass);
+    public <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
+        return decodeNode(path, new LeafNode(configNode), klass, decoderContext);
     }
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass) {
+    public <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
         List<Decoder> classDecoder = getDecoderForClass(klass);
         classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
         if (classDecoder.isEmpty()) {
@@ -128,7 +129,7 @@ public final class DecoderRegistry implements DecoderService {
                 klass, classDecoder, classDecoder.get(0));
         }
 
-        return classDecoder.get(0).decode(path, configNode, klass, this);
+        return classDecoder.get(0).decode(path, configNode, klass, decoderContext);
     }
 
     @Override

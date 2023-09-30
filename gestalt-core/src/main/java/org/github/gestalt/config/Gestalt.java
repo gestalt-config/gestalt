@@ -2,6 +2,7 @@ package org.github.gestalt.config;
 
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
 
 import java.util.Optional;
@@ -160,4 +161,18 @@ public interface Gestalt {
      * @return the configuration or Optional.empty() if it failed.
      */
     <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags);
+
+    /**
+     * register a core event listener.
+     *
+     * @param listener to register
+     */
+    void registerListener(CoreReloadListener listener);
+
+    /**
+     * remove a core event listener.
+     *
+     * @param listener to remove
+     */
+    void removeListener(CoreReloadListener listener);
 }

@@ -19,7 +19,7 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
-import org.github.gestalt.config.reload.CoreReloadStrategy;
+import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.tag.Tags;
@@ -1346,16 +1346,16 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadStrategy.registerListener(coreListener);
+        coreReloadListenersContainer.registerListener(coreListener);
         ConfigSource source = new MapConfigSource(configs);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList(), Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1404,16 +1404,16 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadStrategy.registerListener(coreListener);
+        coreReloadListenersContainer.registerListener(coreListener);
         ConfigSource source = new MapConfigSource(configs);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList(), Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1466,15 +1466,15 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadStrategy.registerListener(coreListener);
+        coreReloadListenersContainer.registerListener(coreListener);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             null,
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList(), Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
 
         try {
             gestalt.reload(source);
@@ -1503,15 +1503,15 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadStrategy.registerListener(coreListener);
+        coreReloadListenersContainer.registerListener(coreListener);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList(), Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1571,16 +1571,16 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadStrategy.registerListener(coreListener);
+        coreReloadListenersContainer.registerListener(coreListener);
 
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList(), Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1636,16 +1636,16 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadStrategy.registerListener(coreListener);
+        coreReloadListenersContainer.registerListener(coreListener);
         ConfigSource source = new MapConfigSource(configs);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             Collections.singletonList(source),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadStrategy, Collections.emptyList(), Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1677,7 +1677,7 @@ class GestaltTest {
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
 
-        coreReloadStrategy.removeListener(coreListener);
+        coreReloadListenersContainer.removeListener(coreListener);
         configs.put("db.name", "test2");
         gestalt.reload(source);
         Assertions.assertEquals(1, coreListener.count);

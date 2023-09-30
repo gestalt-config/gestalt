@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
@@ -22,11 +23,18 @@ import kotlin.reflect.typeOf
 internal class BooleanDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer? = null
+    var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     fun setup() {
         configNodeService = Mockito.mock(ConfigNodeService::class.java)
         lexer = Mockito.mock(SentenceLexer::class.java)
+        decoderService = DecoderRegistry(
+            listOf(BooleanDecoder()), configNodeService, lexer, listOf(
+                StandardPathMapper(),
+                DotNotationPathMapper()
+            )
+        )
     }
 
     @Test
@@ -54,15 +62,11 @@ internal class BooleanDecoderTest {
     fun decode() {
         val decoder = BooleanDecoder()
         val validate: ValidateOf<Boolean> = decoder.decode(
-            "db.enabled", LeafNode("true"), TypeCapture.of(
+            "db.enabled", LeafNode("true"),
+            TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(
-                listOf(decoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -74,15 +78,11 @@ internal class BooleanDecoderTest {
     fun decodeFalse() {
         val decoder = BooleanDecoder()
         val validate: ValidateOf<Boolean> = decoder.decode(
-            "db.enabled", LeafNode("false"), TypeCapture.of(
+            "db.enabled", LeafNode("false"),
+            TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(
-                listOf(decoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -94,15 +94,11 @@ internal class BooleanDecoderTest {
     fun decodeFalseNull() {
         val decoder = BooleanDecoder()
         val validate: ValidateOf<Boolean> = decoder.decode(
-            "db.enabled", LeafNode(null), TypeCapture.of(
+            "db.enabled", LeafNode(null),
+            TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(
-                listOf(decoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

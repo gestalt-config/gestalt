@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -21,11 +22,14 @@ class ShortDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderService decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new ShortDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -60,8 +64,7 @@ class ShortDecoderTest {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Short.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals((short) 124, (short) validate.results());
@@ -73,8 +76,7 @@ class ShortDecoderTest {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Short.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -90,8 +92,7 @@ class ShortDecoderTest {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12345678901234567890123456789012345678901234567890123456789"),
-            TypeCapture.of(Short.class), new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+            TypeCapture.of(Short.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

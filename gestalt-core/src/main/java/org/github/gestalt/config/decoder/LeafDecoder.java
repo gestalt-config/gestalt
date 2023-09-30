@@ -17,14 +17,14 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     /**
      * Validates that the current node is a leaf and if it is call leafDecode.
      *
-     * @param path the current path
-     * @param node the current node we are decoding.
-     * @param type the type of object we are decoding.
-     * @param decoderService decoder Service used to decode members if needed. Such as class fields.
+     * @param path           the current path
+     * @param node           the current node we are decoding.
+     * @param type           the type of object we are decoding.
+     * @param decoderContext
      * @return ValidateOf the current node with details of either success or failures.
      */
     @Override
-    public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<T> results;
         if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
@@ -20,11 +21,18 @@ import java.util.*
 internal class DoubleDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer? = null
+    var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     fun setup() {
         configNodeService = Mockito.mock(ConfigNodeService::class.java)
         lexer = Mockito.mock(SentenceLexer::class.java)
+        decoderService = DecoderRegistry(
+            listOf(DoubleDecoder()), configNodeService, lexer, listOf(
+                StandardPathMapper(),
+                DotNotationPathMapper()
+            )
+        )
     }
 
     @Test
@@ -50,15 +58,11 @@ internal class DoubleDecoderTest {
     fun decodeDouble() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port", LeafNode("124.5"), TypeCapture.of(
+            "db.port", LeafNode("124.5"),
+            TypeCapture.of(
                 Double::class.java
             ),
-            DecoderRegistry(
-                listOf(doubleDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -74,12 +78,7 @@ internal class DoubleDecoderTest {
             "db.port",
             LeafNode("124.5"),
             object : TypeCapture<Double?>() {},
-            DecoderRegistry(
-                listOf(doubleDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -92,15 +91,11 @@ internal class DoubleDecoderTest {
     fun decodeDouble2() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port", LeafNode("124"), TypeCapture.of(
+            "db.port", LeafNode("124"),
+            TypeCapture.of(
                 Double::class.java
             ),
-            DecoderRegistry(
-                listOf(doubleDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -113,15 +108,11 @@ internal class DoubleDecoderTest {
     fun notADouble() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port", LeafNode("12s4"), TypeCapture.of(
+            "db.port", LeafNode("12s4"),
+            TypeCapture.of(
                 Double::class.java
             ),
-            DecoderRegistry(
-                listOf(doubleDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

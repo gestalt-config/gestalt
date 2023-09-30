@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
@@ -20,11 +21,18 @@ import java.util.*
 internal class LongDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer? = null
+    var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     fun setup() {
         configNodeService = Mockito.mock(ConfigNodeService::class.java)
         lexer = Mockito.mock(SentenceLexer::class.java)
+        decoderService = DecoderRegistry(
+            listOf(LongDecoder()), configNodeService, lexer, listOf(
+                StandardPathMapper(),
+                DotNotationPathMapper()
+            )
+        )
     }
 
     @Test
@@ -50,15 +58,11 @@ internal class LongDecoderTest {
     fun decode() {
         val longDecoder = LongDecoder()
         val validate: ValidateOf<Long> = longDecoder.decode(
-            "db.port", LeafNode("124"), TypeCapture.of(
+            "db.port", LeafNode("124"),
+            TypeCapture.of(
                 Long::class.java
             ),
-            DecoderRegistry(
-                listOf(longDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,15 +75,11 @@ internal class LongDecoderTest {
     fun notALong() {
         val longDecoder = LongDecoder()
         val validate: ValidateOf<Long> = longDecoder.decode(
-            "db.port", LeafNode("12s4"), TypeCapture.of(
+            "db.port", LeafNode("12s4"),
+            TypeCapture.of(
                 Long::class.java
             ),
-            DecoderRegistry(
-                listOf(longDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -99,13 +99,8 @@ internal class LongDecoderTest {
         val decoder = LongDecoder()
         val validate: ValidateOf<Long> = decoder.decode(
             "db.port", LeafNode("12345678901234567890123456789012345678901234567890123456"),
-            TypeCapture.of(Long::class.java), DecoderRegistry(
-                listOf(decoder), configNodeService, lexer,
-                listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            TypeCapture.of(Long::class.java),
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
