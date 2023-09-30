@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -57,11 +56,11 @@ class PatternDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         PatternDecoder decoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = decoder.decode("db.user", new LeafNode("test"), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -70,7 +69,7 @@ class PatternDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
@@ -85,11 +84,11 @@ class PatternDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -100,7 +99,7 @@ class PatternDecoderTest {
     }
 
     @Test
-    void decodeNullNode() throws GestaltException {
+    void decodeNullNode() {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         ValidateOf<Pattern> validate = stringDecoder.decode("db.user", null, TypeCapture.of(String.class),

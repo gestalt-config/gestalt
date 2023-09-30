@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -60,14 +59,14 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
         String date = "2021-01-10";
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
         ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -76,7 +75,7 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void decodeFormatNull() throws GestaltException {
+    void decodeFormatNull() {
         LocalDateDecoder decoder = new LocalDateDecoder(null);
 
         String date = "2021-01-10";
@@ -92,7 +91,7 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void decodeFormatter() throws GestaltException {
+    void decodeFormatter() {
         LocalDateDecoder decoder = new LocalDateDecoder("yyyy-MM-dd");
 
         String date = "2021-01-10";
@@ -108,7 +107,7 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void decodeBadDate() throws GestaltException {
+    void decodeBadDate() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
         String now = "not a date";
@@ -125,7 +124,7 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
         ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
@@ -140,7 +139,7 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
         ValidateOf<LocalDate> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
@@ -155,7 +154,7 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void decodeNullNode() throws GestaltException {
+    void decodeNullNode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
         ValidateOf<LocalDate> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),

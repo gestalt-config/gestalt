@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -61,7 +60,7 @@ class UUIDDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         UUIDDecoder decoder = new UUIDDecoder();
 
 
@@ -75,12 +74,12 @@ class UUIDDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         UUIDDecoder decoder = new UUIDDecoder();
 
 
         ValidateOf<UUID> validate = decoder.decode("db.port", new LeafNode("asdfasdfsdf"), TypeCapture.of(Long.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

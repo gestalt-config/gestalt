@@ -93,7 +93,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
+        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(String[].class),
+            new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -117,7 +118,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        ValidateOf<Object[]> values = decoder.decode("db.hosts", nodes, TypeCapture.of(Double[].class),
+            new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -284,7 +286,7 @@ class ArrayDecoderTest {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", new ArrayNode(null), TypeCapture.of(Double[].class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());

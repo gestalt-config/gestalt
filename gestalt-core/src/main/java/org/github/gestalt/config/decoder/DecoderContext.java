@@ -28,8 +28,12 @@ public class DecoderContext {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DecoderContext)) {
+            return false;
+        }
         DecoderContext that = (DecoderContext) o;
         return Objects.equals(decoderService, that.decoderService) && Objects.equals(gestalt, that.gestalt);
     }

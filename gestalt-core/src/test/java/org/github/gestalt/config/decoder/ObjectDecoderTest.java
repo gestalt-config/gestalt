@@ -80,7 +80,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfo.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -295,7 +296,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoStatic.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -314,7 +316,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoOptional.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -330,7 +333,8 @@ class ObjectDecoderTest {
 
         Map<String, ConfigNode> configs = new HashMap<>();
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoOptional.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -360,7 +364,8 @@ class ObjectDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("port", new LeafNode("100"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoOptional.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -424,7 +429,8 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
+                "during navigating to next node",
             validate.getErrors().get(0).description());
 
         DBInforNoConstructor results = (DBInforNoConstructor) validate.results();
@@ -445,7 +451,7 @@ class ObjectDecoderTest {
         Assertions.assertEquals(3, validate.getErrors().size());
 
         org.assertj.core.api.Assertions.assertThat(validate.getErrors().stream()
-                                                           .allMatch(it -> it.level().equals(ValidationLevel.MISSING_VALUE))).isTrue();
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_VALUE))).isTrue();
 
         org.assertj.core.api.Assertions.assertThat(validate.getErrors()).anyMatch(it ->
             "Unable to find node matching path: db.host.uri, for class: ObjectToken, during navigating to next node"
@@ -476,7 +482,8 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(4, validate.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: ObjectToken, " +
+                "during navigating to next node",
             validate.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
@@ -562,7 +569,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotations.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -600,7 +608,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotations.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -624,7 +633,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         ValidateOf<Object> validate =
-            decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotationsDefault.class), new DecoderContext(decoderService, null));
+            decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoAnnotationsDefault.class),
+                new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -647,7 +657,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoBadAnnotations.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoBadAnnotations.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 

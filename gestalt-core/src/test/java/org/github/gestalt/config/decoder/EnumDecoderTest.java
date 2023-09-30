@@ -1,7 +1,6 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -59,12 +58,12 @@ class EnumDecoderTest {
     }
 
     @Test
-    void leafDecode() throws GestaltException {
+    void leafDecode() {
 
         EnumDecoder decoder = new EnumDecoder();
 
         ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("RED"), TypeCapture.of(Colours.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(Colours.RED, validate.results());
@@ -72,7 +71,7 @@ class EnumDecoderTest {
     }
 
     @Test
-    void leafDecodeNotValidEnum() throws GestaltException {
+    void leafDecodeNotValidEnum() {
 
         EnumDecoder decoder = new EnumDecoder();
 
@@ -87,7 +86,7 @@ class EnumDecoderTest {
     }
 
     @Test
-    void leafDecodeNotAnEnum() throws GestaltException {
+    void leafDecodeNotAnEnum() {
 
         EnumDecoder decoder = new EnumDecoder();
 

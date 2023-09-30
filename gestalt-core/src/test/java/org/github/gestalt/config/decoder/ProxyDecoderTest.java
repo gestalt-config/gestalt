@@ -26,8 +26,8 @@ class ProxyDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
         decoderService = new DecoderRegistry(List.of(new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new FloatDecoder(), new BooleanDecoder(), new ProxyDecoder(), new OptionalDecoder()), configNodeService, lexer,
-            List.of(new StandardPathMapper()));
+            new ObjectDecoder(), new FloatDecoder(), new BooleanDecoder(), new ProxyDecoder(), new OptionalDecoder()),
+            configNodeService, lexer, List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -186,7 +186,8 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
+                "during navigating to next node",
             validate.getErrors().get(0).description());
 
         DBInfoInterface results = (DBInfoInterface) validate.results();
@@ -213,7 +214,8 @@ class ProxyDecoderTest {
     void decodeNullNode() {
         ProxyDecoder decoder = new ProxyDecoder();
 
-        ValidateOf<Object> validate = decoder.decode("db.host", null, TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", null, TypeCapture.of(DBInforNoConstructor.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -354,7 +356,8 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         ValidateOf<Object> validate =
-            decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoBadAnnotations.class), new DecoderContext(decoderService, null));
+            decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoBadAnnotations.class),
+                new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 

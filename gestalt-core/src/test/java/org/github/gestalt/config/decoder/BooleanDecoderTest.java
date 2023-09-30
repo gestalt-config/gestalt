@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -61,7 +60,7 @@ class BooleanDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("true"), TypeCapture.of(Boolean.class),
@@ -72,7 +71,7 @@ class BooleanDecoderTest {
     }
 
     @Test
-    void decodeFalse() throws GestaltException {
+    void decodeFalse() {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("false"), TypeCapture.of(Boolean.class),
@@ -83,11 +82,11 @@ class BooleanDecoderTest {
     }
 
     @Test
-    void decodeFalseNull() throws GestaltException {
+    void decodeFalseNull() {
         BooleanDecoder decoder = new BooleanDecoder();
 
         ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode(null), TypeCapture.of(Boolean.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

@@ -32,8 +32,8 @@ class OptionalDoubleDecoderTest {
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        decoderService = new DecoderRegistry(List.of(new OptionalDoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
+        decoderService = new DecoderRegistry(List.of(new OptionalDoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder(), new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -96,7 +96,8 @@ class OptionalDoubleDecoderTest {
     void decodeLeafDoubleNull() {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
-        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null));
+        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalDouble.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());

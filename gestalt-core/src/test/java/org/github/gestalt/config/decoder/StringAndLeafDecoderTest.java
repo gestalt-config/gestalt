@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -56,7 +55,7 @@ class StringAndLeafDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", new LeafNode("test"), TypeCapture.of(String.class),
@@ -68,7 +67,7 @@ class StringAndLeafDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
@@ -83,7 +82,7 @@ class StringAndLeafDecoderTest {
     }
 
     @Test
-    void nullLeafNode() throws GestaltException {
+    void nullLeafNode() {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", null, TypeCapture.of(String.class),
@@ -98,7 +97,7 @@ class StringAndLeafDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         StringDecoder stringDecoder = new StringDecoder();
 
         ValidateOf<String> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),

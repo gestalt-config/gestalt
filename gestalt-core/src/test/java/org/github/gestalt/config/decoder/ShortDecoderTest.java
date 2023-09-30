@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -60,7 +59,7 @@ class ShortDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Short.class),
@@ -72,7 +71,7 @@ class ShortDecoderTest {
     }
 
     @Test
-    void notAnInteger() throws GestaltException {
+    void notAnInteger() {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Short.class),
@@ -88,7 +87,7 @@ class ShortDecoderTest {
     }
 
     @Test
-    void notAShortTooLarge() throws GestaltException {
+    void notAShortTooLarge() {
         ShortDecoder decoder = new ShortDecoder();
 
         ValidateOf<Short> validate = decoder.decode("db.port", new LeafNode("12345678901234567890123456789012345678901234567890123456789"),

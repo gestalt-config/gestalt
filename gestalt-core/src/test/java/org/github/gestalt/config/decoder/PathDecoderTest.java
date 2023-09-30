@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.integration.GestaltIntegrationTests;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -60,13 +59,13 @@ class PathDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         PathDecoder decoder = new PathDecoder();
 
         URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
         ValidateOf<Path> validate = decoder.decode("db.user", new LeafNode(defaultFile.getAbsolutePath()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -75,11 +74,11 @@ class PathDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         PathDecoder stringDecoder = new PathDecoder();
 
         ValidateOf<Path> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -90,7 +89,7 @@ class PathDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         PathDecoder stringDecoder = new PathDecoder();
 
         ValidateOf<Path> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),

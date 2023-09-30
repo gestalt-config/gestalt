@@ -98,6 +98,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      *
      * @param listener to register
      */
+    @Override
     public void registerListener(CoreReloadListener listener) {
         coreReloadListenersContainer.registerListener(listener);
     }
@@ -107,6 +108,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      *
      * @param listener to remove
      */
+    @Override
     public void removeListener(CoreReloadListener listener) {
         coreReloadListenersContainer.removeListener(listener);
     }

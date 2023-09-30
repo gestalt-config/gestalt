@@ -20,7 +20,7 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
      * @param path           the current path
      * @param node           the current node we are decoding.
      * @param type           the type of object we are decoding.
-     * @param decoderContext
+     * @param decoderContext the information needed to decode an object.
      * @return ValidateOf the current node with details of either success or failures.
      */
     @Override

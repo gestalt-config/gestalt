@@ -1,6 +1,5 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;

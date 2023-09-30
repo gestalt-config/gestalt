@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -67,31 +66,7 @@ class BigIntegerDecoderTest {
     }
 
     @Test
-    void bigDecimalDecoder() throws GestaltException {
-        BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
-
-        ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
-            new DecoderContext(decoderService, null) );
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
-        Assertions.assertEquals(0, validate.getErrors().size());
-    }
-
-    @Test
-    void bigDecimalDecoderType() throws GestaltException {
-        BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
-
-        ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), new TypeCapture<Double>() {
-        }, new DecoderContext(decoderService, null) );
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
-        Assertions.assertEquals(0, validate.getErrors().size());
-    }
-
-    @Test
-    void bigDecimalDecoder2() throws GestaltException {
+    void bigDecimalDecoder() {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
@@ -103,7 +78,31 @@ class BigIntegerDecoderTest {
     }
 
     @Test
-    void notABigDecimal() throws GestaltException {
+    void bigDecimalDecoderType() {
+        BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
+
+        ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), new TypeCapture<Double>() {
+        }, new DecoderContext(decoderService, null));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
+        Assertions.assertEquals(0, validate.getErrors().size());
+    }
+
+    @Test
+    void bigDecimalDecoder2() {
+        BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
+
+        ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
+            new DecoderContext(decoderService, null));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertEquals(BigInteger.valueOf(124), validate.results());
+        Assertions.assertEquals(0, validate.getErrors().size());
+    }
+
+    @Test
+    void notABigDecimal() {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Double.class),
@@ -119,7 +118,7 @@ class BigIntegerDecoderTest {
     }
 
     @Test
-    void notABigDecimalFloat() throws GestaltException {
+    void notABigDecimalFloat() {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         ValidateOf<BigInteger> validate = doubleDecoder.decode("db.port", new LeafNode("124.2"), TypeCapture.of(Double.class),

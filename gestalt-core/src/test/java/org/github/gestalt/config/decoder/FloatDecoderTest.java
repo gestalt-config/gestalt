@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -60,7 +59,7 @@ class FloatDecoderTest {
     }
 
     @Test
-    void decodeFloat() throws GestaltException {
+    void decodeFloat() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("124.5"), TypeCapture.of(Float.class),
@@ -72,11 +71,11 @@ class FloatDecoderTest {
     }
 
     @Test
-    void decodeFloat2() throws GestaltException {
+    void decodeFloat2() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("124"), TypeCapture.of(Float.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124, validate.results());
@@ -84,11 +83,11 @@ class FloatDecoderTest {
     }
 
     @Test
-    void notAFloat() throws GestaltException {
+    void notAFloat() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("12s4"), TypeCapture.of(Float.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

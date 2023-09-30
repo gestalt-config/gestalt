@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -60,7 +59,7 @@ class LongDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         LongDecoder longDecoder = new LongDecoder();
 
         ValidateOf<Long> validate = longDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Long.class),
@@ -72,7 +71,7 @@ class LongDecoderTest {
     }
 
     @Test
-    void notALong() throws GestaltException {
+    void notALong() {
         LongDecoder longDecoder = new LongDecoder();
 
         ValidateOf<Long> validate = longDecoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Long.class),
@@ -88,7 +87,7 @@ class LongDecoderTest {
     }
 
     @Test
-    void notALongTooLarge() throws GestaltException {
+    void notALongTooLarge() {
         LongDecoder decoder = new LongDecoder();
 
         ValidateOf<Long> validate = decoder.decode("db.port", new LeafNode("12345678901234567890123456789012345678901234567890123456"),

@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -57,13 +56,13 @@ class InstantDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         InstantDecoder decoder = new InstantDecoder();
 
         String now = Instant.now().toString();
 
         ValidateOf<Instant> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -72,7 +71,7 @@ class InstantDecoderTest {
     }
 
     @Test
-    void decodeBadDate() throws GestaltException {
+    void decodeBadDate() {
         InstantDecoder decoder = new InstantDecoder();
 
         String now = "not a date";
@@ -89,11 +88,11 @@ class InstantDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         InstantDecoder decoder = new InstantDecoder();
 
         ValidateOf<Instant> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -104,11 +103,11 @@ class InstantDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         InstantDecoder decoder = new InstantDecoder();
 
         ValidateOf<Instant> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -119,7 +118,7 @@ class InstantDecoderTest {
     }
 
     @Test
-    void decodeNullNode() throws GestaltException {
+    void decodeNullNode() {
         InstantDecoder decoder = new InstantDecoder();
 
         ValidateOf<Instant> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),

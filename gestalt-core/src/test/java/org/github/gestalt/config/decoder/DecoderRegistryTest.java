@@ -381,8 +381,8 @@ class DecoderRegistryTest {
         Token nextToken = new ObjectToken("run");
         Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
         Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf))
-               .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test",
-                   NodeType.LEAF.getType(), "navigate to next node")));
+            .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test",
+                NodeType.LEAF.getType(), "navigate to next node")));
 
         ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertFalse(test.hasResults());

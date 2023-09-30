@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -60,11 +59,11 @@ class IntegerDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         IntegerDecoder integerDecoder = new IntegerDecoder();
 
         ValidateOf<Integer> validate = integerDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Integer.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124, validate.results());
@@ -72,11 +71,11 @@ class IntegerDecoderTest {
     }
 
     @Test
-    void notAnInteger() throws GestaltException {
+    void notAnInteger() {
         IntegerDecoder integerDecoder = new IntegerDecoder();
 
         ValidateOf<Integer> validate = integerDecoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Integer.class),
-            new DecoderContext(decoderService, null) );
+            new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -88,12 +87,12 @@ class IntegerDecoderTest {
     }
 
     @Test
-    void notAIntegerTooLarge() throws GestaltException {
+    void notAIntegerTooLarge() {
         IntegerDecoder decoder = new IntegerDecoder();
 
         ValidateOf<Integer> validate = decoder.decode("db.port",
             new LeafNode("12345678901234567890123456789012345678901234567890123456789"),
-            TypeCapture.of(Integer.class), new DecoderContext(decoderService, null) );
+            TypeCapture.of(Integer.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

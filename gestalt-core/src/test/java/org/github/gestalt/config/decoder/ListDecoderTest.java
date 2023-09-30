@@ -172,7 +172,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         ValidateOf<List<?>> values = decoder.decode("db.hosts", new LeafNode(null), new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null) );
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());

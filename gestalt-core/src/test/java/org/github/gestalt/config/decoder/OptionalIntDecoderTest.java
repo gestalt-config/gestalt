@@ -96,7 +96,8 @@ class OptionalIntDecoderTest {
     void decodeLeafIntNull() {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
-        ValidateOf<OptionalInt> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null));
+        ValidateOf<OptionalInt> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalInt.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());

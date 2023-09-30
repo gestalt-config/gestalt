@@ -29,6 +29,7 @@ import java.util.*;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class ProxyDecoder implements Decoder<Object> {
+    // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
     private boolean dontCacheProxyValues = false;
 
     @Override
@@ -95,7 +96,7 @@ public final class ProxyDecoder implements Decoder<Object> {
         // Save it into a cache for use with the proxy.
         for (Method method : classMethods) {
             String methodName = method.getName();
-            Type returnType = method.getReturnType();
+            Type returnType = method.getGenericReturnType();
 
             String name;
 
@@ -136,20 +137,38 @@ public final class ProxyDecoder implements Decoder<Object> {
             }
         }
 
-        InvocationHandler proxyHandler = new ProxyInvocationHandler(path, methodResults);
+        InvocationHandler proxyHandler;
+        if (dontCacheProxyValues) {
+            proxyHandler = new ProxyInvocationHandler(path, decoderContext.getGestalt());
+        } else {
+            proxyHandler = new ProxyInvocationHandler(path, methodResults, decoderContext.getGestalt());
+        }
         Object myProxy = Proxy.newProxyInstance(type.getRawType().getClassLoader(),
             new Class<?>[]{type.getRawType()},
             proxyHandler);
         return ValidateOf.validateOf(myProxy, errors);
     }
 
-    private static class ProxyInvocationHandler implements InvocationHandler {
+    private static class ProxyInvocationHandler implements InvocationHandler, CoreReloadListener {
         private final String path;
         private final Map<String, Object> methodResults;
 
-        private ProxyInvocationHandler(String path, Map<String, Object> methodResults) {
+        private final boolean dontCacheProxyValues;
+
+        private final Gestalt gestalt;
+
+        private ProxyInvocationHandler(String path, Map<String, Object> methodResults, Gestalt gestalt) {
             this.path = path;
             this.methodResults = methodResults;
+            this.dontCacheProxyValues = false;
+            this.gestalt = gestalt;
+        }
+
+        private ProxyInvocationHandler(String path, Gestalt gestalt) {
+            this.path = path;
+            this.methodResults = null;
+            this.dontCacheProxyValues = true;
+            this.gestalt = gestalt;
         }
 
         @Override
@@ -158,23 +177,37 @@ public final class ProxyDecoder implements Decoder<Object> {
             boolean isDefault = method.isDefault();
             Class<?> type = method.getReturnType();
 
-            Object result = methodResults.get(methodName);
+            Object result = null;
+            if (dontCacheProxyValues) {
+                String configName = getConfigName(methodName, type);
+                var optionalResult = gestalt.getConfigOptional(path + configName, TypeCapture.of(type));
+                if (optionalResult.isPresent()) {
+                    result = optionalResult.get();
+                }
+            } else if (methodResults != null) {
+                result = methodResults.get(methodName);
+            }
 
             if (result != null) {
                 return result;
             } else if (isDefault) {
                 return MethodHandles.lookup()
-                                    .findSpecial(
-                                        method.getDeclaringClass(),
-                                        methodName,
-                                        MethodType.methodType(type, new Class[0]),
-                                        method.getDeclaringClass())
-                                    .bindTo(proxy)
-                                    .invokeWithArguments(args);
+                    .findSpecial(
+                        method.getDeclaringClass(),
+                        methodName,
+                        MethodType.methodType(type, new Class[0]),
+                        method.getDeclaringClass())
+                    .bindTo(proxy)
+                    .invokeWithArguments(args);
             } else {
                 throw new GestaltException("Failed to get proxy config while calling method: " + methodName +
-                    " in path: " + path + ".");
+                    " with type: " + type +  " in path: " + path + ".");
             }
+        }
+
+        @Override
+        public void reload() {
+            methodResults.clear();
         }
     }
 }

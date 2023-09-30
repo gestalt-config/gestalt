@@ -32,8 +32,8 @@ class OptionalLongDecoderTest {
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        decoderService = new DecoderRegistry(List.of(new OptionalLongDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
+        decoderService = new DecoderRegistry(List.of(new OptionalLongDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder(), new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -96,7 +96,8 @@ class OptionalLongDecoderTest {
     void decodeLeafLongNull() {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
-        ValidateOf<OptionalLong> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null));
+        ValidateOf<OptionalLong> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalLong.class),
+            new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());

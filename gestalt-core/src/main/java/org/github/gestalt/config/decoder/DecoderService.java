@@ -1,6 +1,5 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
