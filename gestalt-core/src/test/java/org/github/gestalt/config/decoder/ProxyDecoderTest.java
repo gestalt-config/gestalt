@@ -305,6 +305,69 @@ class ProxyDecoderTest {
     }
 
     @Test
+    void decodeHttpPoolDefault() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("maxtotal", new LeafNode("100"));
+        configs.put("maxperroute", new LeafNode("10"));
+        configs.put("validateafterinactivity", new LeafNode("60"));
+        configs.put("keepalivetimeoutms", new LeafNode("123"));
+        configs.put("idletimeoutsec", new LeafNode("1000"));
+        configs.put("enabled", new LeafNode("true"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(DBPoolInterfaceDefault.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
+            " during navigating to next node", validate.getErrors().get(0).description());
+
+        DBPoolInterfaceDefault results = (DBPoolInterfaceDefault) validate.results();
+        Assertions.assertEquals(100, results.getMaxTotal());
+        Assertions.assertEquals(10, results.getMaxPerRoute());
+        Assertions.assertEquals(60, results.getValidateAfterInactivity());
+        Assertions.assertEquals(123, results.getKeepAliveTimeoutMs());
+        Assertions.assertEquals(1000, results.getIdleTimeoutSec());
+        Assertions.assertTrue(results.isEnabled());
+        Assertions.assertEquals(0.26f, results.getDefaultWait());
+    }
+
+
+    @Test
+    void decodeHttpPoolDefaultGeneric() {
+        ProxyDecoder decoder = new ProxyDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("maxtotal", new LeafNode("100"));
+        configs.put("maxperroute", new LeafNode("10"));
+        configs.put("validateafterinactivity", new LeafNode("60"));
+        configs.put("keepalivetimeoutms", new LeafNode("123"));
+        configs.put("idletimeoutsec", new LeafNode("1000"));
+        configs.put("enabled", new LeafNode("true"));
+
+        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
+            TypeCapture.of(DBPoolInterfaceDefaultGeneric.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(validate.hasResults());
+        Assertions.assertTrue(validate.hasErrors());
+
+        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
+            " during navigating to next node", validate.getErrors().get(0).description());
+
+        DBPoolInterfaceDefaultGeneric results = (DBPoolInterfaceDefaultGeneric) validate.results();
+        Assertions.assertEquals(100, results.getMaxTotal());
+        Assertions.assertEquals(10, results.getMaxPerRoute());
+        Assertions.assertEquals(60, results.getValidateAfterInactivity());
+        Assertions.assertEquals(123, results.getKeepAliveTimeoutMs());
+        Assertions.assertEquals(1000, results.getIdleTimeoutSec());
+        Assertions.assertTrue(results.isEnabled());
+        Assertions.assertEquals(List.of(1,2,3,4), results.getDefaultWait());
+    }
+
+    @Test
     void decodeAnnotations() {
         ProxyDecoder decoder = new ProxyDecoder();
 
