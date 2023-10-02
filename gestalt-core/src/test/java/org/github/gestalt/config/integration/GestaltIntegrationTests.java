@@ -4,6 +4,7 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.builder.GestaltBuilder;
+import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
@@ -47,6 +48,30 @@ public class GestaltIntegrationTests {
             .addSource(new MapConfigSource(configs))
             .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
             .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
+    public void integrationTestProxyPassThrough() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        String fileURL = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-core/src/test/resources/default.properties";
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new URLConfigSource(fileURL))
+            .addSource(new ClassPathConfigSource("dev.properties"))
+            .addSource(new MapConfigSource(configs))
+            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .setTreatNullValuesInClassAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
 
         gestalt.loadConfigs();

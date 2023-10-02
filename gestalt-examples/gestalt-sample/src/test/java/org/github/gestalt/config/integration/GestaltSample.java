@@ -14,6 +14,7 @@ import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.builder.GestaltBuilder;
+import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSource;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
@@ -272,6 +273,37 @@ public class GestaltSample {
 
         validateResults(gestalt);
     }
+
+    @Test
+    public void integrationTestProxyPassThrough() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
+        File devFile = new File(devFileURL.getFile());
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new FileConfigSource(devFile))
+            .addSource(new MapConfigSource(configs))
+            .setTreatNullValuesInClassAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .build();
+
+        // Load the configurations, this will thow exceptions if there are any errors.
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
 
     @Test
     @Disabled
