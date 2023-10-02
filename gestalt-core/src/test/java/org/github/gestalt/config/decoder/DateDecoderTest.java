@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,8 +72,8 @@ class DateDecoderTest {
         Date newDate = Date.from(instant2);
 
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(instant.toString()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(instant.toString()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -91,8 +92,8 @@ class DateDecoderTest {
         Date newDate = Date.from(instant2);
 
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(instant.toString()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(instant.toString()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -111,8 +112,8 @@ class DateDecoderTest {
         LocalDateTime ldt = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
         Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(date),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -126,8 +127,8 @@ class DateDecoderTest {
 
         String now = "not a date";
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(now),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -141,8 +142,8 @@ class DateDecoderTest {
     void invalidLeafNode() throws GestaltException {
         DateDecoder decoder = new DateDecoder();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(null),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -156,8 +157,8 @@ class DateDecoderTest {
     void decodeInvalidNode() throws GestaltException {
         DateDecoder decoder = new DateDecoder();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -171,8 +172,8 @@ class DateDecoderTest {
     void decodeNullNode() throws GestaltException {
         DateDecoder decoder = new DateDecoder();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), null,
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

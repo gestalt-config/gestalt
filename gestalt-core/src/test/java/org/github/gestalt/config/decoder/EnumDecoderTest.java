@@ -6,6 +6,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.Colours;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -62,8 +63,8 @@ class EnumDecoderTest {
 
         EnumDecoder decoder = new EnumDecoder();
 
-        ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("RED"), TypeCapture.of(Colours.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Colours> validate = decoder.decode("db.port", Tags.of(), new LeafNode("RED"),
+                TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(Colours.RED, validate.results());
@@ -75,8 +76,8 @@ class EnumDecoderTest {
 
         EnumDecoder decoder = new EnumDecoder();
 
-        ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("pink"), TypeCapture.of(Colours.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Colours> validate = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
+                TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertEquals(1, validate.getErrors().size());
@@ -90,8 +91,8 @@ class EnumDecoderTest {
 
         EnumDecoder decoder = new EnumDecoder();
 
-        ValidateOf<Colours> validate = decoder.decode("db.port", new LeafNode("pink"), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Colours> validate = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertEquals(1, validate.getErrors().size());

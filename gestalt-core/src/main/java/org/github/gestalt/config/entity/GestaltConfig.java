@@ -1,5 +1,6 @@
 package org.github.gestalt.config.entity;
 
+import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 
 import java.time.format.DateTimeFormatter;
@@ -23,7 +24,7 @@ public class GestaltConfig {
     // Treat null values in classes after decoding as errors.
     private boolean treatNullValuesInClassAsErrors = true;
     // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
-    private boolean dontCacheProxyValues = false;
+    private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
     // Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
     private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = System.Logger.Level.DEBUG;
     // Java date decoder format.
@@ -115,21 +116,21 @@ public class GestaltConfig {
     }
 
     /**
-     * Get For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
+     * Get For the proxy decoder mode, if we should use a cached value or call gestalt for the most recent value.
      *
-     * @return if we should use a cached value or call gestalt for the most recent value.
+     * @return the proxy decoder mode
      */
-    public boolean isDontCacheProxyValues() {
-        return dontCacheProxyValues;
+    public ProxyDecoderMode getProxyDecoderMode() {
+        return proxyDecoderMode;
     }
 
     /**
-     * Set For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
+     * Set For the proxy decoder mode, if we should use a cached value or call gestalt for the most recent value.
      *
-     * @param dontCacheProxyValues if we should use a cached value or call gestalt for the most recent value.
+     * @param proxyDecoderMode if we should use a cached value or call gestalt for the most recent value.
      */
-    public void setDontCacheProxyValues(boolean dontCacheProxyValues) {
-        this.dontCacheProxyValues = dontCacheProxyValues;
+    public void setProxyDecoderMode(ProxyDecoderMode proxyDecoderMode) {
+        this.proxyDecoderMode = proxyDecoderMode;
     }
 
 

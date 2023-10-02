@@ -8,6 +8,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,8 +66,8 @@ class LocalDateDecoderTest {
         String date = "2021-01-10";
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), new LeafNode(date),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -81,8 +82,8 @@ class LocalDateDecoderTest {
         String date = "2021-01-10";
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), new LeafNode(date),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -97,8 +98,8 @@ class LocalDateDecoderTest {
         String date = "2021-01-10";
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), new LeafNode(date),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -112,8 +113,8 @@ class LocalDateDecoderTest {
 
         String now = "not a date";
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), new LeafNode(now),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -127,8 +128,8 @@ class LocalDateDecoderTest {
     void invalidLeafNode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), new LeafNode(null),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -142,8 +143,8 @@ class LocalDateDecoderTest {
     void decodeInvalidNode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -157,8 +158,8 @@ class LocalDateDecoderTest {
     void decodeNullNode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
-        ValidateOf<LocalDate> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<LocalDate> validate = decoder.decode("db.user", Tags.of(), null,
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

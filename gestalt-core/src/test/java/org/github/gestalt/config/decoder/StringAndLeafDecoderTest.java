@@ -8,6 +8,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,8 +59,8 @@ class StringAndLeafDecoderTest {
     void decode() {
         StringDecoder stringDecoder = new StringDecoder();
 
-        ValidateOf<String> validate = stringDecoder.decode("db.user", new LeafNode("test"), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<String> validate = stringDecoder.decode("db.user", Tags.of(), new LeafNode("test"),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals("test", validate.results());
@@ -70,8 +71,8 @@ class StringAndLeafDecoderTest {
     void invalidLeafNode() {
         StringDecoder stringDecoder = new StringDecoder();
 
-        ValidateOf<String> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<String> validate = stringDecoder.decode("db.user", Tags.of(), new LeafNode(null),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -85,8 +86,8 @@ class StringAndLeafDecoderTest {
     void nullLeafNode() {
         StringDecoder stringDecoder = new StringDecoder();
 
-        ValidateOf<String> validate = stringDecoder.decode("db.user", null, TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<String> validate = stringDecoder.decode("db.user", Tags.of(), null,
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -100,8 +101,8 @@ class StringAndLeafDecoderTest {
     void decodeInvalidNode() {
         StringDecoder stringDecoder = new StringDecoder();
 
-        ValidateOf<String> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<String> validate = stringDecoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

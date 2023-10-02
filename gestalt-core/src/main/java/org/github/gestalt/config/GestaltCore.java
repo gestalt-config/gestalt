@@ -399,7 +399,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         if (!node.hasErrors() || node.hasErrors(MISSING_VALUE)) {
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
-            ValidateOf<T> decodedResults = decoderService.decodeNode(path, node.results(), klass, decoderContext);
+            ValidateOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
 
             // if we don't have a result and we received missing node errors.
             // return the errors from the call to navigate to node.

@@ -7,6 +7,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,8 +63,8 @@ class CharDecoderTest {
     void decodeChar() {
         CharDecoder decoder = new CharDecoder();
 
-        ValidateOf<Character> validate = decoder.decode("db.port", new LeafNode("a"), TypeCapture.of(Character.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Character> validate = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
+                TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals('a', validate.results());
@@ -74,8 +75,8 @@ class CharDecoderTest {
     void notACharTooLong() {
         CharDecoder decoder = new CharDecoder();
 
-        ValidateOf<Character> validate = decoder.decode("db.port", new LeafNode("aaa"), TypeCapture.of(Character.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Character> validate = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
+                TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -91,8 +92,8 @@ class CharDecoderTest {
     void notACharTooShort() {
         CharDecoder decoder = new CharDecoder();
 
-        ValidateOf<Character> validate = decoder.decode("db.port", new LeafNode(""), TypeCapture.of(Character.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Character> validate = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+                TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

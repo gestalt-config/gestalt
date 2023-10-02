@@ -7,6 +7,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,8 +66,8 @@ class UUIDDecoderTest {
 
 
         UUID uuid = UUID.randomUUID();
-        ValidateOf<UUID> validate = decoder.decode("db.port", new LeafNode(uuid.toString()), TypeCapture.of(Long.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<UUID> validate = decoder.decode("db.port", Tags.of(), new LeafNode(uuid.toString()),
+                TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(uuid, validate.results());
@@ -78,8 +79,8 @@ class UUIDDecoderTest {
         UUIDDecoder decoder = new UUIDDecoder();
 
 
-        ValidateOf<UUID> validate = decoder.decode("db.port", new LeafNode("asdfasdfsdf"), TypeCapture.of(Long.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<UUID> validate = decoder.decode("db.port", Tags.of(), new LeafNode("asdfasdfsdf"),
+                TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

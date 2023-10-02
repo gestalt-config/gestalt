@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.CollectionUtils;
@@ -112,13 +113,14 @@ public final class DecoderRegistry implements DecoderService {
 
 
     @Override
-    public <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
-        return decodeNode(path, new LeafNode(configNode), klass, decoderContext);
+    public <T> ValidateOf<T> decodeNode(String path, Tags tags, String configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
+        return decodeNode(path, tags, new LeafNode(configNode), klass, decoderContext);
     }
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
+    public <T> ValidateOf<T> decodeNode(String path, Tags tags, ConfigNode configNode, TypeCapture<T> klass,
+                                        DecoderContext decoderContext) {
         List<Decoder> classDecoder = getDecoderForClass(klass);
         classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
         if (classDecoder.isEmpty()) {
@@ -128,7 +130,7 @@ public final class DecoderRegistry implements DecoderService {
                 klass, classDecoder, classDecoder.get(0));
         }
 
-        return classDecoder.get(0).decode(path, configNode, klass, decoderContext);
+        return classDecoder.get(0).decode(path, tags, configNode, klass, decoderContext);
     }
 
     @Override

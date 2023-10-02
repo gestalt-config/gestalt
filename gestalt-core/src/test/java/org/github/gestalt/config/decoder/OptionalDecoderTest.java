@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +71,7 @@ class OptionalDecoderTest {
     void decodeLeafInteger() {
         OptionalDecoder decoder = new OptionalDecoder();
 
-        ValidateOf<Optional<?>> validate = decoder.decode("db.port", new LeafNode("124"), new TypeCapture<Optional<Integer>>() {
+        ValidateOf<Optional<?>> validate = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<Optional<Integer>>() {
         }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
@@ -83,7 +84,7 @@ class OptionalDecoderTest {
     void decodeLeafIntegerEmpty() {
         OptionalDecoder decoder = new OptionalDecoder();
 
-        ValidateOf<Optional<?>> validate = decoder.decode("db.port", new LeafNode(null), new TypeCapture<Optional<Integer>>() {
+        ValidateOf<Optional<?>> validate = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<Optional<Integer>>() {
         }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
@@ -98,7 +99,7 @@ class OptionalDecoderTest {
     void decodeLeafIntegerNull() {
         OptionalDecoder decoder = new OptionalDecoder();
 
-        ValidateOf<Optional<?>> validate = decoder.decode("db.port", null, new TypeCapture<Optional<Integer>>() {
+        ValidateOf<Optional<?>> validate = decoder.decode("db.port", Tags.of(), null, new TypeCapture<Optional<Integer>>() {
         }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());

@@ -14,8 +14,8 @@ public interface DBPoolInterfaceDefaultGeneric {
     int getIdleTimeoutSec();
 
     default List<Integer> getDefaultWait() {
-        return List.of(1,2,3,4);
-    };
+        return List.of(1, 2, 3, 4);
+    }
 
     boolean isEnabled();
 }

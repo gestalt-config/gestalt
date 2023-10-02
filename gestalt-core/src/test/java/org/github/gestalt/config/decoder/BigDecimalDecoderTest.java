@@ -8,6 +8,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,8 +75,8 @@ class BigDecimalDecoderTest {
     void bigDecimalDecoder() throws GestaltException {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
-        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", new LeafNode("124.5"), TypeCapture.of(Double.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"),
+                TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.5f), validate.results());
@@ -86,7 +87,7 @@ class BigDecimalDecoderTest {
     void bigDecimalDecoderType() throws GestaltException {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
-        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", new LeafNode("124.5"), new TypeCapture<Double>() {
+        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"), new TypeCapture<Double>() {
         }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
@@ -98,8 +99,8 @@ class BigDecimalDecoderTest {
     void bigDecimalDecoder2() throws GestaltException {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
-        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", new LeafNode("124"), TypeCapture.of(Double.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
+                TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.0f), validate.results());
@@ -110,8 +111,8 @@ class BigDecimalDecoderTest {
     void notABigDecimal() throws GestaltException {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
-        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", new LeafNode("12s4"), TypeCapture.of(Double.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
+                TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

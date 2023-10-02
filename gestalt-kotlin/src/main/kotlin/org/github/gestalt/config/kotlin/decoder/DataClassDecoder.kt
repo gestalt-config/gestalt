@@ -13,6 +13,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.node.MapNode
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.PathUtil
 import org.github.gestalt.config.utils.ValidateOf
 import kotlin.reflect.KClass
@@ -53,6 +54,7 @@ class DataClassDecoder : Decoder<Any> {
     @Suppress("LongMethod")
     override fun decode(
         path: String,
+        tags: Tags,
         node: ConfigNode,
         type: TypeCapture<*>,
         decoderContext: DecoderContext
@@ -95,6 +97,7 @@ class DataClassDecoder : Decoder<Any> {
                             !configNode.hasResults() && configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
                                 val defaultValidateOf: ValidateOf<*> = decoderService.decodeNode(
                                     nextPath,
+                                    tags,
                                     LeafNode(configAnnotation?.defaultVal),
                                     KTypeCapture.of<Any>(it.type),
                                     decoderContext
@@ -117,9 +120,8 @@ class DataClassDecoder : Decoder<Any> {
                             }
 
                             configNode.hasResults() -> {
-                                val parameter = decoderService.decodeNode(nextPath, configNode.results(),
-                                    KTypeCapture.of<Any>(it.type),
-                                    decoderContext)
+                                val parameter = decoderService.decodeNode(nextPath, tags, configNode.results(),
+                                    KTypeCapture.of<Any>(it.type), decoderContext)
                                 if (parameter.hasErrors()) {
                                     errors.addAll(parameter.errors)
                                 }

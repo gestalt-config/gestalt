@@ -12,6 +12,7 @@ import org.github.gestalt.config.node.MapNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -58,7 +59,8 @@ internal class StringAndLeafDecoderTest {
     fun decode() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
-            "db.user", LeafNode("test"),
+            "db.user", Tags.of(),
+            LeafNode("test"),
             TypeCapture.of(
                 String::class.java
             ),
@@ -75,7 +77,8 @@ internal class StringAndLeafDecoderTest {
     fun `invalid Leaf Node`() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
-            "db.user", LeafNode(null),
+            "db.user", Tags.of(),
+            LeafNode(null),
             TypeCapture.of(
                 String::class.java
             ),
@@ -97,7 +100,8 @@ internal class StringAndLeafDecoderTest {
     fun `decode Invalid Node`() {
         val stringDecoder = StringDecoder()
         val validate: ValidateOf<String> = stringDecoder.decode(
-            "db.user", MapNode(HashMap()),
+            "db.user", Tags.of(),
+            MapNode(HashMap()),
             TypeCapture.of(
                 String::class.java
             ),

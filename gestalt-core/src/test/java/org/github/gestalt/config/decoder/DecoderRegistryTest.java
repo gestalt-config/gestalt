@@ -12,6 +12,7 @@ import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -185,7 +186,7 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("value");
 
-        ValidateOf<String> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(String.class),
+        ValidateOf<String> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(String.class),
             new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
@@ -200,7 +201,7 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("100");
 
-        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class),
+        ValidateOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
             new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
@@ -216,7 +217,7 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("100");
 
-        ValidateOf<Long> test = decoderRegistry.decodeNode("test", leaf, TypeCapture.of(Long.class),
+        ValidateOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
             new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());

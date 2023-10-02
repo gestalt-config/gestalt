@@ -13,7 +13,7 @@ public interface DBPoolInterfaceDefault {
 
     default float getDefaultWait() {
         return 0.26f;
-    };
+    }
 
     boolean isEnabled();
 }

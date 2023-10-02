@@ -11,6 +11,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -58,7 +59,8 @@ internal class DoubleDecoderTest {
     fun decodeDouble() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port", LeafNode("124.5"),
+            "db.port", Tags.of(),
+            LeafNode("124.5"),
             TypeCapture.of(
                 Double::class.java
             ),
@@ -75,7 +77,7 @@ internal class DoubleDecoderTest {
     fun decodeDoubleType() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port",
+            "db.port", Tags.of(),
             LeafNode("124.5"),
             object : TypeCapture<Double?>() {},
             DecoderContext(decoderService, null),
@@ -91,7 +93,8 @@ internal class DoubleDecoderTest {
     fun decodeDouble2() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port", LeafNode("124"),
+            "db.port", Tags.of(),
+            LeafNode("124"),
             TypeCapture.of(
                 Double::class.java
             ),
@@ -108,7 +111,8 @@ internal class DoubleDecoderTest {
     fun notADouble() {
         val doubleDecoder = DoubleDecoder()
         val validate: ValidateOf<Double> = doubleDecoder.decode(
-            "db.port", LeafNode("12s4"),
+            "db.port", Tags.of(),
+            LeafNode("12s4"),
             TypeCapture.of(
                 Double::class.java
             ),

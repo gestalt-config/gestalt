@@ -7,6 +7,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.*;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
@@ -79,8 +80,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs), TypeCapture.of(DBInfoInterface.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -98,8 +99,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -122,8 +123,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -147,8 +148,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode(null));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -165,8 +166,8 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
-            Assertions.assertEquals("Failed to get proxy config while calling method: getUri with type: class java.lang.String " +
-                    "in path: db.host.",
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getUri " +
+                    "with type: class java.lang.String in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
         }
     }
@@ -180,8 +181,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -200,8 +201,8 @@ class ProxyDecoderTest {
     void decodeWrongNodeType() {
         ProxyDecoder decoder = new ProxyDecoder();
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new LeafNode("mysql.com"),
-            TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new LeafNode("mysql.com"), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -214,8 +215,8 @@ class ProxyDecoderTest {
     void decodeNullNode() {
         ProxyDecoder decoder = new ProxyDecoder();
 
-        ValidateOf<Object> validate = decoder.decode("db.host", null, TypeCapture.of(DBInforNoConstructor.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(), null,
+            TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -236,8 +237,8 @@ class ProxyDecoderTest {
         configs.put("idletimeoutsec", new LeafNode("1000"));
         configs.put("enabled", new LeafNode("true"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBPoolInterface.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBPoolInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -258,8 +259,8 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
-            Assertions.assertEquals("Failed to get proxy config while calling method: getDefaultWait with type: float " +
-                    "in path: db.host.",
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getDefaultWait " +
+                    "with type: float in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
         }
     }
@@ -276,8 +277,8 @@ class ProxyDecoderTest {
         configs.put("idletimeoutsec", new LeafNode("1000"));
         configs.put("enabled", new LeafNode("true"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBPoolGenericInterface.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBPoolGenericInterface.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -298,8 +299,8 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
-            Assertions.assertEquals("Failed to get proxy config while calling method: getDefaultWait with type: float " +
-                    "in path: db.host.",
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getDefaultWait " +
+                    "with type: float in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
         }
     }
@@ -316,8 +317,8 @@ class ProxyDecoderTest {
         configs.put("idletimeoutsec", new LeafNode("1000"));
         configs.put("enabled", new LeafNode("true"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBPoolInterfaceDefault.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBPoolInterfaceDefault.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -348,8 +349,8 @@ class ProxyDecoderTest {
         configs.put("idletimeoutsec", new LeafNode("1000"));
         configs.put("enabled", new LeafNode("true"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(DBPoolInterfaceDefaultGeneric.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBPoolInterfaceDefaultGeneric.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -364,7 +365,7 @@ class ProxyDecoderTest {
         Assertions.assertEquals(123, results.getKeepAliveTimeoutMs());
         Assertions.assertEquals(1000, results.getIdleTimeoutSec());
         Assertions.assertTrue(results.isEnabled());
-        Assertions.assertEquals(List.of(1,2,3,4), results.getDefaultWait());
+        Assertions.assertEquals(List.of(1, 2, 3, 4), results.getDefaultWait());
     }
 
     @Test
@@ -376,8 +377,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -395,8 +396,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -419,8 +420,8 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         ValidateOf<Object> validate =
-            decoder.decode("db.host", new MapNode(configs), TypeCapture.of(IDBInfoBadAnnotations.class),
-                new DecoderContext(decoderService, null));
+            decoder.decode("db.host", Tags.of(), new MapNode(configs),
+                TypeCapture.of(IDBInfoBadAnnotations.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -439,7 +440,8 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
-            Assertions.assertEquals("Failed to get proxy config while calling method: getPort with type: int in path: db.host.",
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getPort " +
+                    "with type: int in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
         }
     }
@@ -453,8 +455,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(IDBInfoAnnotationsLong.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(IDBInfoAnnotationsLong.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -472,8 +474,8 @@ class ProxyDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Object> validate = decoder.decode("db.host", new MapNode(configs),
-            TypeCapture.of(IDBInfoMethodAnnotations.class), new DecoderContext(decoderService, null));
+        ValidateOf<Object> validate = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(IDBInfoMethodAnnotations.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 

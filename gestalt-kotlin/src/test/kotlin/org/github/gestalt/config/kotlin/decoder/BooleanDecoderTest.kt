@@ -12,6 +12,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -62,7 +63,8 @@ internal class BooleanDecoderTest {
     fun decode() {
         val decoder = BooleanDecoder()
         val validate: ValidateOf<Boolean> = decoder.decode(
-            "db.enabled", LeafNode("true"),
+            "db.enabled", Tags.of(),
+            LeafNode("true"),
             TypeCapture.of(
                 Int::class.java
             ),
@@ -78,7 +80,8 @@ internal class BooleanDecoderTest {
     fun decodeFalse() {
         val decoder = BooleanDecoder()
         val validate: ValidateOf<Boolean> = decoder.decode(
-            "db.enabled", LeafNode("false"),
+            "db.enabled", Tags.of(),
+            LeafNode("false"),
             TypeCapture.of(
                 Int::class.java
             ),
@@ -94,7 +97,8 @@ internal class BooleanDecoderTest {
     fun decodeFalseNull() {
         val decoder = BooleanDecoder()
         val validate: ValidateOf<Boolean> = decoder.decode(
-            "db.enabled", LeafNode(null),
+            "db.enabled", Tags.of(),
+            LeafNode(null),
             TypeCapture.of(
                 Int::class.java
             ),

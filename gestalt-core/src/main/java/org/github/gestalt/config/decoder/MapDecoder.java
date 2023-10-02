@@ -6,6 +6,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.PathUtil;
@@ -38,7 +39,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
     }
 
     @Override
-    public ValidateOf<Map<?, ?>> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+    public ValidateOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<Map<?, ?>> results;
         if (node instanceof MapNode) {
             MapNode mapNode = (MapNode) node;
@@ -69,9 +70,9 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
                     String nextPath = PathUtil.pathForKey(path, key);
                     ValidateOf<Object> keyValidate = decoderContext.getDecoderService()
-                        .decodeNode(nextPath, new LeafNode(key), (TypeCapture<Object>) keyType, decoderContext);
+                        .decodeNode(nextPath, tags, new LeafNode(key), (TypeCapture<Object>) keyType, decoderContext);
                     ValidateOf<Object> valueValidate = decoderContext.getDecoderService()
-                        .decodeNode(nextPath, it.getValue(), (TypeCapture<Object>) valueType, decoderContext);
+                        .decodeNode(nextPath, tags, it.getValue(), (TypeCapture<Object>) valueType, decoderContext);
 
                     errors.addAll(keyValidate.getErrors());
                     errors.addAll(valueValidate.getErrors());

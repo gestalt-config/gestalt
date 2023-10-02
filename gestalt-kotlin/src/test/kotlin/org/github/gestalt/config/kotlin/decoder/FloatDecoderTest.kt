@@ -11,6 +11,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -58,7 +59,8 @@ internal class FloatDecoderTest {
     fun decodeFloat() {
         val floatDecoder = FloatDecoder()
         val validate: ValidateOf<Float> = floatDecoder.decode(
-            "db.timeout", LeafNode("124.5"),
+            "db.timeout", Tags.of(),
+            LeafNode("124.5"),
             TypeCapture.of(
                 Float::class.java
             ),
@@ -75,7 +77,8 @@ internal class FloatDecoderTest {
     fun decodeFloat2() {
         val floatDecoder = FloatDecoder()
         val validate: ValidateOf<Float> = floatDecoder.decode(
-            "db.timeout", LeafNode("124"),
+            "db.timeout", Tags.of(),
+            LeafNode("124"),
             TypeCapture.of(
                 Float::class.java
             ),
@@ -92,7 +95,8 @@ internal class FloatDecoderTest {
     fun notAFloat() {
         val floatDecoder = FloatDecoder()
         val validate: ValidateOf<Float> = floatDecoder.decode(
-            "db.timeout", LeafNode("12s4"),
+            "db.timeout", Tags.of(),
+            LeafNode("12s4"),
             TypeCapture.of(
                 Float::class.java
             ),

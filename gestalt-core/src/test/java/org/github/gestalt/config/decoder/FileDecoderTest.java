@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,8 +64,8 @@ class FileDecoderTest {
 
         URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
-        ValidateOf<File> validate = decoder.decode("db.user", new LeafNode(defaultFile.getAbsolutePath()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<File> validate = decoder.decode("db.user", Tags.of(), new LeafNode(defaultFile.getAbsolutePath()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -76,8 +77,8 @@ class FileDecoderTest {
     void invalidLeafNode() {
         FileDecoder stringDecoder = new FileDecoder();
 
-        ValidateOf<File> validate = stringDecoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<File> validate = stringDecoder.decode("db.user", Tags.of(), new LeafNode(null),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -91,8 +92,8 @@ class FileDecoderTest {
     void decodeInvalidNode() {
         FileDecoder stringDecoder = new FileDecoder();
 
-        ValidateOf<File> validate = stringDecoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<File> validate = stringDecoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -106,8 +107,8 @@ class FileDecoderTest {
     void decodeNullNode() {
         FileDecoder stringDecoder = new FileDecoder();
 
-        ValidateOf<File> validate = stringDecoder.decode("db.user", null, TypeCapture.of(String.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<File> validate = stringDecoder.decode("db.user", Tags.of(), null,
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

@@ -7,6 +7,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,8 +64,8 @@ class BooleanDecoderTest {
     void decode() {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("true"), TypeCapture.of(Boolean.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Boolean> validate = decoder.decode("db.enabled", Tags.of(), new LeafNode("true"),
+                TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertTrue(validate.results());
@@ -74,8 +75,8 @@ class BooleanDecoderTest {
     void decodeFalse() {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode("false"), TypeCapture.of(Boolean.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Boolean> validate = decoder.decode("db.enabled", Tags.of(), new LeafNode("false"),
+                TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertFalse(validate.results());
@@ -85,8 +86,8 @@ class BooleanDecoderTest {
     void decodeFalseNull() {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", new LeafNode(null), TypeCapture.of(Boolean.class),
-            new DecoderContext(decoderService, null));
+        ValidateOf<Boolean> validate = decoder.decode("db.enabled", Tags.of(), new LeafNode(null),
+                TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

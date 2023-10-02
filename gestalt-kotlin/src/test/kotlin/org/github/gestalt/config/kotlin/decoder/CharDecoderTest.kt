@@ -11,6 +11,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -58,7 +59,8 @@ internal class CharDecoderTest {
     fun decodeChar() {
         val decoder = CharDecoder()
         val validate: ValidateOf<Char> = decoder.decode(
-            "db.port", LeafNode("a"),
+            "db.port", Tags.of(),
+            LeafNode("a"),
             TypeCapture.of(
                 Char::class.java
             ),
@@ -75,7 +77,8 @@ internal class CharDecoderTest {
     fun notACharTooLong() {
         val decoder = CharDecoder()
         val validate: ValidateOf<Char> = decoder.decode(
-            "db.port", LeafNode("aaa"),
+            "db.port", Tags.of(),
+            LeafNode("aaa"),
             TypeCapture.of(
                 Char::class.java
             ),
@@ -97,7 +100,8 @@ internal class CharDecoderTest {
     fun notACharTooShort() {
         val decoder = CharDecoder()
         val validate: ValidateOf<Char> = decoder.decode(
-            "db.port", LeafNode(""),
+            "db.port", Tags.of(),
+            LeafNode(""),
             TypeCapture.of(
                 Char::class.java
             ),

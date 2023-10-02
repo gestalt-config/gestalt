@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 /**
@@ -48,10 +49,11 @@ public interface Decoder<T> {
      * Decode the current node. If the current node is a class or list we may need to decode sub nodes.
      *
      * @param path           the current path
+     * @param tags           the tags for the current request
      * @param node           the current node we are decoding.
      * @param type           the type of object we are decoding.
      * @param decoderContext The context of the current decoder.
      * @return ValidateOf the current node with details of either success or failures.
      */
-    ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext);
+    ValidateOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext);
 }

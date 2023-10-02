@@ -11,6 +11,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -57,7 +58,8 @@ internal class IntegerDecoderTest {
     fun decode() {
         val integerDecoder = IntegerDecoder()
         val validate: ValidateOf<Int> = integerDecoder.decode(
-            "db.port", LeafNode("124"),
+            "db.port", Tags.of(),
+            LeafNode("124"),
             TypeCapture.of(
                 Int::class.java
             ),
@@ -74,7 +76,8 @@ internal class IntegerDecoderTest {
     fun notAnInteger() {
         val integerDecoder = IntegerDecoder()
         val validate: ValidateOf<Int> = integerDecoder.decode(
-            "db.port", LeafNode("12s4"),
+            "db.port", Tags.of(),
+            LeafNode("12s4"),
             TypeCapture.of(
                 Int::class.java
             ),
@@ -97,7 +100,7 @@ internal class IntegerDecoderTest {
     fun notAIntegerTooLarge() {
         val decoder = IntegerDecoder()
         val validate: ValidateOf<Int> = decoder.decode(
-            "db.port",
+            "db.port", Tags.of(),
             LeafNode("12345678901234567890123456789012345678901234567890123456789"),
             TypeCapture.of(Int::class.java),
             DecoderContext(decoderService, null),
