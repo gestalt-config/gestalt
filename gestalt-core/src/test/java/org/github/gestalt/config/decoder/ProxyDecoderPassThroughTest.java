@@ -154,7 +154,6 @@ class ProxyDecoderPassThroughTest {
         }
     }
 
-
     @Test
     void decodeDbPoolMissingException() throws GestaltException {
 

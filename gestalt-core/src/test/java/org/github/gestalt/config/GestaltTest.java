@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.Times;
 
 import java.util.*;
 
@@ -1750,6 +1751,48 @@ class GestaltTest {
         }).get());
         Assertions.assertFalse(gestalt.getConfig("does.not.exist", new TypeCapture<Optional<String>>() {
         }).isPresent());
+    }
+
+    @Test
+    public void reloadListener() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer(".");
+
+        CoreReloadListenersContainer coreReloadListenersContainer = Mockito.mock();
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            Collections.singletonList(new MapConfigSource(configs, Tags.of("env", "dev"))),
+            new DecoderRegistry(
+                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
+                    new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
+                configNodeManager, lexer, List.of(new StandardPathMapper())),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(),
+            Tags.of("env", "dev"));
+
+        gestalt.loadConfigs();
+
+        CoreReloadListener listener = new CoreReloadListener() {
+
+            @Override
+            public void reload() {
+
+            }
+        };
+        gestalt.registerListener(listener);
+        gestalt.removeListener(listener);
+
+        Mockito.verify(coreReloadListenersContainer, Mockito.times(1)).registerListener(Mockito.any());
+        Mockito.verify(coreReloadListenersContainer, Mockito.times(1)).removeListener(Mockito.any());
     }
 
     public static class TestPostProcessor implements PostProcessor {
