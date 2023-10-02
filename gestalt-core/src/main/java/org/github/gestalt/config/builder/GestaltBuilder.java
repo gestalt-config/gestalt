@@ -6,6 +6,7 @@ import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.decoder.Decoder;
 import org.github.gestalt.config.decoder.DecoderRegistry;
 import org.github.gestalt.config.decoder.DecoderService;
+import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.GestaltModuleConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.Logger.Level.WARNING;
+import static org.github.gestalt.config.decoder.ProxyDecoderMode.CACHE;
 
 /**
  * Builder to setup and create the Gestalt config class.
@@ -92,6 +94,9 @@ public class GestaltBuilder {
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = null;
+
+    // Defines how the proxy decoder works. See the enum for details.
+    private ProxyDecoderMode proxyDecoderMode = CACHE;
 
 
     // Default set of tags to apply to all calls to get a configuration where tags are not provided.
@@ -677,6 +682,27 @@ public class GestaltBuilder {
 
 
     /**
+     * Get the mode the for proxy decoder.
+     *
+     * @return the mode the for proxy decoder
+     */
+    public ProxyDecoderMode getProxyDecoderMode() {
+        return proxyDecoderMode;
+    }
+
+    /**
+     * Set the mode the for proxy decoder.
+     *
+     * @param proxyDecoderMode the mode the for proxy decoder
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setProxyDecoderMode(ProxyDecoderMode proxyDecoderMode) {
+        this.proxyDecoderMode = proxyDecoderMode;
+        return this;
+    }
+
+
+    /**
      * Get default tags to apply to all calls to get a configuration when tags are not provided.
      *
      * @return default tags
@@ -857,6 +883,9 @@ public class GestaltBuilder {
 
         newConfig.setSubstitutionRegex(Objects.requireNonNullElseGet(substitutionRegex,
             () -> gestaltConfig.getSubstitutionRegex()));
+
+        newConfig.setProxyDecoderMode(Objects.requireNonNullElseGet(proxyDecoderMode,
+            () -> gestaltConfig.getProxyDecoderMode()));
 
         return newConfig;
     }

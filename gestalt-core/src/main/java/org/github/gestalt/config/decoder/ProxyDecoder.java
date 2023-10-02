@@ -31,11 +31,6 @@ public final class ProxyDecoder implements Decoder<Object> {
     // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
     private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
 
-    @Override
-    public void applyConfig(GestaltConfig config) {
-        proxyDecoderMode = config.getProxyDecoderMode();
-    }
-
     private static String getConfigName(String methodName, Type returnType) {
         String name = methodName;
         if (methodName.startsWith("get")) {
@@ -50,6 +45,11 @@ public final class ProxyDecoder implements Decoder<Object> {
         char[] nameArray = name.toCharArray();
         nameArray[0] = Character.toLowerCase(nameArray[0]);
         return new String(nameArray);
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        proxyDecoderMode = config.getProxyDecoderMode();
     }
 
     /**
@@ -95,6 +95,7 @@ public final class ProxyDecoder implements Decoder<Object> {
         for (Method method : classMethods) {
             String methodName = method.getName();
             Type returnType = method.getGenericReturnType();
+            boolean foundValue = false;
 
             String name;
 
@@ -122,6 +123,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                     errors.addAll(defaultValidateOf.getErrors());
                     if (defaultValidateOf.hasResults()) {
                         methodResults.put(methodName, defaultValidateOf.results());
+                        foundValue = true;
                     }
                 }
             } else {
@@ -131,20 +133,24 @@ public final class ProxyDecoder implements Decoder<Object> {
                 errors.addAll(fieldValidateOf.getErrors());
                 if (fieldValidateOf.hasResults()) {
                     methodResults.put(methodName, fieldValidateOf.results());
+                    foundValue = true;
                 }
+            }
+
+            if (!foundValue && !method.isDefault()) {
+                errors.add(new ValidationError.NullValueDecodingObject(nextPath, name, klass.getSimpleName()));
             }
         }
 
         InvocationHandler proxyHandler;
         switch (proxyDecoderMode) {
-            case CACHE: {
-                proxyHandler = new ProxyCacheInvocationHandler(path, methodResults);
-                break;
-            }
+
             case PASSTHROUGH: {
-                proxyHandler = new ProxyPassThroughInvocationHandler(path, methodResults);
+                proxyHandler = new ProxyPassThroughInvocationHandler(path, tags, decoderContext);
                 break;
             }
+
+            case CACHE:
             default: {
                 proxyHandler = new ProxyCacheInvocationHandler(path, methodResults);
                 break;
@@ -186,19 +192,21 @@ public final class ProxyDecoder implements Decoder<Object> {
                     .invokeWithArguments(args);
             } else {
                 throw new GestaltException("Failed to get cached object from proxy config while calling method: " + methodName +
-                    " with type: " + type +  " in path: " + path + ".");
+                    " with type: " + type + " in path: " + path + ".");
             }
         }
     }
 
     private static class ProxyPassThroughInvocationHandler implements InvocationHandler {
         private final String path;
-        private final Map<String, Object> methodResults;
+        private final Tags tags;
+        private final DecoderContext decoderContext;
 
 
-        private ProxyPassThroughInvocationHandler(String path, Map<String, Object> methodResults) {
+        private ProxyPassThroughInvocationHandler(String path, Tags tags, DecoderContext decoderContext) {
             this.path = path;
-            this.methodResults = methodResults;
+            this.tags = tags;
+            this.decoderContext = decoderContext;
         }
 
         @Override
@@ -206,24 +214,52 @@ public final class ProxyDecoder implements Decoder<Object> {
             String methodName = method.getName();
             boolean isDefault = method.isDefault();
 
-            Object result = methodResults.get(methodName);
+            Type genericType = method.getGenericReturnType();
+            Class<?> returnType = method.getReturnType();
 
-            Class<?> type = method.getReturnType();
-            if (result != null) {
-                return result;
-            } else if (isDefault) {
-                return MethodHandles.lookup()
-                    .findSpecial(
-                        method.getDeclaringClass(),
-                        methodName,
-                        MethodType.methodType(type, new Class[0]),
-                        method.getDeclaringClass())
-                    .bindTo(proxy)
-                    .invokeWithArguments(args);
+            String name;
+
+            // if we have an annotation, use that for the path instead of the name.
+            Config configAnnotation = method.getAnnotation(Config.class);
+            if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
+                name = configAnnotation.path();
             } else {
-                throw new GestaltException("Failed to get cached object from proxy config while calling method: " + methodName +
-                    " with type: " + type +  " in path: " + path + ".");
+                name = getConfigName(methodName, returnType);
             }
+
+            String nextPath = PathUtil.pathForKey(path, name);
+
+            var result = decoderContext.getGestalt().getConfigOptional(nextPath, TypeCapture.of(genericType), tags);
+
+            if (result != null && result.isPresent()) {
+                return result.get();
+            } else {
+
+                // if we have no value, check the config annotation for a default.
+                if (configAnnotation != null && configAnnotation.defaultVal() != null &&
+                    !configAnnotation.defaultVal().isEmpty()) {
+                    ValidateOf<?> defaultValidateOf = decoderContext.getDecoderService()
+                        .decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()), TypeCapture.of(returnType),
+                            decoderContext);
+
+                    if (defaultValidateOf.hasResults()) {
+                        return defaultValidateOf.results();
+                    }
+                }
+
+                if (isDefault) {
+                    return MethodHandles.lookup()
+                        .findSpecial(
+                            method.getDeclaringClass(),
+                            methodName,
+                            MethodType.methodType(returnType, new Class[0]),
+                            method.getDeclaringClass())
+                        .bindTo(proxy)
+                        .invokeWithArguments(args);
+                }
+            }
+            throw new GestaltException("Failed to get pass through object from proxy config while calling method: " + methodName +
+                " with type: " + returnType + " in path: " + path + ".");
         }
     }
 }

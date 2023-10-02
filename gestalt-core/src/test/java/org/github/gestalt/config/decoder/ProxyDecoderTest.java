@@ -156,10 +156,13 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(2, validate.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Leaf on path: db.host.uri, has no value attempting to decode String",
             validate.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
+        Assertions.assertEquals("Decoding object : DBInfoInterface on path: db.host.uri, field uri results in null value",
+            validate.getErrors().get(1).description());
 
         DBInfoInterface results = (DBInfoInterface) validate.results();
         Assertions.assertEquals(100, results.getPort());
@@ -250,7 +253,11 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
+            " during navigating to next node", validate.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
             " during navigating to next node", validate.getErrors().get(0).description());
 
@@ -291,10 +298,14 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(2, validate.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
             " during navigating to next node", validate.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
+        Assertions.assertEquals("Decoding object : DBPoolGenericInterface on path: db.host.defaultWait, " +
+            "field defaultWait results in null value", validate.getErrors().get(1).description());
 
         DBPoolGenericInterface results = (DBPoolGenericInterface) validate.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -439,13 +450,16 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(3, validate.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
         Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
             "attempting to decode Integer", validate.getErrors().get(1).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(2).level());
+        Assertions.assertEquals("Decoding object : IDBInfoBadAnnotations on path: db.host.channel, " +
+            "field channel results in null value", validate.getErrors().get(2).description());
 
         IDBInfoBadAnnotations results = (IDBInfoBadAnnotations) validate.results();
         Assertions.assertEquals("pass", results.getPassword());

@@ -21,7 +21,7 @@ weldCore = "4.0.3.Final"
 jackson = "2.15.2"
 hocon = "1.4.2"
 # Cloud
-awsBom = "2.20.155"
+awsBom = "2.20.157"
 gcpLibraries = "26.23.0"
 # vault
 vault = "6.1.0"
