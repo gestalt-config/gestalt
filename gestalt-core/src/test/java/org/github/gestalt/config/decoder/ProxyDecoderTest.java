@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -105,6 +106,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node",
             validate.getErrors().get(0).description());
 
@@ -129,6 +131,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
                 "LeafNode{value='aaaa'} attempting to decode Integer",
             validate.getErrors().get(0).description());
@@ -154,6 +157,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Leaf on path: db.host.uri, has no value attempting to decode String",
             validate.getErrors().get(0).description());
 
@@ -166,6 +170,7 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
             Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getUri " +
                     "with type: class java.lang.String in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
@@ -187,6 +192,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
                 "during navigating to next node",
             validate.getErrors().get(0).description());
@@ -207,6 +213,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : LEAF",
             validate.getErrors().get(0).description());
     }
@@ -221,6 +228,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : null",
             validate.getErrors().get(0).description());
     }
@@ -259,6 +267,7 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
             Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getDefaultWait " +
                     "with type: float in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
@@ -283,6 +292,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
             " during navigating to next node", validate.getErrors().get(0).description());
 
@@ -299,6 +309,7 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
             Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getDefaultWait " +
                     "with type: float in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
@@ -323,6 +334,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
             " during navigating to next node", validate.getErrors().get(0).description());
 
@@ -355,6 +367,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
             " during navigating to next node", validate.getErrors().get(0).description());
 
@@ -402,6 +415,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
 
@@ -426,8 +440,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
             "attempting to decode Integer", validate.getErrors().get(1).description());
 
@@ -440,6 +456,7 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
             Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getPort " +
                     "with type: int in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
@@ -480,6 +497,7 @@ class ProxyDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
             "during navigating to next node", validate.getErrors().get(0).description());
 
