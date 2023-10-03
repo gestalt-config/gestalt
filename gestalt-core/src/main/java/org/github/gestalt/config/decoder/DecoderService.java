@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.List;
@@ -30,24 +31,28 @@ public interface DecoderService {
     /**
      * Decode a node and return the ValidateOf with the results.
      *
-     * @param path Current path we are decoding, used for logging
+     * @param <T>        The generic type of the node we are decoding.
+     * @param path       Current path we are decoding, used for logging
+     * @param tags       the tags for the current request
      * @param configNode the current node we are decoding
-     * @param klass the TypeCapture of the node we are decoding
-     * @param <T> The generic type of the node we are decoding.
+     * @param klass      the TypeCapture of the node we are decoding
+     * @param decoderContext The context for the decoder
      * @return ValidateOf the code we are decoding.
      */
-    <T> ValidateOf<T> decodeNode(String path, String configNode, TypeCapture<T> klass);
+    <T> ValidateOf<T> decodeNode(String path, Tags tags, String configNode, TypeCapture<T> klass, DecoderContext decoderContext);
 
     /**
      * Decode a node and return the ValidateOf with the results.
      *
-     * @param path Current path we are decoding, used for logging
+     * @param <T>        The generic type of the node we are decoding.
+     * @param path       Current path we are decoding, used for logging
+     * @param tags       the tags for the current request
      * @param configNode the current node we are decoding
-     * @param klass the TypeCapture of the node we are decoding
-     * @param <T> The generic type of the node we are decoding.
+     * @param klass      the TypeCapture of the node we are decoding
+     * @param decoderContext The context for the decoder
      * @return ValidateOf the code we are decoding.
      */
-    <T> ValidateOf<T> decodeNode(String path, ConfigNode configNode, TypeCapture<T> klass);
+    <T> ValidateOf<T> decodeNode(String path, Tags tags, ConfigNode configNode, TypeCapture<T> klass, DecoderContext decoderContext);
 
     /**
      * Add decoders to the service.

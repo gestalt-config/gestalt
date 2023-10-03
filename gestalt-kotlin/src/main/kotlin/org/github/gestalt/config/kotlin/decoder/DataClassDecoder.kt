@@ -2,7 +2,7 @@ package org.github.gestalt.config.kotlin.decoder
 
 import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.decoder.Decoder
-import org.github.gestalt.config.decoder.DecoderService
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.entity.ValidationError
 import org.github.gestalt.config.kotlin.entity.DataClassCanNotBeConstructed
@@ -13,6 +13,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.node.MapNode
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.PathUtil
 import org.github.gestalt.config.utils.ValidateOf
 import kotlin.reflect.KClass
@@ -51,10 +52,18 @@ class DataClassDecoder : Decoder<Any> {
     }
 
     @Suppress("LongMethod")
-    override fun decode(path: String, node: ConfigNode, type: TypeCapture<*>, decoderService: DecoderService): ValidateOf<Any> {
+    override fun decode(
+        path: String,
+        tags: Tags,
+        node: ConfigNode,
+        type: TypeCapture<*>,
+        decoderContext: DecoderContext
+    ): ValidateOf<Any> {
         if (node !is MapNode) {
             return ValidateOf.inValid(ValidationError.DecodingExpectedMapNodeType(path, node))
         }
+
+        val decoderService = decoderContext.decoderService
 
         if (type is KTypeCapture<*>) {
             val classifier = type.kType.classifier
@@ -88,8 +97,10 @@ class DataClassDecoder : Decoder<Any> {
                             !configNode.hasResults() && configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
                                 val defaultValidateOf: ValidateOf<*> = decoderService.decodeNode(
                                     nextPath,
+                                    tags,
                                     LeafNode(configAnnotation?.defaultVal),
-                                    KTypeCapture.of<Any>(it.type)
+                                    KTypeCapture.of<Any>(it.type),
+                                    decoderContext
                                 )
 
                                 if (defaultValidateOf.hasErrors()) {
@@ -109,7 +120,8 @@ class DataClassDecoder : Decoder<Any> {
                             }
 
                             configNode.hasResults() -> {
-                                val parameter = decoderService.decodeNode(nextPath, configNode.results(), KTypeCapture.of<Any>(it.type))
+                                val parameter = decoderService.decodeNode(nextPath, tags, configNode.results(),
+                                    KTypeCapture.of<Any>(it.type), decoderContext)
                                 if (parameter.hasErrors()) {
                                     errors.addAll(parameter.errors)
                                 }

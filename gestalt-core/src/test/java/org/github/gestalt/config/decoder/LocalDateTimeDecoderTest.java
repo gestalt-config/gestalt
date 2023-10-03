@@ -1,13 +1,14 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,11 +27,14 @@ class LocalDateTimeDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderService decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new LocalDateTimeDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -55,14 +59,13 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
         String now = Instant.now().toString();
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), new LeafNode(now),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -71,14 +74,13 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
-    void decodeFormatNull() throws GestaltException {
+    void decodeFormatNull() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder(null);
 
         String now = Instant.now().toString();
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), new LeafNode(now),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -88,15 +90,14 @@ class LocalDateTimeDecoderTest {
 
 
     @Test
-    void decodeFormatter() throws GestaltException {
+    void decodeFormatter() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         String date = "2021-01-10T01:01:06Z";
         LocalDateTime localDate = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), new LeafNode(date),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -105,14 +106,13 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
-    void decodeBadDate() throws GestaltException {
+    void decodeBadDate() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
         String now = "not a date";
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), new LeafNode(now),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -123,12 +123,11 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), new LeafNode(null),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -139,12 +138,11 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -155,12 +153,11 @@ class LocalDateTimeDecoderTest {
     }
 
     @Test
-    void decodeNullNode() throws GestaltException {
+    void decodeNullNode() {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
-        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<LocalDateTime> validate = decoder.decode("db.user", Tags.of(), null,
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

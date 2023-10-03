@@ -1,12 +1,13 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +21,15 @@ class FloatDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderService decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+
+        decoderService = new DecoderRegistry(Collections.singletonList(new FloatDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -55,12 +60,11 @@ class FloatDecoderTest {
     }
 
     @Test
-    void decodeFloat() throws GestaltException {
+    void decodeFloat() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
-        ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("124.5"), TypeCapture.of(Float.class),
-            new DecoderRegistry(Collections.singletonList(floatDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Float> validate = floatDecoder.decode("db.timeout", Tags.of(), new LeafNode("124.5"),
+                TypeCapture.of(Float.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124.5f, validate.results());
@@ -68,12 +72,11 @@ class FloatDecoderTest {
     }
 
     @Test
-    void decodeFloat2() throws GestaltException {
+    void decodeFloat2() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
-        ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("124"), TypeCapture.of(Float.class),
-            new DecoderRegistry(Collections.singletonList(floatDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Float> validate = floatDecoder.decode("db.timeout", Tags.of(), new LeafNode("124"),
+                TypeCapture.of(Float.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals(124, validate.results());
@@ -81,12 +84,11 @@ class FloatDecoderTest {
     }
 
     @Test
-    void notAFloat() throws GestaltException {
+    void notAFloat() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
-        ValidateOf<Float> validate = floatDecoder.decode("db.timeout", new LeafNode("12s4"), TypeCapture.of(Float.class),
-            new DecoderRegistry(Collections.singletonList(floatDecoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Float> validate = floatDecoder.decode("db.timeout", Tags.of(), new LeafNode("12s4"),
+                TypeCapture.of(Float.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

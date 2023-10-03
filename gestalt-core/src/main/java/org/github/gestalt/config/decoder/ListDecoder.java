@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -27,7 +28,8 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
     }
 
     @Override
-    protected ValidateOf<List<?>> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService) {
+    protected ValidateOf<List<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass,
+                                              DecoderContext decoderContext) {
         List<ValidationError> errors = new ArrayList<>();
         List<Object> results = new ArrayList<>(node.size());
 
@@ -35,7 +37,8 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
                 String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<?> validateOf = decoderService.decodeNode(nextPath, currentNode, klass.getFirstParameterType());
+                ValidateOf<?> validateOf = decoderContext.getDecoderService()
+                    .decodeNode(nextPath, tags, currentNode, klass.getFirstParameterType(), decoderContext);
 
                 errors.addAll(validateOf.getErrors());
                 if (validateOf.hasResults()) {

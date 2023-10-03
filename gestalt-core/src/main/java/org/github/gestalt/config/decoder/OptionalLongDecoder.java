@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.OptionalLong;
@@ -29,9 +30,10 @@ public final class OptionalLongDecoder implements Decoder<OptionalLong> {
     }
 
     @Override
-    public ValidateOf<OptionalLong> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<OptionalLong> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
-        ValidateOf<Long> optionalValue = decoderService.decodeNode(path, node, TypeCapture.of(Long.class));
+        ValidateOf<Long> optionalValue = decoderContext.getDecoderService()
+            .decodeNode(path, tags, node, TypeCapture.of(Long.class), decoderContext);
 
         if (optionalValue.hasResults()) {
             return ValidateOf.validateOf(OptionalLong.of(optionalValue.results()), optionalValue.getErrors());

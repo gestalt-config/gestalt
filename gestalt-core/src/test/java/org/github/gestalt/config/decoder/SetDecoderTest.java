@@ -5,6 +5,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,8 +80,8 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("", nodes, new TypeCapture<Set<String>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<Set<String>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -105,8 +106,8 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("", nodes, new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -131,8 +132,8 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -152,8 +153,8 @@ class SetDecoderTest {
     void arrayDecodeLeaf() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new LeafNode("0.1111, 0.22"), new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"), new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -170,8 +171,8 @@ class SetDecoderTest {
     void arrayDecodeLeafWithEscapeComma() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new LeafNode("a,b,c\\,d"), new TypeCapture<List<String>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"), new TypeCapture<List<String>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -188,8 +189,8 @@ class SetDecoderTest {
     void arrayDecodeNullLeaf() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new LeafNode(null), new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null), new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -203,8 +204,8 @@ class SetDecoderTest {
     void arrayDecodeNullNode() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", null, new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), null, new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -225,8 +226,8 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -255,8 +256,8 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", nodes, new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -278,8 +279,8 @@ class SetDecoderTest {
     void arrayDecodeMapNode() {
         SetDecoder decoder = new SetDecoder();
 
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", new MapNode(new HashMap<>()), new TypeCapture<Set<Double>>() {
-        }, decoderService);
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new MapNode(new HashMap<>()), new TypeCapture<Set<Double>>() {
+        }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());

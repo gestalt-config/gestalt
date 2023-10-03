@@ -5,6 +5,7 @@ import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.Arrays;
@@ -26,11 +27,11 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
     }
 
     @Override
-    public ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<T> results;
         if (node instanceof ArrayNode) {
             if (node.size() > 0) {
-                results = arrayDecode(path, node, type, decoderService);
+                results = arrayDecode(path, tags, node, type, decoderContext);
             } else {
                 results = ValidateOf.inValid(new ValidationError.DecodingArrayMissingValue(path, name()));
             }
@@ -44,7 +45,7 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
                                                    .map(LeafNode::new)
                                                    .collect(Collectors.toList());
 
-                results = arrayDecode(path, new ArrayNode(leafNodes), type, decoderService);
+                results = arrayDecode(path, tags, new ArrayNode(leafNodes), type, decoderContext);
             } else {
                 results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, name()));
             }
@@ -57,11 +58,13 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
     /**
      * Decode an array values.
      *
-     * @param path Current path we are decoding
-     * @param node current node we are decoding
-     * @param klass class to decode into
-     * @param decoderService decoder service use to recursively decode nodes
+     * @param path           Current path we are decoding
+     * @param tags           Current tags for the request
+     * @param node           current node we are decoding
+     * @param klass          class to decode into
+     * @param decoderContext The context of the current decoder.
      * @return ValidateOf array built from the config node
      */
-    protected abstract ValidateOf<T> arrayDecode(String path, ConfigNode node, TypeCapture<?> klass, DecoderService decoderService);
+    protected abstract ValidateOf<T> arrayDecode(String path, Tags tags, ConfigNode node,
+                                                 TypeCapture<?> klass, DecoderContext decoderContext);
 }

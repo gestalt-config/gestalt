@@ -6,6 +6,7 @@ import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.decoder.Decoder;
 import org.github.gestalt.config.decoder.DecoderRegistry;
 import org.github.gestalt.config.decoder.DecoderService;
+import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.GestaltModuleConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
@@ -21,7 +22,7 @@ import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
-import org.github.gestalt.config.reload.CoreReloadStrategy;
+import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.Logger.Level.WARNING;
+import static org.github.gestalt.config.decoder.ProxyDecoderMode.CACHE;
 
 /**
  * Builder to setup and create the Gestalt config class.
@@ -92,6 +94,9 @@ public class GestaltBuilder {
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = null;
+
+    // Defines how the proxy decoder works. See the enum for details.
+    private ProxyDecoderMode proxyDecoderMode = CACHE;
 
 
     // Default set of tags to apply to all calls to get a configuration where tags are not provided.
@@ -677,6 +682,27 @@ public class GestaltBuilder {
 
 
     /**
+     * Get the mode the for proxy decoder.
+     *
+     * @return the mode the for proxy decoder
+     */
+    public ProxyDecoderMode getProxyDecoderMode() {
+        return proxyDecoderMode;
+    }
+
+    /**
+     * Set the mode the for proxy decoder.
+     *
+     * @param proxyDecoderMode the mode the for proxy decoder
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setProxyDecoderMode(ProxyDecoderMode proxyDecoderMode) {
+        this.proxyDecoderMode = proxyDecoderMode;
+        return this;
+    }
+
+
+    /**
      * Get default tags to apply to all calls to get a configuration when tags are not provided.
      *
      * @return default tags
@@ -796,21 +822,21 @@ public class GestaltBuilder {
         configLoaderService.setLoaders(dedupedConfigs);
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
-        CoreReloadStrategy coreReloadStrategy = new CoreReloadStrategy();
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig,
-            configNodeService, coreReloadStrategy, postProcessors, defaultTags);
+            configNodeService, coreReloadListenersContainer, postProcessors, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
         // Add all listeners for the core update.
-        coreCoreReloadListeners.forEach(coreReloadStrategy::registerListener);
+        coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
             GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.
-            coreReloadStrategy.registerListener(gestaltCache);
+            coreReloadListenersContainer.registerListener(gestaltCache);
             return gestaltCache;
         } else {
             return gestaltCore;
@@ -857,6 +883,9 @@ public class GestaltBuilder {
 
         newConfig.setSubstitutionRegex(Objects.requireNonNullElseGet(substitutionRegex,
             () -> gestaltConfig.getSubstitutionRegex()));
+
+        newConfig.setProxyDecoderMode(Objects.requireNonNullElseGet(proxyDecoderMode,
+            () -> gestaltConfig.getProxyDecoderMode()));
 
         return newConfig;
     }

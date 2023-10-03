@@ -24,8 +24,10 @@ import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Provider;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.GestaltCore;
+import org.github.gestalt.config.decoder.DecoderContext;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -86,6 +88,8 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
         String key = GestaltConfigProducerUtil.getConfigKey(ip, configProperty);
         String defaultValue = configProperty.defaultValue();
 
+        Gestalt gestalt = getConfig();
+
         try {
             if (annotated.getBaseType() instanceof ParameterizedType) {
                 ParameterizedType paramType = (ParameterizedType) annotated.getBaseType();
@@ -97,17 +101,18 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
                         ((Class<?>) rawType).isAssignableFrom(Instance.class)) &&
                     paramType.getActualTypeArguments().length == 1) {
                     Class<?> paramTypeClass = (Class<?>) paramType.getActualTypeArguments()[0];
-                    return (T) getConfig().getConfig(key, paramTypeClass);
+                    return (T) gestalt.getConfig(key, paramTypeClass);
                 }
             } else {
                 Class<?> annotatedTypeClass = (Class<?>) annotated.getBaseType();
                 if (defaultValue.isEmpty()) {
-                    return (T) getConfig().getConfig(key, annotatedTypeClass);
+                    return (T) gestalt.getConfig(key, annotatedTypeClass);
                 } else {
-                    Optional<T> optionalValue = (Optional<T>) getConfig().getConfigOptional(key, annotatedTypeClass);
+                    Optional<T> optionalValue = (Optional<T>) gestalt.getConfigOptional(key, annotatedTypeClass);
                     return optionalValue.orElseGet(
-                        () -> (T) ((GestaltCore) getConfig()).getDecoderService()
-                                                             .decodeNode(key, defaultValue, TypeCapture.of(annotatedTypeClass))
+                        () -> (T) ((GestaltCore) gestalt).getDecoderService()
+                            .decodeNode(key, Tags.of(), defaultValue, TypeCapture.of(annotatedTypeClass),
+                                new DecoderContext(((GestaltCore) gestalt).getDecoderService(), gestalt))
                     );
                 }
             }

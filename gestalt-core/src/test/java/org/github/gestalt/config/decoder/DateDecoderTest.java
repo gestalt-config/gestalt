@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -8,6 +9,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,11 +30,14 @@ class DateDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderRegistry decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new DateDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -67,9 +72,8 @@ class DateDecoderTest {
         Date newDate = Date.from(instant2);
 
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(instant.toString()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(instant.toString()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -88,9 +92,8 @@ class DateDecoderTest {
         Date newDate = Date.from(instant2);
 
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(instant.toString()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(instant.toString()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -102,14 +105,15 @@ class DateDecoderTest {
     void decodeFormatter() throws GestaltException {
         DateDecoder decoder = new DateDecoder("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+        DecoderRegistry decoderService = new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
         String date = "2021-01-10T01:01:06Z";
 
         LocalDateTime ldt = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
         Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(date), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(date),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
 
@@ -123,9 +127,8 @@ class DateDecoderTest {
 
         String now = "not a date";
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(now), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(now),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -139,9 +142,8 @@ class DateDecoderTest {
     void invalidLeafNode() throws GestaltException {
         DateDecoder decoder = new DateDecoder();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new LeafNode(null), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(null),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -155,9 +157,8 @@ class DateDecoderTest {
     void decodeInvalidNode() throws GestaltException {
         DateDecoder decoder = new DateDecoder();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", new MapNode(new HashMap<>()), TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -171,9 +172,8 @@ class DateDecoderTest {
     void decodeNullNode() throws GestaltException {
         DateDecoder decoder = new DateDecoder();
 
-        ValidateOf<Date> validate = decoder.decode("db.user", null, TypeCapture.of(String.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), null,
+                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

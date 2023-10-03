@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,12 +28,12 @@ class OptionalIntDecoderTest {
 
     final SentenceLexer lexer = new PathLexer();
     ConfigNodeService configNodeService;
-    DecoderRegistry registry;
+    DecoderRegistry decoderService;
 
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        registry = new DecoderRegistry(List.of(new OptionalIntDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
+        decoderService = new DecoderRegistry(List.of(new OptionalIntDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
             new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
@@ -68,8 +69,8 @@ class OptionalIntDecoderTest {
     void decodeLeafInt() {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
-        ValidateOf<OptionalInt> validate = decoder.decode("db.port", new LeafNode("124"), new TypeCapture<OptionalInt>() {
-        }, registry);
+        ValidateOf<OptionalInt> validate = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalInt>() {
+        }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertTrue(validate.results().isPresent());
@@ -81,8 +82,8 @@ class OptionalIntDecoderTest {
     void decodeLeafIntEmpty() {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
-        ValidateOf<OptionalInt> validate = decoder.decode("db.port", new LeafNode(null), new TypeCapture<OptionalInt>() {
-        }, registry);
+        ValidateOf<OptionalInt> validate = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalInt>() {
+        }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());
@@ -96,7 +97,8 @@ class OptionalIntDecoderTest {
     void decodeLeafIntNull() {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
-        ValidateOf<OptionalInt> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalInt.class), registry);
+        ValidateOf<OptionalInt> validate = decoder.decode("db.port", Tags.of(), null,
+                TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());

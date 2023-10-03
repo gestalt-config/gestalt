@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.exceptions.GestaltConfigurationException
@@ -10,6 +11,7 @@ import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.*
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,13 +20,13 @@ import java.util.*
 class DataClassDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer = PathLexer()
-    private var registry: DecoderRegistry? = null
+    private var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     @Throws(GestaltConfigurationException::class)
     fun setup() {
         configNodeService = ConfigNodeManager()
-        registry = DecoderRegistry(
+        decoderService = DecoderRegistry(
             listOf(
                 LongDecoder(), IntegerDecoder(), StringDecoder(),
                 DataClassDecoder(), FloatDecoder()
@@ -67,7 +69,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfo>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfo>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
         val results: DBInfo = validate.results() as DBInfo
@@ -81,7 +88,12 @@ class DataClassDecoderTest {
         val decoder = DataClassDecoder()
         val configs = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", configs, kTypeCaptureOf<DBInfo>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            configs,
+            kTypeCaptureOf<DBInfo>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(
@@ -98,7 +110,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), TypeCapture.of(DBInfo::class.java), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            TypeCapture.of(DBInfo::class.java),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(
@@ -114,7 +131,12 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfo>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfo>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(
@@ -135,7 +157,12 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoRequired>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoRequired>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(
@@ -148,7 +175,12 @@ class DataClassDecoderTest {
     fun `decode Missing All Members`() {
         val decoder = DataClassDecoder()
         val configs: MutableMap<String, ConfigNode> = HashMap()
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfo>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfo>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(3, validate.errors.size)
@@ -166,7 +198,12 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoNoDefaultOptional>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoNoDefaultOptional>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(1, validate.errors.size)
@@ -188,7 +225,12 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoNoDefault>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoNoDefault>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
@@ -210,7 +252,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfo>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfo>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
@@ -237,7 +284,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfo>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfo>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(2, validate.errors.size)
@@ -264,7 +316,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoAnnotation>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoAnnotation>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
 
@@ -281,7 +338,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoAnnotation>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoAnnotation>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
         Assertions.assertEquals(1, validate.errors.size)
@@ -304,7 +366,12 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode("db.host", MapNode(configs), kTypeCaptureOf<DBInfoAnnotationLong>(), registry!!)
+        val validate = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoAnnotationLong>(),
+            DecoderContext(decoderService, null)
+        )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
 

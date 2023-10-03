@@ -145,6 +145,16 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     }
 
     @Override
+    public void registerListener(CoreReloadListener listener) {
+        delegate.registerListener(listener);
+    }
+
+    @Override
+    public void removeListener(CoreReloadListener listener) {
+        delegate.removeListener(listener);
+    }
+
+    @Override
     public void reload() {
         cache.clear();
     }

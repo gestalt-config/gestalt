@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.OptionalDouble;
@@ -29,9 +30,10 @@ public final class OptionalDoubleDecoder implements Decoder<OptionalDouble> {
     }
 
     @Override
-    public ValidateOf<OptionalDouble> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<OptionalDouble> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
-        ValidateOf<Double> optionalValue = decoderService.decodeNode(path, node, TypeCapture.of(Double.class));
+        ValidateOf<Double> optionalValue = decoderContext.getDecoderService()
+            .decodeNode(path, tags, node, TypeCapture.of(Double.class), decoderContext);
 
         if (optionalValue.hasResults()) {
             return ValidateOf.validateOf(OptionalDouble.of(optionalValue.results()), optionalValue.getErrors());

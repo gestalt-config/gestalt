@@ -1,12 +1,13 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +22,15 @@ class ByteDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderRegistry decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+
+        decoderService = new DecoderRegistry(Collections.singletonList(new ByteDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -58,12 +63,11 @@ class ByteDecoderTest {
     }
 
     @Test
-    void decodeByte() throws GestaltException {
+    void decodeByte() {
         ByteDecoder decoder = new ByteDecoder();
 
-        ValidateOf<Byte> validate = decoder.decode("db.port", new LeafNode("a"), TypeCapture.of(Byte.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Byte> validate = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
+                TypeCapture.of(Byte.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals("a".getBytes(Charset.defaultCharset())[0], validate.results());
@@ -71,12 +75,11 @@ class ByteDecoderTest {
     }
 
     @Test
-    void notAByteTooLong() throws GestaltException {
+    void notAByteTooLong() {
         ByteDecoder decoder = new ByteDecoder();
 
-        ValidateOf<Byte> validate = decoder.decode("db.port", new LeafNode("aaa"), TypeCapture.of(Byte.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Byte> validate = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
+                TypeCapture.of(Byte.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());
@@ -87,12 +90,11 @@ class ByteDecoderTest {
     }
 
     @Test
-    void notAByteTooShort() throws GestaltException {
+    void notAByteTooShort() {
         ByteDecoder decoder = new ByteDecoder();
 
-        ValidateOf<Byte> validate = decoder.decode("db.port", new LeafNode(""), TypeCapture.of(Byte.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Byte> validate = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+                TypeCapture.of(Byte.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.entity;
 
+import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 
 import java.time.format.DateTimeFormatter;
@@ -20,9 +21,11 @@ public class GestaltConfig {
     private boolean treatMissingArrayIndexAsError = false;
     // Treat missing object values as errors. If false it will leave the default values or null.
     private boolean treatMissingValuesAsErrors = false;
-    //Treat null values in classes after decoding as errors.
+    // Treat null values in classes after decoding as errors.
     private boolean treatNullValuesInClassAsErrors = true;
-    //Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
+    // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
+    private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
+    // Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
     private System.Logger.Level logLevelForMissingValuesWhenDefaultOrOptional = System.Logger.Level.DEBUG;
     // Java date decoder format.
     private DateTimeFormatter dateDecoderFormat = DateTimeFormatter.ISO_DATE_TIME;
@@ -110,6 +113,24 @@ public class GestaltConfig {
      */
     public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
         this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
+    }
+
+    /**
+     * Get For the proxy decoder mode, if we should use a cached value or call gestalt for the most recent value.
+     *
+     * @return the proxy decoder mode
+     */
+    public ProxyDecoderMode getProxyDecoderMode() {
+        return proxyDecoderMode;
+    }
+
+    /**
+     * Set For the proxy decoder mode, if we should use a cached value or call gestalt for the most recent value.
+     *
+     * @param proxyDecoderMode if we should use a cached value or call gestalt for the most recent value.
+     */
+    public void setProxyDecoderMode(ProxyDecoderMode proxyDecoderMode) {
+        this.proxyDecoderMode = proxyDecoderMode;
     }
 
 

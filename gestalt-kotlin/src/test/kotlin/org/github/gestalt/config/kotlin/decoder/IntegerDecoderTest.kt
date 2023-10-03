@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
@@ -10,6 +11,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -20,11 +22,18 @@ import java.util.*
 internal class IntegerDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer? = null
+    var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     fun setup() {
         configNodeService = Mockito.mock(ConfigNodeService::class.java)
         lexer = Mockito.mock(SentenceLexer::class.java)
+        decoderService = DecoderRegistry(
+            listOf(IntegerDecoder()), configNodeService, lexer, listOf(
+                StandardPathMapper(),
+                DotNotationPathMapper()
+            )
+        )
     }
 
     @Test
@@ -49,15 +58,12 @@ internal class IntegerDecoderTest {
     fun decode() {
         val integerDecoder = IntegerDecoder()
         val validate: ValidateOf<Int> = integerDecoder.decode(
-            "db.port", LeafNode("124"), TypeCapture.of(
+            "db.port", Tags.of(),
+            LeafNode("124"),
+            TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(
-                listOf(integerDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -70,15 +76,12 @@ internal class IntegerDecoderTest {
     fun notAnInteger() {
         val integerDecoder = IntegerDecoder()
         val validate: ValidateOf<Int> = integerDecoder.decode(
-            "db.port", LeafNode("12s4"), TypeCapture.of(
+            "db.port", Tags.of(),
+            LeafNode("12s4"),
+            TypeCapture.of(
                 Int::class.java
             ),
-            DecoderRegistry(
-                listOf(integerDecoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -97,15 +100,10 @@ internal class IntegerDecoderTest {
     fun notAIntegerTooLarge() {
         val decoder = IntegerDecoder()
         val validate: ValidateOf<Int> = decoder.decode(
-            "db.port",
+            "db.port", Tags.of(),
             LeafNode("12345678901234567890123456789012345678901234567890123456789"),
-            TypeCapture.of(Int::class.java), DecoderRegistry(
-                listOf(decoder), configNodeService, lexer,
-                listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            TypeCapture.of(Int::class.java),
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

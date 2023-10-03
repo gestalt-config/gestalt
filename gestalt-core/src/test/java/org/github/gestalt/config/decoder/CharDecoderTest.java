@@ -1,12 +1,13 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +21,14 @@ class CharDecoderTest {
 
     ConfigNodeService configNodeService;
     SentenceLexer lexer;
+    DecoderRegistry decoderService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
+        decoderService = new DecoderRegistry(Collections.singletonList(new CharDecoder()), configNodeService, lexer,
+            List.of(new StandardPathMapper()));
     }
 
     @Test
@@ -56,12 +60,11 @@ class CharDecoderTest {
     }
 
     @Test
-    void decodeChar() throws GestaltException {
+    void decodeChar() {
         CharDecoder decoder = new CharDecoder();
 
-        ValidateOf<Character> validate = decoder.decode("db.port", new LeafNode("a"), TypeCapture.of(Character.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Character> validate = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
+                TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertEquals('a', validate.results());
@@ -69,12 +72,11 @@ class CharDecoderTest {
     }
 
     @Test
-    void notACharTooLong() throws GestaltException {
+    void notACharTooLong() {
         CharDecoder decoder = new CharDecoder();
 
-        ValidateOf<Character> validate = decoder.decode("db.port", new LeafNode("aaa"), TypeCapture.of(Character.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Character> validate = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
+                TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
 
@@ -87,12 +89,11 @@ class CharDecoderTest {
     }
 
     @Test
-    void notACharTooShort() throws GestaltException {
+    void notACharTooShort() {
         CharDecoder decoder = new CharDecoder();
 
-        ValidateOf<Character> validate = decoder.decode("db.port", new LeafNode(""), TypeCapture.of(Character.class),
-            new DecoderRegistry(Collections.singletonList(decoder), configNodeService, lexer,
-                List.of(new StandardPathMapper())));
+        ValidateOf<Character> validate = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+                TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertNull(validate.results());

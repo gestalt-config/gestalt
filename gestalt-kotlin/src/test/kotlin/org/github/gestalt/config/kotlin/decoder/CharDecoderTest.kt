@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
@@ -10,6 +11,7 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -20,11 +22,18 @@ import java.util.*
 internal class CharDecoderTest {
     var configNodeService: ConfigNodeService? = null
     var lexer: SentenceLexer? = null
+    var decoderService: DecoderRegistry? = null
 
     @BeforeEach
     fun setup() {
         configNodeService = Mockito.mock(ConfigNodeService::class.java)
         lexer = Mockito.mock(SentenceLexer::class.java)
+        decoderService = DecoderRegistry(
+            listOf(CharDecoder()), configNodeService, lexer, listOf(
+                StandardPathMapper(),
+                DotNotationPathMapper()
+            )
+        )
     }
 
     @Test
@@ -50,15 +59,12 @@ internal class CharDecoderTest {
     fun decodeChar() {
         val decoder = CharDecoder()
         val validate: ValidateOf<Char> = decoder.decode(
-            "db.port", LeafNode("a"), TypeCapture.of(
+            "db.port", Tags.of(),
+            LeafNode("a"),
+            TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(
-                listOf(decoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertFalse(validate.hasErrors())
@@ -71,15 +77,12 @@ internal class CharDecoderTest {
     fun notACharTooLong() {
         val decoder = CharDecoder()
         val validate: ValidateOf<Char> = decoder.decode(
-            "db.port", LeafNode("aaa"), TypeCapture.of(
+            "db.port", Tags.of(),
+            LeafNode("aaa"),
+            TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(
-                listOf(decoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertTrue(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())
@@ -97,15 +100,12 @@ internal class CharDecoderTest {
     fun notACharTooShort() {
         val decoder = CharDecoder()
         val validate: ValidateOf<Char> = decoder.decode(
-            "db.port", LeafNode(""), TypeCapture.of(
+            "db.port", Tags.of(),
+            LeafNode(""),
+            TypeCapture.of(
                 Char::class.java
             ),
-            DecoderRegistry(
-                listOf(decoder), configNodeService, lexer, listOf(
-                    StandardPathMapper(),
-                    DotNotationPathMapper()
-                )
-            )
+            DecoderContext(decoderService, null),
         )
         Assertions.assertFalse(validate.hasResults())
         Assertions.assertTrue(validate.hasErrors())

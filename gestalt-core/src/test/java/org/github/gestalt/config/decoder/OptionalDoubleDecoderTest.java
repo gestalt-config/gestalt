@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +28,13 @@ class OptionalDoubleDecoderTest {
 
     final SentenceLexer lexer = new PathLexer();
     ConfigNodeService configNodeService;
-    DecoderRegistry registry;
+    DecoderRegistry decoderService;
 
     @BeforeEach
     void setup() throws GestaltConfigurationException {
         configNodeService = new ConfigNodeManager();
-        registry = new DecoderRegistry(List.of(new OptionalDoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
-            new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
+        decoderService = new DecoderRegistry(List.of(new OptionalDoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
+            new StringDecoder(), new ObjectDecoder(), new DoubleDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -68,8 +69,8 @@ class OptionalDoubleDecoderTest {
     void decodeLeafDouble() {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
-        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", new LeafNode("124"), new TypeCapture<OptionalDouble>() {
-        }, registry);
+        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalDouble>() {
+        }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertFalse(validate.hasErrors());
         Assertions.assertTrue(validate.results().isPresent());
@@ -81,8 +82,8 @@ class OptionalDoubleDecoderTest {
     void decodeLeafDoubleEmpty() {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
-        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", new LeafNode(null), new TypeCapture<OptionalDouble>() {
-        }, registry);
+        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalDouble>() {
+        }, new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());
@@ -96,7 +97,8 @@ class OptionalDoubleDecoderTest {
     void decodeLeafDoubleNull() {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
-        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", null, TypeCapture.of(OptionalDouble.class), registry);
+        ValidateOf<OptionalDouble> validate = decoder.decode("db.port", Tags.of(), null,
+                TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(validate.hasResults());
         Assertions.assertTrue(validate.hasErrors());
         Assertions.assertFalse(validate.results().isPresent());

@@ -6,6 +6,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.RecComponent;
 import org.github.gestalt.config.utils.RecordUtils;
@@ -39,7 +40,7 @@ public final class RecordDecoder implements Decoder<Object> {
     }
 
     @Override
-    public ValidateOf<Object> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService) {
+    public ValidateOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
             return ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
         }
@@ -47,6 +48,7 @@ public final class RecordDecoder implements Decoder<Object> {
         boolean hasAllValues = true;
         List<ValidationError> errors = new ArrayList<>();
         Class<?> klass = type.getRawType();
+        DecoderService decoderService = decoderContext.getDecoderService();
 
         final RecComponent[] recordComponents = RecordUtils.recordComponents(klass, Comparator.comparing(RecComponent::index));
         final Object[] values = new Object[recordComponents.length];
@@ -70,8 +72,8 @@ public final class RecordDecoder implements Decoder<Object> {
                 // if we have no value, check the config annotation for a default.
                 if (configAnnotation != null && configAnnotation.defaultVal() != null &&
                     !configAnnotation.defaultVal().isEmpty()) {
-                    ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, new LeafNode(configAnnotation.defaultVal()),
-                        typeCapture);
+                    ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
+                        typeCapture, decoderContext);
 
                     errors.addAll(defaultValidateOf.getErrors());
                     if (defaultValidateOf.hasResults()) {
@@ -82,7 +84,8 @@ public final class RecordDecoder implements Decoder<Object> {
                 } else {
                     // when we have no result for the field and no annotation default
                     // try and decode the value anyway, in case its supports a nullable type, such as optional.
-                    ValidateOf<?> decodedResults = decoderService.decodeNode(nextPath, configNode.results(), typeCapture);
+                    ValidateOf<?> decodedResults =
+                        decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
                     if (decodedResults.hasResults()) {
                         values[i] = decodedResults.results();
                     } else {
@@ -90,7 +93,8 @@ public final class RecordDecoder implements Decoder<Object> {
                     }
                 }
             } else {
-                ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, configNode.results(), typeCapture);
+                ValidateOf<?> fieldValidateOf =
+                    decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
 
                 errors.addAll(fieldValidateOf.getErrors());
                 if (fieldValidateOf.hasResults()) {
