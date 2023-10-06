@@ -26,7 +26,7 @@ dependencies {
 }
 
 tasks.dokkaJavadoc.configure {
-    outputDirectory.set(buildDir.resolve("dokka"))
+    outputDirectory.set(layout.buildDirectory.get().asFile.resolve("dokka"))
 }
 
 
