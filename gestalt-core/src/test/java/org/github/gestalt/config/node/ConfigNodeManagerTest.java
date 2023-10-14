@@ -1693,6 +1693,124 @@ class ConfigNodeManagerTest {
     }
 
     @Test
+    public void testMerge3NodesTagsThenReload() throws GestaltException {
+        // create source 1
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        // add source 1 to the configNodeManager with tags
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        ConfigSource s1 = new TestSource(Tags.of("toy", "ball"));
+        ValidateOf<ConfigNode> validateOfResults =
+            configNodeManager.addNode(new ConfigNodeContainer(root1, s1));
+        Assertions.assertFalse(validateOfResults.hasErrors());
+        Assertions.assertTrue(validateOfResults.hasResults());
+        Assertions.assertNotNull(validateOfResults.results());
+
+        // create source 2
+        ConfigNode[] arrayNode2 = new ConfigNode[3];
+        arrayNode2[1] = new LeafNode("Scott");
+        arrayNode2[2] = new LeafNode("Paul");
+
+        Map<String, ConfigNode> dbNode2 = new HashMap<>();
+        dbNode2.put("name", new LeafNode("New Name"));
+        dbNode2.put("password", new LeafNode("123abc"));
+
+        Map<String, ConfigNode> rootNode2 = new HashMap<>();
+        rootNode2.put("db", new MapNode(dbNode2));
+        rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
+        ConfigNode root2 = new MapNode(rootNode2);
+
+        // add source 2 to the configNodeManager with tags
+        ConfigSource s2 = new TestSource(Tags.of("toy", "ball"));
+        ValidateOf<ConfigNode> validateOfResults2 =
+            configNodeManager.addNode(new ConfigNodeContainer(root2, s2));
+        Assertions.assertFalse(validateOfResults2.hasErrors());
+        Assertions.assertTrue(validateOfResults2.hasResults());
+        Assertions.assertNotNull(validateOfResults2.results());
+
+        ConfigNode results2 = validateOfResults2.results();
+        Assertions.assertEquals(2, results2.size());
+
+        // create source 2
+        ConfigNode[] arrayNode3 = new ConfigNode[1];
+        arrayNode3[0] = new LeafNode("Matt");
+
+        Map<String, ConfigNode> dbNode3 = new HashMap<>();
+        dbNode3.put("name", new LeafNode("New Name"));
+        dbNode3.put("timeout", new LeafNode("5000"));
+
+        Map<String, ConfigNode> rootNode3 = new HashMap<>();
+        rootNode3.put("db", new MapNode(dbNode3));
+        rootNode3.put("admin", new ArrayNode(Arrays.asList(arrayNode3)));
+        ConfigNode root3 = new MapNode(rootNode3);
+
+        // add source 2 to the configNodeManager without tags
+        ConfigSource s3 = new TestSource();
+        ValidateOf<ConfigNode> validateOfResults3 =
+            configNodeManager.addNode(new ConfigNodeContainer(root3, s3));
+        Assertions.assertFalse(validateOfResults3.hasErrors());
+        Assertions.assertTrue(validateOfResults3.hasResults());
+        Assertions.assertNotNull(validateOfResults3.results());
+
+        ConfigNode results3 = validateOfResults3.results();
+        Assertions.assertEquals(2, results3.size());
+
+        //validate results are not merged with the tagged results.
+        Assertions.assertEquals("New Name", results3.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertTrue(results3.getKey("db").get().getKey("port").isEmpty());
+        Assertions.assertTrue(results3.getKey("db").get().getKey("password").isEmpty());
+        Assertions.assertEquals("5000", results3.getKey("db").get().getKey("timeout").get().getValue().get());
+
+        Assertions.assertEquals(1, results3.getKey("admin").get().size());
+        Assertions.assertEquals("Matt", results3.getKey("admin").get().getIndex(0).get().getValue().get());
+
+        // update source 2
+        ConfigNode[] arrayNode2reload = new ConfigNode[4];
+        arrayNode2reload[1] = new LeafNode("Matt");
+        arrayNode2reload[2] = new LeafNode("Paul");
+        arrayNode2reload[3] = new LeafNode("June");
+
+        Map<String, ConfigNode> dbNode2Reload = new HashMap<>();
+        dbNode2Reload.put("name", new LeafNode("New Name2"));
+        dbNode2Reload.put("password", new LeafNode("123abcefg"));
+
+        Map<String, ConfigNode> rootNode2Reload = new HashMap<>();
+        rootNode2Reload.put("db", new MapNode(dbNode2Reload));
+        rootNode2Reload.put("admin", new ArrayNode(Arrays.asList(arrayNode2reload)));
+        ConfigNode root2Reload = new MapNode(rootNode2Reload);
+
+        // reload source 2 with tags.
+        validateOfResults2 = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
+        Assertions.assertFalse(validateOfResults2.hasErrors());
+        Assertions.assertTrue(validateOfResults2.hasResults());
+        Assertions.assertNotNull(validateOfResults2.results());
+
+        // validate we merge with the tag nodes, but not the untagged nodes.
+        results2 = validateOfResults2.results();
+        Assertions.assertEquals(2, results2.size());
+
+        Assertions.assertEquals("New Name2", results2.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abcefg", results2.getKey("db").get().getKey("password").get().getValue().get());
+
+        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("June", results2.getKey("admin").get().getIndex(3).get().getValue().get());
+    }
+
+    @Test
     public void testPostProcessor() throws GestaltException {
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");

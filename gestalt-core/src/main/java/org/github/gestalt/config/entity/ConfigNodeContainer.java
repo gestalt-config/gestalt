@@ -54,12 +54,12 @@ public final class ConfigNodeContainer {
     }
 
     /**
-     * returns true if the tokens for the Config Node match the input.
+     * returns true if the tags for the Config Node match the input.
      *
      * @param match tokens to match
-     * @return true if the tokens for the Config Node match the input
+     * @return true if the tags for the Config Node match the input
      */
-    public boolean matchesTokens(Tags match) {
+    public boolean matchesTags(Tags match) {
         return source.getTags().equals(match);
     }
 
