@@ -188,6 +188,11 @@ public final class ConfigNodeManager implements ConfigNodeService {
                 currentNode = reloadNode.getConfigNode();
             }
 
+            // only merge with other nodes of the same tags.
+            if (!nodePair.matchesTags(reloadNode.getTags())) {
+                continue;
+            }
+
             if (newRoot == null) {
                 newRoot = currentNode;
             } else {

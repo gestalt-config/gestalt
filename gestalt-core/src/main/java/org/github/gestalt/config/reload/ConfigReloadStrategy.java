@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public class ConfigReloadStrategy {
+public abstract class ConfigReloadStrategy {
 
     /**
      * The listeners for the Config Reload.
