@@ -11,11 +11,11 @@ import org.github.gestalt.config.post.process.transform.TransformerPostProcessor
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
+import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -81,7 +81,7 @@ public class GestaltIntegrationTests {
 
     //to run this test it must be run as an administrator.
     @Test
-    @Disabled
+    //@Disabled
     public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
@@ -108,6 +108,7 @@ public class GestaltIntegrationTests {
             .addSource(new MapConfigSource(configs))
             .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
             .addCoreReloadListener(reloadListener)
+            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -230,6 +231,64 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("credmond", hosts.get(2).getUser());
         Assertions.assertEquals("9012", hosts.get(2).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb2", hosts.get(2).url);
+    }
+
+    @Test
+    public void integrationTestEmpty() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        String fileURL = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-core/src/test/resources/default.properties";
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new URLConfigSource(fileURL))
+            .addSource(new ClassPathConfigSource("dev.properties"))
+            .addSource(new ClassPathConfigSource("empty.properties"))
+            .addSource(new MapConfigSource(configs))
+            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .addSource(new StringConfigSource("", "properties"))
+            .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    @Test
+    public void integrationTestEmptyReload() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+
+        String fileURL = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-core/src/test/resources/default.properties";
+
+        ConfigSource emptyString = new StringConfigSource("", "properties");
+        ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy(emptyString);
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(new URLConfigSource(fileURL))
+            .addSource(new ClassPathConfigSource("dev.properties"))
+            .addSource(new ClassPathConfigSource("empty.properties"))
+            .addSource(new MapConfigSource(configs))
+            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .addSource(emptyString)
+            .addReloadStrategy(reloadStrategy)
+            .setTreatNullValuesInClassAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+
+        reloadStrategy.reload();
+
+        validateResults(gestalt);
     }
 
     @Test
