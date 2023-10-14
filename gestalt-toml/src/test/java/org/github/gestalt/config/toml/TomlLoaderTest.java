@@ -167,6 +167,23 @@ class TomlLoaderTest {
     }
 
     @Test
+    void loadSourceEmpty() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("", "toml");
+
+        TomlLoader tomlLoader = new TomlLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(0, result.size());
+    }
+
+    @Test
     void loadSourceBadInput() throws GestaltException {
 
         StringConfigSource source = new StringConfigSource("&&&& ", "toml");

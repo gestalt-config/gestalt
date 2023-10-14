@@ -209,4 +209,21 @@ class YamlLoaderTest {
             Assertions.assertEquals("Config source: mapConfig does not have a stream to load.", e.getMessage());
         }
     }
+
+    @Test
+    void loadSourceEmptySource() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("", "yml");
+
+        YamlLoader yamlLoader = new YamlLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(0, result.size());
+    }
 }

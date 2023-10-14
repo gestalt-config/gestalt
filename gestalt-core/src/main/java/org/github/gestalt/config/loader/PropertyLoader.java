@@ -6,6 +6,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -79,6 +81,10 @@ public final class PropertyLoader implements ConfigLoader {
             }
         } else {
             throw new GestaltException("Config source: " + source.name() + " does not have a stream to load.");
+        }
+
+        if (properties.isEmpty()) {
+            return ValidateOf.valid(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
         }
 
         List<Pair<String, String>> configs = properties.entrySet()

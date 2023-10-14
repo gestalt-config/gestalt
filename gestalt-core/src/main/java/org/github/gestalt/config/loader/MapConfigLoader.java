@@ -6,6 +6,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
@@ -15,6 +16,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Loads an in memory map from MapConfigSource.
@@ -61,6 +63,10 @@ public final class MapConfigLoader implements ConfigLoader {
             configs = source.loadList();
         } else {
             throw new GestaltException("Config source: " + source.name() + " does not have a list to load.");
+        }
+
+        if (configs.isEmpty()) {
+            return ValidateOf.valid(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
         }
 
         ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);

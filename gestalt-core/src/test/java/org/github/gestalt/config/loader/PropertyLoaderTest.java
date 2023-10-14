@@ -10,6 +10,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -366,5 +367,21 @@ class PropertyLoaderTest {
         } catch (Exception e) {
             Assertions.assertEquals("Config source: mapConfig does not have a stream to load.", e.getMessage());
         }
+    }
+
+    @Test
+    void loadSourceEmpty() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("", "properties");
+
+        PropertyLoader propertyLoader = new PropertyLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = propertyLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals(0, result.size());
     }
 }
