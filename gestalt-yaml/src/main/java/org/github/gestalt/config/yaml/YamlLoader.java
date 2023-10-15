@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static com.fasterxml.jackson.databind.node.JsonNodeType.MISSING;
+
 /**
  * Loads from a yaml files from multiple sources, such as a file.
  *
@@ -72,6 +74,10 @@ public final class YamlLoader implements ConfigLoader {
                 JsonNode jsonNode = objectMapper.readTree(is);
                 if (jsonNode == null || jsonNode.isNull()) {
                     throw new GestaltException("Exception loading source: " + source.name() + " no yaml found");
+                }
+
+                if (jsonNode.getNodeType() == MISSING) {
+                    return ValidateOf.valid(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
                 }
 
                 ValidateOf<ConfigNode> node = buildConfigTree("", jsonNode);

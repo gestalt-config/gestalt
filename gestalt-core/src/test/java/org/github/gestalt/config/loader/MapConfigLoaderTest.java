@@ -351,4 +351,20 @@ class MapConfigLoaderTest {
             Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
         }
     }
+
+    @Test
+    void loadSourceEmpty() throws GestaltException {
+
+        MapConfigSource source = new MapConfigSource(Map.of());
+
+        MapConfigLoader mapConfigLoader = new MapConfigLoader();
+
+        ValidateOf<List<ConfigNodeContainer>> resultContainer = mapConfigLoader.loadSource(source);
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals(0, result.size());
+    }
 }
