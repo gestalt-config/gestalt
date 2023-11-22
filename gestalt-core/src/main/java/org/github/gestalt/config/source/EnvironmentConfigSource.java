@@ -47,7 +47,7 @@ public final class EnvironmentConfigSource implements ConfigSource {
      * constructor for EnvironmentConfigSource.
      *
      * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     *     are often uncontrolled and may not follow expected conventions of this library.
+     *                     are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource(boolean failOnErrors) {
         this("", false, failOnErrors, Tags.of());
@@ -57,7 +57,7 @@ public final class EnvironmentConfigSource implements ConfigSource {
      * Specify if you want to only parse the Environment variables that have a prefix.
      * By default it will remove the prefix from the output.
      *
-     * @param prefix only use the Environment variables that have a prefix.
+     * @param prefix       only use the Environment variables that have a prefix.
      * @param removePrefix if we should remove the prefix
      */
     public EnvironmentConfigSource(String prefix, boolean removePrefix) {
@@ -77,11 +77,11 @@ public final class EnvironmentConfigSource implements ConfigSource {
     /**
      * Specify if you want to only parse the Environment variables that have a prefix.
      *
-     * @param prefix only use the Environment variables that have a prefix.
+     * @param prefix       only use the Environment variables that have a prefix.
      * @param removePrefix If you should remove the prefix from the output
      * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     *     are often uncontrolled and may not follow expected conventions of this library.
-     * @param tags set of tags associated with this source.
+     *                     are often uncontrolled and may not follow expected conventions of this library.
+     * @param tags         set of tags associated with this source.
      */
     public EnvironmentConfigSource(String prefix, boolean removePrefix, boolean failOnErrors, Tags tags) {
         this.failOnErrors = failOnErrors;
@@ -118,23 +118,23 @@ public final class EnvironmentConfigSource implements ConfigSource {
     @Override
     public List<Pair<String, String>> loadList() {
         return SystemWrapper.getEnvVars().entrySet()
-                            .stream()
-                            .filter(envVar -> envVar.getKey().startsWith(prefix))
-                            .map(envVar -> {
-                                String key = envVar.getKey();
-                                if (removePrefix) {
-                                    key = key.substring(prefix.length());
+            .stream()
+            .filter(envVar -> envVar.getKey().startsWith(prefix))
+            .map(envVar -> {
+                String key = envVar.getKey();
+                if (removePrefix) {
+                    key = key.substring(prefix.length());
 
-                                    //if the next character is a _ or . remove that as well
-                                    if (key.startsWith("_") || key.startsWith(".")) {
-                                        key = key.substring(1);
-                                    }
-                                }
+                    //if the next character is a _ or . remove that as well
+                    if (key.startsWith("_") || key.startsWith(".")) {
+                        key = key.substring(1);
+                    }
+                }
 
-                                return new Pair<>(key, envVar.getValue());
+                return new Pair<>(key, envVar.getValue());
 
-                            })
-                            .collect(Collectors.toList());
+            })
+            .collect(Collectors.toList());
     }
 
     @Override

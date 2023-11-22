@@ -22,7 +22,7 @@ import java.util.OptionalLong;
 /**
  * Tests for an optionalLong.
  *
- * @author Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 class OptionalLongDecoderTest {
 

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Nodes to build a substitution tree.
  *
- * @author Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public class SubstitutionNode {
 

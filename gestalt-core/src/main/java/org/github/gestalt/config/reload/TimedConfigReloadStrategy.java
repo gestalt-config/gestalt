@@ -4,6 +4,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,11 +22,12 @@ public final class TimedConfigReloadStrategy extends ConfigReloadStrategy {
     /**
      * Constructor for TimedConfigReloadStrategy.
      *
-     * @param source the config source to reload
+     * @param source      the config source to reload
      * @param reloadDelay how often to reload the config source
      */
     public TimedConfigReloadStrategy(ConfigSource source, Duration reloadDelay) {
         super(source);
+        Objects.requireNonNull(reloadDelay, "Reload Delay must be set for a TimedConfigReloadStrategy");
         this.reloadDelay = reloadDelay;
         startTimer();
     }

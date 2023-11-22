@@ -684,11 +684,11 @@ public class GestaltSample {
         configDirectory.toFile().deleteOnExit();
 
 
-        GitConfigSourceBuilder gitBuilder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder gitBuilder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = gitBuilder.build();
+        ConfigSourcePackage<GitConfigSource> source = gitBuilder.build();
 
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
@@ -696,7 +696,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(source)
+            .addSource(source.getConfigSource())
             .addSource(new FileConfigSource(devFile))
             .addSource(new MapConfigSource(configs))
             .setTreatNullValuesInClassAsErrors(false)

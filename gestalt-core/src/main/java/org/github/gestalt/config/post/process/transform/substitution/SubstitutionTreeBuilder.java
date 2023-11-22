@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Builds a substitution tree to support nested substitutions.
  *
- * @author Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class SubstitutionTreeBuilder {
 

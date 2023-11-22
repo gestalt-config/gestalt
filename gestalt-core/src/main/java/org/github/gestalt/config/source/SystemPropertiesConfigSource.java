@@ -44,7 +44,7 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
      * constructor for SystemPropertiesConfigSource.
      *
      * @param failOnErrors treat Errors while loading as warnings since System Properties
-     *     are often uncontrolled and may not follow expected conventions of this library.
+     *                     are often uncontrolled and may not follow expected conventions of this library.
      */
     public SystemPropertiesConfigSource(boolean failOnErrors) {
         this(failOnErrors, Tags.of());
@@ -63,8 +63,8 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
      * constructor for SystemPropertiesConfigSource.
      *
      * @param failOnErrors treat Errors while loading as warnings since System Properties
-     *     are often uncontrolled and may not follow expected conventions of this library.
-     * @param tags tags associated with the source
+     *                     are often uncontrolled and may not follow expected conventions of this library.
+     * @param tags         tags associated with the source
      */
     public SystemPropertiesConfigSource(boolean failOnErrors, Tags tags) {
         this.failOnErrors = failOnErrors;
@@ -109,9 +109,9 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
         Properties properties = System.getProperties();
 
         return properties.entrySet()
-                         .stream()
-                         .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
-                         .collect(Collectors.toList());
+            .stream()
+            .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
+            .collect(Collectors.toList());
     }
 
     @Override

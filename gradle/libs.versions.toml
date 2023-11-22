@@ -6,7 +6,7 @@ kotlin = "1.8.22"
 # @pin
 kotlinDokka = "1.8.20"
 # Kotlin DI
-kodeinDI = "7.20.2"
+kodeinDI = "7.21.0"
 koinDI = "3.5.0"
 # Java DI
 # @pin
@@ -18,38 +18,38 @@ weld = "3.1.0.Final"
 # @pin
 weldCore = "4.0.3.Final"
 #encoding/decoding
-jackson = "2.15.2"
-hocon = "1.4.2"
+jackson = "2.16.0"
+hocon = "1.4.3"
 # Cloud
-awsBom = "2.20.157"
-gcpLibraries = "26.23.0"
+awsBom = "2.21.28"
+gcpLibraries = "26.27.0"
 # vault
-vault = "6.1.0"
+vault = "6.2.0"
 # Git support
 jgit = "6.7.0.202309050840-r"
 eddsa = "0.3.0"
 # testing
-junit5 = "5.10.0"
+junit5 = "5.10.1"
 assertJ = "3.24.2"
 mockito = "5.2.0"
 mockk = "1.13.8"
-koTestAssertions = "5.7.2"
+koTestAssertions = "5.8.0"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.19.0"
+testcontainers = "1.19.3"
 # static code analysis
-errorprone = "2.22.0"
+errorprone = "2.23.0"
 gradleErrorProne = "3.1.0"
-detekt = "1.23.1"
-gradleDetekt = "1.23.1"
+detekt = "1.23.3"
+gradleDetekt = "1.23.3"
 checkStyle = "10.10.0"
 # benchmarking
 jmh = "1.37"
-gradleJmh = "0.7.1"
+gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.23.1"
+gestalt = "0.23.3"
 # Gradle utility
-gradleVersions = "0.48.0"
+gradleVersions = "0.50.0"
 gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.1"
 

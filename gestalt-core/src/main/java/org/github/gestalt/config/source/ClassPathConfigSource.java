@@ -33,7 +33,7 @@ public final class ClassPathConfigSource implements ConfigSource {
      * Default constructor for the ClassPathConfigSource.
      *
      * @param resource name of the resource to load from the class path.
-     * @param tags tags associated with the source
+     * @param tags     tags associated with the source
      * @throws GestaltException any exceptions
      */
     public ClassPathConfigSource(String resource, Tags tags) throws GestaltException {
