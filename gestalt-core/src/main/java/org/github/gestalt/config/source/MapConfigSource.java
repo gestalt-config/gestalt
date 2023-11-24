@@ -47,6 +47,7 @@ public final class MapConfigSource implements ConfigSource {
      * @param tags         tags associated with the source
      */
     public MapConfigSource(Map<String, String> customConfig, Tags tags) {
+        Objects.requireNonNull(customConfig, "Custom map must not be null");
         this.customConfig = customConfig;
         this.tags = tags;
     }

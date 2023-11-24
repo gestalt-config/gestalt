@@ -1,6 +1,7 @@
 package org.github.gestalt.config.lexer;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -59,6 +60,11 @@ class PathLexerTest {
         Assertions.assertFalse(validate.hasResults());
 
         List<ValidationError> errors = validate.getErrors();
+        Assertions.assertEquals(ValidationLevel.WARN, errors.get(0).level());
+        Assertions.assertEquals("empty element for path: the.quick[].brown.fox", errors.get(0).description());
+
+        validate.getErrors(ValidationLevel.WARN);
+        Assertions.assertEquals(ValidationLevel.WARN, errors.get(0).level());
         Assertions.assertEquals("empty element for path: the.quick[].brown.fox", errors.get(0).description());
 
         validate = pathLexer.evaluator(null, "the.quick[0].brown.fox");

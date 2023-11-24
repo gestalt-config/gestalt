@@ -62,10 +62,6 @@ public final class MapConfigSourceBuilder extends SourceBuilder<MapConfigSourceB
      * @return the builder
      */
     public MapConfigSourceBuilder addCustomConfig(String path, String value) {
-        if (customConfig == null) {
-            customConfig = new HashMap<>();
-        }
-
         customConfig.put(path, value);
         return this;
     }
@@ -73,9 +69,6 @@ public final class MapConfigSourceBuilder extends SourceBuilder<MapConfigSourceB
 
     @Override
     public ConfigSourcePackage<MapConfigSource> build() throws GestaltException {
-        if (customConfig == null) {
-            customConfig = new HashMap<>();
-        }
         return buildPackage(new MapConfigSource(customConfig, tags));
     }
 }
