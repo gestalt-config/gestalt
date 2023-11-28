@@ -19,14 +19,12 @@ class StringConfigSourceBuilderTest {
 
         assertEquals(config, builder.getConfig());
         assertEquals(format, builder.getFormat());
-        ConfigSourcePackage<StringConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-
-
-        StringConfigSource stringConfigSource = configSourcePackage.getConfigSource();
+        StringConfigSource stringConfigSource = (StringConfigSource) configSourcePackage.getConfigSource();
         assertTrue(stringConfigSource.hasStream());
         assertEquals(format, stringConfigSource.format());
     }
@@ -68,13 +66,13 @@ class StringConfigSourceBuilderTest {
             .setFormat(format);
 
         // Act
-        ConfigSourcePackage<StringConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         // Assert
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        StringConfigSource stringConfigSource = configSourcePackage.getConfigSource();
+        StringConfigSource stringConfigSource = (StringConfigSource) configSourcePackage.getConfigSource();
         assertTrue(stringConfigSource.hasStream());
         assertEquals(format, stringConfigSource.format());
     }

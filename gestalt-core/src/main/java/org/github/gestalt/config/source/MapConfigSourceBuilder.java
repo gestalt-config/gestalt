@@ -49,9 +49,11 @@ public final class MapConfigSourceBuilder extends SourceBuilder<MapConfigSourceB
      * Set the map that backs the config source.
      *
      * @param customConfig the map that backs the config source.
+     * @return the builder
      */
-    public void setCustomConfig(Map<String, String> customConfig) {
+    public MapConfigSourceBuilder setCustomConfig(Map<String, String> customConfig) {
         this.customConfig = customConfig;
+        return this;
     }
 
     /**
@@ -68,7 +70,7 @@ public final class MapConfigSourceBuilder extends SourceBuilder<MapConfigSourceB
 
 
     @Override
-    public ConfigSourcePackage<MapConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new MapConfigSource(customConfig, tags));
     }
 }

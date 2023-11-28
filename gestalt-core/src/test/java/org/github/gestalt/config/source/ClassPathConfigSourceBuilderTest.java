@@ -14,7 +14,7 @@ class ClassPathConfigSourceBuilderTest {
         ClassPathConfigSourceBuilder builder = ClassPathConfigSourceBuilder.builder().setResource(resourcePath);
 
         // Act
-        ConfigSourcePackage<ClassPathConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         // Assert
         assertNotNull(configSourcePackage);

@@ -24,11 +24,11 @@ class GCSConfigSourceBuilderTest {
         assertEquals("testBucket", builder.getBucketName());
         assertEquals("testObject", builder.getObjectName());
 
-        ConfigSourcePackage<GCSConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        GCSConfigSource gcsConfigSource = configSourcePackage.getConfigSource();
+        GCSConfigSource gcsConfigSource = (GCSConfigSource) configSourcePackage.getConfigSource();
         assertTrue(gcsConfigSource.hasStream());
     }
 

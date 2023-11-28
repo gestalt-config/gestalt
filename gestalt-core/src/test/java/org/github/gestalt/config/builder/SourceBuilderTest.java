@@ -3,6 +3,8 @@ package org.github.gestalt.config.builder;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.reload.ConfigReloadStrategy;
+import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tag;
@@ -15,7 +17,6 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 public class SourceBuilderTest {
 
@@ -35,7 +36,7 @@ public class SourceBuilderTest {
         }
 
         @Override
-        public ConfigSourcePackage<StringConfigSource> build() throws GestaltException {
+        public ConfigSourcePackage build() throws GestaltException {
             return buildPackage(new StringConfigSource(text, "properties", tags));
         }
     }
@@ -57,7 +58,7 @@ public class SourceBuilderTest {
     @Test
     public void testBuilderConfigSourcePackageCreation() throws GestaltException, IOException {
         var source = new StringConfigSource("abc=def", "properties", Tags.environment("dev"));
-        ConfigSourcePackage<StringConfigSource> configSourcePackage = new ConfigSourcePackage<>(source, List.of());
+        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of());
 
         var built = sourceBuilder.setSource("abc=def")
             .setTags(Tags.environment("dev"))
@@ -71,7 +72,7 @@ public class SourceBuilderTest {
     @Test
     public void testConfigSourcePackageCreation() throws GestaltException {
         var source = new StringConfigSource("abc=def", "properties");
-        ConfigSourcePackage<StringConfigSource> configSourcePackage = new ConfigSourcePackage<>(source, List.of());
+        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of());
         assertEquals(source, configSourcePackage.getConfigSource());
         assertEquals(0, configSourcePackage.getConfigReloadStrategies().size());
     }
@@ -112,23 +113,23 @@ public class SourceBuilderTest {
 
     @Test
     public void addConfigReloadStrategyBuilderShouldAddStrategyBuilder() {
-        ConfigReloadStrategyBuilder<?, ?> strategyBuilder = mock(ConfigReloadStrategyBuilder.class);
-        sourceBuilder.addConfigReloadStrategyBuilder(strategyBuilder);
-        List<ConfigReloadStrategyBuilder<?, ?>> strategyBuilders = sourceBuilder.getConfigReloadStrategyBuilders();
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
+        sourceBuilder.addConfigReloadStrategy(reload);
+        List<ConfigReloadStrategy> strategyBuilders = sourceBuilder.getConfigReloadStrategies();
         assertNotNull(strategyBuilders);
         assertEquals(1, strategyBuilders.size());
-        assertTrue(strategyBuilders.contains(strategyBuilder));
+        assertTrue(strategyBuilders.contains(reload));
     }
 
     @Test
     public void addConfigReloadStrategyBuilderShouldThrowExceptionOnNullStrategyBuilder() {
-        assertThrows(NullPointerException.class, () -> sourceBuilder.addConfigReloadStrategyBuilder(null));
+        assertThrows(NullPointerException.class, () -> sourceBuilder.addConfigReloadStrategy(null));
     }
 
     @Test
     public void buildShouldCreateConfigSourcePackage() throws GestaltException {
         sourceBuilder.setSource("abc=def");
-        ConfigSourcePackage<StringConfigSource> result = sourceBuilder.build();
+        ConfigSourcePackage result = sourceBuilder.build();
         assertNotNull(result);
     }
 }

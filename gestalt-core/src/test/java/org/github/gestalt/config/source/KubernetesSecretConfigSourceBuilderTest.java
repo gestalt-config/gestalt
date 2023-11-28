@@ -42,8 +42,9 @@ class KubernetesSecretConfigSourceBuilderTest {
 
         // When
         try {
-            ConfigSourcePackage<KubernetesSecretConfigSource> configSourcePackage = builder.build();
-            KubernetesSecretConfigSource kubernetesSecretConfigSource = configSourcePackage.getConfigSource();
+            ConfigSourcePackage configSourcePackage = builder.build();
+            KubernetesSecretConfigSource kubernetesSecretConfigSource =
+                (KubernetesSecretConfigSource) configSourcePackage.getConfigSource();
 
             // Then
             assertEquals(folderPath, kubernetesSecretConfigSource.getPath());

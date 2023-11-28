@@ -43,13 +43,15 @@ public final class URLConfigSourceBuilder extends SourceBuilder<URLConfigSourceB
      * Set the URL to find the config source at.
      *
      * @param sourceURL the URL to find the config source at.
+     * @return the builder
      */
-    public void setSourceURL(String sourceURL) {
+    public URLConfigSourceBuilder setSourceURL(String sourceURL) {
         this.sourceURL = sourceURL;
+        return this;
     }
 
     @Override
-    public ConfigSourcePackage<URLConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new URLConfigSource(sourceURL, tags));
     }
 }

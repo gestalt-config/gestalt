@@ -5,8 +5,8 @@ import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
-import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.test.classes.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -423,15 +423,16 @@ class ProxyDecoderPassThroughTest {
         configs.put("db.uri", "mysql.com");
         configs.put("db.password", "pass");
 
-        ConfigSource cs = new MapConfigSource(configs);
-        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy(cs);
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
 
         // using the builder to layer on the configuration files.
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(cs)
-            .addReloadStrategy(reload)
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(reload)
+                .build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();

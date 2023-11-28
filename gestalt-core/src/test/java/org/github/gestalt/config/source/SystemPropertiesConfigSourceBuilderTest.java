@@ -13,13 +13,13 @@ class SystemPropertiesConfigSourceBuilderTest {
         SystemPropertiesConfigSourceBuilder builder = SystemPropertiesConfigSourceBuilder.builder();
 
         // Act
-        ConfigSourcePackage<SystemPropertiesConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         // Assert
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        SystemPropertiesConfigSource systemPropertiesConfigSource = configSourcePackage.getConfigSource();
+        SystemPropertiesConfigSource systemPropertiesConfigSource = (SystemPropertiesConfigSource) configSourcePackage.getConfigSource();
         assertFalse(systemPropertiesConfigSource.failOnErrors());
     }
 
@@ -31,13 +31,13 @@ class SystemPropertiesConfigSourceBuilderTest {
         builder.setFailOnErrors(true);
 
         // Act
-        ConfigSourcePackage<SystemPropertiesConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         // Assert
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        SystemPropertiesConfigSource systemPropertiesConfigSource = configSourcePackage.getConfigSource();
+        SystemPropertiesConfigSource systemPropertiesConfigSource = (SystemPropertiesConfigSource) configSourcePackage.getConfigSource();
         assertTrue(systemPropertiesConfigSource.failOnErrors());
         assertTrue(builder.failOnErrors());
     }

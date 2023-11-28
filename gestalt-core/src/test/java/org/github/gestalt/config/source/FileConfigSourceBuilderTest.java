@@ -29,8 +29,8 @@ class FileConfigSourceBuilderTest {
 
         // When
         try {
-            ConfigSourcePackage<FileConfigSource> configSourcePackage = builder.build();
-            FileConfigSource fileConfigSource = configSourcePackage.getConfigSource();
+            ConfigSourcePackage configSourcePackage = builder.build();
+            FileConfigSource fileConfigSource = (FileConfigSource) configSourcePackage.getConfigSource();
 
             // Then
             assertEquals(filePath, fileConfigSource.getPath());

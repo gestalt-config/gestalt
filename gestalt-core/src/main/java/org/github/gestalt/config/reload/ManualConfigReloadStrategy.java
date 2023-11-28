@@ -9,6 +9,13 @@ import org.github.gestalt.config.source.ConfigSource;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class ManualConfigReloadStrategy extends ConfigReloadStrategy {
+
+    /**
+     * Constructor for ManualConfigReloadStrategy with no constructor.
+     */
+    public ManualConfigReloadStrategy() {
+    }
+
     /**
      * Constructor for ManualConfigReloadStrategy.
      *

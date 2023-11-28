@@ -90,7 +90,7 @@ public final class S3ConfigSourceBuilder extends SourceBuilder<S3ConfigSourceBui
     }
 
     @Override
-    public ConfigSourcePackage<S3ConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new S3ConfigSource(s3, bucketName, keyName, tags));
     }
 }

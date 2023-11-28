@@ -24,11 +24,11 @@ class S3ConfigSourceBuilderTest {
         assertEquals("testBucket", builder.getBucketName());
         assertEquals("testKey", builder.getKeyName());
 
-        ConfigSourcePackage<S3ConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        S3ConfigSource s3ConfigSource = configSourcePackage.getConfigSource();
+        S3ConfigSource s3ConfigSource = (S3ConfigSource) configSourcePackage.getConfigSource();
         assertTrue(s3ConfigSource.hasStream());
     }
 

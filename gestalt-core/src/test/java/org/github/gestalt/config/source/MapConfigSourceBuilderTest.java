@@ -22,13 +22,13 @@ class MapConfigSourceBuilderTest {
         builder.setCustomConfig(customConfig);
 
         // Act
-        ConfigSourcePackage<MapConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         // Assert
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        MapConfigSource configSource = configSourcePackage.getConfigSource();
+        MapConfigSource configSource = (MapConfigSource) configSourcePackage.getConfigSource();
         assertTrue(configSource.hasList());
         assertEquals(3, configSource.loadList().size());
     }
@@ -73,13 +73,13 @@ class MapConfigSourceBuilderTest {
         MapConfigSourceBuilder builder = MapConfigSourceBuilder.builder();
 
         // Act
-        ConfigSourcePackage<MapConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         // Assert
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        MapConfigSource configSource = configSourcePackage.getConfigSource();
+        MapConfigSource configSource = (MapConfigSource) configSourcePackage.getConfigSource();
         assertNotNull(configSource.hasList());
         assertTrue(configSource.loadList().isEmpty());
     }

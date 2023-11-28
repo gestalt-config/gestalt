@@ -24,6 +24,7 @@ import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
 
@@ -64,7 +65,8 @@ public class GestaltBuilder {
     private SentenceLexer sentenceLexer = new PathLexer();
     private GestaltConfig gestaltConfig = new GestaltConfig();
     private ConfigNodeService configNodeService = new ConfigNodeManager();
-    private List<ConfigSource> sources = new ArrayList<>();
+    private final List<ConfigSource> sources = new ArrayList<>();
+    private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<PostProcessor> postProcessors = new ArrayList<>();
@@ -169,43 +171,15 @@ public class GestaltBuilder {
     }
 
     /**
-     * Sets the list of sources to load. Replaces any sources already set.
-     *
-     * @param sources list of sources to load.
-     * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException exception if there are no sources
-     */
-    public GestaltBuilder setSources(List<ConfigSource> sources) throws GestaltConfigurationException {
-        if (sources == null || sources.isEmpty()) {
-            throw new GestaltConfigurationException("No sources provided while setting sources");
-        }
-        this.sources = sources;
-
-        return this;
-    }
-
-    /**
-     * List of sources to add to the builder.
-     *
-     * @param sources list of sources to add.
-     * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException no sources provided
-     */
-    public GestaltBuilder addSources(List<ConfigSource> sources) throws GestaltConfigurationException {
-        if (sources == null || sources.isEmpty()) {
-            throw new GestaltConfigurationException("No sources provided while adding sources");
-        }
-        this.sources.addAll(sources);
-
-        return this;
-    }
-
-    /**
      * Add a single source to the builder.
+     *
+     * <p>Deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder
      *
      * @param source add a single sources
      * @return GestaltBuilder builder
+     *
      */
+    @Deprecated(since = "0.23.4")
     public GestaltBuilder addSource(ConfigSource source) {
         Objects.requireNonNull(source, "Source should not be null");
         this.sources.add(source);
@@ -213,11 +187,51 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set a single source build with a builder, to gestalt the builder.
+     *
+     * @param configSourcePackage add a single Config source Package
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSources(List<ConfigSourcePackage> configSourcePackage) {
+        Objects.requireNonNull(configSourcePackage, "ConfigSourcePackage should not be null");
+        this.configSourcePackages = configSourcePackage;
+        return this;
+    }
+
+    /**
+     * Add a list of sources build with a builder, to gestalt the builder.
+     *
+     * @param configSourcePackage add list of Config source Package
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addSources(List<ConfigSourcePackage> configSourcePackage) {
+        Objects.requireNonNull(configSourcePackage, "ConfigSourcePackage should not be null");
+        this.configSourcePackages.addAll(configSourcePackage);
+        return this;
+    }
+
+    /**
+     * Add a single source build with a builder, to gestalt the builder.
+     *
+     * @param configSourcePackage add a single Config source Package
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addSource(ConfigSourcePackage configSourcePackage) {
+        Objects.requireNonNull(configSourcePackage, "ConfigSourcePackage should not be null");
+        this.configSourcePackages.add(configSourcePackage);
+        return this;
+    }
+
+    /**
      * Add a config reload strategy to the builder.
+     *
+     * <p>Deprecated prefer the use of addSource(ConfigSourcePackage configSourcePackage) with a source builder.
+     * Use the source builder to add a reload strategy
      *
      * @param configReloadStrategy add a config reload strategy.
      * @return GestaltBuilder builder
      */
+    @Deprecated(since = "0.23.4", forRemoval = true)
     public GestaltBuilder addReloadStrategy(ConfigReloadStrategy configReloadStrategy) {
         Objects.requireNonNull(configReloadStrategy, "reloadStrategy should not be null");
         this.reloadStrategies.add(configReloadStrategy);
@@ -226,10 +240,13 @@ public class GestaltBuilder {
 
     /**
      * Add a list of config reload strategies to the builder.
+     * Deprecated prefer the use of addSource(ConfigSourcePackage configSourcePackage) with a source builder.
+     * Use the source builder to add a reload strategy
      *
      * @param reloadStrategies list of config reload strategies.
      * @return GestaltBuilder builder
      */
+    @Deprecated(since = "0.23.4", forRemoval = true)
     public GestaltBuilder addReloadStrategies(List<ConfigReloadStrategy> reloadStrategies) {
         Objects.requireNonNull(reloadStrategies, "reloadStrategies should not be null");
         this.reloadStrategies.addAll(reloadStrategies);
@@ -774,9 +791,16 @@ public class GestaltBuilder {
      * @throws GestaltConfigurationException multiple validations can throw exceptions
      */
     public Gestalt build() throws GestaltConfigurationException {
-        if (sources.isEmpty()) {
+        if (sources.isEmpty() && configSourcePackages.isEmpty()) {
             throw new GestaltConfigurationException("No sources provided");
         }
+
+        var sourcePackagesFromSource = sources
+            .stream()
+            .map(it -> new ConfigSourcePackage(it, List.of()))
+            .collect(Collectors.toList());
+
+        configSourcePackages.addAll(sourcePackagesFromSource);
 
         gestaltConfig = rebuildConfig();
         gestaltConfig.registerModuleConfig(modules);
@@ -823,11 +847,16 @@ public class GestaltBuilder {
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
-        final GestaltCore gestaltCore = new GestaltCore(configLoaderService, sources, decoderService, sentenceLexer, gestaltConfig,
-            configNodeService, coreReloadListenersContainer, postProcessors, defaultTags);
+        final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
+            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
+
+        // register gestaltCore with all the source reload strategies.
+        configSourcePackages.stream()
+            .flatMap(it -> it.getConfigReloadStrategies().stream())
+            .forEach(it -> it.registerListener(gestaltCore));
         // Add all listeners for the core update.
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 

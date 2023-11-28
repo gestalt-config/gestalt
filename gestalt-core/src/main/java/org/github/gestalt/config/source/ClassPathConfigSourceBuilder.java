@@ -51,7 +51,7 @@ public final class ClassPathConfigSourceBuilder extends SourceBuilder<ClassPathC
     }
 
     @Override
-    public ConfigSourcePackage<ClassPathConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new ClassPathConfigSource(resource, tags));
     }
 }

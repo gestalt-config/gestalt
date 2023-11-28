@@ -20,6 +20,7 @@ import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ErrorsUtil;
@@ -42,7 +43,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());
 
     private final ConfigLoaderService configLoaderService;
-    private final List<ConfigSource> sources;
+    private final List<ConfigSourcePackage> sourcePackages;
     private final DecoderService decoderService;
     private final SentenceLexer sentenceLexer;
     private final GestaltConfig gestaltConfig;
@@ -60,7 +61,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
      *
      * @param configLoaderService configLoaderService to hold all config loaders
-     * @param sources sources we wish to load the configs from. We load the sources in the order they are provided.
+     * @param configSourcePackages sources we wish to load the configs from. We load the sources in the order they are provided.
      *     Overriding older values with new one where needed
      * @param decoderService decoderService to hold all decoders
      * @param sentenceLexer sentenceLexer to parse the configuration paths when doing searches.
@@ -70,11 +71,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param postProcessor postProcessor list of post processors
      * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
-    public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSource> sources, DecoderService decoderService,
-                       SentenceLexer sentenceLexer, GestaltConfig gestaltConfig, ConfigNodeService configNodeService,
-                       CoreReloadListenersContainer reloadStrategy, List<PostProcessor> postProcessor, Tags defaultTags) {
+    public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
+                       DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
+                       ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
+                       List<PostProcessor> postProcessor, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
-        this.sources = sources;
+        this.sourcePackages = configSourcePackages;
         this.decoderService = decoderService;
         this.sentenceLexer = sentenceLexer;
         this.gestaltConfig = gestaltConfig;
@@ -115,11 +117,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     @Override
     public void loadConfigs() throws GestaltException {
-        if (sources == null || sources.isEmpty()) {
+        if (sourcePackages == null || sourcePackages.isEmpty()) {
             throw new GestaltException("No sources provided, unable to load any configs");
         }
 
-        for (ConfigSource source : sources) {
+        for (ConfigSourcePackage sourcePackage : sourcePackages) {
+            ConfigSource source = sourcePackage.getConfigSource();
             ConfigLoader configLoader = configLoaderService.getLoader(source.format());
             ValidateOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(source);
 
@@ -151,12 +154,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltException("No sources provided, unable to reload any configs");
         }
 
-        if (sources == null || sources.isEmpty()) {
+        if (sourcePackages == null || sourcePackages.isEmpty()) {
             throw new GestaltException("No sources provided, unable to reload any configs");
         }
 
-        if (!sources.contains(reloadSource)) {
-            throw new GestaltException("Can not reload a source that does not exist.");
+        if (sourcePackages.stream().noneMatch(it -> it.getConfigSource().equals(reloadSource))) {
+            throw new GestaltException("Can not reload a source that was not registered.");
         }
 
         ConfigLoader configLoader = configLoaderService.getLoader(reloadSource.format());

@@ -85,7 +85,7 @@ public final class StringConfigSourceBuilder extends SourceBuilder<StringConfigS
     }
 
     @Override
-    public ConfigSourcePackage<StringConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new StringConfigSource(config, format, tags));
     }
 }

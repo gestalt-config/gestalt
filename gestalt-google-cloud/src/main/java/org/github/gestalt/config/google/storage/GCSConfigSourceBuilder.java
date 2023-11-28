@@ -90,7 +90,7 @@ public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceB
     }
 
     @Override
-    public ConfigSourcePackage<GCSConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new GCSConfigSource(storage, bucketName, objectName, tags));
     }
 }

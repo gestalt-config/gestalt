@@ -97,7 +97,7 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
     }
 
     @Override
-    public ConfigSourcePackage<EnvironmentConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new EnvironmentConfigSource(prefix, removePrefix, failOnErrors, tags));
     }
 }

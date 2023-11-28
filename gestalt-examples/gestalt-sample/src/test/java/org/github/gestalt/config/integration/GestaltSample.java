@@ -331,10 +331,9 @@ public class GestaltSample {
         TestReloadListener reloadListener = new TestReloadListener();
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(devFileSource)
-            .addSource(new MapConfigSource(configs))
-            .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).addConfigReloadStrategy(new FileChangeReloadStrategy()).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addCoreReloadListener(reloadListener)
             .build();
 
@@ -688,7 +687,7 @@ public class GestaltSample {
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        ConfigSourcePackage<GitConfigSource> source = gitBuilder.build();
+        ConfigSourcePackage source = gitBuilder.build();
 
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());

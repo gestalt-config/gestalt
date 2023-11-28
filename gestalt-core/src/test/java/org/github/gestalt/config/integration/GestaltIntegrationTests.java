@@ -9,9 +9,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
-import org.github.gestalt.config.reload.CoreReloadListener;
-import org.github.gestalt.config.reload.FileChangeReloadStrategy;
-import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
+import org.github.gestalt.config.reload.*;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
@@ -43,10 +41,10 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -66,10 +64,10 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -98,15 +96,15 @@ public class GestaltIntegrationTests {
 
         devFile = tempFile.toFile();
 
-        ConfigSource devFileSource = new FileConfigSource(devFile);
-
         TestReloadListener reloadListener = new TestReloadListener();
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
-            .addSource(devFileSource)
-            .addSource(new MapConfigSource(configs))
-            .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder()
+                .setFile(devFile)
+                .addConfigReloadStrategy(new FileChangeReloadStrategy())
+                .build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addCoreReloadListener(reloadListener)
             .setTreatNullValuesInClassAsErrors(false)
             .build();
@@ -244,12 +242,12 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new ClassPathConfigSource("empty.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
-            .addSource(new StringConfigSource("", "properties"))
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("empty.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("").setFormat("properties").build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -267,18 +265,20 @@ public class GestaltIntegrationTests {
 
         String fileURL = "https://raw.githubusercontent.com/gestalt-config/gestalt/main/gestalt-core/src/test/resources/default.properties";
 
-        ConfigSource emptyString = new StringConfigSource("", "properties");
-        ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy(emptyString);
+        var reloadStrategy = new ManualConfigReloadStrategy();
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("dev.properties"))
-            .addSource(new ClassPathConfigSource("empty.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
-            .addSource(emptyString)
-            .addReloadStrategy(reloadStrategy)
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("empty.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
+            .addSource(StringConfigSourceBuilder.builder()
+                .setConfig("")
+                .setFormat("properties")
+                .addConfigReloadStrategy(reloadStrategy)
+                .build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -309,10 +309,10 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.properties"))
-            .addSource(new ClassPathConfigSource("/dev.properties"))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new EnvironmentConfigSource(false))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(EnvironmentConfigSourceBuilder.builder().setFailOnErrors(false).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -345,8 +345,8 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("defaultPPEnv.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPEnv.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(new MapConfigSource(configs))
             .addDefaultPostProcessors()
             .setTreatNullValuesInClassAsErrors(false)
@@ -386,9 +386,9 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPSys.properties"))
-            .addSource(new ClassPathConfigSource("integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPSys.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .setTreatNullValuesInClassAsErrors(false)
             .build();
@@ -415,9 +415,9 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
-            .addSource(new ClassPathConfigSource("integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPNode.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -460,9 +460,9 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultMulti.properties"))
-            .addSource(new ClassPathConfigSource("integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultMulti.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -712,10 +712,12 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("/dev.properties", Tags.of("toy", "ball")))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder()
+                .setResource("/dev.properties")
+                .setTags(Tags.of("toy", "ball")).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
             .build();
 
         gestalt.loadConfigs();
@@ -766,7 +768,7 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build();
 
         gestalt.loadConfigs();
@@ -786,7 +788,7 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(customMap))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
             .build();
 
         gestalt.loadConfigs();
@@ -806,7 +808,7 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(customMap))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
             .build();
 
         gestalt.loadConfigs();
@@ -825,7 +827,7 @@ public class GestaltIntegrationTests {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(customMap))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
             .build();
 
         gestalt.loadConfigs();

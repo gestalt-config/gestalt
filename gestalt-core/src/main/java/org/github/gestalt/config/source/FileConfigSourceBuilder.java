@@ -77,7 +77,7 @@ public final class FileConfigSourceBuilder extends SourceBuilder<FileConfigSourc
     }
 
     @Override
-    public ConfigSourcePackage<FileConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new FileConfigSource(path, tags));
     }
 }

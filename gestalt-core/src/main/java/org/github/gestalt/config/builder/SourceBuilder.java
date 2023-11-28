@@ -10,7 +10,6 @@ import org.github.gestalt.config.tag.Tags;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Base class for all source builders.
@@ -21,7 +20,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     protected ConfigSource source;
 
     protected Tags tags = Tags.of();
-    protected List<ConfigReloadStrategyBuilder<?, ?>> configReloadStrategyBuilders = new ArrayList<>();
+    protected List<ConfigReloadStrategy> configReloadStrategies = new ArrayList<>();
 
     /**
      *  Get the tags for the builder.
@@ -67,8 +66,8 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
      *
      * @return list of ConfigReloadStrategyBuilder for the builder.
      */
-    public List<ConfigReloadStrategyBuilder<?, ?>> getConfigReloadStrategyBuilders() {
-        return configReloadStrategyBuilders;
+    public List<ConfigReloadStrategy> getConfigReloadStrategies() {
+        return configReloadStrategies;
     }
 
     /**
@@ -77,9 +76,9 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
      * @param configReloadStrategy  ConfigReloadStrategyBuilder to add to the builder
      * @return the builder
      */
-    public SELF addConfigReloadStrategyBuilder(ConfigReloadStrategyBuilder<?, ?> configReloadStrategy) {
+    public SELF addConfigReloadStrategy(ConfigReloadStrategy configReloadStrategy) {
         Objects.requireNonNull(configReloadStrategy, "Config reloads strategy builder must not be null");
-        configReloadStrategyBuilders.add(configReloadStrategy);
+        configReloadStrategies.add(configReloadStrategy);
         return self();
     }
 
@@ -90,19 +89,16 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
      *
      * @throws GestaltException exceptions if any of the required properties are not set.
      */
-    public abstract ConfigSourcePackage<T> build() throws GestaltException;
+    public abstract ConfigSourcePackage build() throws GestaltException;
 
-    protected ConfigSourcePackage<T> buildPackage(T source) throws GestaltException {
-        var reloadStrategiesBuilder = configReloadStrategyBuilders
-            .stream()
-            .map(it -> it.setSource(source))
-            .collect(Collectors.toList());
+    protected ConfigSourcePackage buildPackage(ConfigSource source) throws GestaltException {
 
-        List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>(reloadStrategiesBuilder.size());
-        for (var reloadStrategy : reloadStrategiesBuilder) {
-            reloadStrategies.add(reloadStrategy.build());
+        List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>(configReloadStrategies.size());
+        for (var reloadStrategy : configReloadStrategies) {
+            reloadStrategy.setSource(source);
+            reloadStrategies.add(reloadStrategy);
         }
-        return new ConfigSourcePackage<T>(source, reloadStrategies);
+        return new ConfigSourcePackage(source, reloadStrategies);
     }
 
     @SuppressWarnings("unchecked")

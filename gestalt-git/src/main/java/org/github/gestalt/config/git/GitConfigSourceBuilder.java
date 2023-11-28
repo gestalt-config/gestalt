@@ -113,7 +113,7 @@ public final class GitConfigSourceBuilder extends SourceBuilder<GitConfigSourceB
      * @throws GestaltException any exceptions thrown while constructing the GitConfigSource.
      */
     @Override
-    public ConfigSourcePackage<GitConfigSource> build() throws GestaltException {
+    public ConfigSourcePackage build() throws GestaltException {
         return buildPackage(new GitConfigSource(repoURI, localRepoDirectory, configFilePath, branch, credentials, sshSessionFactory, tags));
     }
 }

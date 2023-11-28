@@ -1,5 +1,6 @@
 package org.github.gestalt.config.reload;
 
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -34,7 +35,7 @@ class TimedConfigReloadStrategyTest {
         timedConfigReloadStrategy.registerListener(listener);
         int count = 0;
         for (int i = 0; i < 10; i++) {
-            Thread.sleep(1);
+            Thread.sleep(10);
             count = listener.count;
             if (count >= 1) {
                 break;
@@ -45,7 +46,7 @@ class TimedConfigReloadStrategyTest {
 
         int newCount = 0;
         for (int i = 0; i < 5; i++) {
-            Thread.sleep(1);
+            Thread.sleep(10);
             newCount = listener.count;
             if (newCount > count) {
                 break;
@@ -63,7 +64,7 @@ class TimedConfigReloadStrategyTest {
     }
 
     @Test
-    public void timedConfigReloadStrategyTestException() throws InterruptedException {
+    public void timedConfigReloadStrategyTestException() throws InterruptedException, GestaltConfigurationException {
 
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -73,7 +74,8 @@ class TimedConfigReloadStrategyTest {
 
         ConfigSource configSource = new MapConfigSource(configs);
         ExceptionConfigListener listener = new ExceptionConfigListener();
-        TimedConfigReloadStrategy timedConfigReloadStrategy = new TimedConfigReloadStrategy(configSource, Duration.ofMillis(1));
+        TimedConfigReloadStrategy timedConfigReloadStrategy = new TimedConfigReloadStrategy(Duration.ofMillis(1));
+        timedConfigReloadStrategy.setSource(configSource);
 
         ConfigListener listener2 = new ConfigListener();
         timedConfigReloadStrategy.registerListener(listener);

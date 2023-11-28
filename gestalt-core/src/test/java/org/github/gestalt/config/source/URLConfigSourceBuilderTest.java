@@ -16,7 +16,7 @@ class URLConfigSourceBuilderTest {
         builder.setSourceURL(sourceURL);
 
         // Act
-        ConfigSourcePackage<URLConfigSource> configSourcePackage = builder.build();
+        ConfigSourcePackage configSourcePackage = builder.build();
 
         assertEquals(sourceURL, builder.getSourceURL());
 
@@ -24,7 +24,7 @@ class URLConfigSourceBuilderTest {
         assertNotNull(configSourcePackage);
         assertNotNull(configSourcePackage.getConfigSource());
 
-        URLConfigSource urlConfigSource = configSourcePackage.getConfigSource();
+        URLConfigSource urlConfigSource = (URLConfigSource) configSourcePackage.getConfigSource();
         assertTrue(urlConfigSource.hasStream());
     }
 

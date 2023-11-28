@@ -22,6 +22,17 @@ public final class TimedConfigReloadStrategy extends ConfigReloadStrategy {
     /**
      * Constructor for TimedConfigReloadStrategy.
      *
+     * @param reloadDelay how often to reload the config source
+     */
+    public TimedConfigReloadStrategy(Duration reloadDelay) {
+        Objects.requireNonNull(reloadDelay, "Reload Delay must be set for a TimedConfigReloadStrategy");
+        this.reloadDelay = reloadDelay;
+        startTimer();
+    }
+
+    /**
+     * Constructor for TimedConfigReloadStrategy.
+     *
      * @param source      the config source to reload
      * @param reloadDelay how often to reload the config source
      */

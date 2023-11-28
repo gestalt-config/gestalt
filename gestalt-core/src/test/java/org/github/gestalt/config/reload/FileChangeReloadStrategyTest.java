@@ -21,7 +21,8 @@ class FileChangeReloadStrategyTest {
         Files.writeString(path, "user=userA");
 
         FileConfigSource source = new FileConfigSource(path);
-        ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
+        ConfigReloadStrategy strategy = new FileChangeReloadStrategy();
+        strategy.setSource(source);
 
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
