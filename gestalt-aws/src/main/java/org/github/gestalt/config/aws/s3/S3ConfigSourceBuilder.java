@@ -48,9 +48,11 @@ public final class S3ConfigSourceBuilder extends SourceBuilder<S3ConfigSourceBui
      * Set the S3 client.
      *
      * @param s3 the S3 client
+     * @return builder
      */
-    public void setS3(S3Client s3) {
+    public S3ConfigSourceBuilder setS3(S3Client s3) {
         this.s3 = s3;
+        return this;
     }
 
     /**
@@ -66,9 +68,11 @@ public final class S3ConfigSourceBuilder extends SourceBuilder<S3ConfigSourceBui
      * Set the s3 key name.
      *
      * @param keyName the s3 key name
+     * @return builder
      */
-    public void setKeyName(String keyName) {
+    public S3ConfigSourceBuilder setKeyName(String keyName) {
         this.keyName = keyName;
+        return this;
     }
 
     /**
@@ -84,9 +88,11 @@ public final class S3ConfigSourceBuilder extends SourceBuilder<S3ConfigSourceBui
      * Set the s3 bucket name.
      *
      * @param bucketName the s3 bucket name
+     * @return builder
      */
-    public void setBucketName(String bucketName) {
+    public S3ConfigSourceBuilder setBucketName(String bucketName) {
         this.bucketName = bucketName;
+        return this;
     }
 
     @Override

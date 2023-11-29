@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.integration
 
+import io.mockk.core.ValueClassSupport.boxedValue
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.builder.GestaltBuilder
@@ -10,9 +11,13 @@ import org.github.gestalt.config.kotlin.koin.gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.ClassPathConfigSource
+import org.github.gestalt.config.source.ClassPathConfigSourceBuilder
 import org.github.gestalt.config.source.EnvironmentConfigSource
+import org.github.gestalt.config.source.EnvironmentConfigSourceBuilder
 import org.github.gestalt.config.source.FileConfigSource
+import org.github.gestalt.config.source.FileConfigSourceBuilder
 import org.github.gestalt.config.source.MapConfigSource
+import org.github.gestalt.config.source.MapConfigSourceBuilder
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -42,9 +47,9 @@ class GestaltKotlinSample {
 
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(ClassPathConfigSource("/default.properties"))
-            .addSource(ClassPathConfigSource("/dev.properties"))
-            .addSource(MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
@@ -62,10 +67,10 @@ class GestaltKotlinSample {
         val devFile: java.io.File = java.io.File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt: Gestalt = builder
-            .addSource(ClassPathConfigSource("/default.properties"))
-            .addSource(FileConfigSource(devFile))
-            .addSource(MapConfigSource(configs))
-            .addSource(EnvironmentConfigSource())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(EnvironmentConfigSourceBuilder.builder().build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
@@ -91,9 +96,9 @@ class GestaltKotlinSample {
         val devFile: java.io.File = java.io.File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(ClassPathConfigSource("/default.properties"))
-            .addSource(FileConfigSource(devFile))
-            .addSource(MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build()
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool", KTypeCapture.of<HttpPool>(typeOf<HttpPool>())) as HttpPool
@@ -161,9 +166,9 @@ class GestaltKotlinSample {
 
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(ClassPathConfigSource("/default.properties"))
-            .addSource(ClassPathConfigSource("/dev.properties"))
-            .addSource(MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build()
         gestalt.loadConfigs()
 

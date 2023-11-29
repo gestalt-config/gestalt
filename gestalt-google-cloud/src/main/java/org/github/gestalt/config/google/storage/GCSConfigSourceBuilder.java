@@ -48,9 +48,11 @@ public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceB
      * Set the GCS Storage client.
      *
      * @param storage the GCS Storage client
+     * @return the builder
      */
-    public void setStorage(Storage storage) {
+    public GCSConfigSourceBuilder setStorage(Storage storage) {
         this.storage = storage;
+        return this;
     }
 
     /**
@@ -66,9 +68,11 @@ public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceB
      * Set the GCS Object name.
      *
      * @param objectName the GCS Object name
+     * @return the builder
      */
-    public void setObjectName(String objectName) {
+    public GCSConfigSourceBuilder setObjectName(String objectName) {
         this.objectName = objectName;
+        return this;
     }
 
     /**
@@ -84,9 +88,11 @@ public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceB
      * Set the GCS Bucket name.
      *
      * @param bucketName the GCS Bucket name
+     * @return the builder
      */
-    public void setBucketName(String bucketName) {
+    public GCSConfigSourceBuilder setBucketName(String bucketName) {
         this.bucketName = bucketName;
+        return this;
     }
 
     @Override
