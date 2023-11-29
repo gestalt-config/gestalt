@@ -157,8 +157,6 @@ public class GestaltSample {
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
-        EnvironmentConfigSourceBuilder.builder().setPrefix("my.app.config")
-
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
 
