@@ -30,6 +30,8 @@ class FileChangeReloadStrategyTest {
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
 
+        Assertions.assertEquals(source, strategy.getSource());
+
         Files.writeString(path, "user=userB");
 
         for (int i = 0; i < 5; i++) {

@@ -89,8 +89,9 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
      */
     protected void reload() throws GestaltException {
         List<GestaltException> exceptions = new ArrayList<>();
-        if (source != null) {
+        if (source == null) {
             logger.log(System.Logger.Level.WARNING, "Attempting to reload a source but no source provided");
+            return;
         }
 
         for (ConfigReloadListener it : listeners) {

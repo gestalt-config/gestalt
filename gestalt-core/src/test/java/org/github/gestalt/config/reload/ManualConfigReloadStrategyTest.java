@@ -41,4 +41,18 @@ class ManualConfigReloadStrategyTest {
 
         Assertions.assertEquals(1, reloadCount.get());
     }
+
+    @Test
+    public void testManualStrategyWiNoSource() throws GestaltException {
+        AtomicInteger reloadCount = new AtomicInteger(0);
+        ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy(null);
+
+        ConfigReloadListener reloadListener = (it) -> reloadCount.getAndAdd(1);
+
+        reloadStrategy.registerListener(reloadListener);
+
+        reloadStrategy.reload();
+
+        Assertions.assertEquals(0, reloadCount.get());
+    }
 }
