@@ -1,8 +1,10 @@
 package org.github.gestalt.config.reload;
 
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.FileConfigSource;
+import org.github.gestalt.config.source.StringConfigSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
 
 class FileChangeReloadStrategyTest {
 
@@ -136,6 +139,24 @@ class FileChangeReloadStrategyTest {
         Thread.sleep(100);
 
         Assertions.assertEquals(previousCount, listener.count);
+    }
+
+    @Test
+    public void wrongSourceConstructor() {
+        GestaltConfigurationException ex = Assertions.assertThrows(GestaltConfigurationException.class,
+            () -> new FileChangeReloadStrategy(new StringConfigSource("abc=def", "properties")));
+
+        Assertions.assertTrue(ex.getMessage().startsWith("Unable to add a File Change reload strategy to a non file source"));
+    }
+
+    @Test
+    public void wrongSourceSet() throws GestaltConfigurationException {
+        ConfigReloadStrategy strategy = new FileChangeReloadStrategy(Executors.newSingleThreadExecutor());
+
+        GestaltConfigurationException ex = Assertions.assertThrows(GestaltConfigurationException.class,
+            () -> strategy.setSource(new StringConfigSource("abc=def", "properties")));
+
+        Assertions.assertTrue(ex.getMessage().startsWith("Unable to add a File Change reload strategy to a non file source"));
     }
 
     private static class ConfigListener implements ConfigReloadListener {
