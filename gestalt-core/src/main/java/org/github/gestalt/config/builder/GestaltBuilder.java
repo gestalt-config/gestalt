@@ -187,9 +187,9 @@ public class GestaltBuilder {
     }
 
     /**
-     * Set a single source build with a builder, to gestalt the builder.
+     * Set a List of ConfigSourcePackage built with a config source builder, to gestalt the builder.
      *
-     * @param configSourcePackage add a single Config source Package
+     * @param configSourcePackage set a list of ConfigSourcePackage
      * @return GestaltBuilder builder
      */
     public GestaltBuilder setSources(List<ConfigSourcePackage> configSourcePackage) {
@@ -199,7 +199,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a list of sources build with a builder, to gestalt the builder.
+     * Add a List of ConfigSourcePackage built with a config source builder, to gestalt the builder.
      *
      * @param configSourcePackage add list of Config source Package
      * @return GestaltBuilder builder
@@ -211,7 +211,7 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a single source build with a builder, to gestalt the builder.
+     * Add a single ConfigSourcePackage built with a builder, to gestalt the builder.
      *
      * @param configSourcePackage add a single Config source Package
      * @return GestaltBuilder builder
@@ -225,7 +225,7 @@ public class GestaltBuilder {
     /**
      * Add a config reload strategy to the builder.
      *
-     * <p>Deprecated prefer the use of addSource(ConfigSourcePackage configSourcePackage) with a source builder.
+     * <p>Deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder.
      * Use the source builder to add a reload strategy
      *
      * @param configReloadStrategy add a config reload strategy.
@@ -240,7 +240,7 @@ public class GestaltBuilder {
 
     /**
      * Add a list of config reload strategies to the builder.
-     * Deprecated prefer the use of addSource(ConfigSourcePackage configSourcePackage) with a source builder.
+     * Deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder.
      * Use the source builder to add a reload strategy
      *
      * @param reloadStrategies list of config reload strategies.
