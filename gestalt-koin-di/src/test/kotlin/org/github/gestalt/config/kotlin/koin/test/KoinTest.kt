@@ -4,6 +4,7 @@ import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.kotlin.koin.gestalt
 import org.github.gestalt.config.source.ClassPathConfigSource
+import org.github.gestalt.config.source.ClassPathConfigSourceBuilder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -19,7 +20,7 @@ internal class KoinTest {
     fun setup() {
         val builder = GestaltBuilder()
         gestalt = builder
-            .addSource(ClassPathConfigSource("/default.properties"))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .build()
         gestalt!!.loadConfigs()
     }

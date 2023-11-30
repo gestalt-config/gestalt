@@ -124,9 +124,9 @@ class GestaltKotlinSample {
 
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(ClassPathConfigSource("/default.properties"))
-            .addSource(ClassPathConfigSource("/dev.properties"))
-            .addSource(MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build()
         gestalt.loadConfigs()
 

@@ -58,6 +58,7 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
      * set the source this reload strategy should apply to.
      *
      * @param source the source this reload strategy should apply to.
+     * @throws GestaltConfigurationException if there is an exception setting the source
      */
     public void setSource(ConfigSource source) throws GestaltConfigurationException {
         this.source = source;

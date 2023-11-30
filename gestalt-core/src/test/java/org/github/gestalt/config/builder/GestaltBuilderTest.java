@@ -18,7 +18,9 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
+import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
@@ -84,6 +86,7 @@ class GestaltBuilderTest {
             .setSentenceLexer(new PathLexer())
             .setConfigNodeService(configNodeManager)
             .addCoreReloadListener(coreReloadListener)
+            .addCoreReloadListener(List.of())
             .addPostProcessors(Collections.singletonList(
                 new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .setPostProcessors(Collections.singletonList(
@@ -92,9 +95,18 @@ class GestaltBuilderTest {
             .addPathMapper(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()));
 
+        Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());
+        Assertions.assertEquals(true, builder.isTreatWarningsAsErrors());
+        Assertions.assertEquals("", builder.getSubstitutionRegex());
+        Assertions.assertEquals(ProxyDecoderMode.CACHE, builder.getProxyDecoderMode());
+        Assertions.assertEquals(System.Logger.Level.DEBUG, builder.getLogLevelForMissingValuesWhenDefaultOrOptional());
+        Assertions.assertEquals(Tags.of(), builder.getDefaultTags());
+
         Gestalt gestalt = builder.build();
         gestalt.loadConfigs();
         Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
     @Test
@@ -122,6 +134,72 @@ class GestaltBuilderTest {
 
         gestalt.loadConfigs();
         Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void buildSourcePackageAndSource() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+
+        //sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+        ConfigSource configSource = new MapConfigSource(configs2);
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addSource(configSource)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void buildSourceAndSourcePackage() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+
+        //sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+        ConfigSource configSource = new MapConfigSource(configs2);
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(configSource)
+            .addSources(sources)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
     @Test

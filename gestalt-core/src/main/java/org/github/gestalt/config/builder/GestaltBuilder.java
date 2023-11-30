@@ -65,7 +65,6 @@ public class GestaltBuilder {
     private SentenceLexer sentenceLexer = new PathLexer();
     private GestaltConfig gestaltConfig = new GestaltConfig();
     private ConfigNodeService configNodeService = new ConfigNodeManager();
-    private final List<ConfigSource> sources = new ArrayList<>();
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
@@ -177,12 +176,23 @@ public class GestaltBuilder {
      *
      * @param source add a single sources
      * @return GestaltBuilder builder
-     *
      */
     @Deprecated(since = "0.23.4")
     public GestaltBuilder addSource(ConfigSource source) {
         Objects.requireNonNull(source, "Source should not be null");
-        this.sources.add(source);
+        this.configSourcePackages.add(new ConfigSourcePackage(source, List.of()));
+        return this;
+    }
+
+    /**
+     * Add a single ConfigSourcePackage built with a builder, to gestalt the builder.
+     *
+     * @param configSourcePackage add a single Config source Package
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addSource(ConfigSourcePackage configSourcePackage) {
+        Objects.requireNonNull(configSourcePackage, "ConfigSourcePackage should not be null");
+        this.configSourcePackages.add(configSourcePackage);
         return this;
     }
 
@@ -210,17 +220,6 @@ public class GestaltBuilder {
         return this;
     }
 
-    /**
-     * Add a single ConfigSourcePackage built with a builder, to gestalt the builder.
-     *
-     * @param configSourcePackage add a single Config source Package
-     * @return GestaltBuilder builder
-     */
-    public GestaltBuilder addSource(ConfigSourcePackage configSourcePackage) {
-        Objects.requireNonNull(configSourcePackage, "ConfigSourcePackage should not be null");
-        this.configSourcePackages.add(configSourcePackage);
-        return this;
-    }
 
     /**
      * Add a config reload strategy to the builder.
@@ -535,6 +534,15 @@ public class GestaltBuilder {
     }
 
     /**
+     * Get Treat warnings as errors.
+     *
+     * @return warningsAsErrors
+     */
+    public Boolean isTreatWarningsAsErrors() {
+        return treatWarningsAsErrors;
+    }
+
+    /**
      * Treat missing array indexes as errors.
      *
      * @param treatMissingArrayIndexAsError treat missing array indexes as errors.
@@ -791,16 +799,9 @@ public class GestaltBuilder {
      * @throws GestaltConfigurationException multiple validations can throw exceptions
      */
     public Gestalt build() throws GestaltConfigurationException {
-        if (sources.isEmpty() && configSourcePackages.isEmpty()) {
+        if (configSourcePackages.isEmpty()) {
             throw new GestaltConfigurationException("No sources provided");
         }
-
-        var sourcePackagesFromSource = sources
-            .stream()
-            .map(it -> new ConfigSourcePackage(it, List.of()))
-            .collect(Collectors.toList());
-
-        configSourcePackages.addAll(sourcePackagesFromSource);
 
         gestaltConfig = rebuildConfig();
         gestaltConfig.registerModuleConfig(modules);
