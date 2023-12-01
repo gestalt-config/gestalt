@@ -7,6 +7,7 @@ import org.eclipse.jgit.transport.sshd.KeyPasswordProvider;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
 import org.eclipse.jgit.util.FS;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -25,7 +26,7 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI(null)
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
@@ -39,7 +40,7 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath(null)
             .setLocalRepoDirectory(configDirectory);
@@ -50,7 +51,7 @@ class GitConfigSourceTest {
 
     @Test
     void noLocalRepoFilePath() {
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(null);
@@ -64,12 +65,12 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
-        Assertions.assertNotNull(source.id());
+        ConfigSourcePackage source = builder.build();
+        Assertions.assertNotNull(source.getConfigSource().id());
     }
 
     @Test
@@ -77,13 +78,13 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertTrue(source.hasStream());
+        Assertions.assertTrue(source.getConfigSource().hasStream());
     }
 
     @Test
@@ -96,16 +97,16 @@ class GitConfigSourceTest {
         String userName = System.getenv("GIT_GESTALT_USER");
         String password = System.getenv("GIT_GESTALT_PASSWORD");
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setCredentials(new UsernamePasswordCredentialsProvider(userName, password))
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertTrue(source.hasStream());
+        Assertions.assertTrue(source.getConfigSource().hasStream());
         byte[] data = new byte[256];
-        source.loadStream().read(data);
+        source.getConfigSource().loadStream().read(data);
 
         String configData = new String(data, StandardCharsets.UTF_8);
 
@@ -144,16 +145,16 @@ class GitConfigSourceTest {
             .setHomeDirectory(FS.DETECTED.userHome())
             .setSshDirectory(sshDir.toFile());
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("git@github.com:gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory)
             .setSshSessionFactory(sshdBuilder.build(new JGitKeyCache()));
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertTrue(source.hasStream());
+        Assertions.assertTrue(source.getConfigSource().hasStream());
         byte[] data = new byte[256];
-        source.loadStream().read(data);
+        source.getConfigSource().loadStream().read(data);
 
         String configData = new String(data, StandardCharsets.UTF_8);
 
@@ -166,15 +167,15 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertTrue(source.hasStream());
+        Assertions.assertTrue(source.getConfigSource().hasStream());
         byte[] data = new byte[256];
-        source.loadStream().read(data);
+        source.getConfigSource().loadStream().read(data);
 
         String configData = new String(data, StandardCharsets.UTF_8);
 
@@ -186,13 +187,13 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertFalse(source.hasList());
+        Assertions.assertFalse(source.getConfigSource().hasList());
     }
 
     @Test
@@ -200,15 +201,15 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertFalse(source.hasList());
+        Assertions.assertFalse(source.getConfigSource().hasList());
 
-        GestaltException exception = Assertions.assertThrows(GestaltException.class, source::loadList);
+        GestaltException exception = Assertions.assertThrows(GestaltException.class, () -> source.getConfigSource().loadList());
 
         Assertions.assertEquals("Unsupported operation loadList on an GitConfigSource", exception.getMessage());
     }
@@ -218,13 +219,13 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertEquals("properties", source.format());
+        Assertions.assertEquals("properties", source.getConfigSource().format());
     }
 
     @Test
@@ -232,13 +233,13 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertEquals("", source.format());
+        Assertions.assertEquals("", source.getConfigSource().format());
     }
 
     @Test
@@ -246,13 +247,14 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertEquals("Git Config Source key: gestalt-git/src/test/resources/default.properties", source.name());
+        Assertions.assertEquals("Git Config Source key: gestalt-git/src/test/resources/default.properties",
+            source.getConfigSource().name());
     }
 
     @Test
@@ -261,12 +263,12 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
-        GitConfigSource source2 = builder.build();
+        ConfigSourcePackage source = builder.build();
+        ConfigSourcePackage source2 = builder.build();
 
         Assertions.assertEquals(source, source);
         Assertions.assertNotEquals(source, source2);
@@ -282,11 +284,11 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
         Assertions.assertTrue(source.hashCode() != 0);
     }
@@ -297,13 +299,13 @@ class GitConfigSourceTest {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
 
-        GitConfigSourceBuilder builder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory)
             .setTags(Tags.of("toy", "ball"));
-        GitConfigSource source = builder.build();
+        ConfigSourcePackage source = builder.build();
 
-        Assertions.assertEquals(Tags.of("toy", "ball"), source.getTags());
+        Assertions.assertEquals(Tags.of("toy", "ball"), source.getConfigSource().getTags());
     }
 }

@@ -6,12 +6,12 @@ import org.github.gestalt.config.google.config.GoogleModuleConfig;
  * Builder for creating Google specific configuration.
  * You can either specify the project ID or it will get it from the default.
  *
- * @author Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public final class GoogleBuilder {
+public final class GoogleModuleConfigBuilder {
     private String projectId;
 
-    private GoogleBuilder() {
+    private GoogleModuleConfigBuilder() {
 
     }
 
@@ -21,8 +21,8 @@ public final class GoogleBuilder {
      *
      * @return a builder to create the Google config.
      */
-    public static GoogleBuilder builder() {
-        return new GoogleBuilder();
+    public static GoogleModuleConfigBuilder builder() {
+        return new GoogleModuleConfigBuilder();
     }
 
     /**
@@ -40,7 +40,7 @@ public final class GoogleBuilder {
      * @param projectId region to use for aws
      * @return the builder
      */
-    public GoogleBuilder setProjectId(String projectId) {
+    public GoogleModuleConfigBuilder setProjectId(String projectId) {
         this.projectId = projectId;
         return this;
     }

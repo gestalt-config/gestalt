@@ -2,8 +2,9 @@ package org.github.gestalt.config.git;
 
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.SshSessionFactory;
+import org.github.gestalt.config.builder.SourceBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 
 import java.nio.file.Path;
 
@@ -12,7 +13,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
-public final class GitConfigSourceBuilder {
+public final class GitConfigSourceBuilder extends SourceBuilder<GitConfigSourceBuilder, GitConfigSource> {
     private String repoURI;
     private Path localRepoDirectory;
     private String configFilePath;
@@ -20,7 +21,21 @@ public final class GitConfigSourceBuilder {
     private CredentialsProvider credentials;
     private SshSessionFactory sshSessionFactory;
 
-    private Tags tags = Tags.of();
+    /**
+     * private constructor, use the builder method.
+     */
+    private GitConfigSourceBuilder() {
+
+    }
+
+    /**
+     * Static function to create the builder.
+     *
+     * @return the builder
+     */
+    public static GitConfigSourceBuilder builder() {
+        return new GitConfigSourceBuilder();
+    }
 
     /**
      * Set the URI to the git repo. Depending on your authentication method it can be either https or git or sshd.
@@ -89,16 +104,6 @@ public final class GitConfigSourceBuilder {
         return this;
     }
 
-    /**
-     * Sets the tag for the config source.
-     *
-     * @param tags associated with the source
-     * @return the builder
-     */
-    public GitConfigSourceBuilder setTags(Tags tags) {
-        this.tags = tags;
-        return this;
-    }
 
     /**
      * Builds the GitConfigSource, The GitConfigSource will try and download the repo to the provided folder.
@@ -107,7 +112,8 @@ public final class GitConfigSourceBuilder {
      * @return the built config source
      * @throws GestaltException any exceptions thrown while constructing the GitConfigSource.
      */
-    public GitConfigSource build() throws GestaltException {
-        return new GitConfigSource(repoURI, localRepoDirectory, configFilePath, branch, credentials, sshSessionFactory, tags);
+    @Override
+    public ConfigSourcePackage build() throws GestaltException {
+        return buildPackage(new GitConfigSource(repoURI, localRepoDirectory, configFilePath, branch, credentials, sshSessionFactory, tags));
     }
 }

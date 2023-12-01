@@ -6,7 +6,7 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
  * Google specific configuration.
  * You can either specify the project ID or it will get it from the default.
  *
- * @author Colin Redmond (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class GoogleModuleConfig implements GestaltModuleConfig {
 

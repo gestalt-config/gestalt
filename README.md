@@ -121,9 +121,9 @@ http.pool.maxPerRoute=50
   // using the builder to layer on the configuration files.
   // The later ones layer on and over write any values in the previous
   Gestalt gestalt = new GestaltBuilder()
-    .addSource(new ClassPathConfigSource("/default.properties"))  // Load the default property files from resources. 
-    .addSource(new FileConfigSource(devFile))
-    .addSource(new MapConfigSource(configs))
+    .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())  // Load the default property files from resources. 
+    .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+    .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
     .build();
 
   // Loads and parses the configurations, this will throw exceptions if there are any errors. 
@@ -170,9 +170,9 @@ You can add several ConfigSources to the builder and Gestalt, and they will be l
 
 ```java
   Gestalt gestalt = builder
-    .addSource(new FileConfigSource(defaults))
-    .addSource(new FileConfigSource(devFile))
-    .addSource(new EnvironmentConfigSource())
+    .addSource(FileConfigSourceBuilder.builder().setFile(defaults).build())
+    .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+    .addSource(EnvironmentConfigSourceBuilder.builder().setPrefix("my.app.config").build())
     .build();
 ```
 In the above example we first load a file defaults, then load a file devFile and overwrite any defaults, then overwrite any values from the Environment Variables.
@@ -291,9 +291,9 @@ Most configuration sources support tagging them. So you can easily add tags to a
 
 ```java
  Gestalt gestalt = new GestaltBuilder()
-    .addSource(new ClassPathConfigSource("/default.properties"))  // Load the default property files from resources. 
-    .addSource(new FileConfigSource(devFile, Tags.of("environment", "dev"))
-    .addSource(new MapConfigSource(configs))
+    .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())  // Load the default property files from resources. 
+    .addSource(FileConfigSourceBuilder.builder().setFile(devFile).setTags(Tags.of("environment", "dev")).build())
+    .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
     .build();
 ```
 
@@ -308,9 +308,9 @@ Tags.environment("dev") == Tags.of("environment", "dev")
 You can set a default tag in the gestalt builder. The default tags are applied to all calls to get a gestalt configuration when tags are not provided. If the caller provides tags they will be used and the default tags will be ignored.  
 ```java
   Gestalt gestalt = new GestaltBuilder()
-    .addSource(new ClassPathConfigSource("/default.properties"))  // Load the default property files from resources. 
-    .addSource(new FileConfigSource(devFile, Tags.profile("dev"))
-    .addSource(new FileConfigSource(testFile, Tags.profile("test"))
+    .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())  // Load the default property files from resources. 
+    .addSource(FileConfigSourceBuilder.builder().setFile(devFile).setTags(Tags.profile("dev").build()))
+    .addSource(FileConfigSourceBuilder.builder().setFile(testFile).setTags(Tags.profile("test").build()))
     .setDefaultTags(Tags.profile("dev"))
     .build();
     
@@ -669,15 +669,15 @@ If you provide 2 tags in the source, when retrieving the configuration you must 
 ```java
   // head.shot.multiplier = 1.3
 // max.online.players = 32
-  ClassPathConfigSource pveConfig = new ClassPathConfigSource("/test-pve.properties", Tags.of("mode", "pve"));
+    ConfigSourcePackage pveConfig = ClassPathConfigSourceBuilder.builder().setResource("/test-pve.properties").setTags(Tags.of("mode", "pve")).build();
 
     // head.shot.multiplier = 1.5
-    ClassPathConfigSource pvpConfig = new ClassPathConfigSource("/test-pvp.properties", Tags.of("mode", "pvp"));
+    ConfigSourcePackage pvpConfig = ClassPathConfigSourceBuilder.builder().setResource("/test-pvp.properties").setTags(Tags.of("mode", "pvp")).build();
 
     // head.shot.multiplier = 1.0
     // gut.shot.multiplier = 1.0
-    ClassPathConfigSource defaultConfig = new ClassPathConfigSource("/test.properties", Tags.of()); // Tags.of() can be omitted
-
+    ConfigSourcePackage defaultConfig = ClassPathConfigSourceBuilder.builder().setResource("/test.properties").setTags(Tags.of()).build(); // Tags.of() can be omitted
+          
     Gestalt gestalt = builder
     .addSource(pveConfig)
     .addSource(pvpConfig)
@@ -793,10 +793,9 @@ When adding a ConfigSource to the builder, if can you also add a reload strategy
 Once Gestalt has reloaded the config it will send out its own Gestalt Core Reload event. you can add a listener to the builder to get a notification when a Gestalt Core Reload has completed. The Gestalt Cache uses this to clear the cache when a Config Source has changed.
 
 ```java
-  ConfigSource devFileSource = new FileConfigSource(devFile);
+  ConfigSourcePackage devFileSource = FileConfigSourceBuilder.builder().setFile(devFile).addConfigReloadStrategy(new FileChangeReloadStrategy()).build();
   Gestalt gestalt = builder
   .addSource(devFileSource)
-  .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
   .addCoreReloadListener(reloadListener)
   .build();
 ```

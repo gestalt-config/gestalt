@@ -23,13 +23,32 @@ import java.util.concurrent.Executors;
  */
 public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
     private static final System.Logger logger = System.getLogger(FileChangeReloadStrategy.class.getName());
-    private final Path path;
+    private Path path;
 
-    private final WatchService watcher;
+    private WatchService watcher;
 
-    private final ExecutorService executor;
+    private ExecutorService executor;
 
     private volatile boolean isWatching = false;
+
+    /**
+     * constructor.
+     *
+     * @throws GestaltConfigurationException if this is not a file source or other errors.
+     */
+    public FileChangeReloadStrategy() throws GestaltConfigurationException {
+        this(null, Executors.newSingleThreadExecutor());
+    }
+
+    /**
+     * constructor.
+     *
+     * @param executor executor to run the watcher on.
+     * @throws GestaltConfigurationException if this is not a file source or other errors.
+     */
+    public FileChangeReloadStrategy(ExecutorService executor) throws GestaltConfigurationException {
+        this(null, executor);
+    }
 
     /**
      * constructor.
@@ -41,25 +60,46 @@ public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
         this(source, Executors.newSingleThreadExecutor());
     }
 
+
     /**
      * constructor.
      *
-     * @param source the source to watch for reload
+     * @param source   the source to watch for reload
      * @param executor ExecutorService to get thread from.
      * @throws GestaltConfigurationException if this is not a file source or other errors.
      */
     public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws GestaltConfigurationException {
         super(source);
         this.executor = executor;
+        if (source != null && !(source instanceof FileConfigSource)) {
+            throw new GestaltConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
+        }
+        setupWatcherTask();
+    }
+
+    @Override
+    public void setSource(ConfigSource source) throws GestaltConfigurationException {
         if (!(source instanceof FileConfigSource)) {
             throw new GestaltConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
         }
-        path = ((FileConfigSource) source).getPath();
-        try {
-            watcher = FileSystems.getDefault().newWatchService();
-            path.toAbsolutePath().getParent().register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-        } catch (IOException e) {
-            throw new GestaltConfigurationException("unable to create a watch service on file " + path);
+        this.source = source;
+        setupWatcherTask();
+    }
+
+    private void setupWatcherTask() throws GestaltConfigurationException {
+        if (source != null) {
+            path = ((FileConfigSource) source).getPath();
+            try {
+                if (watcher != null) {
+                    watcher.close();
+                }
+
+                watcher = FileSystems.getDefault().newWatchService();
+                path.toAbsolutePath().getParent()
+                    .register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
+            } catch (IOException e) {
+                throw new GestaltConfigurationException("unable to create a watch service on file " + path);
+            }
         }
     }
 

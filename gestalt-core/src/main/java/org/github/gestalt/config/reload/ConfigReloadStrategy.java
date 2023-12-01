@@ -1,6 +1,8 @@
 package org.github.gestalt.config.reload;
 
+import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.source.ConfigSource;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public abstract class ConfigReloadStrategy {  ///NOPMD
 
+    private static final System.Logger logger = System.getLogger(ConfigLoaderRegistry.class.getName());
+
     /**
      * The listeners for the Config Reload.
      */
@@ -23,7 +27,14 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
     /**
      * The source we are listening for a reload.
      */
-    protected final ConfigSource source;
+    protected ConfigSource source;
+
+    /**
+     * Protected constructor for the ConfigReloadStrategy. So end users cant create this class, only inherit it.
+     */
+    protected ConfigReloadStrategy() {
+
+    }
 
     /**
      * Protected constructor for the ConfigReloadStrategy. So end users cant create this class, only inherit it.
@@ -31,6 +42,25 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
      * @param source source we are listening for a reload
      */
     protected ConfigReloadStrategy(ConfigSource source) {
+        this.source = source;
+    }
+
+    /**
+     * Get the source this reload strategy should apply to.
+     *
+     * @return the source this reload strategy should apply to.
+     */
+    public ConfigSource getSource() {
+        return source;
+    }
+
+    /**
+     * set the source this reload strategy should apply to.
+     *
+     * @param source the source this reload strategy should apply to.
+     * @throws GestaltConfigurationException if there is an exception setting the source
+     */
+    public void setSource(ConfigSource source) throws GestaltConfigurationException {
         this.source = source;
     }
 
@@ -59,6 +89,11 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
      */
     protected void reload() throws GestaltException {
         List<GestaltException> exceptions = new ArrayList<>();
+        if (source == null) {
+            logger.log(System.Logger.Level.WARNING, "Attempting to reload a source but no source provided");
+            return;
+        }
+
         for (ConfigReloadListener it : listeners) {
             try {
                 it.reload(source);

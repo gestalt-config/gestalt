@@ -19,7 +19,9 @@ import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTran
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -56,9 +58,6 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-
         List<Decoder<?>> decoders = new ArrayList<>(List.of(new StringDecoder(), new DoubleDecoder()));
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
@@ -68,36 +67,46 @@ class GestaltBuilderTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         builder = builder.setDecoderService(new DecoderRegistry(List.of(new StringDecoder(), new DoubleDecoder()),
-                             configNodeManager, lexer, List.of(new StandardPathMapper())))
-                         .setDecoders(decoders)
-                         .addDecoder(new LongDecoder())
-                         .setTreatWarningsAsErrors(true)
-                         .setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level.DEBUG)
-                         .setSubstitutionOpeningToken("${")
-                         .setSubstitutionClosingToken("}")
-                         .setMaxSubstitutionNestedDepth(5)
-                         .setSubstitutionRegex("")
-                         .setGestaltConfig(new GestaltConfig())
-                         .setConfigLoaderService(new ConfigLoaderRegistry())
-                         .addConfigLoader(new MapConfigLoader())
-                         .addSources(sources)
-                         .addSource(new MapConfigSource(configs))
-                         .addSource(new MapConfigSource(configs2))
-                         .setSentenceLexer(new PathLexer())
-                         .setConfigNodeService(configNodeManager)
-                         .addCoreReloadListener(coreReloadListener)
-                         .addReloadStrategy(new TimedConfigReloadStrategy(sources.get(0), Duration.ofMillis(100)))
-                         .addPostProcessors(Collections.singletonList(
-                             new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
-                         .setPostProcessors(Collections.singletonList(
-                             new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
-                         .addPathMapper(new StandardPathMapper())
-                         .addPathMapper(List.of(new DotNotationPathMapper()))
-                         .setPathMappers(List.of(new StandardPathMapper()));
+                configNodeManager, lexer, List.of(new StandardPathMapper())))
+            .setDecoders(decoders)
+            .addDecoder(new LongDecoder())
+            .setTreatWarningsAsErrors(true)
+            .setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level.DEBUG)
+            .setSubstitutionOpeningToken("${")
+            .setSubstitutionClosingToken("}")
+            .setMaxSubstitutionNestedDepth(5)
+            .setSubstitutionRegex("")
+            .setGestaltConfig(new GestaltConfig())
+            .setConfigLoaderService(new ConfigLoaderRegistry())
+            .addConfigLoader(new MapConfigLoader())
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(new TimedConfigReloadStrategy(Duration.ofMillis(100))).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build())
+            .setSentenceLexer(new PathLexer())
+            .setConfigNodeService(configNodeManager)
+            .addCoreReloadListener(coreReloadListener)
+            .addCoreReloadListener(List.of())
+            .addPostProcessors(Collections.singletonList(
+                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+            .setPostProcessors(Collections.singletonList(
+                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+            .addPathMapper(new StandardPathMapper())
+            .addPathMapper(List.of(new DotNotationPathMapper()))
+            .setPathMappers(List.of(new StandardPathMapper()));
+
+        Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());
+        Assertions.assertEquals(true, builder.isTreatWarningsAsErrors());
+        Assertions.assertEquals("", builder.getSubstitutionRegex());
+        Assertions.assertEquals(ProxyDecoderMode.CACHE, builder.getProxyDecoderMode());
+        Assertions.assertEquals(System.Logger.Level.DEBUG, builder.getLogLevelForMissingValuesWhenDefaultOrOptional());
+        Assertions.assertEquals(Tags.of(), builder.getDefaultTags());
 
         Gestalt gestalt = builder.build();
         gestalt.loadConfigs();
         Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
     @Test
@@ -114,9 +123,9 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -125,6 +134,72 @@ class GestaltBuilderTest {
 
         gestalt.loadConfigs();
         Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void buildSourcePackageAndSource() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+
+        //sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+        ConfigSource configSource = new MapConfigSource(configs2);
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addSource(configSource)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void buildSourceAndSourcePackage() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+
+        //sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+        ConfigSource configSource = new MapConfigSource(configs2);
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(configSource)
+            .addSources(sources)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
     @Test
@@ -140,9 +215,9 @@ class GestaltBuilderTest {
         configs2.put("db.password", "pass");
         configs2.put("admin[0]", "John2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -161,9 +236,9 @@ class GestaltBuilderTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: admin[1], for class: java.lang.String\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
-                             "during navigating to next node");
+                .hasMessage("Failed getting config path: admin[1], for class: java.lang.String\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -179,7 +254,7 @@ class GestaltBuilderTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSources(List.of(new MapConfigSource(configs)))
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
             .setTreatWarningsAsErrors(false)
             .setTreatMissingArrayIndexAsError(false)
             .setTreatMissingValuesAsErrors(false)
@@ -193,14 +268,14 @@ class GestaltBuilderTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                             "during navigating to next node\n" +
-                             " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                             "during navigating to next node\n" +
-                             " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
-                             "field password results in null value");
+                .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                    "during navigating to next node\n" +
+                    " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                    "during navigating to next node\n" +
+                    " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
+                    "field password results in null value");
         }
     }
 
@@ -226,7 +301,7 @@ class GestaltBuilderTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
@@ -259,13 +334,13 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSources(sources)
+            .setSources(sources)
             .addDefaultDecoders()
             .addDefaultConfigLoaders()
             .build();
@@ -292,9 +367,9 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -329,14 +404,11 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
-
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .setConfigNodeService(configNodeService)
-            .addSources(sources)
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build())
             .addDefaultDecoders()
             .addDefaultConfigLoaders()
             .useCacheDecorator(true)
@@ -362,9 +434,9 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -391,9 +463,9 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs, Tags.profile("test")));
-        sources.add(new MapConfigSource(configs2, Tags.profile("test")));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.profile("test")).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.profile("test")).build());
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -419,9 +491,9 @@ class GestaltBuilderTest {
         configs2.put("admin[0]", "John2");
         configs2.put("admin[1]", "Steve2");
 
-        List<ConfigSource> sources = new ArrayList<>();
-        sources.add(new MapConfigSource(configs));
-        sources.add(new MapConfigSource(configs2));
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
 
         List<Decoder<?>> decoders = new ArrayList<>(List.of(new StringDecoder(), new DoubleDecoder()));
 
@@ -440,7 +512,7 @@ class GestaltBuilderTest {
             .addConfigLoader(new MapConfigLoader())
             .setSources(sources)
             .addSources(sources)
-            .addSource(new MapConfigSource(configs2))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build())
             .setSentenceLexer(new PathLexer())
             .setConfigNodeService(new ConfigNodeManager())
             .build();
@@ -455,15 +527,15 @@ class GestaltBuilderTest {
         try {
             builder.addSources(null);
             Assertions.fail("Should not hit this");
-        } catch (GestaltConfigurationException e) {
-            Assertions.assertEquals("No sources provided while adding sources", e.getMessage());
+        } catch (Exception e) {
+            Assertions.assertEquals("ConfigSourcePackage should not be null", e.getMessage());
         }
 
         try {
             builder.setSources(null);
             Assertions.fail("Should not hit this");
-        } catch (GestaltConfigurationException e) {
-            Assertions.assertEquals("No sources provided while setting sources", e.getMessage());
+        } catch (Exception e) {
+            Assertions.assertEquals("ConfigSourcePackage should not be null", e.getMessage());
         }
     }
 
@@ -539,3 +611,4 @@ class GestaltBuilderTest {
         }
     }
 }
+

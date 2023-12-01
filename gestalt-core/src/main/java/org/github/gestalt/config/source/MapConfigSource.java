@@ -44,9 +44,10 @@ public final class MapConfigSource implements ConfigSource {
      * takes a map of configs.
      *
      * @param customConfig map of configs.
-     * @param tags tags associated with the source
+     * @param tags         tags associated with the source
      */
     public MapConfigSource(Map<String, String> customConfig, Tags tags) {
+        Objects.requireNonNull(customConfig, "Custom map must not be null");
         this.customConfig = customConfig;
         this.tags = tags;
     }
@@ -75,9 +76,9 @@ public final class MapConfigSource implements ConfigSource {
     @Override
     public List<Pair<String, String>> loadList() {
         return customConfig.entrySet()
-                           .stream()
-                           .map(envVar -> new Pair<>(envVar.getKey(), envVar.getValue()))
-                           .collect(Collectors.toList());
+            .stream()
+            .map(envVar -> new Pair<>(envVar.getKey(), envVar.getValue()))
+            .collect(Collectors.toList());
     }
 
     @Override

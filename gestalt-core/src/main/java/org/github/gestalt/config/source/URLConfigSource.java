@@ -7,6 +7,7 @@ import org.github.gestalt.config.utils.Pair;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +39,7 @@ public final class URLConfigSource implements ConfigSource {
      * Create a URLConfigSource to load a config from a URL.
      *
      * @param sourceURL source URL
-     * @param tags tags associated with the source
+     * @param tags      tags associated with the source
      * @throws GestaltException any exceptions
      */
     public URLConfigSource(String sourceURL, Tags tags) throws GestaltException {
@@ -48,8 +49,8 @@ public final class URLConfigSource implements ConfigSource {
         }
 
         try {
-            source = new URL(this.sourceURL);
-        } catch (MalformedURLException e) {
+            source = URI.create(this.sourceURL).toURL();
+        } catch (MalformedURLException | IllegalArgumentException e) {
             throw new GestaltException("Exception creating URL " + sourceURL + ", with error: " + e.getMessage(), e);
         }
         this.tags = tags;

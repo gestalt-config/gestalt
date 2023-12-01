@@ -38,7 +38,8 @@ class URLConfigSourceTest {
     void loadPathNotURL() {
         GestaltException exception = Assertions.assertThrows(GestaltException.class, () -> new URLConfigSource(badFormattedTestURL));
 
-        Assertions.assertEquals(exception.getMessage(), "Exception creating URL test file, with error: no protocol: test file");
+        Assertions.assertEquals(exception.getMessage(),
+            "Exception creating URL test file, with error: Illegal character in path at index 4: test file");
     }
 
     @Test

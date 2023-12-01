@@ -13,12 +13,14 @@ import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSource;
+import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSource;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
 import org.github.gestalt.config.google.storage.GCSConfigSource;
+import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
@@ -149,9 +151,9 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -178,9 +180,9 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.properties"))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .useCacheDecorator(false)
             .setTreatNullValuesInClassAsErrors(false)
             .build();
@@ -202,10 +204,10 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(fileURL))
-            .addSource(new ClassPathConfigSource("/dev.properties", Tags.of("toy", "ball")))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new StringConfigSource("db.idleTimeout=123", "properties"))
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").setTags(Tags.of("toy", "ball")).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
             .build();
 
         gestalt.loadConfigs();
@@ -261,9 +263,9 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties", Tags.profile("test")))
-            .addSource(new FileConfigSource(devFile, Tags.profile("test")))
-            .addSource(new MapConfigSource(configs, Tags.profile("test")))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").setTags(Tags.profile("test")).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).setTags(Tags.profile("test")).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.profile("test")).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setDefaultTags(Tags.profile("test"))
             .build();
@@ -291,9 +293,9 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -331,10 +333,9 @@ public class GestaltSample {
         TestReloadListener reloadListener = new TestReloadListener();
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(devFileSource)
-            .addSource(new MapConfigSource(configs))
-            .addReloadStrategy(new FileChangeReloadStrategy(devFileSource))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).addConfigReloadStrategy(new FileChangeReloadStrategy()).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addCoreReloadListener(reloadListener)
             .build();
 
@@ -684,11 +685,11 @@ public class GestaltSample {
         configDirectory.toFile().deleteOnExit();
 
 
-        GitConfigSourceBuilder gitBuilder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder gitBuilder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
             .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = gitBuilder.build();
+        ConfigSourcePackage source = gitBuilder.build();
 
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
@@ -697,8 +698,8 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(source)
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -721,18 +722,20 @@ public class GestaltSample {
             PutObjectRequest.builder().bucket(BUCKET_NAME).key(uploadFile.getName()).build(),
             RequestBody.fromFile(uploadFile));
 
-
-        S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, uploadFile.getName());
-
         URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
 
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(source)
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(S3ConfigSourceBuilder
+                .builder()
+                .setS3(s3Client)
+                .setBucketName(BUCKET_NAME)
+                .setKeyName(uploadFile.getName())
+                .build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -779,9 +782,9 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
-            .addSource(new GCSConfigSource("gestalt-test", "dev.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(GCSConfigSourceBuilder.builder().setBucketName("gestalt-test").setObjectName("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -841,9 +844,9 @@ public class GestaltSample {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
-            .addSource(new S3ConfigSource(s3Client, "gestalt-test", "dev.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(S3ConfigSourceBuilder.builder().setS3(s3Client).setBucketName("gestalt-test").setKeyName("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
             .build();
@@ -1137,9 +1140,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPEnv.properties"))
-            .addSource(new ClassPathConfigSource("integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPEnv.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addDefaultPostProcessors()
             .setTreatNullValuesInClassAsErrors(false)
             .build();
@@ -1178,9 +1181,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("defaultPPSys.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
             .setTreatNullValuesInClassAsErrors(false)
             .build();
@@ -1210,9 +1213,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPNode.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPNode.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -1239,9 +1242,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultPPVault.properties"))
-            .addSource(new ClassPathConfigSource("/integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPVault.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .addModuleConfig(vaultModuleConfig)
             .build();
@@ -1271,7 +1274,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build();
 
         gestalt.loadConfigs();
@@ -1292,7 +1295,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(customMap))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
             .build();
 
         gestalt.loadConfigs();
@@ -1312,7 +1315,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(customMap))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
             .build();
 
         gestalt.loadConfigs();
@@ -1331,7 +1334,7 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(customMap))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
             .build();
 
         gestalt.loadConfigs();

@@ -4,9 +4,7 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
-import org.github.gestalt.config.source.ClassPathConfigSource;
-import org.github.gestalt.config.source.FileConfigSource;
-import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,9 +37,9 @@ public class GestaltSampleJavaLatest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.properties"))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build();
 
         gestalt.loadConfigs();

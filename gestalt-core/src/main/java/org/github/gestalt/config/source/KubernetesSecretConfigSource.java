@@ -18,6 +18,8 @@ import java.util.UUID;
 /**
  * Load a config source as kubernetes files secrets.
  * https://kubernetes.io/docs/concepts/configuration/secret/#projection-of-secret-keys-to-specific-paths
+ * Where the name of the file is the path for the configuration and
+ * the value in the file is the value of the configuration.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */

@@ -39,6 +39,16 @@ public final class Tags {
     }
 
     /**
+     * Create a tags from a set of tag.
+     *
+     * @param tags set of tag
+     * @return Tags
+     */
+    public static Tags of(Set<Tag> tags) {     //NOPMD
+        return new Tags(new HashSet<>(tags));
+    }
+
+    /**
      * Create a tags from a varg of tags.
      *
      * @param tag varg of tag

@@ -38,6 +38,13 @@ class EnvironmentConfigSourceTest {
     }
 
     @Test
+    void idNotEquals() {
+        EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
+        EnvironmentConfigSource envConfig2 = new EnvironmentConfigSource();
+        Assertions.assertNotEquals(envConfig2.id(), envConfig.id());
+    }
+
+    @Test
     void unsupportedStream() {
         EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
 
@@ -65,7 +72,7 @@ class EnvironmentConfigSourceTest {
     void testIgnorePrefix() {
         try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
             Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
-                "prefix_key3", "value3", "prefix_key4", "value4");
+                "prefix_key3", "value3", "prefix_key4", "value4", "prefix.key5", "value5");
             mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
 
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource();
@@ -74,8 +81,8 @@ class EnvironmentConfigSourceTest {
             var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
             var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
 
-            assertThat(resultKeys).contains("key1", "key2", "prefix_key3", "prefix_key4");
-            assertThat(resultValues).contains("value1", "value2", "value3", "value4");
+            assertThat(resultKeys).contains("key1", "key2", "prefix_key3", "prefix_key4", "prefix.key5");
+            assertThat(resultValues).contains("value1", "value2", "value3", "value4", "value5");
         }
     }
 
@@ -83,7 +90,7 @@ class EnvironmentConfigSourceTest {
     void testHasPrefix() {
         try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
             Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
-                "prefix_key3", "value3", "prefix_key4", "value4");
+                "prefix_key3", "value3", "prefix_key4", "value4", "prefix.key5", "value5");
             mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
 
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
@@ -92,8 +99,8 @@ class EnvironmentConfigSourceTest {
             var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
             var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
 
-            assertThat(resultKeys).contains("key3", "key4");
-            assertThat(resultValues).contains("value3", "value4");
+            assertThat(resultKeys).contains("key3", "key4", "key5");
+            assertThat(resultValues).contains("value3", "value4", "value5");
         }
     }
 
@@ -138,7 +145,10 @@ class EnvironmentConfigSourceTest {
         EnvironmentConfigSource envConfig = new EnvironmentConfigSource("", false, false, Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), envConfig.getTags());
     }
+
+    @Test
+    void failOnErrors() {
+        EnvironmentConfigSource envConfig = new EnvironmentConfigSource(true);
+        Assertions.assertTrue(envConfig.failOnErrors());
+    }
 }
-
-
-

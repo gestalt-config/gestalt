@@ -21,7 +21,9 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoOptional;
@@ -61,7 +63,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
@@ -128,7 +130,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
@@ -203,7 +205,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs, Tags.of("toys", "ball"))),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("toys", "ball")).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), Tags.of());
@@ -263,7 +265,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer();
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
@@ -331,7 +333,8 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(new MapConfigSource(configs), new MapConfigSource(configs2)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
+            MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -383,7 +386,9 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(new MapConfigSource(configs), new MapConfigSource(configs2), new MapConfigSource(configs3)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
+                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build(),
+                MapConfigSourceBuilder.builder().setCustomConfig(configs3).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -428,8 +433,9 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(new MapConfigSource(configs), new MapConfigSource(configs2, Tags.of("toy", "ball")),
-                new MapConfigSource(configs3)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
+                MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.of("toy", "ball")).build(),
+                MapConfigSourceBuilder.builder().setCustomConfig(configs3).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -473,7 +479,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
@@ -508,7 +514,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
@@ -538,7 +544,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
@@ -569,7 +575,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
@@ -600,7 +606,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
@@ -637,7 +643,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -695,7 +701,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -724,7 +730,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -770,7 +776,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -810,7 +816,8 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(new MapConfigSource(configs), new MapConfigSource(configs2)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
+                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
                 new ListDecoder()), configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -873,7 +880,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.emptyList(),
+            List.of(),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -903,7 +910,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -941,7 +948,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -976,7 +983,7 @@ class GestaltTest {
             ValidateOf.inValid(new ValidationError.ArrayDuplicateIndex(1, "admin")));
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), Tags.of());
@@ -1012,7 +1019,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -1054,7 +1061,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
@@ -1102,7 +1109,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
@@ -1203,7 +1210,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -1233,7 +1240,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -1272,7 +1279,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -1306,7 +1313,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs)),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             new PathLexer("."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -1338,6 +1345,7 @@ class GestaltTest {
         configs.put("db.port", "3306");
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
+        ConfigSource source = new MapConfigSource(configs);
 
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
@@ -1349,10 +1357,9 @@ class GestaltTest {
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
         coreReloadListenersContainer.registerListener(coreListener);
-        ConfigSource source = new MapConfigSource(configs);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(source),
+            List.of(new ConfigSourcePackage(source, List.of())),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
@@ -1407,10 +1414,9 @@ class GestaltTest {
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
         coreReloadListenersContainer.registerListener(coreListener);
-        ConfigSource source = new MapConfigSource(configs);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(source),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
@@ -1493,8 +1499,6 @@ class GestaltTest {
         configs.put("db.port", "3306");
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
-        ConfigSource source = new MapConfigSource(configs);
-
 
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
@@ -1508,7 +1512,7 @@ class GestaltTest {
         coreReloadListenersContainer.registerListener(coreListener);
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(source),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
@@ -1547,7 +1551,7 @@ class GestaltTest {
         try {
             gestalt.reload(source2);
         } catch (GestaltException e) {
-            assertThat(e).hasMessage("Can not reload a source that does not exist.");
+            assertThat(e).hasMessage("Can not reload a source that was not registered.");
         }
 
         Assertions.assertEquals(0, coreListener.count);
@@ -1562,6 +1566,7 @@ class GestaltTest {
         configs.put("db.port", "3306");
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
+
         ConfigSource source = new MapConfigSource(configs);
 
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
@@ -1577,7 +1582,7 @@ class GestaltTest {
 
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(source),
+            List.of(new ConfigSourcePackage(source, List.of())),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
@@ -1639,10 +1644,10 @@ class GestaltTest {
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
         coreReloadListenersContainer.registerListener(coreListener);
-        ConfigSource source = new MapConfigSource(configs);
+        ConfigSourcePackage source = MapConfigSourceBuilder.builder().setCustomConfig(configs).build();
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(source),
+            List.of(source),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), Tags.of());
@@ -1672,14 +1677,14 @@ class GestaltTest {
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
 
         configs.put("db.name", "test1");
-        gestalt.reload(source);
+        gestalt.reload(source.getConfigSource());
 
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
 
         coreReloadListenersContainer.removeListener(coreListener);
         configs.put("db.name", "test2");
-        gestalt.reload(source);
+        gestalt.reload(source.getConfigSource());
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test2", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
 
@@ -1702,7 +1707,7 @@ class GestaltTest {
         SentenceLexer lexer = new PathLexer(".");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs, Tags.of("env", "dev"))),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("env", "dev")).build()),
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
@@ -1770,7 +1775,7 @@ class GestaltTest {
         CoreReloadListenersContainer coreReloadListenersContainer = Mockito.mock();
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            Collections.singletonList(new MapConfigSource(configs, Tags.of("env", "dev"))),
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("env", "dev")).build()),
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),

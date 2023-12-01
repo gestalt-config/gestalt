@@ -12,7 +12,21 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Load a config source from a String. A format for the data in the string must also be provided.
+ * Load a config source from a String. The string must be in the format provided, so if a property file it would be
+ * db.port = 1234
+ * db.password = password
+ * dp.user = notroot
+ *
+ * <p>If the format is json the string would be
+ * {
+ *   db {
+ *       "port" = 1234
+ *       "password" = "password"
+ *       "user" = "notroot"
+ *   }.
+ * }
+ *
+ * <p>A format for the data in the string must also be provided.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
@@ -39,7 +53,7 @@ public final class StringConfigSource implements ConfigSource {
      *
      * @param config config as a string.
      * @param format format for the string.
-     * @param tags tags associated with this source
+     * @param tags   tags associated with this source
      * @throws GestaltException any exception
      */
     public StringConfigSource(String config, String format, Tags tags) throws GestaltException {
