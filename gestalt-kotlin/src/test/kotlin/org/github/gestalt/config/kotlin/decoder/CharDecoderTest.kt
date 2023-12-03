@@ -43,15 +43,15 @@ internal class CharDecoderTest {
     }
 
     @Test
-    fun matches() {
+    fun canDecode() {
         val decoder = CharDecoder()
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<Char>()))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Char?>() {}))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Char::class.java)))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Int>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<String>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Date>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<List<Byte>>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Char>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Char?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Char::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Int>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<String>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Date>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<List<Byte>>()))
     }
 
     @Test

@@ -50,24 +50,24 @@ class BigDecimalDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         BigDecimalDecoder decoder = new BigDecimalDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(BigDecimal.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<BigDecimal>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(BigDecimal.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<BigDecimal>() {
         }));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(double.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(double.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Double.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Double>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Double.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Double>() {
         }));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(double.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(double.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Integer>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Integer>() {
         }));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Double>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Double>>() {
         }));
     }
 

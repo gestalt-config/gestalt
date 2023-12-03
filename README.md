@@ -995,10 +995,13 @@ You can create your own decoder by implementing the Decoder interface. By return
   /**
  * true if this decoder matches the type capture.
  *
- * @param klass TypeCapture we are looking for a decoder.
+ * @param path           the current path
+ * @param tags           the tags for the current request
+ * @param node           the current node we are decoding.
+ * @param type           the type of object we are decoding.
  * @return true if this decoder matches the type capture
  */
-  boolean matches(TypeCapture<?> klass);
+  boolean canDecode(path: String, tags: Tags, configNode:ConfigNode, TypeCapture<?> klass);
 
   /**
    * Decode the current node. If the current node is a class or list we may need to decode sub nodes.

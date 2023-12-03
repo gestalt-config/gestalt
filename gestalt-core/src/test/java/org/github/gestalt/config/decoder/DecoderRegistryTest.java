@@ -75,10 +75,10 @@ class DecoderRegistryTest {
         DecoderRegistry decoderRegistry = new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
             new StringDecoder()), configNodeService, lexer, List.of(new StandardPathMapper()));
 
-        List<Decoder> decoders = decoderRegistry.getDecoderForClass(TypeCapture.of(String.class));
+        List<Decoder> decoders = decoderRegistry.getDecoderForClass("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class));
 
         Assertions.assertEquals(1, decoders.size());
-        Assertions.assertTrue(decoders.get(0).matches(TypeCapture.of(String.class)));
+        Assertions.assertTrue(decoders.get(0).canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
     }
 
     @Test
@@ -86,16 +86,16 @@ class DecoderRegistryTest {
         DecoderRegistry decoderRegistry = new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
 
-        List<Decoder> decoders = decoderRegistry.getDecoderForClass(TypeCapture.of(Double.class));
+        List<Decoder> decoders = decoderRegistry.getDecoderForClass("", Tags.of(), new LeafNode(""), TypeCapture.of(Double.class));
 
         Assertions.assertEquals(0, decoders.size());
 
         decoderRegistry.addDecoders(Collections.singletonList(new DoubleDecoder()));
 
-        decoders = decoderRegistry.getDecoderForClass(TypeCapture.of(Double.class));
+        decoders = decoderRegistry.getDecoderForClass("", Tags.of(), new LeafNode(""), TypeCapture.of(Double.class));
 
         Assertions.assertEquals(1, decoders.size());
-        Assertions.assertTrue(decoders.get(0).matches(TypeCapture.of(Double.class)));
+        Assertions.assertTrue(decoders.get(0).canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Double.class)));
     }
 
     @Test
@@ -420,7 +420,7 @@ class DecoderRegistryTest {
         }
 
         @Override
-        public boolean matches(TypeCapture<?> klass) {
+        public boolean canDecode(String path, Tags tags, ConfigNode configNode, TypeCapture<?> klass) {
             return Long.class.isAssignableFrom(klass.getRawType()) || long.class.isAssignableFrom(klass.getRawType());
         }
 
@@ -444,7 +444,7 @@ class DecoderRegistryTest {
         }
 
         @Override
-        public boolean matches(TypeCapture<?> klass) {
+        public boolean canDecode(String path, Tags tags, ConfigNode configNode, TypeCapture<?> klass) {
             return Long.class.isAssignableFrom(klass.getRawType()) || long.class.isAssignableFrom(klass.getRawType());
         }
 

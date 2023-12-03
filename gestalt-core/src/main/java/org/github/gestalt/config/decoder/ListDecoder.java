@@ -23,8 +23,8 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return List.class.isAssignableFrom(klass.getRawType()) && klass.hasParameter();
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return List.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 
     @Override

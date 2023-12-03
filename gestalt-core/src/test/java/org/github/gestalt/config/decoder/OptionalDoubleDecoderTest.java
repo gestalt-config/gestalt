@@ -51,16 +51,16 @@ class OptionalDoubleDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
-        Assertions.assertTrue(decoder.matches(new TypeCapture<OptionalDouble>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<OptionalDouble>() {
         }));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(OptionalDouble.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(OptionalDouble.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Integer>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Integer>>() {
         }));
 
     }

@@ -46,19 +46,19 @@ class ByteDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         ByteDecoder decoder = new ByteDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Byte.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<Byte>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Byte.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Byte>() {
         }));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(byte.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(byte.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Character.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Float.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Float>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Character.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Float.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Float>>() {
         }));
     }
 

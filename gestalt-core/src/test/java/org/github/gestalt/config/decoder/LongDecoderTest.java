@@ -45,17 +45,17 @@ class LongDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         LongDecoder longDecoder = new LongDecoder();
 
-        Assertions.assertTrue(longDecoder.matches(TypeCapture.of(Long.class)));
-        Assertions.assertTrue(longDecoder.matches(new TypeCapture<Long>() {
+        Assertions.assertTrue(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Long.class)));
+        Assertions.assertTrue(longDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Long>() {
         }));
-        Assertions.assertTrue(longDecoder.matches(TypeCapture.of(long.class)));
+        Assertions.assertTrue(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(long.class)));
 
-        Assertions.assertFalse(longDecoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(longDecoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(longDecoder.matches(new TypeCapture<List<Long>>() {
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Long>>() {
         }));
     }
 

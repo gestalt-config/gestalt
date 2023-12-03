@@ -104,10 +104,10 @@ public final class DecoderRegistry implements DecoderService {
      * @return a list of decoders that match the class
      */
     @SuppressWarnings("rawtypes")
-    <T> List<Decoder> getDecoderForClass(TypeCapture<T> klass) {
+    <T> List<Decoder> getDecoderForClass(String path, Tags tags, ConfigNode configNode, TypeCapture<T> klass) {
         return decoders
             .stream()
-            .filter(decoder -> decoder.matches(klass))
+            .filter(decoder -> decoder.canDecode(path, tags, configNode, klass))
             .collect(Collectors.toList());
     }
 
@@ -121,7 +121,7 @@ public final class DecoderRegistry implements DecoderService {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> ValidateOf<T> decodeNode(String path, Tags tags, ConfigNode configNode, TypeCapture<T> klass,
                                         DecoderContext decoderContext) {
-        List<Decoder> classDecoder = getDecoderForClass(klass);
+        List<Decoder> classDecoder = getDecoderForClass(path, tags, configNode, klass);
         classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
         if (classDecoder.isEmpty()) {
             return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));

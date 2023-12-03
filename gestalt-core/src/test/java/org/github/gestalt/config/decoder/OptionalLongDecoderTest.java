@@ -51,16 +51,16 @@ class OptionalLongDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
-        Assertions.assertTrue(decoder.matches(new TypeCapture<OptionalLong>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<OptionalLong>() {
         }));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(OptionalLong.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(OptionalLong.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Integer>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Integer>>() {
         }));
 
     }

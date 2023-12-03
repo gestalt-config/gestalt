@@ -45,17 +45,17 @@ class FloatDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         FloatDecoder floatDecoder = new FloatDecoder();
 
-        Assertions.assertTrue(floatDecoder.matches(TypeCapture.of(Float.class)));
-        Assertions.assertTrue(floatDecoder.matches(new TypeCapture<Float>() {
+        Assertions.assertTrue(floatDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Float.class)));
+        Assertions.assertTrue(floatDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Float>() {
         }));
-        Assertions.assertTrue(floatDecoder.matches(TypeCapture.of(float.class)));
+        Assertions.assertTrue(floatDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(float.class)));
 
-        Assertions.assertFalse(floatDecoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(floatDecoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(floatDecoder.matches(new TypeCapture<List<Float>>() {
+        Assertions.assertFalse(floatDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(floatDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(floatDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Float>>() {
         }));
     }
 

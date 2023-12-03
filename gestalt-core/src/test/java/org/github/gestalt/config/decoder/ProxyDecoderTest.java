@@ -45,31 +45,31 @@ class ProxyDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         ProxyDecoder decoder = new ProxyDecoder();
 
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Long>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Long>>() {
         }));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Set<Long>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Set<Long>>() {
         }));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Map<Long, String>>() {
-        }));
-
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfoInterface.class)));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBPoolInterface.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<DBPoolInterface>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map<Long, String>>() {
         }));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(DBInfo.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(DBInfoExtended.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Long>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfoInterface.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBPoolInterface.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<DBPoolInterface>() {
         }));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(long.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfo.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfoExtended.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Long>() {
+        }));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(long.class)));
+
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
     }
 
     @Test

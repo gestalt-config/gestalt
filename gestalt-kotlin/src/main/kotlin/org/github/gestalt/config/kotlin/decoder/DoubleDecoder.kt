@@ -6,6 +6,7 @@ import org.github.gestalt.config.entity.ValidationError
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.StringUtils
 import org.github.gestalt.config.utils.ValidateOf
 
@@ -23,7 +24,7 @@ class DoubleDecoder : LeafDecoder<Double>() {
         return Priority.HIGH
     }
 
-    override fun matches(klass: TypeCapture<*>): Boolean {
+    override fun canDecode(path: String, tags: Tags, configNode:ConfigNode?, klass: TypeCapture<*>): Boolean {
         return if (klass is KTypeCapture<*>) {
             klass.isAssignableFrom(Double::class)
         } else {

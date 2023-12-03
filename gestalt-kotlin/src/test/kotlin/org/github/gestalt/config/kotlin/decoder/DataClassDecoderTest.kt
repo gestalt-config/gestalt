@@ -47,18 +47,18 @@ class DataClassDecoderTest {
     }
 
     @Test
-    fun matches() {
+    fun canDecode() {
         val decoder = DataClassDecoder()
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<DBInfo>()))
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<DBInfoNoDefault>()))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(DBInfoNoDefault::class.java)))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long::class.java)))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Long?>() {}))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long::class.javaPrimitiveType)))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String::class.java)))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Date>()))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<List<Long?>?>() {}))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Map<String?, Long?>?>() {}))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<DBInfo>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<DBInfoNoDefault>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(DBInfoNoDefault::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Long::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Long?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Long::class.javaPrimitiveType)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(String::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Date>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<List<Long?>?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Map<String?, Long?>?>() {}))
     }
 
     @Test

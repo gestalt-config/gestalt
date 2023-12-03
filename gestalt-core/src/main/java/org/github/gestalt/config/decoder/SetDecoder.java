@@ -25,7 +25,7 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> type) {
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return Set.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 

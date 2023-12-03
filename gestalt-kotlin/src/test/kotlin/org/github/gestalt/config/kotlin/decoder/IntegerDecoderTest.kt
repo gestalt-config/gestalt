@@ -43,14 +43,14 @@ internal class IntegerDecoderTest {
     }
 
     @Test
-    fun matches() {
+    fun canDecode() {
         val decoder = IntegerDecoder()
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<Int>()))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Int?>() {}))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Int::class.java)))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<String>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Date>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<List<Byte>>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Int>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Int?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Int::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<String>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Date>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<List<Byte>>()))
     }
 
     @Test

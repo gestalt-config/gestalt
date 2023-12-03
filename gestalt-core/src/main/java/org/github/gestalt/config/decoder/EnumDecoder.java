@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,8 +27,8 @@ public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return klass.getRawType().isEnum();
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return type.getRawType().isEnum();
     }
 
     @Override

@@ -49,22 +49,22 @@ class SetDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         SetDecoder decoder = new SetDecoder();
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<String>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<String>() {
         }));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Long>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Long>() {
         }));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(List.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<String>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(List.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<String>>() {
         }));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Set.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<Set<String>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Set.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Set<String>>() {
         }));
     }
 

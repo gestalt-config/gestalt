@@ -50,13 +50,13 @@ class LocalDateDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         LocalDateDecoder decoder = new LocalDateDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(LocalDate.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(LocalDateTime.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(LocalDate.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(LocalDateTime.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
     }
 
     @Test

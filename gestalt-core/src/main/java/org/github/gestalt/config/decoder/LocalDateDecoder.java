@@ -4,6 +4,7 @@ import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.time.LocalDate;
@@ -57,8 +58,8 @@ public final class LocalDateDecoder extends LeafDecoder<LocalDate> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return LocalDate.class.isAssignableFrom(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return LocalDate.class.isAssignableFrom(type.getRawType());
     }
 
     @Override

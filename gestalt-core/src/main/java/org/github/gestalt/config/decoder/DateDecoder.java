@@ -4,6 +4,7 @@ import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.time.Instant;
@@ -60,8 +61,8 @@ public final class DateDecoder extends LeafDecoder<Date> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return Date.class.isAssignableFrom(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return Date.class.isAssignableFrom(type.getRawType());
     }
 
     @Override

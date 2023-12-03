@@ -46,17 +46,17 @@ class UUIDDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         UUIDDecoder longDecoder = new UUIDDecoder();
 
-        Assertions.assertTrue(longDecoder.matches(TypeCapture.of(UUID.class)));
-        Assertions.assertTrue(longDecoder.matches(new TypeCapture<UUID>() {
+        Assertions.assertTrue(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(UUID.class)));
+        Assertions.assertTrue(longDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<UUID>() {
         }));
-        Assertions.assertFalse(longDecoder.matches(TypeCapture.of(long.class)));
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(long.class)));
 
-        Assertions.assertFalse(longDecoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(longDecoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(longDecoder.matches(new TypeCapture<List<Long>>() {
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(longDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Long>>() {
         }));
     }
 

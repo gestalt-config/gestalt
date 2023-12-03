@@ -5,6 +5,7 @@ import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
+import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.ValidateOf
 
 /**
@@ -21,7 +22,7 @@ class StringDecoder : LeafDecoder<String>() {
         return Priority.HIGH
     }
 
-    override fun matches(klass: TypeCapture<*>): Boolean {
+    override fun canDecode(path: String, tags: Tags, configNode:ConfigNode?, klass: TypeCapture<*>): Boolean {
         return if (klass is KTypeCapture<*>) {
             klass.isAssignableFrom(String::class)
         } else {

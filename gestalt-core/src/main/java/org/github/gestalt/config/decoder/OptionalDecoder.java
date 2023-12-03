@@ -25,7 +25,7 @@ public final class OptionalDecoder implements Decoder<Optional<?>> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> type) {
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return Optional.class.isAssignableFrom(type.getRawType());
     }
 

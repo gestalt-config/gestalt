@@ -43,15 +43,15 @@ internal class FloatDecoderTest {
     }
 
     @Test
-    fun matches() {
+    fun canDecode() {
         val decoder = FloatDecoder()
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<Float>()))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Float?>() {}))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Float::class.java)))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Int>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<String>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Date>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<List<Byte>>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Float>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Float?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Float::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Int>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<String>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Date>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<List<Byte>>()))
     }
 
     @Test
