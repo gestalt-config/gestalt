@@ -489,6 +489,9 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(25, pool.idleTimeoutSec);
         Assertions.assertEquals(33.0F, pool.defaultWait);
 
+        MaxTotal maxTotal = gestalt.getConfig("http.pool.maxTotal", MaxTotal.class);
+        Assertions.assertEquals(1000, maxTotal.maxTotal);
+
         long startTime = System.nanoTime();
         gestalt.getConfig("db", DataBase.class);
         long timeTaken = System.nanoTime() - startTime;
@@ -1148,6 +1151,22 @@ public class GestaltIntegrationTests {
 
         public void setDbPath(String dbPath) {
             this.dbPath = dbPath;
+        }
+    }
+
+    public static class MaxTotal {
+
+        private Integer maxTotal;
+        public MaxTotal(String maxTotal) {
+            this.maxTotal = Integer.parseInt(maxTotal);
+        }
+
+        public Integer getMaxTotal() {
+            return maxTotal;
+        }
+
+        public void setMaxTotal(Integer port) {
+            this.maxTotal = port;
         }
     }
 }
