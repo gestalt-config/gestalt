@@ -928,7 +928,7 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                          .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
-                             " - level: ERROR, message: No decoders found for class: java.lang.Integer");
+                             " - level: ERROR, message: No decoders found for class: java.lang.Integer and node type: leaf");
         }
     }
 

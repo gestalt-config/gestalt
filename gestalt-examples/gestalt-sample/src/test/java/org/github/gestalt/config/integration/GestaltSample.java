@@ -880,6 +880,9 @@ public class GestaltSample {
         Assertions.assertEquals(25, pool.idleTimeoutSec);
         Assertions.assertEquals(33.0F, pool.defaultWait);
 
+        MaxTotal maxTotal = gestalt.getConfig("http.pool.maxTotal", MaxTotal.class);
+        Assertions.assertEquals(1000, maxTotal.maxTotal);
+
         Map<String, Integer> httpPoolMap = gestalt.getConfig("http.pool", new TypeCapture<>() { });
 
         Assertions.assertEquals(50, httpPoolMap.get("maxperroute"));
@@ -1661,6 +1664,22 @@ public class GestaltSample {
 
         public void setDataBase(DataBase dataBase) {
             this.dataBase = dataBase;
+        }
+    }
+
+    public static class MaxTotal {
+
+        private Integer maxTotal;
+        public MaxTotal(String maxTotal) {
+            this.maxTotal = Integer.parseInt(maxTotal);
+        }
+
+        public Integer getMaxTotal() {
+            return maxTotal;
+        }
+
+        public void setMaxTotal(Integer port) {
+            this.maxTotal = port;
         }
     }
 }

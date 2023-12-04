@@ -669,15 +669,17 @@ public abstract class ValidationError {
      */
     public static class NoDecodersFound extends ValidationError {
         private final String klass;
+        private final ConfigNode configNode;
 
-        public NoDecodersFound(String klass) {
+        public NoDecodersFound(String klass, ConfigNode configNode) {
             super(ValidationLevel.ERROR);
             this.klass = klass;
+            this.configNode = configNode;
         }
 
         @Override
         public String description() {
-            return "No decoders found for class: " + klass;
+            return "No decoders found for class: " + klass + " and node type: " + configNode.getNodeType().getType();
         }
     }
 
@@ -956,6 +958,25 @@ public abstract class ValidationError {
     }
 
     /**
+     * Leaf node is null.
+     */
+    public static class LeafNodesIsNullDecoding extends ValidationError {
+        private final String path;
+        private final TypeCapture<?> type;
+
+        public LeafNodesIsNullDecoding(String path, TypeCapture<?> type) {
+            super(ValidationLevel.MISSING_VALUE);
+            this.path = path;
+            this.type = type;
+        }
+
+        @Override
+        public String description() {
+            return "Leaf nodes is null on path: " + path + " decoding type " + type.getRawType().getSimpleName();
+        }
+    }
+
+    /**
      * Leaf node has no values.
      */
     public static class LeafNodesHaveNoValues extends ValidationError {
@@ -969,6 +990,25 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Leaf nodes are empty for path: " + path;
+        }
+    }
+
+    /**
+     * While decoding an Object the string constructor was not found. Unable to create the object.
+     */
+    public static class StringConstructorNotFound extends ValidationError {
+        private final String path;
+        private final TypeCapture<?> type;
+
+        public StringConstructorNotFound(String path, TypeCapture<?> type) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.type = type;
+        }
+
+        @Override
+        public String description() {
+            return "String Constructor for: " + type.getRawType().getSimpleName() + " is not found on Path: " + path;
         }
     }
 

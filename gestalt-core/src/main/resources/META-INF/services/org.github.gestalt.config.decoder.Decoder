@@ -29,4 +29,5 @@ org.github.gestalt.config.decoder.RecordDecoder
 org.github.gestalt.config.decoder.SetDecoder
 org.github.gestalt.config.decoder.ShortDecoder
 org.github.gestalt.config.decoder.StringDecoder
+org.github.gestalt.config.decoder.StringConstructorDecoder
 org.github.gestalt.config.decoder.UUIDDecoder

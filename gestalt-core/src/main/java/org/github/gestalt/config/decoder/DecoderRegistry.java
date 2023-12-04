@@ -124,7 +124,7 @@ public final class DecoderRegistry implements DecoderService {
         List<Decoder> classDecoder = getDecoderForClass(path, tags, configNode, klass);
         classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
         if (classDecoder.isEmpty()) {
-            return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName()));
+            return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName(), configNode));
         } else if (classDecoder.size() > 1) {
             logger.log(System.Logger.Level.TRACE, "Found multiple decoders for {0}, found: {1}, using {2}: ",
                 klass, classDecoder, classDecoder.get(0));
