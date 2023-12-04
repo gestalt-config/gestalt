@@ -47,12 +47,12 @@ class StringAndLeafDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         StringDecoder stringDecoder = new StringDecoder();
 
-        Assertions.assertTrue(stringDecoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(stringDecoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(stringDecoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertTrue(stringDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(stringDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(stringDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
     }
 
     @Test

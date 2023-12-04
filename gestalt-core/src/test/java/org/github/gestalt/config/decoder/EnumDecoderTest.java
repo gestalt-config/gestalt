@@ -47,15 +47,15 @@ class EnumDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         EnumDecoder decoder = new EnumDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Colours.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<Colours>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Colours.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Colours>() {
         }));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(DBInfo.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfo.class)));
     }
 
     @Test

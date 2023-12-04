@@ -45,17 +45,17 @@ class ShortDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         ShortDecoder decoder = new ShortDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Short.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<Short>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Short.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Short>() {
         }));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(short.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(short.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Integer>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Integer>>() {
         }));
     }
 

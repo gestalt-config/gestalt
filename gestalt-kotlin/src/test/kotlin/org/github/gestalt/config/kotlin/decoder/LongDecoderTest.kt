@@ -43,15 +43,15 @@ internal class LongDecoderTest {
     }
 
     @Test
-    fun matches() {
+    fun canDecode() {
         val decoder = LongDecoder()
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<Long>()))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Long?>() {}))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long::class.java)))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Int>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<String>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Date>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<List<Byte>>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Long>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Long?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Long::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Int>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<String>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Date>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<List<Byte>>()))
     }
 
     @Test

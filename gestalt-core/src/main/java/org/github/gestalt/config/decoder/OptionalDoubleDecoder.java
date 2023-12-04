@@ -25,7 +25,7 @@ public final class OptionalDoubleDecoder implements Decoder<OptionalDouble> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> type) {
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return OptionalDouble.class.isAssignableFrom(type.getRawType());
     }
 

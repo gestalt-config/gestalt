@@ -35,8 +35,8 @@ public final class RecordDecoder implements Decoder<Object> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return RecordUtils.isRecord(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return RecordUtils.isRecord(type.getRawType());
     }
 
     @Override

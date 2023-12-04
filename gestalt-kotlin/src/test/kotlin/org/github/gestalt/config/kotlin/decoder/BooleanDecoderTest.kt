@@ -46,16 +46,16 @@ internal class BooleanDecoderTest {
 
     @ExperimentalStdlibApi
     @Test
-    fun matches() {
+    fun canDecode() {
         val decoder = BooleanDecoder()
-        Assertions.assertTrue(decoder.matches(kTypeCaptureOf<Boolean>()))
-        Assertions.assertTrue(decoder.matches(KTypeCapture.of<Boolean>(typeOf<Boolean>())))
-        Assertions.assertFalse(decoder.matches(object : TypeCapture<Boolean?>() {}))
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Boolean::class.java)))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Int>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<String>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<Date>()))
-        Assertions.assertFalse(decoder.matches(kTypeCaptureOf<List<Byte>>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Boolean>()))
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), LeafNode(""), KTypeCapture.of<Boolean>(typeOf<Boolean>())))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), object : TypeCapture<Boolean?>() {}))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), TypeCapture.of(Boolean::class.java)))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Int>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<String>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<Date>()))
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), LeafNode(""), kTypeCaptureOf<List<Byte>>()))
     }
 
     @Test

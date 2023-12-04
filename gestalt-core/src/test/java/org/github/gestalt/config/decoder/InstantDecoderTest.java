@@ -48,12 +48,12 @@ class InstantDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         InstantDecoder decoder = new InstantDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Instant.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Instant.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
     }
 
     @Test

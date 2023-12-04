@@ -68,10 +68,10 @@ public final class ProxyDecoder implements Decoder<Object> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return klass.isInterface() &&
-            !Collection.class.isAssignableFrom(klass.getRawType()) &&
-            !Map.class.isAssignableFrom(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return type.isInterface() &&
+            !Collection.class.isAssignableFrom(type.getRawType()) &&
+            !Map.class.isAssignableFrom(type.getRawType());
     }
 
     @Override

@@ -48,12 +48,12 @@ class PatternDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         PatternDecoder decoder = new PatternDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Pattern.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Pattern.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
     }
 
     @Test

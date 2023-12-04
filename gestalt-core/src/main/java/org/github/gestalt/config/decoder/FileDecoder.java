@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.File;
@@ -26,8 +27,8 @@ public final class FileDecoder extends LeafDecoder<File> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return File.class.isAssignableFrom(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return File.class.isAssignableFrom(type.getRawType());
     }
 
     @Override

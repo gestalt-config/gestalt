@@ -39,7 +39,7 @@ class DataClassDecoder : Decoder<Any> {
         return Priority.MEDIUM
     }
 
-    override fun matches(klass: TypeCapture<*>): Boolean {
+    override fun canDecode(path: String, tags: Tags, configNode:ConfigNode?, klass: TypeCapture<*>): Boolean {
         if (klass is KTypeCapture<*>) {
             val classifier = klass.kType.classifier
 

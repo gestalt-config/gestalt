@@ -50,9 +50,9 @@ public final class ObjectDecoder implements Decoder<Object> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return !klass.getRawType().isPrimitive() && !klass.isArray() && !klass.isEnum() &&
-            !klass.hasParameter() && !klass.isInterface() && !ignoreTypes.contains(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return !type.getRawType().isPrimitive() && !type.isArray() && !type.isEnum() &&
+            !type.hasParameter() && !type.isInterface() && !ignoreTypes.contains(type.getRawType());
     }
 
     private Set<Class<?>> getIgnoreTypes() {

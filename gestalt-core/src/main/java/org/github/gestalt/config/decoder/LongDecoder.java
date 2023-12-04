@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.StringUtils;
 import org.github.gestalt.config.utils.ValidateOf;
 
@@ -24,8 +25,8 @@ public final class LongDecoder extends LeafDecoder<Long> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return Long.class.isAssignableFrom(klass.getRawType()) || long.class.isAssignableFrom(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return Long.class.isAssignableFrom(type.getRawType()) || long.class.isAssignableFrom(type.getRawType());
     }
 
     @Override

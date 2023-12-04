@@ -52,23 +52,23 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         ObjectDecoder decoder = new ObjectDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfo.class)));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(DBInfoExtended.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Long.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Long>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfo.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfoExtended.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Long>() {
         }));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(long.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Long>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Long>>() {
         }));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<Map<String, Long>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map<String, Long>>() {
         }));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<DBInfoGeneric<String>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<DBInfoGeneric<String>>() {
         }));
     }
 

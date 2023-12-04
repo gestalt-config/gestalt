@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.regex.Pattern;
@@ -24,8 +25,8 @@ public final class PatternDecoder extends LeafDecoder<Pattern> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> klass) {
-        return Pattern.class.isAssignableFrom(klass.getRawType());
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
+        return Pattern.class.isAssignableFrom(type.getRawType());
     }
 
     @Override

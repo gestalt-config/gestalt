@@ -34,7 +34,7 @@ public final class ArrayDecoder<T> implements Decoder<T[]> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> type) {
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return type.isArray();
     }
 

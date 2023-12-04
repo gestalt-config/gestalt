@@ -45,17 +45,17 @@ class IntegerDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         IntegerDecoder integerDecoder = new IntegerDecoder();
 
-        Assertions.assertTrue(integerDecoder.matches(TypeCapture.of(Integer.class)));
-        Assertions.assertTrue(integerDecoder.matches(new TypeCapture<Integer>() {
+        Assertions.assertTrue(integerDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Integer.class)));
+        Assertions.assertTrue(integerDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Integer>() {
         }));
-        Assertions.assertTrue(integerDecoder.matches(TypeCapture.of(int.class)));
+        Assertions.assertTrue(integerDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(int.class)));
 
-        Assertions.assertFalse(integerDecoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(integerDecoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(integerDecoder.matches(new TypeCapture<List<Integer>>() {
+        Assertions.assertFalse(integerDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(integerDecoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(integerDecoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Integer>>() {
         }));
     }
 

@@ -1868,7 +1868,7 @@ class GestaltTest {
         }
 
         @Override
-        public boolean matches(TypeCapture<?> klass) {
+        public boolean canDecode(String path, Tags tags, ConfigNode configNode, TypeCapture<?> klass) {
             return String.class.isAssignableFrom(klass.getRawType());
         }
 

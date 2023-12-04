@@ -25,7 +25,7 @@ public final class OptionalLongDecoder implements Decoder<OptionalLong> {
     }
 
     @Override
-    public boolean matches(TypeCapture<?> type) {
+    public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return OptionalLong.class.isAssignableFrom(type.getRawType());
     }
 

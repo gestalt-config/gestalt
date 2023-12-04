@@ -76,7 +76,7 @@ class ConfigLoaderRegistryTest {
     }
 
     @Test
-    void testMultipleLoaderMatches() throws GestaltConfigurationException {
+    void testMultipleLoadercanDecode() throws GestaltConfigurationException {
         ConfigLoader loader = Mockito.mock(ConfigLoader.class);
         Mockito.when(loader.accepts("test")).thenReturn(true);
         Mockito.when(loader.accepts("noMatch")).thenReturn(false);

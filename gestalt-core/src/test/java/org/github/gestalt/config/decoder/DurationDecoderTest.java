@@ -47,17 +47,17 @@ class DurationDecoderTest {
     }
 
     @Test
-    void matches() {
+    void canDecode() {
         DurationDecoder decoder = new DurationDecoder();
 
-        Assertions.assertTrue(decoder.matches(TypeCapture.of(Duration.class)));
-        Assertions.assertTrue(decoder.matches(new TypeCapture<Duration>() {
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Duration.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Duration>() {
         }));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(long.class)));
 
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(String.class)));
-        Assertions.assertFalse(decoder.matches(TypeCapture.of(Date.class)));
-        Assertions.assertFalse(decoder.matches(new TypeCapture<List<Long>>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Long>>() {
         }));
     }
 
