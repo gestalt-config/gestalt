@@ -54,6 +54,7 @@ public final class StringConstructorDecoder implements Decoder<Object> {
      * @param decoderContext The context of the current decoder.
      * @return ValidateOf the current node with details of either success or failures.
      */
+    @Override
     public ValidateOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
 
         LeafNode leafNode = (LeafNode) node;
