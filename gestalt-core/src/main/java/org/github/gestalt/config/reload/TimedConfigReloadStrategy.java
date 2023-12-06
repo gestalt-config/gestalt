@@ -16,7 +16,7 @@ import java.util.TimerTask;
 public final class TimedConfigReloadStrategy extends ConfigReloadStrategy {
     private static final System.Logger logger = System.getLogger(TimedConfigReloadStrategy.class.getName());
 
-    private final Timer timer = new Timer();
+    private final Timer timer = new Timer(true);
     private final Duration reloadDelay;
 
     /**
