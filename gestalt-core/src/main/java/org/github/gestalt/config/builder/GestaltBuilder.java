@@ -76,6 +76,7 @@ public class GestaltBuilder {
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatNullValuesInClassAsErrors = null;
+    private Boolean treatEmptyCollectionAsErrors = null;
 
     private Level logLevelForMissingValuesWhenDefaultOrOptional = null;
 
@@ -576,6 +577,26 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set treat empty collections or arrays as errors.
+     *
+     * @param treatEmptyCollectionAsErrors Treat empty collections or arrays as errors.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setTreatEmptyCollectionAsErrors(Boolean treatEmptyCollectionAsErrors) {
+        this.treatEmptyCollectionAsErrors = treatEmptyCollectionAsErrors;
+        return this;
+    }
+
+    /**
+     * Get treat empty collections or arrays as errors.
+     *
+     * @return Treat empty collections or arrays as errors.
+     */
+    public Boolean isTreatEmptyCollectionAsErrors() {
+        return treatEmptyCollectionAsErrors;
+    }
+
+    /**
      * Add a cache layer to gestalt.
      *
      * @param useCacheDecorator use a cache decorator.
@@ -888,6 +909,9 @@ public class GestaltBuilder {
 
         newConfig.setTreatNullValuesInClassAsErrors(Objects.requireNonNullElseGet(treatNullValuesInClassAsErrors,
             () -> gestaltConfig.isTreatNullValuesInClassAsErrors()));
+
+        newConfig.setTreatEmptyCollectionAsErrors(Objects.requireNonNullElseGet(treatEmptyCollectionAsErrors,
+            () -> gestaltConfig.isTreatEmptyCollectionAsErrors()));
 
         newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(
             Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,

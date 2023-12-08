@@ -477,6 +477,117 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    @Test
+    public void testDontTreatEmptyCollectionAsErrors() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
+            .setTreatEmptyCollectionAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            List<String> admins = gestalt.getConfig("admin", new TypeCapture<>() {});
+            Assertions.assertEquals(0, admins.size());
+
+            Set<String> adminsSet = gestalt.getConfig("admin", new TypeCapture<>() {});
+            Assertions.assertEquals(0, adminsSet.size());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testTreatEmptyCollectionAsErrors() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
+            .setTreatEmptyCollectionAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            List<String> admins = gestalt.getConfig("admin", new TypeCapture<>() {});
+            Assertions.fail("Should not reach here");
+            Assertions.assertEquals(0, admins.size());  // so it doesn't' complain about not being used.
+        } catch (GestaltException e) {
+            Assertions.assertEquals("Failed getting config path: admin, for class: java.util.List<java.lang.String>\n" +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: admin, for class: ObjectToken, " +
+                "during navigating to next node", e.getMessage());
+        }
+
+        try {
+            Set<String> admins = gestalt.getConfig("admin", new TypeCapture<>() {});
+            Assertions.fail("Should not reach here");
+            Assertions.assertEquals(0, admins.size());  // so it doesn't' complain about not being used.
+        } catch (GestaltException e) {
+            Assertions.assertEquals("Failed getting config path: admin, for class: java.util.Set<java.lang.String>\n" +
+                                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin, for class: ObjectToken, " +
+                                    "during navigating to next node", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testDontTreatEmptyArraysAsErrors() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
+            .setTreatEmptyCollectionAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            String[] admins = gestalt.getConfig("admin", TypeCapture.of(String[].class));
+            Assertions.assertEquals(0, admins.length);
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testTreatEmptyArraysAsErrors() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
+            .setTreatEmptyCollectionAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            String[] admins = gestalt.getConfig("admin", TypeCapture.of(String[].class));
+            Assertions.fail("Should not reach here");
+            Assertions.assertEquals(0, admins.length);  // so it doesn't' complain about not being used.
+        } catch (GestaltException e) {
+            Assertions.assertEquals("Failed getting config path: admin, for class: java.lang.String[]\n" +
+                                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin, " +
+                                    "for class: ObjectToken, during navigating to next node", e.getMessage());
+        }
+    }
+
     private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 
