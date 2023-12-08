@@ -91,6 +91,7 @@ class StringConstructorDecoderTest {
             results.getErrors().get(0).description());
     }
 
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private static class MyClass {
         Integer myData;
 
@@ -103,6 +104,7 @@ class StringConstructorDecoderTest {
         }
     }
 
+    @SuppressWarnings("UnusedMethod")
     private static class MyStringClass {
         String myData;
 

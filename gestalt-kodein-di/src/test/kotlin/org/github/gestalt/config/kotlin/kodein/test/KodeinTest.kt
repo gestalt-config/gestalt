@@ -3,7 +3,6 @@ package org.github.gestalt.config.kotlin.kodein.test
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.kotlin.kodein.gestalt
-import org.github.gestalt.config.source.ClassPathConfigSource
 import org.github.gestalt.config.source.ClassPathConfigSourceBuilder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
