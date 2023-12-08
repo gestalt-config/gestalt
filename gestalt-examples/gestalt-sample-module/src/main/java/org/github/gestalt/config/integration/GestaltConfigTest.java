@@ -289,11 +289,11 @@ public class GestaltConfigTest {
         configDirectory.toFile().deleteOnExit();
 
 
-        GitConfigSourceBuilder gitBuilder = new GitConfigSourceBuilder()
+        GitConfigSourceBuilder gitBuilder = GitConfigSourceBuilder.builder()
                 .setRepoURI("https://github.com/gestalt-config/gestalt.git")
                 .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
                 .setLocalRepoDirectory(configDirectory);
-        GitConfigSource source = gitBuilder.build();
+        ConfigSourcePackage source = gitBuilder.build();
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
