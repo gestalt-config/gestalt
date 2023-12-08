@@ -289,7 +289,6 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(StringConfigSourceBuilder.builder().setConfig(hoconStr).setFormat("conf").build())
-            .setTreatEmptyCollectionAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -301,36 +300,6 @@ public class GestaltSample {
             Assertions.fail("Should not reach here");
         }
     }
-
-    @Test
-    public void testTreatEmptyCollectionAsErrors() throws GestaltException {
-
-        String hoconStr = "database: {\n" +
-            "  global: {\n" +
-            "    volumes: []\n" +
-            "  }\n" +
-            "}\n";
-
-        GestaltBuilder builder = new GestaltBuilder();
-        Gestalt gestalt = builder
-            .addSource(StringConfigSourceBuilder.builder().setConfig(hoconStr).setFormat("conf").build())
-            .setTreatEmptyCollectionAsErrors(true)
-            .build();
-
-        gestalt.loadConfigs();
-
-        try {
-            List<String> admins = gestalt.getConfig("database.global.volumes", new TypeCapture<>() {});
-            Assertions.fail("Should not reach here");
-            Assertions.assertEquals(0, admins.size());  // so it doesn't' complain about not being used.
-        } catch (GestaltException e) {
-            Assertions.assertEquals("Failed getting config path: database.global.volumes, " +
-                    "for class: java.util.List<java.lang.String>\n" +
-                    " - level: MISSING_VALUE, message: Array on path: database.global.volumes, has no value attempting to decode List",
-                e.getMessage());
-        }
-    }
-
 
     @Test
     public void integrationTestProxyPassThrough() throws GestaltException {

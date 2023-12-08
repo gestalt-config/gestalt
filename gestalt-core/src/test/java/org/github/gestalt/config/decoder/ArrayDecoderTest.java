@@ -1,6 +1,5 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 class ArrayDecoderTest {
     final DoubleDecoder doubleDecoder = new DoubleDecoder();
     final StringDecoder stringDecoder = new StringDecoder();
@@ -37,18 +35,21 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes"})
     void name() {
         ArrayDecoder decoder = new ArrayDecoder();
         Assertions.assertEquals("Array", decoder.name());
     }
 
     @Test
+    @SuppressWarnings({"rawtypes"})
     void priority() {
         ArrayDecoder decoder = new ArrayDecoder();
         Assertions.assertEquals(Priority.MEDIUM, decoder.priority());
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void canDecode() {
         ArrayDecoder decoder = new ArrayDecoder();
 
@@ -82,6 +83,7 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void arrayDecodeStrings() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -106,6 +108,7 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void arrayDecodeDoubles() {
 
         ConfigNode[] arrayNode = new ConfigNode[3];
@@ -131,6 +134,7 @@ class ArrayDecoderTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void arrayDecodeDoublesMissingIndex() {
 
         ConfigNode[] arrayNode = new ConfigNode[4];
@@ -195,10 +199,6 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of());
         ArrayDecoder decoder = new ArrayDecoder();
 
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
         ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
             TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
 
@@ -215,10 +215,6 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(null);
         ArrayDecoder decoder = new ArrayDecoder();
 
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
         ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
             new DecoderContext(decoderService, null));
 
@@ -232,10 +228,6 @@ class ArrayDecoderTest {
         ConfigNode nodes = new LeafNode("");
         ArrayDecoder decoder = new ArrayDecoder();
 
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
         ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
             new DecoderContext(decoderService, null));
 
@@ -243,39 +235,6 @@ class ArrayDecoderTest {
         Assertions.assertTrue(values.hasResults());
         Assertions.assertEquals(1, values.results().length);
         Assertions.assertEquals("", values.results()[0]);
-    }
-
-    @Test
-    void arrayDecodeNullLeafNodeOk() {
-        ConfigNode nodes = new LeafNode(null);
-        ArrayDecoder decoder = new ArrayDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
-            new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().length);
-    }
-
-    @Test
-    void arrayDecodeNullNodeOk() {
-        ArrayDecoder decoder = new ArrayDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), null, TypeCapture.of(String[].class),
-            new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().length);
     }
 
     @Test
@@ -367,18 +326,29 @@ class ArrayDecoderTest {
     }
 
     @Test
+    void arrayDecodeListNodeEmpty() {
+        ArrayDecoder<Double> decoder = new ArrayDecoder<>();
+
+        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new ArrayNode(List.of()),
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertEquals(0, values.results().length);
+    }
+
+    @Test
     void arrayDecodeListNodeNullInside() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
         ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new ArrayNode(null),
                 TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
-        Assertions.assertTrue(values.hasErrors());
-        Assertions.assertFalse(values.hasResults());
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
 
-        Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Array on path: db.hosts, has no value attempting to decode Array",
-            values.getErrors().get(0).description());
+        Assertions.assertEquals(0, values.results().length);
     }
 
     @Test

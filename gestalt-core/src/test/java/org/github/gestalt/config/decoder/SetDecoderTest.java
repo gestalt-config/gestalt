@@ -1,6 +1,5 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
@@ -222,10 +221,6 @@ class SetDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of());
         SetDecoder decoder = new SetDecoder();
 
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
         ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
         }, new DecoderContext(decoderService, null));
 
@@ -238,10 +233,6 @@ class SetDecoderTest {
     void arrayDecodeNullArrayNodeOk() {
         ConfigNode nodes = new ArrayNode(null);
         SetDecoder decoder = new SetDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
 
         ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
         }, new DecoderContext(decoderService, null));
@@ -256,10 +247,6 @@ class SetDecoderTest {
         ConfigNode nodes = new LeafNode("");
         SetDecoder decoder = new SetDecoder();
 
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
         ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
         }, new DecoderContext(decoderService, null));
 
@@ -267,39 +254,6 @@ class SetDecoderTest {
         Assertions.assertTrue(values.hasResults());
         Assertions.assertEquals(1, values.results().size());
         Assertions.assertTrue(values.results().contains(""));
-    }
-
-    @Test
-    void arrayDecodeNullLeafNodeOk() {
-        ConfigNode nodes = new LeafNode(null);
-        SetDecoder decoder = new SetDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().size());
-    }
-
-    @Test
-    void arrayDecodeNullNodeOk() {
-        SetDecoder decoder = new SetDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), null, new TypeCapture<Set<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().size());
     }
 
     @Test
@@ -317,7 +271,8 @@ class SetDecoderTest {
         }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
-        Assertions.assertFalse(values.hasResults());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertEquals(0, values.results().size());
 
         Assertions.assertEquals(3, values.getErrors().size());
         Assertions.assertEquals("Unable to parse a number on Path: db.hosts[0], from node: LeafNode{value='John'} " +
