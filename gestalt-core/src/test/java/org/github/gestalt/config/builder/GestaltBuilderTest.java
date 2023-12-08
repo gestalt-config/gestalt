@@ -71,7 +71,6 @@ class GestaltBuilderTest {
             .setDecoders(decoders)
             .addDecoder(new LongDecoder())
             .setTreatWarningsAsErrors(true)
-            .setTreatEmptyCollectionAsErrors(true)
             .setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level.DEBUG)
             .setSubstitutionOpeningToken("${")
             .setSubstitutionClosingToken("}")
@@ -98,7 +97,6 @@ class GestaltBuilderTest {
 
         Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());
         Assertions.assertEquals(true, builder.isTreatWarningsAsErrors());
-        Assertions.assertEquals(true, builder.isTreatEmptyCollectionAsErrors());
         Assertions.assertEquals("", builder.getSubstitutionRegex());
         Assertions.assertEquals(ProxyDecoderMode.CACHE, builder.getProxyDecoderMode());
         Assertions.assertEquals(System.Logger.Level.DEBUG, builder.getLogLevelForMissingValuesWhenDefaultOrOptional());

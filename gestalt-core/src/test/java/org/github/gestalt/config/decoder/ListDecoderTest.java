@@ -1,6 +1,5 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
@@ -197,91 +196,6 @@ class ListDecoderTest {
         Assertions.assertEquals(1, values.getErrors().size());
         Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode List",
             values.getErrors().get(0).description());
-    }
-
-    @Test
-    void arrayDecodeEmptyArrayNodeOk() {
-        ConfigNode nodes = new ArrayNode(List.of());
-        ListDecoder decoder = new ListDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().size());
-    }
-
-    @Test
-    void arrayDecodeNullArrayNodeOk() {
-        ConfigNode nodes = new ArrayNode(null);
-        ListDecoder decoder = new ListDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().size());
-    }
-
-    @Test
-    void arrayDecodeEmptyLeafNodeOk() {
-        ConfigNode nodes = new LeafNode("");
-        ListDecoder decoder = new ListDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(1, values.results().size());
-        Assertions.assertEquals("", values.results().get(0));
-    }
-
-    @Test
-    void arrayDecodeNullLeafNodeOk() {
-        ConfigNode nodes = new LeafNode(null);
-        ListDecoder decoder = new ListDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().size());
-    }
-
-    @Test
-    void arrayDecodeNullNodeOk() {
-        ListDecoder decoder = new ListDecoder();
-
-        var gestaltConfig = new GestaltConfig();
-        gestaltConfig.setTreatEmptyCollectionAsErrors(false);
-        decoder.applyConfig(gestaltConfig);
-
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), null, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
-
-        Assertions.assertFalse(values.hasErrors());
-        Assertions.assertTrue(values.hasResults());
-        Assertions.assertEquals(0, values.results().size());
     }
 
     @Test

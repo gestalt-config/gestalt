@@ -23,8 +23,6 @@ public class GestaltConfig {
     private boolean treatMissingValuesAsErrors = false;
     // Treat null values in classes after decoding as errors.
     private boolean treatNullValuesInClassAsErrors = true;
-    // Treat empty collections or arrays as errors.
-    private boolean treatEmptyCollectionAsErrors = true;
     // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
     private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
     // Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
@@ -115,24 +113,6 @@ public class GestaltConfig {
      */
     public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
         this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
-    }
-
-    /**
-     * Treat empty collections or arrays as errors.
-     *
-     * @return Treat empty collections or arrays as errors.
-     */
-    public boolean isTreatEmptyCollectionAsErrors() {
-        return treatEmptyCollectionAsErrors;
-    }
-
-    /**
-     * Set treat empty collections or arrays as errors.
-     *
-     * @param treatEmptyCollectionAsErrors Treat empty collections or arrays as errors.
-     */
-    public void setTreatEmptyCollectionAsErrors(boolean treatEmptyCollectionAsErrors) {
-        this.treatEmptyCollectionAsErrors = treatEmptyCollectionAsErrors;
     }
 
     /**
