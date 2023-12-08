@@ -276,6 +276,31 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+
+    @Test
+    public void testDontTreatEmptyCollectionAsErrors() throws GestaltException {
+
+        String hoconStr = "database: {\n" +
+                          "  global: {\n" +
+                          "    volumes: []\n" +
+                          "  }\n" +
+                          "}\n";
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(StringConfigSourceBuilder.builder().setConfig(hoconStr).setFormat("conf").build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            List<String> admins = gestalt.getConfig("database.global.volumes", new TypeCapture<>() {});
+            Assertions.assertEquals(0, admins.size());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
     @Test
     public void integrationTestProxyPassThrough() throws GestaltException {
         // Create a map of configurations we wish to inject.

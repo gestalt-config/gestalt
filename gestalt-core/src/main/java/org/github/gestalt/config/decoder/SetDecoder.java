@@ -52,6 +52,6 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
         }
 
 
-        return ValidateOf.validateOf(!results.isEmpty() ? results : null, errors);
+        return ValidateOf.validateOf(results, errors);
     }
 }

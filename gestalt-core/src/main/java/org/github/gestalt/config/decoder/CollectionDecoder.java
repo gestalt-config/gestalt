@@ -30,11 +30,7 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
     public ValidateOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<T> results;
         if (node instanceof ArrayNode) {
-            if (node.size() > 0) {
-                results = arrayDecode(path, tags, node, type, decoderContext);
-            } else {
-                results = ValidateOf.inValid(new ValidationError.DecodingArrayMissingValue(path, name()));
-            }
+            results = arrayDecode(path, tags, node, type, decoderContext);
         } else if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {
                 String value = node.getValue().get();

@@ -52,6 +52,6 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
         }
 
 
-        return ValidateOf.validateOf(!results.isEmpty() ? results : null, errors);
+        return ValidateOf.validateOf(results, errors);
     }
 }

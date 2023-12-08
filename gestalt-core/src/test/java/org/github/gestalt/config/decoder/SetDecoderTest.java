@@ -215,6 +215,47 @@ class SetDecoderTest {
             values.getErrors().get(0).description());
     }
 
+
+    @Test
+    void arrayDecodeEmptyArrayNodeOk() {
+        ConfigNode nodes = new ArrayNode(List.of());
+        SetDecoder decoder = new SetDecoder();
+
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
+        }, new DecoderContext(decoderService, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertEquals(0, values.results().size());
+    }
+
+    @Test
+    void arrayDecodeNullArrayNodeOk() {
+        ConfigNode nodes = new ArrayNode(null);
+        SetDecoder decoder = new SetDecoder();
+
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
+        }, new DecoderContext(decoderService, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertEquals(0, values.results().size());
+    }
+
+    @Test
+    void arrayDecodeEmptyLeafNodeOk() {
+        ConfigNode nodes = new LeafNode("");
+        SetDecoder decoder = new SetDecoder();
+
+        ValidateOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
+        }, new DecoderContext(decoderService, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertEquals(1, values.results().size());
+        Assertions.assertTrue(values.results().contains(""));
+    }
+
     @Test
     void arrayDecodeWrongTypeDoubles() {
 
@@ -230,7 +271,8 @@ class SetDecoderTest {
         }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
-        Assertions.assertFalse(values.hasResults());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertEquals(0, values.results().size());
 
         Assertions.assertEquals(3, values.getErrors().size());
         Assertions.assertEquals("Unable to parse a number on Path: db.hosts[0], from node: LeafNode{value='John'} " +
