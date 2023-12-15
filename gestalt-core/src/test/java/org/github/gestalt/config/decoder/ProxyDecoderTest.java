@@ -1,5 +1,7 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -8,6 +10,9 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
+import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.*;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -519,6 +524,128 @@ class ProxyDecoderTest {
         Assertions.assertEquals(1234, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeReload() throws GestaltException {
+
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.port", "100");
+        configs.put("db.uri", "mysql.com");
+        configs.put("db.password", "pass");
+
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(reload)
+                .build())
+            .setTreatNullValuesInClassAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        DBInfoInterface results = gestalt.getConfig("db", DBInfoInterface.class);
+
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+
+        configs.put("db.port", "200");
+        reload.reload();
+
+        Assertions.assertEquals(200, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeReloadDefault() throws GestaltException {
+
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.port", "100");
+        configs.put("db.uri", "mysql.com");
+        configs.put("db.password", "pass");
+
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(reload)
+                .build())
+            .setTreatNullValuesInClassAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        DBInfoInterface results = gestalt.getConfig("db", DBInfoInterface.class);
+
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+
+        configs.remove("db.port");
+        configs.put("db.uri", "postgresql.org");
+        reload.reload();
+
+        Assertions.assertEquals(10, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("postgresql.org", results.getUri());
+    }
+
+    @Test
+    void decodeReloadDAnnotationDefault() throws GestaltException {
+
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.channel", "100");
+        configs.put("db.uri", "mysql.com");
+        configs.put("db.password", "pass");
+
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(reload)
+                .build())
+            .setTreatNullValuesInClassAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        IDBInfoAnnotations results = gestalt.getConfig("db", IDBInfoAnnotations.class);
+
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+
+        configs.remove("db.channel");
+        configs.put("db.uri", "postgresql.org");
+        reload.reload();
+
+        Assertions.assertEquals(1234, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("postgresql.org", results.getUri());
     }
 }
 

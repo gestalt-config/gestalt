@@ -4,10 +4,12 @@ import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.ValidateOf;
@@ -28,8 +30,10 @@ import java.util.*;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
  */
 public final class ProxyDecoder implements Decoder<Object> {
+
     // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
     private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
+
 
     private static String getConfigName(String methodName, Type returnType) {
         String name = methodName;
@@ -153,6 +157,9 @@ public final class ProxyDecoder implements Decoder<Object> {
             case CACHE:
             default: {
                 proxyHandler = new ProxyCacheInvocationHandler(path, tags, decoderContext, methodResults);
+                if(decoderContext.getGestalt() != null) {
+                    decoderContext.getGestalt().registerListener((ProxyCacheInvocationHandler) proxyHandler);
+                }
                 break;
             }
         }
@@ -162,7 +169,7 @@ public final class ProxyDecoder implements Decoder<Object> {
     }
 
 
-    private static class ProxyPassThroughInvocationHandler implements InvocationHandler {
+    static class ProxyPassThroughInvocationHandler implements InvocationHandler {
         protected final String path;
         protected final Tags tags;
         protected final DecoderContext decoderContext;
@@ -243,7 +250,10 @@ public final class ProxyDecoder implements Decoder<Object> {
     }
 
 
-    private static class ProxyCacheInvocationHandler extends ProxyPassThroughInvocationHandler implements InvocationHandler {
+    static class ProxyCacheInvocationHandler extends ProxyPassThroughInvocationHandler
+        implements InvocationHandler, CoreReloadListener {
+
+        private static final System.Logger logger = System.getLogger(ProxyCacheInvocationHandler.class.getName());
         private final Map<String, Object> methodResults;
 
 
@@ -270,6 +280,12 @@ public final class ProxyDecoder implements Decoder<Object> {
 
                 return gestaltResult;
             }
+        }
+
+        @Override
+        public void reload() {
+            logger.log(System.Logger.Level.DEBUG, "Reloading received on Proxy Cache Listener. Clearing Cache");
+            methodResults.clear();
         }
     }
 }
