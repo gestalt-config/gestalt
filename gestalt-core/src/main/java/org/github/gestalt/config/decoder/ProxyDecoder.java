@@ -4,7 +4,6 @@ import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
@@ -35,7 +34,7 @@ public final class ProxyDecoder implements Decoder<Object> {
     private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
 
 
-    private static String getConfigName(String methodName, Type returnType) {
+    private static String getConfigNameFromMethod(String methodName, Type returnType) {
         String name = methodName;
         if (methodName.startsWith("get")) {
             name = methodName.substring(3);
@@ -108,7 +107,7 @@ public final class ProxyDecoder implements Decoder<Object> {
             if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
                 name = configAnnotation.path();
             } else {
-                name = getConfigName(methodName, returnType);
+                name = getConfigNameFromMethod(methodName, returnType);
             }
 
             String nextPath = PathUtil.pathForKey(path, name);
@@ -206,7 +205,7 @@ public final class ProxyDecoder implements Decoder<Object> {
             if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
                 name = configAnnotation.path();
             } else {
-                name = getConfigName(methodName, returnType);
+                name = getConfigNameFromMethod(methodName, returnType);
             }
 
             String nextPath = PathUtil.pathForKey(path, name);

@@ -1,7 +1,5 @@
 package org.github.gestalt.config.reload;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.WeakHashMap;
 
 /**

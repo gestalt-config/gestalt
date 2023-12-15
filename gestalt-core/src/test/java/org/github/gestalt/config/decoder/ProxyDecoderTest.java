@@ -11,7 +11,6 @@ import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
-import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.*;
