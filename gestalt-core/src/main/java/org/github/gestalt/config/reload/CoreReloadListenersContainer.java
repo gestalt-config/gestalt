@@ -1,7 +1,6 @@
 package org.github.gestalt.config.reload;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Store all core reload listeners and functionality to call the on reload.
@@ -12,7 +11,7 @@ public class CoreReloadListenersContainer {
     /**
      * Listeners for the core reload.
      */
-    protected final List<CoreReloadListener> listeners = new ArrayList<>();
+    protected final WeakHashMap<Integer, CoreReloadListener> listeners = new WeakHashMap<>();
 
     /**
      * Default constructor for CoreReloadStrategy.
@@ -26,7 +25,7 @@ public class CoreReloadListenersContainer {
      * @param listener to register
      */
     public void registerListener(CoreReloadListener listener) {
-        listeners.add(listener);
+        listeners.put(listener.hashCode(), listener);
     }
 
     /**
@@ -35,13 +34,13 @@ public class CoreReloadListenersContainer {
      * @param listener to remove
      */
     public void removeListener(CoreReloadListener listener) {
-        listeners.remove(listener);
+        listeners.remove(listener.hashCode());
     }
 
     /**
      * called when the core has reloaded.
      */
     public void reload() {
-        listeners.forEach(CoreReloadListener::reload);
+        listeners.forEach((k, v) -> v.reload());
     }
 }
