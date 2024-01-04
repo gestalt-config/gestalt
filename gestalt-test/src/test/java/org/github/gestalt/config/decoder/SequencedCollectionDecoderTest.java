@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
@@ -27,8 +28,8 @@ class SequencedCollectionDecoderTest {
 
     @BeforeEach
     void setup() throws GestaltConfigurationException {
-        configNodeService = Mockito.mock(ConfigNodeService.class);
-        lexer = Mockito.mock(SentenceLexer.class);
+        configNodeService = new ConfigNodeManager();
+        lexer = new PathLexer();
         decoderService = new DecoderRegistry(List.of(doubleDecoder, stringDecoder, SequencedCollectionDecoder, listDecoder), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
