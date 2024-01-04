@@ -27,6 +27,9 @@ org.github.gestalt.config.decoder.PatternDecoder
 org.github.gestalt.config.decoder.ProxyDecoder
 org.github.gestalt.config.decoder.RecordDecoder
 org.github.gestalt.config.decoder.SetDecoder
+org.github.gestalt.config.decoder.SequencedCollectionDecoder
+org.github.gestalt.config.decoder.SequencedMapDecoder
+org.github.gestalt.config.decoder.SequencedSetDecoder
 org.github.gestalt.config.decoder.ShortDecoder
 org.github.gestalt.config.decoder.StringDecoder
 org.github.gestalt.config.decoder.StringConstructorDecoder

@@ -7,10 +7,9 @@ kotlin = "1.9.21"
 kotlinDokka = "1.9.10"
 # Kotlin DI
 kodeinDI = "7.21.1"
-koinDI = "3.5.0"
+koinDI = "3.5.3"
 # Java DI
-# @pin
-guice = "6.0.0"
+guice = "7.0.0"
 # @pin
 cdi = "3.0.0"
 # @pin
@@ -18,11 +17,11 @@ weld = "3.1.0.Final"
 # @pin
 weldCore = "4.0.3.Final"
 #encoding/decoding
-jackson = "2.16.0"
+jackson = "2.16.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.21.39"
-gcpLibraries = "26.28.0"
+awsBom = "2.22.10"
+gcpLibraries = "26.29.0"
 # vault
 vault = "6.2.0"
 # Git support
@@ -30,7 +29,7 @@ jgit = "6.8.0.202311291450-r"
 eddsa = "0.3.0"
 # testing
 junit5 = "5.10.1"
-assertJ = "3.24.2"
+assertJ = "3.25.1"
 mockito = "5.2.0"
 mockk = "1.13.8"
 koTestAssertions = "5.8.0"
@@ -38,7 +37,7 @@ koTestAssertions = "5.8.0"
 awsMock = "2.17.0"
 testcontainers = "1.19.3"
 # static code analysis
-errorprone = "2.23.0"
+errorprone = "2.24.1"
 gradleErrorProne = "3.1.0"
 detekt = "1.23.4"
 checkStyle = "10.10.0"
@@ -50,7 +49,7 @@ gestalt = "0.24.2"
 # Gradle utility
 gradleVersions = "0.50.0"
 gitVersions = "3.0.0"
-gradleVersionsUpdate = "0.8.1"
+gradleVersionsUpdate = "0.8.3"
 
 [libraries]
 # Kotlin
