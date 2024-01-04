@@ -137,7 +137,7 @@ public final class HoconLoader implements ConfigLoader {
 
     private ValidateOf<ConfigNode> buildObjectConfigTree(String path, ConfigObject configObject) {
         List<ValidationError> errors = new ArrayList<>();
-        Map<String, ConfigNode> mapNode = new HashMap<>();
+        Map<String, ConfigNode> mapNode = new LinkedHashMap<>();
 
         configObject.forEach((key, value) -> {
             String newPath = normalizeSentence(key);
