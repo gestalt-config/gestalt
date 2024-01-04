@@ -47,5 +47,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./code-coverage-report/build/reports/jacoco/testCodeCoverageReport
+          files: ./code-coverage-report/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           fail_ci_if_error: true
