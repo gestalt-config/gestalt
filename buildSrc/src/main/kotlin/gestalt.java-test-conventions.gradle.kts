@@ -6,6 +6,7 @@
 
 plugins {
     id("gestalt.java-common-conventions")
+    `jvm-test-suite`
     jacoco
 }
 
@@ -25,11 +26,19 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
 }
 
-tasks.test {
-    // Use junit platform for unit tests
-    systemProperty("junit.jupiter.execution.parallel.enabled", "true")
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport)
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            targets {
+                all {
+                    testTask {
+                        finalizedBy(tasks.jacocoTestReport)
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.jacocoTestReport {
