@@ -37,7 +37,7 @@ class SequencedCollectionDecoderTest {
     void name() {
 
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
-        Assertions.assertEquals("SequencedList", decoder.name());
+        Assertions.assertEquals("SequencedCollection", decoder.name());
     }
 
     @Test
@@ -215,7 +215,7 @@ class SequencedCollectionDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Leaf on path: db.hosts, has no value attempting to decode SequencedList",
+        Assertions.assertEquals("Leaf on path: db.hosts, has no value attempting to decode SequencedCollection",
             values.getErrors().get(0).description());
     }
 
@@ -230,7 +230,7 @@ class SequencedCollectionDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode SequencedList",
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode SequencedCollection",
             values.getErrors().get(0).description());
     }
 
@@ -348,7 +348,7 @@ class SequencedCollectionDecoderTest {
         Assertions.assertFalse(values.hasResults());
 
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode SequencedList",
+        Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode SequencedCollection",
             values.getErrors().get(0).description());
     }
 }
