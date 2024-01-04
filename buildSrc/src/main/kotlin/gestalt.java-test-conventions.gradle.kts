@@ -29,7 +29,7 @@ tasks.jacocoTestReport {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
+            useJUnitJupiter(libs.versions.junit5.get())
             targets {
                 all {
                     testTask {
