@@ -6,9 +6,9 @@ import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.kotlin.getConfig
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
-import org.github.gestalt.config.source.ClassPathConfigSource
-import org.github.gestalt.config.source.EnvironmentConfigSource
-import org.github.gestalt.config.source.MapConfigSource
+import org.github.gestalt.config.source.ClassPathConfigSourceBuilder
+import org.github.gestalt.config.source.EnvironmentConfigSourceBuilder
+import org.github.gestalt.config.source.MapConfigSourceBuilder
 import org.junit.jupiter.api.Assertions.*
 import kotlin.reflect.typeOf
 
@@ -23,9 +23,9 @@ class GestaltKotlinTest {
 
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(ClassPathConfigSource("default.properties"))
-            .addSource(ClassPathConfigSource("dev.properties"))
-            .addSource(MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
@@ -40,10 +40,10 @@ class GestaltKotlinTest {
         configs["db.hosts[2].password"] = "9012"
         val builder = GestaltBuilder()
         val gestalt: Gestalt = builder
-            .addSource(ClassPathConfigSource("default.properties"))
-            .addSource(ClassPathConfigSource("dev.properties"))
-            .addSource(MapConfigSource(configs))
-            .addSource(EnvironmentConfigSource())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(EnvironmentConfigSourceBuilder.builder().build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
@@ -66,9 +66,9 @@ class GestaltKotlinTest {
         configs["db.idleTimeout"] = "123"
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(ClassPathConfigSource("default.properties"))
-            .addSource(ClassPathConfigSource("dev.properties"))
-            .addSource(MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
