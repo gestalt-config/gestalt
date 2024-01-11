@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Decode a Set type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class SetDecoder extends CollectionDecoder<Set<?>> {
 

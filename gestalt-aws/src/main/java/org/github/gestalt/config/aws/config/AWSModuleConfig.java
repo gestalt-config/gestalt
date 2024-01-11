@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
  * You can either specify the region and Gestalt will use defaults to build the SecretsManagerClient
  * or you can provide a SecretsManagerClient yourself.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class AWSModuleConfig implements GestaltModuleConfig {
 

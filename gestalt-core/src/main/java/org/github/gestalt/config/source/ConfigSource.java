@@ -16,7 +16,7 @@ import java.util.UUID;
  *
  * <p>Each source has a unique ID, so we can track and match it in the system.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface ConfigSource {
 

@@ -19,7 +19,7 @@ import static java.util.logging.Level.*;
 /*
  * Benchmark of basic Gestalt configuration.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 
 public abstract class Benchmarks {

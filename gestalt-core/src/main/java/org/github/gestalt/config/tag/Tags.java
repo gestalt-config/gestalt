@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a collection of tags that can be applied to data.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class Tags {
     private static final Tags defaultTags = new Tags(Set.of());

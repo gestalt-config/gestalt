@@ -10,7 +10,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  * Interface for decoders so we can tell which classes this decoder supports and functionality to decode them.
  *
  * @param <T> the generic type of the decoder.
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface Decoder<T> {
 

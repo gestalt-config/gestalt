@@ -20,7 +20,7 @@ weldCore = "4.0.3.Final"
 jackson = "2.16.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.22.10"
+awsBom = "2.22.13"
 gcpLibraries = "26.29.0"
 # vault
 vault = "6.2.0"
@@ -31,7 +31,7 @@ eddsa = "0.3.0"
 junit5 = "5.10.1"
 assertJ = "3.25.1"
 mockito = "5.2.0"
-mockk = "1.13.8"
+mockk = "1.13.9"
 koTestAssertions = "5.8.0"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"

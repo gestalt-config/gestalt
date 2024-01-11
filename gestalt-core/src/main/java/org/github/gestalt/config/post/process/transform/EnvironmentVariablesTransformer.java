@@ -8,7 +8,7 @@ import org.github.gestalt.config.utils.ValidateOf;
  * Allows you to inject Environment Variables into leaf values that match ${env:key},
  * where the key is used to lookup into the Environment Variables.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 @ConfigPriority(100)
 public final class EnvironmentVariablesTransformer implements Transformer {

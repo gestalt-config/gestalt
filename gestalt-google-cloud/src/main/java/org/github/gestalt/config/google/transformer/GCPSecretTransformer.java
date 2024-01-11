@@ -14,7 +14,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 /**
  * Allows you to substitute a GCP secret using ${gcpSecret:key}.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class GCPSecretTransformer implements Transformer {
 

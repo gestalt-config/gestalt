@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Splits the sentence by camel case and converts it to Snake Case.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 @ConfigPriority(550)
 public final class SnakeCasePathMapper implements PathMapper {

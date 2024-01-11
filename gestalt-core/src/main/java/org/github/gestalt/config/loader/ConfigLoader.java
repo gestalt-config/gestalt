@@ -16,7 +16,7 @@ import java.util.List;
  * <p>A config loader knows how to load a specific format, so a property loader will load a stream of properties.
  * An Environment Vars loader will load a list of Environment Variables.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface ConfigLoader {
     /**

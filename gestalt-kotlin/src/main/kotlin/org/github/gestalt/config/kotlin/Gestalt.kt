@@ -8,7 +8,7 @@ import kotlin.reflect.typeOf
 /**
  * reified function to get a config, that automatically gets the generic type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 inline fun <reified T> Gestalt.getConfig(path: String, tags: Tags = Tags.of()): T {
     val type = typeOf<T>()

@@ -23,7 +23,7 @@ import java.util.Optional;
  * <p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
  *
  * @author <a href="https://github.com/guhilling">Gunnar Hilling</a>
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023. (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024. (c) 2024.
  */
 @SuppressWarnings({"StringSplitter", "TypeParameterUnusedInFormals"})
 public final class GestaltConfigProducerUtil {

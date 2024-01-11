@@ -1089,7 +1089,7 @@ To implement your own Post Processor you need to inherit from PostProcessor.
 /**
  * Interface for the Post Processing of Config nodes. This will be run against every node in the tree. 
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface PostProcessor {
   ValidateOf<ConfigNode> process(String path, ConfigNode currentNode);

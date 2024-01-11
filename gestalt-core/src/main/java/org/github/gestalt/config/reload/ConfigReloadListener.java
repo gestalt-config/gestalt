@@ -6,7 +6,7 @@ import org.github.gestalt.config.source.ConfigSource;
 /**
  * Listener for when configs need to reloads.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface ConfigReloadListener {
     /**

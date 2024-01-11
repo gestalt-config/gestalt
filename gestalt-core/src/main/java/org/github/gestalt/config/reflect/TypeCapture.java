@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * This class is modeled on the TypeToken from Guava, TypeLiteral from guice and jackson.
  *
  * @param <T> type to capture
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class TypeCapture<T> {
     /**

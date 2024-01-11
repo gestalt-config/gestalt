@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 /**
  * Decode an Enum.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 

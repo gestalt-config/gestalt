@@ -6,7 +6,7 @@ import java.util.Objects;
  * A simple class that holds a pair of values. There are many implementations of this but i didnt want to pull in
  * another library only for a simple class.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class Triple<A, B, C> {
 

@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 /**
  * Allows you to substitute an aws secret using ${awsSecret:secretName:secretKey}.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class AWSSecretTransformer implements Transformer {
 

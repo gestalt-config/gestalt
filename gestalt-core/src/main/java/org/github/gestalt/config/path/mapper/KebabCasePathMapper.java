@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Splits the sentence by camel case and converts it to Kebab Case.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 @ConfigPriority(600)
 public final class KebabCasePathMapper implements PathMapper {

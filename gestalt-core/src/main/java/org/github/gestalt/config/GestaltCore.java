@@ -37,7 +37,7 @@ import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class GestaltCore implements Gestalt, ConfigReloadListener {
     private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());

@@ -10,7 +10,7 @@ import kotlin.reflect.typeOf
 /**
  * Extension function for koin to allow us to inject configuration using the method gestalt
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 inline fun <reified T : Any> Scope.gestalt(
     path: String,

@@ -9,7 +9,7 @@ import java.util.Base64;
 /**
  * Allows you to encode a string to base 64.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class Base64EncoderTransformer implements Transformer {
     @Override

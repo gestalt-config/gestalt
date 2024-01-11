@@ -8,7 +8,7 @@ import org.github.gestalt.config.utils.ValidateOf;
 /**
  * Decode a boolean.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class BooleanDecoder extends LeafDecoder<Boolean> {
 

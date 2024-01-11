@@ -13,7 +13,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin Short Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 class ShortDecoder : LeafDecoder<Short>() {
     override fun name(): String {

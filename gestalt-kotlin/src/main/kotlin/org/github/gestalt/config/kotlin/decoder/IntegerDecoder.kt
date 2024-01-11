@@ -13,7 +13,7 @@ import org.github.gestalt.config.utils.ValidateOf
 /**
  * Kotlin Int Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 class IntegerDecoder : LeafDecoder<Int>() {
     override fun name(): String {

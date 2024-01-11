@@ -3,7 +3,7 @@ package org.github.gestalt.config.token;
 /**
  * interface for a token.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class Token {
     /**

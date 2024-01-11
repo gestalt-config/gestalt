@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class for collections.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class CollectionUtils {
 

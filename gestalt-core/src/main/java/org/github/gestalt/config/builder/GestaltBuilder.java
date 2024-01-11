@@ -53,7 +53,7 @@ import static org.github.gestalt.config.decoder.ProxyDecoderMode.CACHE;
  *
  * <p>The builder can be used to customize and replace any of the functionality of Gestalt.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class GestaltBuilder {
     private static final System.Logger logger = System.getLogger(GestaltBuilder.class.getName());

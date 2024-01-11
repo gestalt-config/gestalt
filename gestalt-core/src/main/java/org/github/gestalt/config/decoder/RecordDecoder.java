@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Decoder support for Java Records.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class RecordDecoder implements Decoder<Object> {
 

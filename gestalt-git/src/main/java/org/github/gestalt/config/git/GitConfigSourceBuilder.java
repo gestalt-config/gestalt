@@ -11,7 +11,7 @@ import java.nio.file.Path;
 /**
  * Builder that allows you to construct a GitConfigSource.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class GitConfigSourceBuilder extends SourceBuilder<GitConfigSourceBuilder, GitConfigSource> {
     private String repoURI;

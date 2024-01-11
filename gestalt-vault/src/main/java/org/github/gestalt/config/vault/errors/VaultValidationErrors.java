@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * Validation errors for Vault Module.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2023.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class VaultValidationErrors {
 
