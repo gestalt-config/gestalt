@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class MainClass {
 
-    public static void main(String[] args) throws GestaltException, IOException, InterruptedException, VaultException {
+    public static void main(String[] args) throws GestaltException, IOException, VaultException {
         GestaltConfigTest configTest = new GestaltConfigTest();
         configTest.integrationTest();
         configTest.integrationTestNoCache();

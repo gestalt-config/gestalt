@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 class SequencedMapDecoderTest {
 
     final SentenceLexer lexer = new PathLexer();
@@ -263,7 +264,7 @@ class SequencedMapDecoderTest {
         Assertions.assertEquals(3, results2.size());
         var first = results2.removeFirst();
         Assertions.assertEquals("port", first.getKey());
-        Assertions.assertEquals(null, first.getValue());
+        Assertions.assertNull(first.getValue());
         Assertions.assertEquals(Map.entry("uri", "mysql.com"), results2.removeFirst());
         Assertions.assertEquals(Map.entry("password", "pass"), results2.removeFirst());
     }
@@ -284,7 +285,7 @@ class SequencedMapDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Map key was null on path: db.host",
-            validate.getErrors().get(0).description());
+            validate.getErrors().getFirst().description());
 
         Map<String, String> results = (Map<String, String>) validate.results();
         Assertions.assertNull(results.get("port"));
@@ -326,7 +327,7 @@ class SequencedMapDecoderTest {
         Assertions.assertEquals(3, results2.size());
         var first = results2.removeFirst();
         Assertions.assertEquals("port", first.getKey());
-        Assertions.assertEquals(null, first.getValue());
+        Assertions.assertNull(first.getValue());
         Assertions.assertEquals(Map.entry("uri", "mysql.com"), results2.removeFirst());
         Assertions.assertEquals(Map.entry("password", "pass"), results2.removeFirst());
     }
@@ -342,7 +343,7 @@ class SequencedMapDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : LEAF",
-            validate.getErrors().get(0).description());
+            validate.getErrors().getFirst().description());
     }
 
     @Test
@@ -363,7 +364,7 @@ class SequencedMapDecoderTest {
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Expected a map on path: db.host, received node type : map, " +
                 "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
-            validate.getErrors().get(0).description());
+            validate.getErrors().getFirst().description());
     }
 
     @Test
@@ -378,7 +379,7 @@ class SequencedMapDecoderTest {
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Expected a map on path: db.host, received node type : map, " +
                 "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
-            validate.getErrors().get(0).description());
+            validate.getErrors().getFirst().description());
     }
 
     @Test
@@ -391,7 +392,7 @@ class SequencedMapDecoderTest {
 
         Assertions.assertEquals(1, validate.getErrors().size());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : null",
-            validate.getErrors().get(0).description());
+            validate.getErrors().getFirst().description());
     }
 
     static class User {

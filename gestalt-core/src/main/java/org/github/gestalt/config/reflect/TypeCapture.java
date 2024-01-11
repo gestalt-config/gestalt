@@ -251,7 +251,7 @@ public class TypeCapture<T> {
 
     /**
      * Lifted from Guice TypeLiteral.
-     * https://github.com/google/guice/blob/master/core/src/com/google/inject/TypeLiteral.java
+     * <a href="https://github.com/google/guice/blob/master/core/src/com/google/inject/TypeLiteral.java">...</a>
      *
      * @param type java type
      * @return class of the raw type

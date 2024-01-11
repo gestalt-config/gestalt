@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 // cicd isn't setup to run this test.
+@SuppressWarnings("resource")
 class GitConfigSourceTest {
 
     @Test

@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.Mockito.times;
 
+@SuppressWarnings("rawtypes")
 class GCPSecretTransformerTest {
 
     private final SecretManagerServiceClient secretManagerServiceClient = Mockito.mock();
@@ -41,7 +41,7 @@ class GCPSecretTransformerTest {
     }
 
     @Test
-    void process() throws IOException {
+    void process() {
 
         GestaltConfig config = new GestaltConfig();
         PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
@@ -68,7 +68,7 @@ class GCPSecretTransformerTest {
     }
 
     @Test
-    void processConfigNoProjectSet() throws IOException {
+    void processConfigNoProjectSet() {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(new GoogleModuleConfig());
@@ -98,7 +98,7 @@ class GCPSecretTransformerTest {
     }
 
     @Test
-    void processConfigProjectSet() throws IOException {
+    void processConfigProjectSet() {
         GoogleModuleConfig googleModuleConfig = new GoogleModuleConfig("myProject");
         googleModuleConfig.setProjectId("myProject");
 
@@ -132,7 +132,7 @@ class GCPSecretTransformerTest {
     }
 
     @Test
-    void processError() throws IOException {
+    void processError() {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(new GoogleModuleConfig());

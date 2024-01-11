@@ -27,7 +27,7 @@ public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
 
     private WatchService watcher;
 
-    private ExecutorService executor;
+    private final ExecutorService executor;
 
     private volatile boolean isWatching = false;
 

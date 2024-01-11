@@ -13,7 +13,7 @@ import static java.lang.invoke.MethodType.methodType;
 
 /**
  * Large parts of this code is borrowed from
- * https://github.com/FrauBoes/record-s11n-util/blob/main/src/invoke/InvokeUtils.java
+ * <a href="https://github.com/FrauBoes/record-s11n-util/blob/main/src/invoke/InvokeUtils.java">...</a>
  *
  * <p>Utility methods for record serialization, using MethodHandles.
  *
@@ -165,6 +165,7 @@ public final class RecordUtils {
      * @param args objects used to create the  record
      * @return the record created
      */
+    @SuppressWarnings("unchecked")
     public static <T> T invokeCanonicalConstructor(Class<T> recordType,
                                                    RecComponent[] recordComponents,
                                                    Object[] args) {

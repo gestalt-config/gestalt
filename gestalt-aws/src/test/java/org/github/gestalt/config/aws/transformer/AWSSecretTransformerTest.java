@@ -20,8 +20,8 @@ import software.amazon.awssdk.services.secretsmanager.model.InvalidParameterExce
 
 class AWSSecretTransformerTest {
 
-    SecretsManagerClientBuilder secretsManagerClientBuilder = Mockito.mock();
-    SecretsManagerClient secretsManagerClient = Mockito.mock();
+    final SecretsManagerClientBuilder secretsManagerClientBuilder = Mockito.mock();
+    final SecretsManagerClient secretsManagerClient = Mockito.mock();
 
     @BeforeEach
     public void setup() {

@@ -7,7 +7,7 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.MapConfigSource;
+import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldJunit5Extension;
 import org.jboss.weld.junit5.WeldSetup;
@@ -59,7 +59,7 @@ class InjectConfigsInjectionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build();
         gestalt.loadConfigs();
 

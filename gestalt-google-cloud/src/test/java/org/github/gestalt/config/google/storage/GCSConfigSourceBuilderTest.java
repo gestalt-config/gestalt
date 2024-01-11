@@ -33,7 +33,7 @@ class GCSConfigSourceBuilderTest {
     }
 
     @Test
-    void buildGCSConfigSourceNullStorage() throws GestaltException {
+    void buildGCSConfigSourceNullStorage() {
         GCSConfigSourceBuilder builder = GCSConfigSourceBuilder.builder();
         //builder.setStorage(storage);
         builder.setBucketName("testBucket");
@@ -45,7 +45,7 @@ class GCSConfigSourceBuilderTest {
     }
 
     @Test
-    void buildGCSConfigSourceNullBucket() throws GestaltException {
+    void buildGCSConfigSourceNullBucket() {
         GCSConfigSourceBuilder builder = GCSConfigSourceBuilder.builder();
         builder.setStorage(storage);
         //builder.setBucketName("testBucket");
@@ -57,7 +57,7 @@ class GCSConfigSourceBuilderTest {
     }
 
     @Test
-    void buildGCSConfigSourceNullObject() throws GestaltException {
+    void buildGCSConfigSourceNullObject() {
         GCSConfigSourceBuilder builder = GCSConfigSourceBuilder.builder();
         builder.setStorage(storage);
         builder.setBucketName("testBucket");

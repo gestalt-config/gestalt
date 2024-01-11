@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Actual implementations for producer method in CDI producer {@link GestaltConfigProducer}.
  *
- * <p>Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ * <p>Based on <a href="https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi">...</a>
  *
  * @author <a href="https://github.com/guhilling">Gunnar Hilling</a>
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024. (c) 2024.

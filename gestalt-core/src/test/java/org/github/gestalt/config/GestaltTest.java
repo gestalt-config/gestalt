@@ -741,13 +741,13 @@ class GestaltTest {
 
         Assertions.assertEquals(Optional.of("test"), gestalt.getConfigOptional("db.name", String.class));
         Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class));
-        Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class));
-        Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class));
+        Assertions.assertEquals(Optional.of(3306), gestalt.getConfigOptional("db.port", Integer.class));
+        Assertions.assertEquals(Optional.of(3306L), gestalt.getConfigOptional("db.port", Long.class));
 
         Assertions.assertEquals(Optional.of("test"), gestalt.getConfigOptional("db.name", String.class, Tags.of()));
         Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class, Tags.of()));
-        Assertions.assertEquals(Optional.of(Integer.valueOf(3306)), gestalt.getConfigOptional("db.port", Integer.class, Tags.of()));
-        Assertions.assertEquals(Optional.of(Long.valueOf(3306)), gestalt.getConfigOptional("db.port", Long.class, Tags.of()));
+        Assertions.assertEquals(Optional.of(3306), gestalt.getConfigOptional("db.port", Integer.class, Tags.of()));
+        Assertions.assertEquals(Optional.of(3306L), gestalt.getConfigOptional("db.port", Long.class, Tags.of()));
 
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.port", Integer.class));
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("redis.uri", String.class));
@@ -1139,7 +1139,7 @@ class GestaltTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatMissingValuesAsErrors(false)
             .setTreatNullValuesInClassAsErrors(true)
             .build();
@@ -1166,7 +1166,7 @@ class GestaltTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatMissingValuesAsErrors(true)
             .setTreatNullValuesInClassAsErrors(true)
             .build();
@@ -1785,12 +1785,8 @@ class GestaltTest {
 
         gestalt.loadConfigs();
 
-        CoreReloadListener listener = new CoreReloadListener() {
+        CoreReloadListener listener = () -> {
 
-            @Override
-            public void reload() {
-
-            }
         };
         gestalt.registerListener(listener);
         gestalt.removeListener(listener);

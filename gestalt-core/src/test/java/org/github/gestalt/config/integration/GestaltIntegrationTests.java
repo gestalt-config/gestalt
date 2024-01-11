@@ -347,7 +347,7 @@ public class GestaltIntegrationTests {
         Gestalt gestalt = builder
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPEnv.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addDefaultPostProcessors()
             .setTreatNullValuesInClassAsErrors(false)
             .build();

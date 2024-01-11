@@ -26,7 +26,7 @@ class EnvironmentConfigSourceBuilderTest {
             () -> assertEquals(failOnErrors, builder.isFailOnErrors())
         );
 
-        assertDoesNotThrow(() -> builder.build());
+        assertDoesNotThrow(builder::build);
 
         var result = builder.build();
         assertEquals(0, result.getConfigReloadStrategies().size());

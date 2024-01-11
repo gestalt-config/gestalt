@@ -28,6 +28,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 class DecoderRegistryTest {
     ConfigNodeService configNodeService;
     SentenceLexer lexer;

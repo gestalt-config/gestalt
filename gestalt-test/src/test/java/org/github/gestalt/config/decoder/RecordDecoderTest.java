@@ -155,9 +155,9 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().getFirst().level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().get(0).description());
+            "during navigating to next node", validate.getErrors().getFirst().description());
     }
 
     @Test
@@ -195,9 +195,9 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().getFirst().level());
         Assertions.assertEquals("Expected a leaf on path: user.admin, received node type: leaf, attempting to decode Record",
-            validate.getErrors().get(0).description());
+            validate.getErrors().getFirst().description());
     }
 
     @Test
@@ -231,9 +231,9 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().getFirst().level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().get(0).description());
+            "during navigating to next node", validate.getErrors().getFirst().description());
 
         PersonAnnotations results = (PersonAnnotations) validate.results();
         Assertions.assertEquals("tim", results.name());
@@ -312,9 +312,9 @@ class RecordDecoderTest {
         Assertions.assertTrue(validate.hasErrors());
 
         Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().getFirst().level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().get(0).description());
+            "during navigating to next node", validate.getErrors().getFirst().description());
 
         PersonOptional results = (PersonOptional) validate.results();
         Assertions.assertEquals("tim", results.name().get());

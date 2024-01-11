@@ -20,7 +20,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     protected ConfigSource source;
 
     protected Tags tags = Tags.of();
-    protected List<ConfigReloadStrategy> configReloadStrategies = new ArrayList<>();
+    protected final List<ConfigReloadStrategy> configReloadStrategies = new ArrayList<>();
 
     /**
      *  Get the tags for the builder.

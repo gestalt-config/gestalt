@@ -36,7 +36,7 @@ class RecordUtilsTest {
         Assertions.assertEquals("id", recComponents[0].name());
 
         Object value = RecordUtils.componentValue(new Person("Tim", 52), recComponents[0]);
-        Assertions.assertTrue(value instanceof Integer);
+        Assertions.assertInstanceOf(Integer.class, value);
         Assertions.assertEquals(52, (Integer) value);
         Assertions.assertEquals(String.class, recComponents[1].typeGeneric());
     }
@@ -47,7 +47,7 @@ class RecordUtilsTest {
         Assertions.assertEquals("id", recComponents[0].name());
 
         Object value = RecordUtils.componentValue(new Person3(52, "Tim"), recComponents[0]);
-        Assertions.assertTrue(value instanceof Integer);
+        Assertions.assertInstanceOf(Integer.class, value);
         Assertions.assertEquals(52, (Integer) value);
         Assertions.assertEquals(String.class, recComponents[1].typeGeneric());
         Assertions.assertNotNull(recComponents[0].getAccessor().getAnnotation(Config.class));

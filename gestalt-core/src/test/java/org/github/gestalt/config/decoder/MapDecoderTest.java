@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 class MapDecoderTest {
 
     final SentenceLexer lexer = new PathLexer();

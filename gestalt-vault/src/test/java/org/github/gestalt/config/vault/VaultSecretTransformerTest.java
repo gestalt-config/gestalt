@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+@SuppressWarnings("rawtypes")
 @Testcontainers
 class VaultSecretTransformerTest {
 

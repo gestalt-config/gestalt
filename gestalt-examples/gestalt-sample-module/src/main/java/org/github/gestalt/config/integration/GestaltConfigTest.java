@@ -9,13 +9,10 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
-import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.git.GitConfigSource;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
-import org.github.gestalt.config.google.storage.GCSConfigSource;
 import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
@@ -504,7 +501,7 @@ public class GestaltConfigTest {
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
-        Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
+        Assertions.assertEquals("credmond", db.hosts.getFirst().getUser());
         // index into the path of an array.
         Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
         Assertions.assertEquals("1234", db.hosts.get(0).getPassword());
@@ -527,7 +524,7 @@ public class GestaltConfigTest {
         Assertions.assertNull(dbPrefix.isEnabled);
 
         Assertions.assertEquals(3, dbPrefix.hosts.size());
-        Assertions.assertEquals("credmond", dbPrefix.hosts.get(0).getUser());
+        Assertions.assertEquals("credmond", dbPrefix.hosts.getFirst().getUser());
         // index into the path of an array.
         Assertions.assertEquals("1234", dbPrefix.hosts.get(0).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", dbPrefix.hosts.get(0).url);
@@ -541,7 +538,7 @@ public class GestaltConfigTest {
         List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
-        Assertions.assertEquals("credmond", hosts.get(0).getUser());
+        Assertions.assertEquals("credmond", hosts.getFirst().getUser());
         Assertions.assertEquals("1234", hosts.get(0).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hosts.get(0).url);
         Assertions.assertEquals("credmond", hosts.get(1).getUser());
@@ -554,7 +551,7 @@ public class GestaltConfigTest {
         List<IHost> ihosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, ihosts.size());
-        Assertions.assertEquals("credmond", ihosts.get(0).getUser());
+        Assertions.assertEquals("credmond", ihosts.getFirst().getUser());
         Assertions.assertEquals("1234", ihosts.get(0).getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", ihosts.get(0).getUrl());
         Assertions.assertEquals("credmond", ihosts.get(1).getUser());
@@ -567,15 +564,15 @@ public class GestaltConfigTest {
         List<IHostDefault> ihostsDefault = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, ihostsDefault.size());
-        Assertions.assertEquals("credmond", ihostsDefault.get(0).getUser());
-        Assertions.assertEquals("1234", ihostsDefault.get(0).getPassword());
+        Assertions.assertEquals("credmond", ihostsDefault.getFirst().getUser());
+        Assertions.assertEquals("1234", ihostsDefault.getFirst().getPassword());
         //Assertions.assertEquals(10, ihostsDefault.get(0).getPort());
 
         List<IHostAnnotations> iHostAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, iHostAnnotations.size());
-        Assertions.assertEquals("credmond", iHostAnnotations.get(0).getUser());
-        Assertions.assertEquals("1234", iHostAnnotations.get(0).getPassword());
+        Assertions.assertEquals("credmond", iHostAnnotations.getFirst().getUser());
+        Assertions.assertEquals("1234", iHostAnnotations.getFirst().getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", iHostAnnotations.get(0).getUrl());
         Assertions.assertEquals("customers", iHostAnnotations.get(0).getTable());
         Assertions.assertEquals("credmond", iHostAnnotations.get(1).getUser());
@@ -590,8 +587,8 @@ public class GestaltConfigTest {
         List<HostAnnotations> hostsAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hostsAnnotations.size());
-        Assertions.assertEquals("credmond", hostsAnnotations.get(0).getUser());
-        Assertions.assertEquals("1234", hostsAnnotations.get(0).getPassword());
+        Assertions.assertEquals("credmond", hostsAnnotations.getFirst().getUser());
+        Assertions.assertEquals("1234", hostsAnnotations.getFirst().getPassword());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsAnnotations.get(0).getUrl());
         Assertions.assertEquals("customers", hostsAnnotations.get(0).getTable());
         Assertions.assertEquals("credmond", hostsAnnotations.get(1).getUser());
@@ -606,8 +603,8 @@ public class GestaltConfigTest {
         List<HostMethodAnnotations> hostsMethodAnnotations = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hostsMethodAnnotations.size());
-        Assertions.assertEquals("credmond", hostsMethodAnnotations.get(0).getUser());
-        Assertions.assertEquals("1234", hostsMethodAnnotations.get(0).getSecret());
+        Assertions.assertEquals("credmond", hostsMethodAnnotations.getFirst().getUser());
+        Assertions.assertEquals("1234", hostsMethodAnnotations.getFirst().getSecret());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hostsMethodAnnotations.get(0).getUrl());
         Assertions.assertEquals("customers", hostsMethodAnnotations.get(0).getTable());
         Assertions.assertEquals("credmond", hostsMethodAnnotations.get(1).getUser());
@@ -655,7 +652,7 @@ public class GestaltConfigTest {
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
-        Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
+        Assertions.assertEquals("credmond", db.hosts.getFirst().getUser());
         // index into the path of an array.
         Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
         Assertions.assertEquals("1234", db.hosts.get(0).getPassword());

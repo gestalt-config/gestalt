@@ -805,10 +805,10 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
   .build();
 ```
 
-| Reload Strategy | Details |
-| --------------- | ------- | 
-| FileChangeReload | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file. When the file changes it will tell Gestalt to reload the file. Also works with symlink and will reload if the symlink change.  |
-| TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration |
+| Reload Strategy           | Details                                                                                                                                                                                                                   |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| FileChangeReload          | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file. When the file changes it will tell Gestalt to reload the file. Also works with symlink and will reload if the symlink change. |
+| TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration                                                                                                           |
 
 # Gestalt configuration
 | Configuration                 | default  | Details                                                                                                                                                                                                                                                                                                          |

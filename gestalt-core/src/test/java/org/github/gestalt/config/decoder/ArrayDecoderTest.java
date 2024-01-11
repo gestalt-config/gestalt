@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 class ArrayDecoderTest {
     final DoubleDecoder doubleDecoder = new DoubleDecoder();
     final StringDecoder stringDecoder = new StringDecoder();

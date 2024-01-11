@@ -156,7 +156,7 @@ public final class ProxyDecoder implements Decoder<Object> {
             case CACHE:
             default: {
                 proxyHandler = new ProxyCacheInvocationHandler(path, tags, decoderContext, methodResults);
-                if(decoderContext.getGestalt() != null) {
+                if (decoderContext.getGestalt() != null) {
                     decoderContext.getGestalt().registerListener((ProxyCacheInvocationHandler) proxyHandler);
                 }
                 break;
@@ -211,7 +211,7 @@ public final class ProxyDecoder implements Decoder<Object> {
             String nextPath = PathUtil.pathForKey(path, name);
 
             Optional<Object> result = Optional.empty();
-            if(decoderContext.getGestalt() != null) {
+            if (decoderContext.getGestalt() != null) {
                 result = decoderContext.getGestalt().getConfigOptional(nextPath, TypeCapture.of(genericType), tags);
             }
 
@@ -271,9 +271,9 @@ public final class ProxyDecoder implements Decoder<Object> {
                 return result;
             } else {
                 Optional<Object> resultOptional = retrieveConfig(proxy, method, args);
-                var gestaltResult =  resultOptional.orElseThrow(() ->
+                var gestaltResult = resultOptional.orElseThrow(() ->
                     new GestaltException("Failed to get cached object from proxy config while calling method: " + methodName +
-                    " with type: " + returnType + " in path: " + path + "."));
+                        " with type: " + returnType + " in path: " + path + "."));
 
                 methodResults.put(methodName, gestaltResult);
 

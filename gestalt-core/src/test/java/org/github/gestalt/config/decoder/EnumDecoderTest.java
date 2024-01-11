@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 class EnumDecoderTest {
 
     ConfigNodeService configNodeService;

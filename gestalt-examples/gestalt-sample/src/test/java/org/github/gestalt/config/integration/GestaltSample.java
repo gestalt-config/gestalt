@@ -12,14 +12,11 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
-import org.github.gestalt.config.aws.s3.S3ConfigSource;
 import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.git.GitConfigSource;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
-import org.github.gestalt.config.google.storage.GCSConfigSource;
 import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
@@ -82,6 +79,8 @@ public class GestaltSample {
             .withInitialBuckets(String.join(",", INITIAL_BUCKET_NAMES));
 
     private static final String VAULT_TOKEN = "my-root-token";
+
+    @SuppressWarnings("rawtypes")
     @Container
     private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.13.0").withVaultToken(VAULT_TOKEN);
 
@@ -353,8 +352,6 @@ public class GestaltSample {
 
         devFile = tempFile.toFile();
 
-        ConfigSource devFileSource = new FileConfigSource(devFile);
-
         TestReloadListener reloadListener = new TestReloadListener();
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -509,10 +506,10 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new URLConfigSource(urlFile))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
-            .addSource(new EnvironmentConfigSource())
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(urlFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(EnvironmentConfigSourceBuilder.builder().build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -555,9 +552,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/defaultMulti.properties"))
-            .addSource(new ClassPathConfigSource("integration.properties"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultMulti.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -588,9 +585,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -612,9 +609,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("default.yml"))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.yml").build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -633,9 +630,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new ClassPathConfigSource("/default.json"))
-            .addSource(new ClassPathConfigSource("dev.yml"))
-            .addSource(new MapConfigSource(configs))
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.json").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -660,9 +657,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 
@@ -687,9 +684,9 @@ public class GestaltSample {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new FileConfigSource(defaultFile))
-            .addSource(new FileConfigSource(devFile))
-            .addSource(new MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build();
 

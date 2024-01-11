@@ -2,10 +2,8 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
-import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
-import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.test.classes.*;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +18,7 @@ import java.util.Map;
 class ProxyDecoderPassThroughTest {
 
     @BeforeEach
-    void setup() throws GestaltConfigurationException {
+    void setup() {
 
     }
 
@@ -49,7 +47,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -76,7 +74,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -100,7 +98,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -128,7 +126,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -169,7 +167,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(true)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -201,7 +199,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -241,7 +239,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -273,7 +271,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -301,7 +299,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -324,7 +322,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -347,7 +345,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -376,7 +374,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
@@ -400,7 +398,7 @@ class ProxyDecoderPassThroughTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(new MapConfigSource(configs))
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();

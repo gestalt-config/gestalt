@@ -4,9 +4,9 @@ import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.getConfig
 import org.github.gestalt.config.reflect.TypeCapture
-import org.github.gestalt.config.source.EnvironmentConfigSource
-import org.github.gestalt.config.source.FileConfigSource
-import org.github.gestalt.config.source.MapConfigSource
+import org.github.gestalt.config.source.EnvironmentConfigSourceBuilder
+import org.github.gestalt.config.source.FileConfigSourceBuilder
+import org.github.gestalt.config.source.MapConfigSourceBuilder
 import org.github.gestalt.config.tag.Tags
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -27,9 +27,9 @@ class KotlinGestaltIntegrationTests {
         val devFile = File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
-            .addSource(FileConfigSource(devFile))
-            .addSource(MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
@@ -124,9 +124,9 @@ class KotlinGestaltIntegrationTests {
         val devFile = File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
-            .addSource(FileConfigSource(devFile))
-            .addSource(MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build()
         gestalt.loadConfigs()
         val maxTotal: Short? = gestalt.getConfig("http.pool.maxTotal")
@@ -162,9 +162,9 @@ class KotlinGestaltIntegrationTests {
         val devFile = File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
-            .addSource(FileConfigSource(devFile))
-            .addSource(MapConfigSource(configs))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatMissingValuesAsErrors(false)
             .build()
         gestalt.loadConfigs()
@@ -197,8 +197,8 @@ class KotlinGestaltIntegrationTests {
         val devFile = File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
-            .addSource(FileConfigSource(devFile, Tags.of("env", "dev")))
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).setTags(Tags.of("env", "dev")).build())
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig<HttpPool>("http.pool")
@@ -237,10 +237,10 @@ class KotlinGestaltIntegrationTests {
         val devFile = File(devFileURL.file)
         val builder = GestaltBuilder()
         val gestalt = builder
-            .addSource(FileConfigSource(defaultFile))
-            .addSource(FileConfigSource(devFile))
-            .addSource(MapConfigSource(configs))
-            .addSource(EnvironmentConfigSource())
+            .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(EnvironmentConfigSourceBuilder.builder().build())
             .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()

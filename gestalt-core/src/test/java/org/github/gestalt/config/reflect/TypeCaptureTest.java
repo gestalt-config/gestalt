@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 class TypeCaptureTest {
 
     @Test

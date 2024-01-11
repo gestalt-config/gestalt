@@ -11,7 +11,7 @@ import java.util.Objects;
  * ConfigSourceBuilder for the Kubernetes Secret Config Source.
  *
  * <p>Load a config source as kubernetes files secrets.
- * https://kubernetes.io/docs/concepts/configuration/secret/#projection-of-secret-keys-to-specific-paths
+ * <a href="https://kubernetes.io/docs/concepts/configuration/secret/#projection-of-secret-keys-to-specific-paths">...</a>
  * Where the name of the file is the path for the configuration and
  * the value in the file is the value of the configuration.
  *

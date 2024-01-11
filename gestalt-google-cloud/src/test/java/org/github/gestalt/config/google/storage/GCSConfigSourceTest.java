@@ -45,7 +45,7 @@ class GCSConfigSourceTest {
     }
 
     @Test
-    void loadFileException() throws GestaltException, IOException {
+    void loadFileException() throws GestaltException {
 
         final File uploadFile = new File(UPLOAD_FILE_NAME);
 

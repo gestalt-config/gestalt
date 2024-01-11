@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -72,7 +71,7 @@ class BigDecimalDecoderTest {
     }
 
     @Test
-    void bigDecimalDecoder() throws GestaltException {
+    void bigDecimalDecoder() {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"),
@@ -84,7 +83,7 @@ class BigDecimalDecoderTest {
     }
 
     @Test
-    void bigDecimalDecoderType() throws GestaltException {
+    void bigDecimalDecoderType() {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"), new TypeCapture<Double>() {
@@ -96,7 +95,7 @@ class BigDecimalDecoderTest {
     }
 
     @Test
-    void bigDecimalDecoder2() throws GestaltException {
+    void bigDecimalDecoder2() {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
@@ -108,7 +107,7 @@ class BigDecimalDecoderTest {
     }
 
     @Test
-    void notABigDecimal() throws GestaltException {
+    void notABigDecimal() {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         ValidateOf<BigDecimal> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),

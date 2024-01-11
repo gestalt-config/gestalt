@@ -27,7 +27,7 @@ class TripleTest {
         Triple<Integer, Long, String> triple4 = new Triple<>(1, 3L, "abc");
         Assertions.assertEquals(triple, triple);
         Assertions.assertNotEquals(triple, triple2);
-        Assertions.assertNotEquals(triple2, Long.valueOf(12L));
+        Assertions.assertNotEquals(triple2, 12L);
         Assertions.assertNotEquals(triple, triple3);
         Assertions.assertNotEquals(triple, triple4);
     }

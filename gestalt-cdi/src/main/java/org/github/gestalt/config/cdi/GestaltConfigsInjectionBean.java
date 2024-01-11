@@ -15,7 +15,7 @@ import java.util.Set;
 
 
 /**
- * Based on https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi
+ * Based on <a href="https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi">...</a>
  */
 public final class GestaltConfigsInjectionBean<T> implements Bean<T> {
     private final ConfigClassWithPrefix configClassWithPrefix;

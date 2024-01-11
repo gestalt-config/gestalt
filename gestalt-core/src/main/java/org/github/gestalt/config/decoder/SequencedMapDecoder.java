@@ -51,6 +51,7 @@ public final class SequencedMapDecoder implements Decoder<Map<?, ?>> {
         return sequencedMap != null && sequencedMap.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ValidateOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<Map<?, ?>> results;

@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@SuppressWarnings("resource")
 public class SourceBuilderTest {
 
     private TestSourceBuilder sourceBuilder;
@@ -42,12 +41,12 @@ public class SourceBuilderTest {
     }
 
     @BeforeEach
-    public void setUp() throws GestaltException {
+    public void setUp() {
         sourceBuilder = new TestSourceBuilder();
     }
 
     @Test
-    public void testSourceBuilder() throws GestaltException {
+    public void testSourceBuilder() {
         sourceBuilder = sourceBuilder.setSource("abc=def")
             .setTags(Tags.environment("dev"));
 

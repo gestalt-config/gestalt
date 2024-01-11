@@ -83,7 +83,7 @@ public class GestaltSampleJavaLatest {
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled.2", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
-        Assertions.assertEquals("credmond", db.hosts.get(0).user());
+        Assertions.assertEquals("credmond", db.hosts.getFirst().user());
         // index into the path of an array.
         Assertions.assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test", String.class));
         Assertions.assertEquals("1234", db.hosts.get(0).password());
@@ -100,7 +100,7 @@ public class GestaltSampleJavaLatest {
         List<Host> hosts = gestalt.getConfig("db.hosts", Collections.emptyList(), new TypeCapture<>() {
         });
         Assertions.assertEquals(3, hosts.size());
-        Assertions.assertEquals("credmond", hosts.get(0).user());
+        Assertions.assertEquals("credmond", hosts.getFirst().user());
         Assertions.assertEquals("1234", hosts.get(0).password());
         Assertions.assertEquals("jdbc:postgresql://dev.host.name1:5432/mydb", hosts.get(0).url);
         Assertions.assertEquals("credmond", hosts.get(1).user());

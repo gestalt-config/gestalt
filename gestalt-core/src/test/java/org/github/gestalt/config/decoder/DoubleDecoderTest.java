@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -62,7 +61,7 @@ class DoubleDecoderTest {
     }
 
     @Test
-    void decodeDouble() throws GestaltException {
+    void decodeDouble() {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"),
@@ -74,7 +73,7 @@ class DoubleDecoderTest {
     }
 
     @Test
-    void decodeDoubleType() throws GestaltException {
+    void decodeDoubleType() {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"), new TypeCapture<Double>() {
@@ -86,7 +85,7 @@ class DoubleDecoderTest {
     }
 
     @Test
-    void decodeDouble2() throws GestaltException {
+    void decodeDouble2() {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
@@ -98,7 +97,7 @@ class DoubleDecoderTest {
     }
 
     @Test
-    void notADouble() throws GestaltException {
+    void notADouble() {
         DoubleDecoder doubleDecoder = new DoubleDecoder();
 
         ValidateOf<Double> validate = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),

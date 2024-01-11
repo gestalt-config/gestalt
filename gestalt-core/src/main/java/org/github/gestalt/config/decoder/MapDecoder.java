@@ -38,6 +38,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
         return Map.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ValidateOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         ValidateOf<Map<?, ?>> results;

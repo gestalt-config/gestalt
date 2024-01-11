@@ -26,7 +26,8 @@ public final class SequencedCollectionDecoder extends CollectionDecoder<List<?>>
             sequencedCollection = Class.forName("java.util.SequencedCollection");
         } catch (ClassNotFoundException e) {
             sequencedCollection = null;
-            logger.log(System.Logger.Level.TRACE, "Unable to find class java.util.SequencedCollection, SequencedCollectionDecoder disabled");
+            logger.log(System.Logger.Level.TRACE, "Unable to find class java.util.SequencedCollection, " +
+                "SequencedCollectionDecoder disabled");
         }
     }
 

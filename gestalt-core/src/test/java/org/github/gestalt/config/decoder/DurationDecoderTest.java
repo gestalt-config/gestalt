@@ -2,7 +2,6 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -62,7 +61,7 @@ class DurationDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         DurationDecoder decoder = new DurationDecoder();
 
         ValidateOf<Duration> validate = decoder.decode("db.port", Tags.of(), new LeafNode("124"),
@@ -74,7 +73,7 @@ class DurationDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         DurationDecoder decoder = new DurationDecoder();
 
         ValidateOf<Duration> validate = decoder.decode("db.port", Tags.of(), new LeafNode("12s4"),

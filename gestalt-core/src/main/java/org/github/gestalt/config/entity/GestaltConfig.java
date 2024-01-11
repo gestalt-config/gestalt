@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class GestaltConfig {
 
+    @SuppressWarnings("rawtypes")
     private final Map<Class, GestaltModuleConfig> modulesConfig = new HashMap<>();
     // Treat all warnings as errors
     private boolean treatWarningsAsErrors = false;
@@ -287,6 +288,7 @@ public class GestaltConfig {
         modulesConfig.put(module.getClass(), module);
     }
 
+    @SuppressWarnings("rawtypes")
     public void registerModuleConfig(Map<Class, GestaltModuleConfig> module) {
         modulesConfig.putAll(module);
     }

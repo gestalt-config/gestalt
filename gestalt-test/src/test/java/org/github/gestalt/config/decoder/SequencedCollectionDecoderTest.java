@@ -11,7 +11,6 @@ import org.github.gestalt.config.utils.ValidateOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.*;
 
@@ -149,7 +148,7 @@ class SequencedCollectionDecoderTest {
         Assertions.assertTrue(values.hasResults());
         Assertions.assertEquals(4, values.results().size());
         Assertions.assertEquals(1, values.getErrors().size());
-        Assertions.assertEquals("Missing array index: 2", values.getErrors().get(0).description());
+        Assertions.assertEquals("Missing array index: 2", values.getErrors().getFirst().description());
 
         Assertions.assertEquals(0.1111, values.results().get(0));
         Assertions.assertEquals(0.222, values.results().get(1));
@@ -217,7 +216,7 @@ class SequencedCollectionDecoderTest {
 
         Assertions.assertEquals(1, values.getErrors().size());
         Assertions.assertEquals("Leaf on path: db.hosts, has no value attempting to decode SequencedCollection",
-            values.getErrors().get(0).description());
+            values.getErrors().getFirst().description());
     }
 
     @Test
@@ -232,7 +231,7 @@ class SequencedCollectionDecoderTest {
 
         Assertions.assertEquals(1, values.getErrors().size());
         Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: null, attempting to decode SequencedCollection",
-            values.getErrors().get(0).description());
+            values.getErrors().getFirst().description());
     }
 
     @Test
@@ -272,7 +271,7 @@ class SequencedCollectionDecoderTest {
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
         Assertions.assertEquals(1, values.results().size());
-        Assertions.assertEquals("", values.results().get(0));
+        Assertions.assertEquals("", values.results().getFirst());
 
         SequencedCollection<?> sq = values.results();
         Assertions.assertEquals(1, sq.size());
@@ -335,7 +334,7 @@ class SequencedCollectionDecoderTest {
                 "LeafNode{value='Tom'} attempting to decode Double",
             values.getErrors().get(1).description());
 
-        Assertions.assertEquals(0.22, values.results().get(0));
+        Assertions.assertEquals(0.22, values.results().getFirst());
     }
 
     @Test
@@ -350,6 +349,6 @@ class SequencedCollectionDecoderTest {
 
         Assertions.assertEquals(1, values.getErrors().size());
         Assertions.assertEquals("Expected a Array on path: db.hosts, received node type: MAP, attempting to decode SequencedCollection",
-            values.getErrors().get(0).description());
+            values.getErrors().getFirst().description());
     }
 }

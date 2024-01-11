@@ -59,6 +59,7 @@ public class GestaltBuilder {
     private static final System.Logger logger = System.getLogger(GestaltBuilder.class.getName());
     private final List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>();
     private final List<CoreReloadListener> coreCoreReloadListeners = new ArrayList<>();
+    @SuppressWarnings("rawtypes")
     private final Map<Class, GestaltModuleConfig> modules = new HashMap<>();
     private ConfigLoaderService configLoaderService = new ConfigLoaderRegistry();
     private DecoderService decoderService;

@@ -62,7 +62,7 @@ class DateDecoderTest {
     }
 
     @Test
-    void decode() throws GestaltException {
+    void decode() {
         DateDecoder decoder = new DateDecoder();
 
         Instant instant = Instant.now();
@@ -82,7 +82,7 @@ class DateDecoderTest {
     }
 
     @Test
-    void decodeFormatNull() throws GestaltException {
+    void decodeFormatNull() {
         DateDecoder decoder = new DateDecoder(null);
 
         Instant instant = Instant.now();
@@ -122,7 +122,7 @@ class DateDecoderTest {
     }
 
     @Test
-    void decodeBadDate() throws GestaltException {
+    void decodeBadDate() {
         DateDecoder decoder = new DateDecoder();
 
         String now = "not a date";
@@ -139,7 +139,7 @@ class DateDecoderTest {
     }
 
     @Test
-    void invalidLeafNode() throws GestaltException {
+    void invalidLeafNode() {
         DateDecoder decoder = new DateDecoder();
 
         ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new LeafNode(null),
@@ -154,7 +154,7 @@ class DateDecoderTest {
     }
 
     @Test
-    void decodeInvalidNode() throws GestaltException {
+    void decodeInvalidNode() {
         DateDecoder decoder = new DateDecoder();
 
         ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
@@ -169,7 +169,7 @@ class DateDecoderTest {
     }
 
     @Test
-    void decodeNullNode() throws GestaltException {
+    void decodeNullNode() {
         DateDecoder decoder = new DateDecoder();
 
         ValidateOf<Date> validate = decoder.decode("db.user", Tags.of(), null,

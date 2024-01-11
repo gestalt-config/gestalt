@@ -139,6 +139,7 @@ class GestaltBuilderTest {
     }
 
     @Test
+    @SuppressWarnings({"deprecation"})
     public void buildSourcePackageAndSource() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -170,6 +171,7 @@ class GestaltBuilderTest {
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void buildSourceAndSourcePackage() throws GestaltException {
         Map<String, String> configs = new HashMap<>();

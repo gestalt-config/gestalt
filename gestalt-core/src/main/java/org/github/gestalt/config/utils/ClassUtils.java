@@ -40,10 +40,6 @@ import java.util.Map;
 public final class ClassUtils {
 
     /**
-     * Maps names of primitives to their corresponding primitive {@link Class}es.
-     */
-    private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<>();
-    /**
      * Maps primitive {@link Class}es to their corresponding wrapper {@link Class}.
      */
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
@@ -52,17 +48,6 @@ public final class ClassUtils {
      */
     private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>();
 
-    static {
-        namePrimitiveMap.put("boolean", Boolean.TYPE);
-        namePrimitiveMap.put("byte", Byte.TYPE);
-        namePrimitiveMap.put("char", Character.TYPE);
-        namePrimitiveMap.put("short", Short.TYPE);
-        namePrimitiveMap.put("int", Integer.TYPE);
-        namePrimitiveMap.put("long", Long.TYPE);
-        namePrimitiveMap.put("double", Double.TYPE);
-        namePrimitiveMap.put("float", Float.TYPE);
-        namePrimitiveMap.put("void", Void.TYPE);
-    }
 
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);

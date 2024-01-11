@@ -61,6 +61,7 @@ public final class ObjectDecoder implements Decoder<Object> {
             Short.class, String.class, Void.class));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public ValidateOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
