@@ -9,7 +9,7 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.*;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,12 +74,12 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("id", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Person results = (Person) validate.results();
+        Person results = (Person) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
     }
@@ -92,11 +92,11 @@ class RecordDecoderTest {
         configs.put("id", new LeafNode("52"));
         configs.put("name", new LeafNode("tim"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
+            new DecoderContext(registry, null));        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Person results = (Person) validate.results();
+        Person results = (Person) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
     }
@@ -109,12 +109,12 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("id", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person2.class),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person2.class),
             new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Person2 results = (Person2) validate.results();
+        Person2 results = (Person2) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
     }
@@ -129,12 +129,12 @@ class RecordDecoderTest {
         configs.put("address", new LeafNode("home"));
         configs.put("phone", new LeafNode("12345"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Person results = (Person) validate.results();
+        Person results = (Person) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
     }
@@ -149,15 +149,15 @@ class RecordDecoderTest {
         configs.put("address", new LeafNode("home"));
         configs.put("phone", new LeafNode("12345"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().getFirst().level());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().getFirst().level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().getFirst().description());
+            "during navigating to next node", result.getErrors().getFirst().description());
     }
 
     @Test
@@ -170,34 +170,34 @@ class RecordDecoderTest {
         configs.put("address", new LeafNode("home"));
         configs.put("phone", new LeafNode("12345"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: user.admin.id, from node: LeafNode{value='dog'} " +
-            "attempting to decode Integer", validate.getErrors().get(0).description());
+            "attempting to decode Integer", result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(1).level());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Class, during record decoding",
-            validate.getErrors().get(1).description());
+            result.getErrors().get(1).description());
     }
 
     @Test
     void decodePersonWrongNode() {
         RecordDecoder decoder = new RecordDecoder();
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new LeafNode("12345"),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new LeafNode("12345"),
             TypeCapture.of(Person.class), new DecoderContext(registry, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().getFirst().level());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().getFirst().level());
         Assertions.assertEquals("Expected a leaf on path: user.admin, received node type: leaf, attempting to decode Record",
-            validate.getErrors().getFirst().description());
+            result.getErrors().getFirst().description());
     }
 
     @Test
@@ -208,12 +208,12 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("identity", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(),
                 new MapNode(configs), TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        PersonAnnotations results = (PersonAnnotations) validate.results();
+        PersonAnnotations results = (PersonAnnotations) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
     }
@@ -225,17 +225,17 @@ class RecordDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("name", new LeafNode("tim"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(),
                 new MapNode(configs), TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().getFirst().level());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().getFirst().level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().getFirst().description());
+            "during navigating to next node", result.getErrors().getFirst().description());
 
-        PersonAnnotations results = (PersonAnnotations) validate.results();
+        PersonAnnotations results = (PersonAnnotations) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(1234, results.id());
     }
@@ -247,20 +247,20 @@ class RecordDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("name", new LeafNode("tim"));
 
-        ValidateOf<Object> validate =
+        GResultOf<Object> result =
             decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class),
                 new DecoderContext(registry, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().get(0).description());
+            "during navigating to next node", result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(1).level());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
         Assertions.assertEquals("Unable to parse a number on Path: user.admin.identity, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer", validate.getErrors().get(1).description());
+            "attempting to decode Integer", result.getErrors().get(1).description());
     }
 
     @Test
@@ -271,12 +271,12 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("identity", new MapNode(Map.of("user", new LeafNode("52"))));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(),
                 new MapNode(configs), TypeCapture.of(PersonAnnotationsLong.class), new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        PersonAnnotationsLong results = (PersonAnnotationsLong) validate.results();
+        PersonAnnotationsLong results = (PersonAnnotationsLong) result.results();
         Assertions.assertEquals("tim", results.name());
         Assertions.assertEquals(52, results.id());
     }
@@ -289,12 +289,12 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
         configs.put("id", new LeafNode("52"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs),
             TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        PersonOptional results = (PersonOptional) validate.results();
+        PersonOptional results = (PersonOptional) result.results();
         Assertions.assertEquals("tim", results.name().get());
         Assertions.assertEquals(52, results.id().get());
     }
@@ -306,17 +306,17 @@ class RecordDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("name", new LeafNode("tim"));
 
-        ValidateOf<Object> validate = decoder.decode("user.admin", Tags.of(), new MapNode(configs),
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs),
             TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().getFirst().level());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().getFirst().level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
-            "during navigating to next node", validate.getErrors().getFirst().description());
+            "during navigating to next node", result.getErrors().getFirst().description());
 
-        PersonOptional results = (PersonOptional) validate.results();
+        PersonOptional results = (PersonOptional) result.results();
         Assertions.assertEquals("tim", results.name().get());
         Assertions.assertFalse(results.id().isPresent());
 

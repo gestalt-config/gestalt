@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.StringUtils
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Short Decoder.
@@ -32,18 +32,18 @@ class ShortDecoder : LeafDecoder<Short>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Short> {
-        val results: ValidateOf<Short>
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Short> {
+        val results: GResultOf<Short>
         val value = node.value.orElse("")
         results = if (StringUtils.isInteger(value)) {
             try {
                 val intVal = value.toShort()
-                ValidateOf.valid(intVal)
+                GResultOf.result(intVal)
             } catch (e: NumberFormatException) {
-                ValidateOf.inValid(ValidationError.DecodingNumberFormatException(path, node, name()))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name()))
             }
         } else {
-            ValidateOf.inValid(ValidationError.DecodingNumberParsing(path, node, name()))
+            GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))
         }
         return results
     }

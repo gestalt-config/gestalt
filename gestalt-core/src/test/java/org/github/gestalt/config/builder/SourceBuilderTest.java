@@ -1,7 +1,5 @@
 package org.github.gestalt.config.builder;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
@@ -16,29 +14,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SuppressWarnings("resource")
 public class SourceBuilderTest {
 
     private TestSourceBuilder sourceBuilder;
-
-    private static class TestSourceBuilder extends SourceBuilder<TestSourceBuilder, StringConfigSource> {
-
-        String text;
-
-        public String getSource() {
-            return text;
-        }
-
-        public TestSourceBuilder setSource(String source) {
-            this.text = source;
-            return this;
-        }
-
-        @Override
-        public ConfigSourcePackage build() throws GestaltException {
-            return buildPackage(new StringConfigSource(text, "properties", tags));
-        }
-    }
 
     @BeforeEach
     public void setUp() {
@@ -67,7 +48,6 @@ public class SourceBuilderTest {
         assertEquals(configSourcePackage.getConfigReloadStrategies(), built.getConfigReloadStrategies());
     }
 
-
     @Test
     public void testConfigSourcePackageCreation() throws GestaltException {
         var source = new StringConfigSource("abc=def", "properties");
@@ -75,7 +55,6 @@ public class SourceBuilderTest {
         assertEquals(source, configSourcePackage.getConfigSource());
         assertEquals(0, configSourcePackage.getConfigReloadStrategies().size());
     }
-
 
     @Test
     public void setSourceShouldThrowExceptionOnNullSource() {
@@ -130,6 +109,25 @@ public class SourceBuilderTest {
         sourceBuilder.setSource("abc=def");
         ConfigSourcePackage result = sourceBuilder.build();
         assertNotNull(result);
+    }
+
+    private static class TestSourceBuilder extends SourceBuilder<TestSourceBuilder, StringConfigSource> {
+
+        String text;
+
+        public String getSource() {
+            return text;
+        }
+
+        public TestSourceBuilder setSource(String source) {
+            this.text = source;
+            return this;
+        }
+
+        @Override
+        public ConfigSourcePackage build() throws GestaltException {
+            return buildPackage(new StringConfigSource(text, "properties", tags));
+        }
     }
 }
 

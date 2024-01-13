@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +47,8 @@ public final class SequencedCollectionDecoder extends CollectionDecoder<List<?>>
     }
 
     @Override
-    protected ValidateOf<List<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass,
-                                              DecoderContext decoderContext) {
+    protected GResultOf<List<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass,
+                                             DecoderContext decoderContext) {
         List<ValidationError> errors = new ArrayList<>();
         List<Object> results = new ArrayList<>(node.size());
 
@@ -56,12 +56,12 @@ public final class SequencedCollectionDecoder extends CollectionDecoder<List<?>>
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
                 String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<?> validateOf = decoderContext.getDecoderService()
+                GResultOf<?> resultOf = decoderContext.getDecoderService()
                     .decodeNode(nextPath, tags, currentNode, klass.getFirstParameterType(), decoderContext);
 
-                errors.addAll(validateOf.getErrors());
-                if (validateOf.hasResults()) {
-                    results.add(validateOf.results());
+                errors.addAll(resultOf.getErrors());
+                if (resultOf.hasResults()) {
+                    results.add(resultOf.results());
                 }
 
             } else {
@@ -71,6 +71,6 @@ public final class SequencedCollectionDecoder extends CollectionDecoder<List<?>>
         }
 
 
-        return ValidateOf.validateOf(results, errors);
+        return GResultOf.resultOf(results, errors);
     }
 }

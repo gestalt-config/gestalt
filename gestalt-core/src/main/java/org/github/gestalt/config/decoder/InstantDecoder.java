@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -32,15 +32,15 @@ public final class InstantDecoder extends LeafDecoder<Instant> {
     }
 
     @Override
-    protected ValidateOf<Instant> leafDecode(String path, ConfigNode node) {
-        ValidateOf<Instant> results;
+    protected GResultOf<Instant> leafDecode(String path, ConfigNode node) {
+        GResultOf<Instant> results;
 
         String value = node.getValue().orElse("");
         try {
             Instant instant = Instant.parse(value);
-            results = ValidateOf.valid(instant);
+            results = GResultOf.result(instant);
         } catch (DateTimeParseException e) {
-            results = ValidateOf.inValid(new ValidationError.ErrorDecodingException(path, node, name()));
+            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
         }
         return results;
     }

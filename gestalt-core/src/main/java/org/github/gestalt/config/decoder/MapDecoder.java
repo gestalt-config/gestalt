@@ -8,9 +8,9 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -40,14 +40,14 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ValidateOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
-        ValidateOf<Map<?, ?>> results;
+    public GResultOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+        GResultOf<Map<?, ?>> results;
         if (node instanceof MapNode) {
             MapNode mapNode = (MapNode) node;
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
 
             if (genericInterfaces == null || genericInterfaces.size() != 2) {
-                results = ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
+                results = GResultOf.errors(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
             } else {
                 TypeCapture<?> keyType = genericInterfaces.get(0);
                 TypeCapture<?> valueType = genericInterfaces.get(1);
@@ -70,9 +70,9 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                     }
 
                     String nextPath = PathUtil.pathForKey(path, key);
-                    ValidateOf<Object> keyValidate = decoderContext.getDecoderService()
+                    GResultOf<Object> keyValidate = decoderContext.getDecoderService()
                         .decodeNode(nextPath, tags, new LeafNode(key), (TypeCapture<Object>) keyType, decoderContext);
-                    ValidateOf<Object> valueValidate = decoderContext.getDecoderService()
+                    GResultOf<Object> valueValidate = decoderContext.getDecoderService()
                         .decodeNode(nextPath, tags, it.getValue(), (TypeCapture<Object>) valueType, decoderContext);
 
                     errors.addAll(keyValidate.getErrors());
@@ -94,10 +94,10 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                     .collect(HashMap::new, (m, v) -> m.put(v.getFirst(), v.getSecond()), HashMap::putAll);
 
 
-                return ValidateOf.validateOf(map, errors);
+                return GResultOf.resultOf(map, errors);
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, node));
+            return GResultOf.errors(new ValidationError.DecodingExpectedMapNodeType(path, node));
         }
         return results;
     }

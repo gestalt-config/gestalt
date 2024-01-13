@@ -6,7 +6,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,8 +27,8 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
     }
 
     @Override
-    public ValidateOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
-        ValidateOf<T> results;
+    public GResultOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+        GResultOf<T> results;
         if (node instanceof ArrayNode) {
             results = arrayDecode(path, tags, node, type, decoderContext);
         } else if (node instanceof LeafNode) {
@@ -36,17 +36,17 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
                 String value = node.getValue().get();
                 String[] array = value.split("(?<!\\\\),");
                 List<ConfigNode> leafNodes = Arrays.stream(array)
-                                                   .map(String::trim)
-                                                   .map(it -> it.replace("\\,", ","))
-                                                   .map(LeafNode::new)
-                                                   .collect(Collectors.toList());
+                    .map(String::trim)
+                    .map(it -> it.replace("\\,", ","))
+                    .map(LeafNode::new)
+                    .collect(Collectors.toList());
 
                 results = arrayDecode(path, tags, new ArrayNode(leafNodes), type, decoderContext);
             } else {
-                results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, name()));
+                results = GResultOf.errors(new ValidationError.DecodingLeafMissingValue(path, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingExpectedArrayNodeType(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingExpectedArrayNodeType(path, node, name()));
         }
         return results;
     }
@@ -59,8 +59,8 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
      * @param node           current node we are decoding
      * @param klass          class to decode into
      * @param decoderContext The context of the current decoder.
-     * @return ValidateOf array built from the config node
+     * @return GResultOf array built from the config node
      */
-    protected abstract ValidateOf<T> arrayDecode(String path, Tags tags, ConfigNode node,
-                                                 TypeCapture<?> klass, DecoderContext decoderContext);
+    protected abstract GResultOf<T> arrayDecode(String path, Tags tags, ConfigNode node,
+                                                TypeCapture<?> klass, DecoderContext decoderContext);
 }

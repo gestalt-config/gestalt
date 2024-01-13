@@ -92,9 +92,9 @@ class KubernetesSecretConfigSourceTest {
         KubernetesSecretConfigSource source = new KubernetesSecretConfigSource(kubernetesPath);
         var results = source.loadList();
         assertThat(results).hasSize(3)
-                           .contains(new Pair<>("db.host.password", "abcdef"))
-                           .contains(new Pair<>("db.host.uri", "jdbc:postgresql://localhost:5432/mydb1"))
-                           .contains(new Pair<>("subservice.booking.token", "111222333"));
+            .contains(new Pair<>("db.host.password", "abcdef"))
+            .contains(new Pair<>("db.host.uri", "jdbc:postgresql://localhost:5432/mydb1"))
+            .contains(new Pair<>("subservice.booking.token", "111222333"));
     }
 
     @Test

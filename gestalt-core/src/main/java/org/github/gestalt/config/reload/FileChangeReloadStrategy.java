@@ -23,12 +23,9 @@ import java.util.concurrent.Executors;
  */
 public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
     private static final System.Logger logger = System.getLogger(FileChangeReloadStrategy.class.getName());
-    private Path path;
-
-    private WatchService watcher;
-
     private final ExecutorService executor;
-
+    private Path path;
+    private WatchService watcher;
     private volatile boolean isWatching = false;
 
     /**

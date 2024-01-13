@@ -22,7 +22,7 @@ public final class Tag {
     /**
      * Create a tag from a key and value.
      *
-     * @param key the key for the tag
+     * @param key   the key for the tag
      * @param value the value of the tag
      * @return the new tag
      */

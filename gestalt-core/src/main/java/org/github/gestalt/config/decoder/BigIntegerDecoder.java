@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.StringUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.math.BigInteger;
 
@@ -32,20 +32,20 @@ public final class BigIntegerDecoder extends LeafDecoder<BigInteger> {
     }
 
     @Override
-    protected ValidateOf<BigInteger> leafDecode(String path, ConfigNode node) {
-        ValidateOf<BigInteger> results;
+    protected GResultOf<BigInteger> leafDecode(String path, ConfigNode node) {
+        GResultOf<BigInteger> results;
 
         String value = node.getValue().orElse("");
         if (StringUtils.isReal(value)) {
             try {
                 long longVal = Long.parseLong(value);
                 BigInteger bigDecimal = BigInteger.valueOf(longVal);
-                results = ValidateOf.valid(bigDecimal);
+                results = GResultOf.result(bigDecimal);
             } catch (NumberFormatException e) {
-                results = ValidateOf.inValid(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingNumberParsing(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
 
         return results;

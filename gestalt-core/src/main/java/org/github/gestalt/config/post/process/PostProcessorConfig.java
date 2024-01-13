@@ -17,9 +17,9 @@ public final class PostProcessorConfig {
     /**
      * Constructor for the post processor config.
      *
-     * @param config Gestalt Config
+     * @param config            Gestalt Config
      * @param configNodeService Config node service
-     * @param lexer Lexer to parse paths
+     * @param lexer             Lexer to parse paths
      */
     public PostProcessorConfig(GestaltConfig config, ConfigNodeService configNodeService, SentenceLexer lexer) {
         this.config = config;

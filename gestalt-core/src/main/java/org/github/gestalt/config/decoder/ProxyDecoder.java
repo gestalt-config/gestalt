@@ -10,8 +10,8 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -78,9 +78,9 @@ public final class ProxyDecoder implements Decoder<Object> {
     }
 
     @Override
-    public ValidateOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+    public GResultOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, node));
+            return GResultOf.errors(new ValidationError.DecodingExpectedMapNodeType(path, node));
         }
 
         Class<?> klass = type.getRawType();
@@ -112,7 +112,7 @@ public final class ProxyDecoder implements Decoder<Object> {
 
             String nextPath = PathUtil.pathForKey(path, name);
 
-            ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
+            GResultOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
 
             errors.addAll(configNode.getErrors());
             if (!configNode.hasResults()) {
@@ -120,22 +120,22 @@ public final class ProxyDecoder implements Decoder<Object> {
                 // if we have no value, check the config annotation for a default.
                 if (configAnnotation != null && configAnnotation.defaultVal() != null &&
                     !configAnnotation.defaultVal().isEmpty()) {
-                    ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
+                    GResultOf<?> defaultGResultOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
                         TypeCapture.of(returnType), decoderContext);
 
-                    errors.addAll(defaultValidateOf.getErrors());
-                    if (defaultValidateOf.hasResults()) {
-                        methodResults.put(methodName, defaultValidateOf.results());
+                    errors.addAll(defaultGResultOf.getErrors());
+                    if (defaultGResultOf.hasResults()) {
+                        methodResults.put(methodName, defaultGResultOf.results());
                         foundValue = true;
                     }
                 }
             } else {
-                ValidateOf<?> fieldValidateOf = decoderService.decodeNode(nextPath, tags, configNode.results(),
+                GResultOf<?> fieldGResultOf = decoderService.decodeNode(nextPath, tags, configNode.results(),
                     TypeCapture.of(returnType), decoderContext);
 
-                errors.addAll(fieldValidateOf.getErrors());
-                if (fieldValidateOf.hasResults()) {
-                    methodResults.put(methodName, fieldValidateOf.results());
+                errors.addAll(fieldGResultOf.getErrors());
+                if (fieldGResultOf.hasResults()) {
+                    methodResults.put(methodName, fieldGResultOf.results());
                     foundValue = true;
                 }
             }
@@ -164,7 +164,7 @@ public final class ProxyDecoder implements Decoder<Object> {
         }
 
         Object myProxy = Proxy.newProxyInstance(type.getRawType().getClassLoader(), new Class<?>[]{type.getRawType()}, proxyHandler);
-        return ValidateOf.validateOf(myProxy, errors);
+        return GResultOf.resultOf(myProxy, errors);
     }
 
 
@@ -222,12 +222,12 @@ public final class ProxyDecoder implements Decoder<Object> {
                 // if we have no value, check the config annotation for a default.
                 if (configAnnotation != null && configAnnotation.defaultVal() != null &&
                     !configAnnotation.defaultVal().isEmpty()) {
-                    ValidateOf<?> defaultValidateOf = decoderContext.getDecoderService()
+                    GResultOf<?> defaultGResultOf = decoderContext.getDecoderService()
                         .decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()), TypeCapture.of(returnType),
                             decoderContext);
 
-                    if (defaultValidateOf.hasResults()) {
-                        return Optional.of(defaultValidateOf.results());
+                    if (defaultGResultOf.hasResults()) {
+                        return Optional.of(defaultGResultOf.results());
                     }
                 }
 

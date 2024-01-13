@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -18,11 +18,11 @@ public final class URLEncoderTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
         if (key != null) {
-            return ValidateOf.valid(URLEncoder.encode(key, Charset.defaultCharset()));
+            return GResultOf.result(URLEncoder.encode(key, Charset.defaultCharset()));
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
     }
 }

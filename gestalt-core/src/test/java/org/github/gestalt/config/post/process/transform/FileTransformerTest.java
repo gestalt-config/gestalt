@@ -21,12 +21,12 @@ class FileTransformerTest {
 
         FileTransformer transformer = new FileTransformer();
         File testFile = new File(devFileURL.getFile());
-        var validateOfResults = transformer.process("db", testFile.getAbsolutePath(), "file:" + testFile.getAbsolutePath());
+        var resultsOf = transformer.process("db", testFile.getAbsolutePath(), "file:" + testFile.getAbsolutePath());
 
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertNotNull(validateOfResults.results());
-        String results = validateOfResults.results();
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertNotNull(resultsOf.results());
+        String results = resultsOf.results();
         Assertions.assertTrue(results.startsWith("hello world"));
     }
 
@@ -34,26 +34,26 @@ class FileTransformerTest {
     void processFileDoesntExist() {
 
         FileTransformer transformer = new FileTransformer();
-        var validateOfResults = transformer.process("db", "^&ASD*A&N&*A^BD(*&", "file:^&ASD*A&N&*A^BD(*&");
+        var resultsOf = transformer.process("db", "^&ASD*A&N&*A^BD(*&", "file:^&ASD*A&N&*A^BD(*&");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(resultsOf.hasResults());
+        Assertions.assertTrue(resultsOf.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertTrue(validateOfResults.getErrors().get(0).description()
-                                               .startsWith("Exception transforming file while reading file"));
+        Assertions.assertEquals(1, resultsOf.getErrors().size());
+        Assertions.assertTrue(resultsOf.getErrors().get(0).description()
+            .startsWith("Exception transforming file while reading file"));
     }
 
     @Test
     void processNull() {
         FileTransformer transformer = new FileTransformer();
-        var validateOfResults = transformer.process("db", null, "file:");
+        var resultsOf = transformer.process("db", null, "file:");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(resultsOf.hasResults());
+        Assertions.assertTrue(resultsOf.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, resultsOf.getErrors().size());
         Assertions.assertEquals("Invalid string: file:, on path: db in transformer: file",
-            validateOfResults.getErrors().get(0).description());
+            resultsOf.getErrors().get(0).description());
     }
 }

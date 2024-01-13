@@ -7,7 +7,7 @@ import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Char Decoder.
@@ -31,7 +31,7 @@ class CharDecoder : LeafDecoder<Char>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Char> {
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Char> {
         var results: Char? = null
         val error: MutableList<ValidationError> = ArrayList()
         val value = node.value.orElse("")
@@ -41,6 +41,6 @@ class CharDecoder : LeafDecoder<Char>() {
         if (value.length != 1) {
             error.add(ValidationError.DecodingCharWrongSize(path, node))
         }
-        return ValidateOf.validateOf(results, error)
+        return GResultOf.resultOf(results, error)
     }
 }

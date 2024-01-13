@@ -15,7 +15,7 @@ public final class TagToken extends Token {
     /**
      * constructor.
      *
-     * @param tag tag name
+     * @param tag   tag name
      * @param value tag value
      */
     public TagToken(String tag, String value) {

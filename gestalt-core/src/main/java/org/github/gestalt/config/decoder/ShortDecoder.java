@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.StringUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 /**
  * Decode a Short.
@@ -30,19 +30,19 @@ public final class ShortDecoder extends LeafDecoder<Short> {
     }
 
     @Override
-    protected ValidateOf<Short> leafDecode(String path, ConfigNode node) {
-        ValidateOf<Short> results;
+    protected GResultOf<Short> leafDecode(String path, ConfigNode node) {
+        GResultOf<Short> results;
 
         String value = node.getValue().orElse("");
         if (StringUtils.isInteger(value)) {
             try {
                 Short intVal = Short.parseShort(value);
-                results = ValidateOf.valid(intVal);
+                results = GResultOf.result(intVal);
             } catch (NumberFormatException e) {
-                results = ValidateOf.inValid(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingNumberParsing(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
 
         return results;

@@ -19,7 +19,7 @@ public final class ConfigNodeContainer {
      * Constructor to hold a ConfigNode and a id.
      *
      * @param configNode node to hold
-     * @param source the source of the configs
+     * @param source     the source of the configs
      */
     public ConfigNodeContainer(ConfigNode configNode, ConfigSource source) {
         this.configNode = configNode;

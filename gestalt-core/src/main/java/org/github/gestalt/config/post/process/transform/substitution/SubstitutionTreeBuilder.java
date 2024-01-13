@@ -1,8 +1,8 @@
 package org.github.gestalt.config.post.process.transform.substitution;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public final class SubstitutionTreeBuilder {
         this.patternReplaceClose = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + closingToken));
     }
 
-    public ValidateOf<List<SubstitutionNode>> build(String path, String value) {
+    public GResultOf<List<SubstitutionNode>> build(String path, String value) {
         List<SubstitutionNode> nodes;
         var results = buildInternal(path, value, 0, 0);
 
@@ -49,10 +49,10 @@ public final class SubstitutionTreeBuilder {
         } else {
             nodes = new ArrayList<>();
         }
-        return ValidateOf.validateOf(nodes, results.getErrors());
+        return GResultOf.resultOf(nodes, results.getErrors());
     }
 
-    public ValidateOf<Pair<SubstitutionNode, Integer>> buildInternal(String path, String value, int index, int depth) {
+    public GResultOf<Pair<SubstitutionNode, Integer>> buildInternal(String path, String value, int index, int depth) {
         List<ValidationError> errors = new ArrayList<>();
         List<SubstitutionNode> nodes = new ArrayList<>();
 
@@ -73,7 +73,7 @@ public final class SubstitutionTreeBuilder {
                 // lets skip ahead the size of the opening token.
                 i += openingTokenLength;
 
-                ValidateOf<Pair<SubstitutionNode, Integer>> nestedNodes = buildInternal(path, value, i, depth + 1);
+                GResultOf<Pair<SubstitutionNode, Integer>> nestedNodes = buildInternal(path, value, i, depth + 1);
 
                 errors.addAll(nestedNodes.getErrors());
                 if (nestedNodes.hasResults()) {
@@ -98,7 +98,7 @@ public final class SubstitutionTreeBuilder {
 
                     i += closingTokenLength;
 
-                    return ValidateOf.validateOf(new Pair<>(new SubstitutionNode.TransformNode(nodes), i), errors);
+                    return GResultOf.resultOf(new Pair<>(new SubstitutionNode.TransformNode(nodes), i), errors);
                 }
             }
         }
@@ -115,7 +115,7 @@ public final class SubstitutionTreeBuilder {
             nodes.add(new SubstitutionNode.TextNode(text));
         }
 
-        return ValidateOf.validateOf(new Pair<>(new SubstitutionNode.TransformNode(nodes), length), errors);
+        return GResultOf.resultOf(new Pair<>(new SubstitutionNode.TransformNode(nodes), length), errors);
     }
 
     private String getEscapedText(String value, int lastNodeEnd, int i) {

@@ -17,9 +17,9 @@ public final class Triple<A, B, C> {
     /**
      * Create a pair of values.
      *
-     * @param first first of Triple
+     * @param first  first of Triple
      * @param second second of Triple
-     * @param third third of a Triple
+     * @param third  third of a Triple
      */
     public Triple(A first, B second, C third) {
         this.first = first;

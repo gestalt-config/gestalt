@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public final class CharDecoder extends LeafDecoder<Character> {
     }
 
     @Override
-    protected ValidateOf<Character> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Character> leafDecode(String path, ConfigNode node) {
         Character results = null;
         List<ValidationError> error = new ArrayList<>();
 
@@ -46,6 +46,6 @@ public final class CharDecoder extends LeafDecoder<Character> {
         }
 
 
-        return ValidateOf.validateOf(results, error);
+        return GResultOf.resultOf(results, error);
     }
 }

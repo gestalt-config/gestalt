@@ -8,8 +8,8 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -63,17 +63,17 @@ public final class ObjectDecoder implements Decoder<Object> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public ValidateOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+    public GResultOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
+            return GResultOf.errors(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
         }
         Class<?> klass = type.getRawType();
 
         try {
             Constructor<?> constructor = klass.getDeclaredConstructor();
             if (Modifier.isPrivate(constructor.getModifiers())) {
-                return ValidateOf.inValid(new ValidationError.ConstructorNotPublic(path, klass.getName()));
+                return GResultOf.errors(new ValidationError.ConstructorNotPublic(path, klass.getName()));
             }
 
             List<ValidationError> errors = new ArrayList<>();
@@ -100,19 +100,19 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                 // check if there is a node in the map for this field.
                 String nextPath = PathUtil.pathForKey(path, name);
-                ValidateOf<ConfigNode> configNode = decoderContext.getDecoderService().getNextNode(nextPath, name, node);
+                GResultOf<ConfigNode> configNode = decoderContext.getDecoderService().getNextNode(nextPath, name, node);
 
                 errors.addAll(configNode.getErrors());
                 if (configNode.hasResults()) {
                     // if the map node has a value for the field.
                     //decode the field node.
-                    ValidateOf<?> fieldValidateOf = decoderContext.getDecoderService()
+                    GResultOf<?> fieldGResultOf = decoderContext.getDecoderService()
                         .decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
 
-                    errors.addAll(fieldValidateOf.getErrors());
-                    if (fieldValidateOf.hasResults()) {
+                    errors.addAll(fieldGResultOf.getErrors());
+                    if (fieldGResultOf.hasResults()) {
                         // set the field to the decoded value for the map node.
-                        setField(obj, field, klass, fieldValidateOf.results());
+                        setField(obj, field, klass, fieldGResultOf.results());
                     } else {
                         // if we have a node for this field but the decoding failed,
                         // check to see if the field value result will be null. If so add a null value error
@@ -130,13 +130,13 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                     if (!defaultValue.isEmpty()) {
                         // if we have a default value in the annotation attempt to decode it as a leaf of the field type.
-                        ValidateOf<?> defaultValidateOf = decoderContext.getDecoderService()
+                        GResultOf<?> defaultGResultOf = decoderContext.getDecoderService()
                             .decodeNode(nextPath, tags, new LeafNode(defaultValue), fieldType, decoderContext);
 
-                        errors.addAll(defaultValidateOf.getErrors());
+                        errors.addAll(defaultGResultOf.getErrors());
                         // if the default value decoded to the expected field type set the field to the default value.
-                        if (defaultValidateOf.hasResults()) {
-                            setField(obj, field, klass, defaultValidateOf.results());
+                        if (defaultGResultOf.hasResults()) {
+                            setField(obj, field, klass, defaultGResultOf.results());
                         } else {
 
                             // if we failed to decode the default annotation value, check to see if the field value result will be null.
@@ -150,7 +150,7 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                         // even though we have default value in the annotation lets try to decode the field,
                         // as it may be an optional that can support null values.
-                        ValidateOf<?> decodedResults = decoderContext.getDecoderService()
+                        GResultOf<?> decodedResults = decoderContext.getDecoderService()
                             .decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
 
                         // if the decoder supported nullable types (such as optional) set the field to the value.
@@ -168,12 +168,12 @@ public final class ObjectDecoder implements Decoder<Object> {
                 }
             }
 
-            return ValidateOf.validateOf(obj, errors);
+            return GResultOf.resultOf(obj, errors);
         } catch (NoSuchMethodException e) {
-            return ValidateOf.inValid(new ValidationError.NoDefaultConstructor(path, klass.getName()));
+            return GResultOf.errors(new ValidationError.NoDefaultConstructor(path, klass.getName()));
         } catch (SecurityException | InstantiationException | IllegalAccessException |
                  IllegalArgumentException | InvocationTargetException e) {
-            return ValidateOf.inValid(new ValidationError.ConstructorNotPublic(path, klass.getName()));
+            return GResultOf.errors(new ValidationError.ConstructorNotPublic(path, klass.getName()));
         }
     }
 
@@ -258,8 +258,8 @@ public final class ObjectDecoder implements Decoder<Object> {
 
     private Optional<Method> getMethod(Class<?> klass, String methodName) {
         return Arrays.stream(klass.getMethods())
-                     .filter(it -> it.getName().equalsIgnoreCase(methodName))
-                     .findFirst();
+            .filter(it -> it.getName().equalsIgnoreCase(methodName))
+            .findFirst();
     }
 
     private void setField(Object obj, Field field, Class<?> klass, Object value) throws IllegalAccessException {

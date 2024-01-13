@@ -29,7 +29,7 @@ import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoOptional;
 import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
 import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -334,7 +334,7 @@ class GestaltTest {
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
-            MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
+                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
@@ -520,7 +520,7 @@ class GestaltTest {
             lexer, new GestaltConfig(), configNodeManager, null,
             Collections.singletonList(new TestPostProcessor("aaa")), Tags.of());
 
-        Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(ValidateOf.validateOf(null, Collections.emptyList()));
+        Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
 
         GestaltException e = Assertions.assertThrows(GestaltException.class, gestalt::postProcessConfigs);
 
@@ -551,7 +551,7 @@ class GestaltTest {
             Collections.singletonList(new TestPostProcessor("aaa")), Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
-            ValidateOf.validateOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
+            GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
 
         GestaltException e = Assertions.assertThrows(GestaltException.class, gestalt::postProcessConfigs);
         Assertions.assertEquals("Failed post processing config nodes with errors \n" +
@@ -582,7 +582,7 @@ class GestaltTest {
             Collections.singletonList(new TestPostProcessor("aaa")), Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
-            ValidateOf.validateOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
+            GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
 
         gestalt.postProcessConfigs();
     }
@@ -836,9 +836,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
-                             "during navigating to next node");
+                .hasMessage("Failed getting config path: admin.user[2], for class: java.lang.Integer\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin.user[2], for class: ArrayToken, " +
+                    "during navigating to next node");
         }
 
         try {
@@ -847,8 +847,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
-                             " - level: MISSING_VALUE, message: Missing array index: 2");
+                .hasMessage("Failed getting config path: admin.user, for class: java.util.List<java.lang.String>\n" +
+                    " - level: MISSING_VALUE, message: Missing array index: 2");
         }
 
         try {
@@ -890,7 +890,7 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("No sources provided, unable to load any configs");
+                .hasMessage("No sources provided, unable to load any configs");
         }
     }
 
@@ -927,8 +927,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
-                             " - level: ERROR, message: No decoders found for class: java.lang.Integer and node type: leaf");
+                .hasMessage("Failed getting config path: db.port, for class: java.lang.Integer\n" +
+                    " - level: ERROR, message: No decoders found for class: java.lang.Integer and node type: leaf");
         }
     }
 
@@ -980,7 +980,7 @@ class GestaltTest {
 
         Mockito.when(configLoaderRegistry.getLoader(Mockito.anyString())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(
-            ValidateOf.inValid(new ValidationError.ArrayDuplicateIndex(1, "admin")));
+            GResultOf.errors(new ValidationError.ArrayDuplicateIndex(1, "admin")));
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
@@ -993,8 +993,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed to load configs from source: mapConfig\n" +
-                             " - level: ERROR, message: Duplicate array index: 1 for path: admin");
+                .hasMessage("Failed to load configs from source: mapConfig\n" +
+                    " - level: ERROR, message: Duplicate array index: 1 for path: admin");
         }
     }
 
@@ -1033,9 +1033,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, " +
-                             "for class: ObjectToken, during navigating to next node");
+                .hasMessage("Failed getting config path: no.exist.name, for class: java.lang.String\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: no.exist.name, " +
+                    "for class: ObjectToken, during navigating to next node");
         }
     }
 
@@ -1076,14 +1076,14 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                             "during navigating to next node\n" +
-                             " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                             "during navigating to next node\n" +
-                             " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
-                             "field password results in null value");
+                .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                    "during navigating to next node\n" +
+                    " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                    "during navigating to next node\n" +
+                    " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
+                    "field password results in null value");
         }
     }
 
@@ -1179,9 +1179,9 @@ class GestaltTest {
 
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoOptional\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                             "during navigating to next node");
+                .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoOptional\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -1196,7 +1196,7 @@ class GestaltTest {
 
         ConfigLoader mockConfigLoader = Mockito.mock(ConfigLoader.class);
         Mockito.when(mockConfigLoader.accepts(MapConfigSource.MAP_CONFIG)).thenReturn(true);
-        Mockito.when(mockConfigLoader.loadSource(Mockito.any())).thenReturn(ValidateOf.validateOf(null, Collections.emptyList()));
+        Mockito.when(mockConfigLoader.loadSource(Mockito.any())).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
 
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(mockConfigLoader);
@@ -1252,9 +1252,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                             "during navigating to next node");
+                .hasMessage("Failed getting config path: db.password, for class: java.lang.String\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -1291,9 +1291,9 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
-                             " - level: MISSING_VALUE, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
-                             "during navigating to next node");
+                .hasMessage("Failed getting config path: admin[3], for class: java.lang.String\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: admin[3], for class: ArrayToken, " +
+                    "during navigating to next node");
         }
     }
 
@@ -1325,8 +1325,8 @@ class GestaltTest {
             Assertions.fail("Should not reach here");
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
-                         .hasMessage("Unable to parse path: admin[a3]\n" +
-                             " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
+                .hasMessage("Unable to parse path: admin[a3]\n" +
+                    " - level: ERROR, message: Unable to tokenize element admin[a3] for path: admin[a3]");
         }
 
         Optional<String> result = gestalt.getConfigOptional("admin[a3]", String.class);
@@ -1803,11 +1803,11 @@ class GestaltTest {
         }
 
         @Override
-        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
-                return ValidateOf.valid(new LeafNode(currentNode.getValue().get() + " " + add));
+                return GResultOf.result(new LeafNode(currentNode.getValue().get() + " " + add));
             }
-            return ValidateOf.valid(currentNode);
+            return GResultOf.result(currentNode);
         }
     }
 
@@ -1821,7 +1821,7 @@ class GestaltTest {
         }
 
         @Override
-        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof MapNode) {
                 Map<String, ConfigNode> mapNode = ((MapNode) currentNode).getMapNode();
                 if (mapNode.containsKey(node1) && mapNode.containsKey(node2)) {
@@ -1831,9 +1831,9 @@ class GestaltTest {
                     mapNode.put(node1, configNode2);
                     mapNode.put(node2, configNode1);
                 }
-                return ValidateOf.valid(new MapNode(mapNode));
+                return GResultOf.result(new MapNode(mapNode));
             }
-            return ValidateOf.valid(currentNode);
+            return GResultOf.result(currentNode);
         }
     }
 
@@ -1869,8 +1869,8 @@ class GestaltTest {
         }
 
         @Override
-        protected ValidateOf<String> leafDecode(String path, ConfigNode node) {
-            return ValidateOf.inValid(new ValidationError.ArrayInvalidIndex(1, "should not happen"));
+        protected GResultOf<String> leafDecode(String path, ConfigNode node) {
+            return GResultOf.errors(new ValidationError.ArrayInvalidIndex(1, "should not happen"));
         }
     }
 

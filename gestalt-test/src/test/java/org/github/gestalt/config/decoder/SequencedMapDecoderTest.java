@@ -8,7 +8,7 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,17 +81,17 @@ class SequencedMapDecoderTest {
 
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<String, Integer>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Map<String, Integer> results = (Map<String, Integer>) validate.results();
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
         Assertions.assertEquals(100, results.get("port"));
         Assertions.assertEquals(300, results.get("uri"));
         Assertions.assertEquals(6000, results.get("password"));
 
-        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(3, results2.size());
         Assertions.assertEquals(Map.entry("port", 100), results2.removeFirst());
         Assertions.assertEquals(Map.entry("uri", 300), results2.removeFirst());
@@ -109,17 +109,17 @@ class SequencedMapDecoderTest {
 
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
                 new TypeCapture<Map<Integer, Integer>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Map<Integer, Integer> results = (Map<Integer, Integer>) validate.results();
+        Map<Integer, Integer> results = (Map<Integer, Integer>) result.results();
         Assertions.assertEquals(100, results.get(1));
         Assertions.assertEquals(300, results.get(2));
         Assertions.assertEquals(6000, results.get(3));
 
-        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(3, results2.size());
         Assertions.assertEquals(Map.entry(1, 100), results2.removeFirst());
         Assertions.assertEquals(Map.entry(2, 300), results2.removeFirst());
@@ -142,18 +142,18 @@ class SequencedMapDecoderTest {
 
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
                 new TypeCapture<Map<String, User>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Map<String, User> results = (Map<String, User>) validate.results();
+        Map<String, User> results = (Map<String, User>) result.results();
         Assertions.assertEquals("steve", results.get("user1").name);
         Assertions.assertEquals(52, results.get("user1").age);
         Assertions.assertEquals("john", results.get("user2").name);
         Assertions.assertEquals(23, results.get("user2").age);
 
-        SequencedSet<Map.Entry<String, User>> results2 = ((SequencedMap<String, User>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, User>> results2 = ((SequencedMap<String, User>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(2, results2.size());
         Assertions.assertEquals(Map.entry("user1", new User("steve", 52)), results2.removeFirst());
         Assertions.assertEquals(Map.entry("user2", new User("john", 23)), results2.removeFirst());
@@ -176,19 +176,19 @@ class SequencedMapDecoderTest {
 
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
                 new TypeCapture<Map<String, Integer>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Map<String, Integer> results = (Map<String, Integer>) validate.results();
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
         Assertions.assertEquals(100, results.get("port"));
         Assertions.assertEquals(300, results.get("uri"));
         Assertions.assertEquals(123, results.get("settings.timeout"));
         Assertions.assertEquals(2, results.get("settings.retry.times"));
         Assertions.assertEquals(7, results.get("settings.retry.delay"));
 
-        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(5, results2.size());
         Assertions.assertEquals(Map.entry("port", 100 ), results2.removeFirst());
         Assertions.assertEquals(Map.entry("uri", 300 ), results2.removeFirst());
@@ -214,19 +214,19 @@ class SequencedMapDecoderTest {
 
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
                 new TypeCapture<Map<String, Integer>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
 
-        Map<String, Integer> results = (Map<String, Integer>) validate.results();
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
         Assertions.assertEquals(100, results.get("port"));
         Assertions.assertEquals(300, results.get("uri"));
         Assertions.assertEquals(123, results.get("settings.timeout"));
         Assertions.assertEquals(2, results.get("settings.retryList[0]"));
         Assertions.assertEquals(7, results.get("settings.retryList[1]"));
 
-        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(5, results2.size());
         Assertions.assertEquals(Map.entry("port", 100), results2.removeFirst());
         Assertions.assertEquals(Map.entry("uri", 300), results2.removeFirst());
@@ -244,23 +244,23 @@ class SequencedMapDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
                 new MapNode(configs), new TypeCapture<Map<String, String>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(2, result.getErrors().size());
         Assertions.assertEquals("Leaf on path: db.host.port, has no value attempting to decode String",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
         Assertions.assertEquals("Map key was null on path: db.host.port",
-            validate.getErrors().get(1).description());
+            result.getErrors().get(1).description());
 
-        Map<String, String> results = (Map<String, String>) validate.results();
+        Map<String, String> results = (Map<String, String>) result.results();
         Assertions.assertNull(results.get("port"));
         Assertions.assertEquals("mysql.com", results.get("uri"));
         Assertions.assertEquals("pass", results.get("password"));
 
-        SequencedSet<Map.Entry<String, String>> results2 = ((SequencedMap<String, String>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, String>> results2 = ((SequencedMap<String, String>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(3, results2.size());
         var first = results2.removeFirst();
         Assertions.assertEquals("port", first.getKey());
@@ -278,21 +278,21 @@ class SequencedMapDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
                 new MapNode(configs), new TypeCapture<Map<String, String>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Map key was null on path: db.host",
-            validate.getErrors().getFirst().description());
+            result.getErrors().getFirst().description());
 
-        Map<String, String> results = (Map<String, String>) validate.results();
+        Map<String, String> results = (Map<String, String>) result.results();
         Assertions.assertNull(results.get("port"));
         Assertions.assertEquals("mysql.com", results.get("uri"));
         Assertions.assertEquals("pass", results.get("password"));
 
-        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(2, results2.size());
         Assertions.assertEquals(Map.entry("uri", "mysql.com"), results2.removeFirst());
         Assertions.assertEquals(Map.entry("password", "pass"), results2.removeFirst());
@@ -307,23 +307,23 @@ class SequencedMapDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
                 new MapNode(configs), new TypeCapture<Map<String, String>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(2, validate.getErrors().size());
+        Assertions.assertEquals(2, result.getErrors().size());
         Assertions.assertEquals("Expected a leaf on path: db.host.port, received node type: null, attempting to decode String",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
         Assertions.assertEquals("Map key was null on path: db.host.port",
-            validate.getErrors().get(1).description());
+            result.getErrors().get(1).description());
 
-        Map<String, String> results = (Map<String, String>) validate.results();
+        Map<String, String> results = (Map<String, String>) result.results();
         Assertions.assertNull(results.get("port"));
         Assertions.assertEquals("mysql.com", results.get("uri"));
         Assertions.assertEquals("pass", results.get("password"));
 
-        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) validate.results()).sequencedEntrySet();
+        SequencedSet<Map.Entry<String, Integer>> results2 = ((SequencedMap<String, Integer>) result.results()).sequencedEntrySet();
         Assertions.assertEquals(3, results2.size());
         var first = results2.removeFirst();
         Assertions.assertEquals("port", first.getKey());
@@ -336,14 +336,14 @@ class SequencedMapDecoderTest {
     void decodeWrongNodeType() {
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
                 new LeafNode("mysql.com"), new TypeCapture<Map<String, String>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : LEAF",
-            validate.getErrors().getFirst().description());
+            result.getErrors().getFirst().description());
     }
 
     @Test
@@ -356,43 +356,43 @@ class SequencedMapDecoderTest {
 
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
                 new TypeCapture<List<String>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Expected a map on path: db.host, received node type : map, " +
                 "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
-            validate.getErrors().getFirst().description());
+            result.getErrors().getFirst().description());
     }
 
     @Test
     void decodeMapNodeNullInside() {
         SequencedMapDecoder decoder = new SequencedMapDecoder();
 
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), new MapNode(null),
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(null),
                 new TypeCapture<List<String>>() { }, new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Expected a map on path: db.host, received node type : map, " +
                 "received invalid types: [TypeCapture{rawType=class java.lang.String, type=class java.lang.String}]",
-            validate.getErrors().getFirst().description());
+            result.getErrors().getFirst().description());
     }
 
     @Test
     void decodeNullNode() {
         SequencedMapDecoder decoder = new SequencedMapDecoder();
-        ValidateOf<Map<?, ?>> validate = decoder.decode("db.host", Tags.of(), null, new TypeCapture<List<String>>() {
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), null, new TypeCapture<List<String>>() {
         }, new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : null",
-            validate.getErrors().getFirst().description());
+            result.getErrors().getFirst().description());
     }
 
     static class User {

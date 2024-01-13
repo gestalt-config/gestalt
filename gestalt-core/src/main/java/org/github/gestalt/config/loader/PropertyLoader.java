@@ -1,7 +1,6 @@
 package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
-import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -11,12 +10,11 @@ import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.SystemPropertiesConfigSource;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -43,7 +41,7 @@ public final class PropertyLoader implements ConfigLoader {
     /**
      * Construct a property loader providing a lexer and a config parser.
      *
-     * @param lexer SentenceLexer to create tokens for the path.
+     * @param lexer  SentenceLexer to create tokens for the path.
      * @param parser Parser for the property files
      */
     public PropertyLoader(SentenceLexer lexer, ConfigParser parser) {
@@ -67,11 +65,11 @@ public final class PropertyLoader implements ConfigLoader {
      * Pass these into the ConfigCompiler to build a config node tree.
      *
      * @param source source we want to load with this config loader.
-     * @return ValidateOf config node or errors.
+     * @return GResultOf config node or errors.
      * @throws GestaltException any errors.
      */
     @Override
-    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
         Properties properties = new Properties();
         if (source.hasStream()) {
             try (InputStream is = source.loadStream()) {
@@ -84,24 +82,16 @@ public final class PropertyLoader implements ConfigLoader {
         }
 
         if (properties.isEmpty()) {
-            return ValidateOf.valid(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
+            return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
         }
 
         List<Pair<String, String>> configs = properties.entrySet()
-                                                       .stream()
-                                                       .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
-                                                       .collect(Collectors.toList());
+            .stream()
+            .map(prop -> new Pair<>((String) prop.getKey(), (String) prop.getValue()))
+            .collect(Collectors.toList());
 
-        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
+        GResultOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
 
-        List<ValidationError> errors = new ArrayList<>();
-        if (loadedNode.hasErrors()) {
-            errors.addAll(loadedNode.getErrors());
-        }
-        if (!loadedNode.hasResults()) {
-            return ValidateOf.inValid(errors);
-        }
-
-        return ValidateOf.validateOf(List.of(new ConfigNodeContainer(loadedNode.results(), source)), errors);
+        return loadedNode.mapWithError((result) -> List.of(new ConfigNodeContainer(result, source)));
     }
 }

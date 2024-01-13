@@ -7,7 +7,7 @@ import org.github.gestalt.config.aws.errors.AWSValidationErrors;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.Transformer;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -56,20 +56,20 @@ public final class AWSSecretTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String secretNameKey, String rawValue) {
+    public GResultOf<String> process(String path, String secretNameKey, String rawValue) {
         if (secretNameKey != null) {
             try {
                 String[] secretParts = secretNameKey.split(":");
 
                 if (secretParts.length != 2) {
-                    return ValidateOf.inValid(new AWSValidationErrors.AWSSecretInvalid(path, rawValue, secretParts));
+                    return GResultOf.errors(new AWSValidationErrors.AWSSecretInvalid(path, rawValue, secretParts));
                 }
 
                 String secretName = secretParts[0];
                 String secretKey = secretParts[1];
 
                 if (secretsClient == null) {
-                    return ValidateOf.inValid(new AWSValidationErrors.AWSModuleConfigNotSet(path, rawValue));
+                    return GResultOf.errors(new AWSValidationErrors.AWSModuleConfigNotSet(path, rawValue));
                 }
 
                 GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
@@ -81,18 +81,18 @@ public final class AWSSecretTransformer implements Transformer {
                 JsonNode jsonNode = mapper.readTree(secret);
 
                 if (!jsonNode.has(secretKey)) {
-                    return ValidateOf.inValid(new AWSValidationErrors.AWSSecretDoesNotExist(path, secretName, secretKey, rawValue));
+                    return GResultOf.errors(new AWSValidationErrors.AWSSecretDoesNotExist(path, secretName, secretKey, rawValue));
                 }
 
                 JsonNode secretNode = jsonNode.get(secretKey);
 
-                return ValidateOf.valid(secretNode.asText());
+                return GResultOf.result(secretNode.asText());
 
             } catch (Exception e) {
-                return ValidateOf.inValid(new AWSValidationErrors.ExceptionProcessingAWSSecret(path, rawValue, name(), e));
+                return GResultOf.errors(new AWSValidationErrors.ExceptionProcessingAWSSecret(path, rawValue, name(), e));
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
     }
 }

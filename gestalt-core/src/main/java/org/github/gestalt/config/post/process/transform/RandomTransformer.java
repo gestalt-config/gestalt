@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.Base64;
 import java.util.Locale;
@@ -48,13 +48,13 @@ public final class RandomTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
 
         if (key == null) {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
 
-        ValidateOf<String> result;
+        GResultOf<String> result;
 
         Matcher matcher = randomPattern.matcher(key.replace(" ", ""));
         if (matcher.find()) {
@@ -77,10 +77,10 @@ public final class RandomTransformer implements Transformer {
                         random.nextBytes(bytes);
 
                         if (parameter2 != null) {
-                            result = ValidateOf.validateOf(Base64.getEncoder().encodeToString(bytes),
+                            result = GResultOf.resultOf(Base64.getEncoder().encodeToString(bytes),
                                 new ValidationError.InvalidNumberOfParametersForRandomExpression(path, key, transformName, 1));
                         } else {
-                            result = ValidateOf.valid(Base64.getEncoder().encodeToString(bytes));
+                            result = GResultOf.result(Base64.getEncoder().encodeToString(bytes));
                         }
                     }
                     break;
@@ -90,11 +90,11 @@ public final class RandomTransformer implements Transformer {
                         Integer parameter2 = p2 == null || p2.isEmpty() ? null : Integer.parseInt(p2);
 
                         if (parameter1 != null && parameter2 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.ints(parameter1, parameter2).findFirst().getAsInt()));
+                            result = GResultOf.result(String.valueOf(random.ints(parameter1, parameter2).findFirst().getAsInt()));
                         } else if (parameter1 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.nextInt(parameter1)));
+                            result = GResultOf.result(String.valueOf(random.nextInt(parameter1)));
                         } else {
-                            result = ValidateOf.valid(String.valueOf(random.nextInt()));
+                            result = GResultOf.result(String.valueOf(random.nextInt()));
                         }
                     }
                     break;
@@ -103,11 +103,11 @@ public final class RandomTransformer implements Transformer {
                         Long parameter1 = p1 == null || p1.isEmpty() ? null : Long.parseLong(p1);
                         Long parameter2 = p2 == null || p2.isEmpty() ? null : Long.parseLong(p2);
                         if (parameter1 != null && parameter2 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.longs(parameter1, parameter2).findFirst().getAsLong()));
+                            result = GResultOf.result(String.valueOf(random.longs(parameter1, parameter2).findFirst().getAsLong()));
                         } else if (parameter1 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.longs(0, parameter1).findFirst().getAsLong()));
+                            result = GResultOf.result(String.valueOf(random.longs(0, parameter1).findFirst().getAsLong()));
                         } else {
-                            result = ValidateOf.valid(String.valueOf(random.nextLong()));
+                            result = GResultOf.result(String.valueOf(random.nextLong()));
                         }
                     }
                     break;
@@ -116,11 +116,11 @@ public final class RandomTransformer implements Transformer {
                         Float parameter1 = p1 == null || p1.isEmpty() ? null : Float.parseFloat(p1);
                         Float parameter2 = p2 == null || p2.isEmpty() ? null : Float.parseFloat(p2);
                         if (parameter1 != null && parameter2 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.nextFloat() * (parameter2 - parameter1) + parameter1));
+                            result = GResultOf.result(String.valueOf(random.nextFloat() * (parameter2 - parameter1) + parameter1));
                         } else if (parameter1 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.nextFloat() * parameter1));
+                            result = GResultOf.result(String.valueOf(random.nextFloat() * parameter1));
                         } else {
-                            result = ValidateOf.valid(String.valueOf(random.nextFloat()));
+                            result = GResultOf.result(String.valueOf(random.nextFloat()));
                         }
                     }
                     break;
@@ -129,11 +129,11 @@ public final class RandomTransformer implements Transformer {
                         Double parameter1 = p1 == null || p1.isEmpty() ? null : Double.parseDouble(p1);
                         Double parameter2 = p2 == null || p2.isEmpty() ? null : Double.parseDouble(p2);
                         if (parameter1 != null && parameter2 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.doubles(parameter1, parameter2).findFirst().getAsDouble()));
+                            result = GResultOf.result(String.valueOf(random.doubles(parameter1, parameter2).findFirst().getAsDouble()));
                         } else if (parameter1 != null) {
-                            result = ValidateOf.valid(String.valueOf(random.doubles(0, parameter1).findFirst().getAsDouble()));
+                            result = GResultOf.result(String.valueOf(random.doubles(0, parameter1).findFirst().getAsDouble()));
                         } else {
-                            result = ValidateOf.valid(String.valueOf(random.nextDouble()));
+                            result = GResultOf.result(String.valueOf(random.nextDouble()));
                         }
                     }
                     break;
@@ -142,10 +142,10 @@ public final class RandomTransformer implements Transformer {
                         boolean value = random.nextBoolean();
                         String strResult = String.valueOf(value);
                         if (p1 != null || p2 != null) {
-                            result = ValidateOf.validateOf(strResult,
+                            result = GResultOf.resultOf(strResult,
                                 new ValidationError.InvalidNumberOfParametersForRandomExpression(path, key, transformName, 0));
                         } else {
-                            result = ValidateOf.valid(strResult);
+                            result = GResultOf.result(strResult);
                         }
                     }
                     break;
@@ -153,14 +153,14 @@ public final class RandomTransformer implements Transformer {
                     case "string": {
                         Integer parameter1 = p1 == null || p1.isEmpty() ? null : Integer.parseInt(p1);
                         if (parameter1 == null || p2 != null) {
-                            result = ValidateOf.inValid(
+                            result = GResultOf.errors(
                                 new ValidationError.InvalidNumberOfParametersForRandomExpressionError(path, key, transformName, 1));
                         } else {
                             StringBuilder sb = new StringBuilder(parameter1);
                             for (int i = 0; i < parameter1; i++) {
                                 sb.append(randomChar());
                             }
-                            result = ValidateOf.valid(sb.toString());
+                            result = GResultOf.result(sb.toString());
                         }
                     }
                     break;
@@ -168,10 +168,10 @@ public final class RandomTransformer implements Transformer {
                     case "char": {
                         String strResult = randomChar();
                         if (p1 != null || p2 != null) {
-                            result = ValidateOf.validateOf(strResult,
+                            result = GResultOf.resultOf(strResult,
                                 new ValidationError.InvalidNumberOfParametersForRandomExpression(path, key, transformName, 0));
                         } else {
-                            result = ValidateOf.valid(strResult);
+                            result = GResultOf.result(strResult);
                         }
                     }
                     break;
@@ -179,21 +179,21 @@ public final class RandomTransformer implements Transformer {
                     case "uuid": {
                         String strResult = String.valueOf(UUID.randomUUID());
                         if (p1 != null || p2 != null) {
-                            result = ValidateOf.validateOf(strResult,
+                            result = GResultOf.resultOf(strResult,
                                 new ValidationError.InvalidNumberOfParametersForRandomExpression(path, key, transformName, 0));
                         } else {
-                            result = ValidateOf.valid(strResult);
+                            result = GResultOf.result(strResult);
                         }
                     }
                     break;
                     default:
-                        result = ValidateOf.inValid(new ValidationError.UnsupportedRandomPostProcess(path, key));
+                        result = GResultOf.errors(new ValidationError.UnsupportedRandomPostProcess(path, key));
                 }
             } catch (IllegalArgumentException e) {
-                result = ValidateOf.inValid(new ValidationError.UnableToParseRandomParameter(path, key, transformName, p1, p2));
+                result = GResultOf.errors(new ValidationError.UnableToParseRandomParameter(path, key, transformName, p1, p2));
             }
         } else {
-            result = ValidateOf.inValid(new ValidationError.UnableToParseRandomExpression(path, key));
+            result = GResultOf.errors(new ValidationError.UnableToParseRandomExpression(path, key));
         }
 
         return result;

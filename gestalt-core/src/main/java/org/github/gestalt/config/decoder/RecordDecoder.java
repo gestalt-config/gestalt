@@ -7,10 +7,10 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.RecComponent;
 import org.github.gestalt.config.utils.RecordUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -40,9 +40,9 @@ public final class RecordDecoder implements Decoder<Object> {
     }
 
     @Override
-    public ValidateOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+    public GResultOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         if (!(node instanceof MapNode)) {
-            return ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
+            return GResultOf.errors(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
         }
 
         boolean hasAllValues = true;
@@ -64,7 +64,7 @@ public final class RecordDecoder implements Decoder<Object> {
             Type fieldClass = rc.typeGeneric();
             String nextPath = PathUtil.pathForKey(path, name);
 
-            ValidateOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
+            GResultOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
             var typeCapture = TypeCapture.of(fieldClass);
 
             errors.addAll(configNode.getErrors());
@@ -72,19 +72,19 @@ public final class RecordDecoder implements Decoder<Object> {
                 // if we have no value, check the config annotation for a default.
                 if (configAnnotation != null && configAnnotation.defaultVal() != null &&
                     !configAnnotation.defaultVal().isEmpty()) {
-                    ValidateOf<?> defaultValidateOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
+                    GResultOf<?> defaultGResultOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
                         typeCapture, decoderContext);
 
-                    errors.addAll(defaultValidateOf.getErrors());
-                    if (defaultValidateOf.hasResults()) {
-                        values[i] = defaultValidateOf.results();
+                    errors.addAll(defaultGResultOf.getErrors());
+                    if (defaultGResultOf.hasResults()) {
+                        values[i] = defaultGResultOf.results();
                     } else {
                         hasAllValues = false;
                     }
                 } else {
                     // when we have no result for the field and no annotation default
                     // try and decode the value anyway, in case its supports a nullable type, such as optional.
-                    ValidateOf<?> decodedResults =
+                    GResultOf<?> decodedResults =
                         decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
                     if (decodedResults.hasResults()) {
                         values[i] = decodedResults.results();
@@ -93,12 +93,12 @@ public final class RecordDecoder implements Decoder<Object> {
                     }
                 }
             } else {
-                ValidateOf<?> fieldValidateOf =
+                GResultOf<?> fieldGResultOf =
                     decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
 
-                errors.addAll(fieldValidateOf.getErrors());
-                if (fieldValidateOf.hasResults()) {
-                    values[i] = fieldValidateOf.results();
+                errors.addAll(fieldGResultOf.getErrors());
+                if (fieldGResultOf.hasResults()) {
+                    values[i] = fieldGResultOf.results();
                 } else {
                     hasAllValues = false;
                     errors.add(new ValidationError.NoResultsFoundForNode(nextPath, fieldClass.getClass(), "record decoding"));
@@ -107,9 +107,9 @@ public final class RecordDecoder implements Decoder<Object> {
         }
 
         if (!hasAllValues) {
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
-        return ValidateOf.validateOf(RecordUtils.invokeCanonicalConstructor(klass, recordComponents, values), errors);
+        return GResultOf.resultOf(RecordUtils.invokeCanonicalConstructor(klass, recordComponents, values), errors);
     }
 }

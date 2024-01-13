@@ -69,15 +69,15 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertFalse(validate.hasErrors())
-        val results: DBInfo = validate.results() as DBInfo
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasErrors())
+        val results: DBInfo = result.results() as DBInfo
         Assertions.assertEquals(100, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -88,17 +88,17 @@ class DataClassDecoderTest {
         val decoder = DataClassDecoder()
         val configs = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             configs,
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
         Assertions.assertEquals(
             "Expected a map node on path: db.host, received node type : LEAF",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
     }
 
@@ -110,17 +110,17 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             TypeCapture.of(DBInfo::class.java),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
         Assertions.assertEquals(
             "Data Class: org.github.gestalt.config.kotlin.test.classes.DBInfo, can not be constructed on path: db.host",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
     }
 
@@ -131,20 +131,20 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
 
-        val results: DBInfo = validate.results() as DBInfo
+        val results: DBInfo = result.results() as DBInfo
         Assertions.assertEquals(100, results.port)
         Assertions.assertEquals("password", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -157,17 +157,17 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoRequired>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
     }
 
@@ -175,17 +175,17 @@ class DataClassDecoderTest {
     fun `decode Missing All Members`() {
         val decoder = DataClassDecoder()
         val configs: MutableMap<String, ConfigNode> = HashMap()
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertEquals(3, validate.errors.size)
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(3, result.errors.size)
 
-        val results: DBInfo = validate.results() as DBInfo
+        val results: DBInfo = result.results() as DBInfo
         Assertions.assertEquals(0, results.port)
         Assertions.assertEquals("password", results.password)
         Assertions.assertEquals("mysql:URI", results.uri)
@@ -198,21 +198,21 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNoDefaultOptional>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertEquals(1, validate.errors.size)
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
 
-        val results: DBInfoNoDefaultOptional = validate.results() as DBInfoNoDefaultOptional
+        val results: DBInfoNoDefaultOptional = result.results() as DBInfoNoDefaultOptional
         Assertions.assertEquals(100, results.port)
         Assertions.assertNull(results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -225,22 +225,22 @@ class DataClassDecoderTest {
         configs["port"] = LeafNode("100")
         configs["uri"] = LeafNode("mysql.com")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNoDefault>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertEquals(2, validate.errors.size)
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(2, result.errors.size)
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
         Assertions.assertEquals(
             "Data Class: DBInfoNoDefault, can not be constructed. Missing required members [password], on path: db.host",
-            validate.errors[1].description()
+            result.errors[1].description()
         )
     }
 
@@ -252,25 +252,25 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertEquals(2, validate.errors.size)
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(2, result.errors.size)
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.host.port, from node: LeafNode{value='abc'} attempting to decode kInt",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.port, for class: class kotlin.Int, during data decoding",
-            validate.errors[1].description()
+            result.errors[1].description()
         )
 
-        val results: DBInfo = validate.results() as DBInfo
+        val results: DBInfo = result.results() as DBInfo
         Assertions.assertEquals(0, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -284,25 +284,25 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertEquals(2, validate.errors.size)
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(2, result.errors.size)
         Assertions.assertEquals(
             "Leaf on path: db.host.port, has no value attempting to decode kInt",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.port, for class: class kotlin.Int, during data decoding",
-            validate.errors[1].description()
+            result.errors[1].description()
         )
 
-        val results: DBInfo = validate.results() as DBInfo
+        val results: DBInfo = result.results() as DBInfo
         Assertions.assertEquals(0, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -316,16 +316,16 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotation>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertFalse(validate.hasErrors())
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasErrors())
 
-        val results: DBInfoAnnotation = validate.results() as DBInfoAnnotation
+        val results: DBInfoAnnotation = result.results() as DBInfoAnnotation
         Assertions.assertEquals(100, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -338,21 +338,21 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotation>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertEquals(1, validate.errors.size)
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(
             "Unable to find node matching path: db.host.channel, for class: ObjectToken, during navigating to next node",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
 
-        val results: DBInfoAnnotation = validate.results() as DBInfoAnnotation
+        val results: DBInfoAnnotation = result.results() as DBInfoAnnotation
         Assertions.assertEquals(1234, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -366,16 +366,16 @@ class DataClassDecoderTest {
         configs["uri"] = LeafNode("mysql.com")
         configs["password"] = LeafNode("pass")
 
-        val validate = decoder.decode(
+        val result = decoder.decode(
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotationLong>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertFalse(validate.hasErrors())
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasErrors())
 
-        val results: DBInfoAnnotationLong = validate.results() as DBInfoAnnotationLong
+        val results: DBInfoAnnotationLong = result.results() as DBInfoAnnotationLong
         Assertions.assertEquals(100, results.port)
         Assertions.assertEquals("pass", results.password)
         Assertions.assertEquals("mysql.com", results.uri)

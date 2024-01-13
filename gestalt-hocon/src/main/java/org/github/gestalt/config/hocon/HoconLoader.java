@@ -11,7 +11,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,11 +62,11 @@ public final class HoconLoader implements ConfigLoader {
      * Pass these into the ConfigCompiler to build a config node tree.
      *
      * @param source source we want to load with this config loader.
-     * @return ValidateOf config node or errors.
+     * @return GResultOf config node or errors.
      * @throws GestaltException any errors.
      */
     @Override
-    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
 
         if (source.hasStream()) {
             try (InputStream is = source.loadStream()) {
@@ -77,13 +77,8 @@ public final class HoconLoader implements ConfigLoader {
                     throw new GestaltException("Exception loading source: " + source.name() + " no hocon found");
                 }
 
-                ValidateOf<ConfigNode> node = buildConfigTree("", config.root());
-
-                if (node.hasResults()) {
-                    return ValidateOf.validateOf(List.of(new ConfigNodeContainer(node.results(), source)), node.getErrors());
-                } else {
-                    return ValidateOf.inValid(node.getErrors());
-                }
+                GResultOf<ConfigNode> node = buildConfigTree("", config.root());
+                return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source)));
             } catch (ConfigException | NullPointerException | IOException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
@@ -92,7 +87,7 @@ public final class HoconLoader implements ConfigLoader {
         }
     }
 
-    private ValidateOf<ConfigNode> buildConfigTree(String path, ConfigValue configObject) {
+    private GResultOf<ConfigNode> buildConfigTree(String path, ConfigValue configObject) {
         switch (configObject.valueType()) {
             case LIST:
                 return buildArrayConfigTree(path, (ConfigList) configObject);
@@ -103,12 +98,12 @@ public final class HoconLoader implements ConfigLoader {
             case STRING:
             case BOOLEAN:
             case NUMBER:
-                return ValidateOf.valid(new LeafNode(configObject.unwrapped().toString()));
+                return GResultOf.result(new LeafNode(configObject.unwrapped().toString()));
 
             case NULL:
-                return ValidateOf.inValid(new ValidationError.NoResultsFoundForPath(path));
+                return GResultOf.errors(new ValidationError.NoResultsFoundForPath(path));
             default:
-                return ValidateOf.inValid(new ValidationError.UnknownNodeTypeDuringLoad(path, configObject.valueType().name()));
+                return GResultOf.errors(new ValidationError.UnknownNodeTypeDuringLoad(path, configObject.valueType().name()));
         }
     }
 
@@ -116,14 +111,14 @@ public final class HoconLoader implements ConfigLoader {
         return sentence.toLowerCase(Locale.getDefault());
     }
 
-    private ValidateOf<ConfigNode> buildArrayConfigTree(String path, ConfigList configList) {
+    private GResultOf<ConfigNode> buildArrayConfigTree(String path, ConfigList configList) {
         List<ValidationError> errors = new ArrayList<>();
         List<ConfigNode> array = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(0);
         configList.forEach(it -> {
             String currentPath = PathUtil.pathForIndex(path, index.getAndIncrement());
 
-            ValidateOf<ConfigNode> node = buildConfigTree(currentPath, it);
+            GResultOf<ConfigNode> node = buildConfigTree(currentPath, it);
             errors.addAll(node.getErrors());
             if (!node.hasResults()) {
                 errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
@@ -132,10 +127,10 @@ public final class HoconLoader implements ConfigLoader {
             }
         });
         ConfigNode arrayNode = new ArrayNode(array);
-        return ValidateOf.validateOf(arrayNode, errors);
+        return GResultOf.resultOf(arrayNode, errors);
     }
 
-    private ValidateOf<ConfigNode> buildObjectConfigTree(String path, ConfigObject configObject) {
+    private GResultOf<ConfigNode> buildObjectConfigTree(String path, ConfigObject configObject) {
         List<ValidationError> errors = new ArrayList<>();
         Map<String, ConfigNode> mapNode = new LinkedHashMap<>();
 
@@ -143,7 +138,7 @@ public final class HoconLoader implements ConfigLoader {
             String newPath = normalizeSentence(key);
             String currentPath = PathUtil.pathForKey(path, key);
 
-            ValidateOf<ConfigNode> node = buildConfigTree(currentPath, value);
+            GResultOf<ConfigNode> node = buildConfigTree(currentPath, value);
             errors.addAll(node.getErrors());
             if (!node.hasResults()) {
                 errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
@@ -153,6 +148,6 @@ public final class HoconLoader implements ConfigLoader {
         });
 
         ConfigNode mapConfigNode = new MapNode(mapNode);
-        return ValidateOf.validateOf(mapConfigNode, errors);
+        return GResultOf.resultOf(mapConfigNode, errors);
     }
 }

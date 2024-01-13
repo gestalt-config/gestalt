@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform.substitution;
 
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class SubstitutionTreeBuilderTest {
     public void noSubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "test");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "test");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -30,7 +30,7 @@ public class SubstitutionTreeBuilderTest {
     public void emptySubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -42,7 +42,7 @@ public class SubstitutionTreeBuilderTest {
     public void oneSubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location}.");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location}.");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -66,7 +66,7 @@ public class SubstitutionTreeBuilderTest {
     public void onlySubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "${name}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "${name}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -81,7 +81,7 @@ public class SubstitutionTreeBuilderTest {
     public void backToBackSubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "${name}${location}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "${name}${location}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -101,7 +101,7 @@ public class SubstitutionTreeBuilderTest {
     public void nestedSubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name.${location}}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name.${location}}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -125,7 +125,7 @@ public class SubstitutionTreeBuilderTest {
     public void nestedMultipleSubstitution() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name.${location}} today is ${weather}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name.${location}} today is ${weather}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -155,7 +155,7 @@ public class SubstitutionTreeBuilderTest {
     public void nestedSubstitutionEscaped() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello \\${name.${location}\\}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello \\${name.${location}\\}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -176,7 +176,7 @@ public class SubstitutionTreeBuilderTest {
     public void nestedSubstitutionEscaped2() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello \\${name.${location\\}}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello \\${name.${location\\}}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -195,7 +195,7 @@ public class SubstitutionTreeBuilderTest {
     public void unexpectedClosingTokenAtMiddle() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome } to ${location}.");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome } to ${location}.");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -223,7 +223,7 @@ public class SubstitutionTreeBuilderTest {
     public void unexpectedClosingTokenAtBeginning() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "}hello ${name} welcome to ${location}.");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "}hello ${name} welcome to ${location}.");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -251,7 +251,7 @@ public class SubstitutionTreeBuilderTest {
     public void unexpectedClosingTokenAtEnding() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location}.}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location}.}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -279,7 +279,7 @@ public class SubstitutionTreeBuilderTest {
     public void unClosingTokenAtEnding() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -306,7 +306,7 @@ public class SubstitutionTreeBuilderTest {
     public void unClosingTokenAtBeginning() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(2, result.getErrors().size());
@@ -325,7 +325,7 @@ public class SubstitutionTreeBuilderTest {
     public void unClosingTokenAtBeginning2() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location}");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -354,7 +354,7 @@ public class SubstitutionTreeBuilderTest {
     public void nestedSubstitutionCustomTokens() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("aaa", "ooo");
 
-        ValidateOf<List<SubstitutionNode>> result = builder.build("db.host", "hello aaaname.aaalocationoooooo");
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello aaaname.aaalocationoooooo");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 

@@ -6,7 +6,7 @@ import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin String Decoder.
@@ -30,7 +30,7 @@ class StringDecoder : LeafDecoder<String>() {
         }
     }
 
-    override fun leafDecode(path: String, node: ConfigNode): ValidateOf<String> {
-        return ValidateOf.valid((node.value.orElse("")) as String)
+    override fun leafDecode(path: String, node: ConfigNode): GResultOf<String> {
+        return GResultOf.result((node.value.orElse("")) as String)
     }
 }

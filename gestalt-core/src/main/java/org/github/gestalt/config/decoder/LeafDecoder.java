@@ -5,7 +5,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Base class for leaf decoders. Will decode leaf types, including booleans, integers ect.
@@ -18,24 +18,24 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     /**
      * Validates that the current node is a leaf and if it is call leafDecode.
      *
-     * @param path           the current path
-     * @param tags           the tags for the current request
+     * @param path           the current path.
+     * @param tags           the tags for the current request.
      * @param node           the current node we are decoding.
      * @param type           the type of object we are decoding.
      * @param decoderContext the information needed to decode an object.
-     * @return ValidateOf the current node with details of either success or failures.
+     * @return GResultOf the current node with details of either success or failures.
      */
     @Override
-    public ValidateOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
-        ValidateOf<T> results;
+    public GResultOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+        GResultOf<T> results;
         if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {
                 results = leafDecode(path, node, type);
             } else {
-                results = ValidateOf.inValid(new ValidationError.DecodingLeafMissingValue(path, name()));
+                results = GResultOf.errors(new ValidationError.DecodingLeafMissingValue(path, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
         }
         return results;
     }
@@ -43,21 +43,21 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     /**
      * Decode a leaf value.
      *
-     * @param path the current path
+     * @param path the current path.
      * @param node the current node we are decoding.
      * @param type the type of object we are decoding.
-     * @return ValidateOf the current node with details of either success or failures.
+     * @return GResultOf the current node with details of either success or failures.
      */
-    protected ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
+    protected GResultOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
         return leafDecode(path, node);
     }
 
     /**
      * Decode a leaf value.
      *
-     * @param path the current path
+     * @param path the current path.
      * @param node the current node we are decoding.
-     * @return ValidateOf the current node with details of either success or failures.
+     * @return GResultOf the current node with details of either success or failures.
      */
-    protected abstract ValidateOf<T> leafDecode(String path, ConfigNode node);
+    protected abstract GResultOf<T> leafDecode(String path, ConfigNode node);
 }

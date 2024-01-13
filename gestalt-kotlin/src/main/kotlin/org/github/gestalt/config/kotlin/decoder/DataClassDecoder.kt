@@ -15,7 +15,7 @@ import org.github.gestalt.config.node.MapNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.PathUtil
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
@@ -58,9 +58,9 @@ class DataClassDecoder : Decoder<Any> {
         node: ConfigNode,
         type: TypeCapture<*>,
         decoderContext: DecoderContext
-    ): ValidateOf<Any> {
+    ): GResultOf<Any> {
         if (node !is MapNode) {
-            return ValidateOf.inValid(ValidationError.DecodingExpectedMapNodeType(path, node))
+            return GResultOf.errors(ValidationError.DecodingExpectedMapNodeType(path, node))
         }
 
         val decoderService = decoderContext.decoderService
@@ -70,7 +70,7 @@ class DataClassDecoder : Decoder<Any> {
 
             if (classifier is KClass<*> && classifier.isData) {
                 if (classifier.constructors.isEmpty()) {
-                    return ValidateOf.inValid(DataClassHasNoConstructor(path, classifier.simpleName ?: ""))
+                    return GResultOf.errors(DataClassHasNoConstructor(path, classifier.simpleName ?: ""))
                 }
 
                 val constructor = classifier.constructors.first()
@@ -95,7 +95,7 @@ class DataClassDecoder : Decoder<Any> {
                         var results: Any? = null
                         when {
                             !configNode.hasResults() && configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
-                                val defaultValidateOf: ValidateOf<*> = decoderService.decodeNode(
+                                val defaultGResultOf: GResultOf<*> = decoderService.decodeNode(
                                     nextPath,
                                     tags,
                                     LeafNode(configAnnotation?.defaultVal),
@@ -103,12 +103,12 @@ class DataClassDecoder : Decoder<Any> {
                                     decoderContext
                                 )
 
-                                if (defaultValidateOf.hasErrors()) {
-                                    errors.addAll(defaultValidateOf.errors)
+                                if (defaultGResultOf.hasErrors()) {
+                                    errors.addAll(defaultGResultOf.errors)
                                 }
 
-                                if (defaultValidateOf.hasResults()) {
-                                    results = defaultValidateOf.results()
+                                if (defaultGResultOf.hasResults()) {
+                                    results = defaultGResultOf.results()
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }
@@ -116,7 +116,6 @@ class DataClassDecoder : Decoder<Any> {
 
                             !it.isOptional && !configNode.hasResults() -> {
                                 missingMembers.add(paramName)
-
                             }
 
                             configNode.hasResults() -> {
@@ -142,26 +141,26 @@ class DataClassDecoder : Decoder<Any> {
                 return when {
                     missingMembers.isNotEmpty() -> {
                         errors.add(DataClassMissingRequiredMember(path, classifier.simpleName ?: "", missingMembers))
-                        ValidateOf.inValid(errors)
+                        GResultOf.errors(errors)
                     }
 
                     parameters.isNotEmpty() -> {
-                        ValidateOf.validateOf(constructor.callBy(parameters), errors)
+                        GResultOf.resultOf(constructor.callBy(parameters), errors)
                     }
 
                     else -> {
                         try {
                             // so try and use the default constructor, it may provide all the default args
                             // if not it will fail constructing.
-                            ValidateOf.validateOf(classifier.createInstance(), errors)
+                            GResultOf.resultOf(classifier.createInstance(), errors)
                         } catch (e: IllegalArgumentException) {
                             errors.add(DataClassCanNotBeConstructed(path, classifier.simpleName ?: ""))
-                            ValidateOf.inValid(errors)
+                            GResultOf.errors(errors)
                         }
                     }
                 }
             }
         }
-        return ValidateOf.inValid(DataClassCanNotBeConstructed(path, type.name))
+        return GResultOf.errors(DataClassCanNotBeConstructed(path, type.name))
     }
 }

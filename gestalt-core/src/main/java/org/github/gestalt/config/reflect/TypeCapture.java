@@ -70,7 +70,7 @@ public class TypeCapture<T> {
      * This should not be used with classes that have generic type parameters.
      *
      * @param klass to get type of.
-     * @param <T> type of capture
+     * @param <T>   type of capture
      * @return the TypeCapture
      */
     public static <T> TypeCapture<T> of(Class<T> klass) {   // NOPMD
@@ -82,7 +82,7 @@ public class TypeCapture<T> {
      * This should not be used with classes that have generic type parameters.
      *
      * @param klass type to capture.
-     * @param <T> type of capture
+     * @param <T>   type of capture
      * @return the TypeCapture
      */
     public static <T> TypeCapture<T> of(Type klass) {       // NOPMD
@@ -137,8 +137,8 @@ public class TypeCapture<T> {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
             return Arrays.stream(parameterized.getActualTypeArguments())
-                         .map(TypeCapture::of)
-                         .collect(Collectors.toList());
+                .map(TypeCapture::of)
+                .collect(Collectors.toList());
         } else {
             return null;
         }
@@ -227,7 +227,7 @@ public class TypeCapture<T> {
      * Get the annotations by type.
      *
      * @param annotationClass annotation class
-     * @param <A> the type of the annotation
+     * @param <A>             the type of the annotation
      * @return the annotation
      */
     public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {

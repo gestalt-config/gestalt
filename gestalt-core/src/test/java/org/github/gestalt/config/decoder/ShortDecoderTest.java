@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,44 +63,44 @@ class ShortDecoderTest {
     void decode() {
         ShortDecoder decoder = new ShortDecoder();
 
-        ValidateOf<Short> validate = decoder.decode("db.port", Tags.of(), new LeafNode("124"),
-                TypeCapture.of(Short.class), new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertEquals((short) 124, (short) validate.results());
-        Assertions.assertEquals(0, validate.getErrors().size());
+        GResultOf<Short> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"),
+            TypeCapture.of(Short.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals((short) 124, (short) result.results());
+        Assertions.assertEquals(0, result.getErrors().size());
     }
 
     @Test
     void notAnInteger() {
         ShortDecoder decoder = new ShortDecoder();
 
-        ValidateOf<Short> validate = decoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-                TypeCapture.of(Short.class), new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertNull(validate.results());
-        Assertions.assertNotNull(validate.getErrors());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        GResultOf<Short> result = decoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
+            TypeCapture.of(Short.class), new DecoderContext(decoderService, null));
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertNull(result.results());
+        Assertions.assertNotNull(result.getErrors());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
                 "attempting to decode Short",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 
     @Test
     void notAShortTooLarge() {
         ShortDecoder decoder = new ShortDecoder();
 
-        ValidateOf<Short> validate = decoder.decode("db.port", Tags.of(),
-                new LeafNode("12345678901234567890123456789012345678901234567890123456789"), TypeCapture.of(Short.class),
+        GResultOf<Short> result = decoder.decode("db.port", Tags.of(),
+            new LeafNode("12345678901234567890123456789012345678901234567890123456789"), TypeCapture.of(Short.class),
             new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertNull(validate.results());
-        Assertions.assertNotNull(validate.getErrors());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertNull(result.results());
+        Assertions.assertNotNull(result.getErrors());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to decode a number on path: db.port, from node: " +
                 "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode Short",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 }

@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.UUID;
 
@@ -31,13 +31,13 @@ public final class UUIDDecoder extends LeafDecoder<UUID> {
     }
 
     @Override
-    protected ValidateOf<UUID> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<UUID> leafDecode(String path, ConfigNode node) {
         String value = node.getValue().orElse("");
 
         try {
-            return ValidateOf.valid(UUID.fromString(value));
+            return GResultOf.result(UUID.fromString(value));
         } catch (IllegalArgumentException e) {
-            return ValidateOf.inValid(new ValidationError.ErrorDecodingException(path, node, name()));
+            return GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
         }
     }
 }

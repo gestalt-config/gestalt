@@ -59,7 +59,7 @@ public final class MapConfigSourceBuilder extends SourceBuilder<MapConfigSourceB
     /**
      * Add a new configuration with a path and a value.
      *
-     * @param path the path for the configuration
+     * @param path  the path for the configuration
      * @param value the value for the configuration.
      * @return the builder
      */

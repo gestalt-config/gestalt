@@ -1,7 +1,6 @@
 package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
-import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -11,10 +10,9 @@ import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.EnvironmentConfigSource;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.utils.ValidateOf;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +37,7 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
     /**
      * Constructor for Environment Variables Loader.
      *
-     * @param lexer how to create the tokens for the variables.
+     * @param lexer  how to create the tokens for the variables.
      * @param parser parser for Environment Variables
      */
     public EnvironmentVarsLoader(SentenceLexer lexer, ConfigParser parser) {
@@ -58,7 +56,7 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
     }
 
     @Override
-    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
         List<Pair<String, String>> configs;
         if (source.hasList()) {
             configs = source.loadList();
@@ -67,19 +65,11 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
         }
 
         if (configs.isEmpty()) {
-            return ValidateOf.valid(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
+            return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
         }
 
-        ValidateOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
+        GResultOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
 
-        List<ValidationError> errors = new ArrayList<>();
-        if (loadedNode.hasErrors()) {
-            errors.addAll(loadedNode.getErrors());
-        }
-        if (!loadedNode.hasResults()) {
-            return ValidateOf.inValid(errors);
-        }
-
-        return ValidateOf.validateOf(List.of(new ConfigNodeContainer(loadedNode.results(), source)), errors);
+        return loadedNode.mapWithError((result) -> List.of(new ConfigNodeContainer(result, source)));
     }
 }

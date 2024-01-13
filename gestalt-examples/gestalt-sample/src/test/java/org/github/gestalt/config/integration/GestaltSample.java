@@ -961,7 +961,7 @@ public class GestaltSample {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.does.not.exist", "test", String.class));
 
-        //  validate prefix annotation
+        //  result prefix annotation
         DataBasePrefix dbPrefix = gestalt.getConfig("", DataBasePrefix.class);
         // not really a great test for ensuring we are hitting a cache
         Assertions.assertEquals(600, dbPrefix.connectionTimeout);
@@ -1119,7 +1119,7 @@ public class GestaltSample {
         Assertions.assertEquals("active", gestalt.getConfig("serviceMode", TypeCapture.of(String.class)));
         Assertions.assertEquals('a', gestalt.getConfig("serviceMode", TypeCapture.of(Character.class)));
 
-        // Validate that guice gets the injected config.
+        // result that guice gets the injected config.
         Injector injector = Guice.createInjector(new GestaltModule(gestalt));
         DBQueryService dbService = injector.getInstance(DBQueryService.class);
         db = dbService.getDataBase();

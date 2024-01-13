@@ -49,18 +49,18 @@ public final class RecordUtils {
             Class<?> c = Class.forName("java.lang.reflect.RecordComponent");
             MH_isRecord = LOOKUP.findVirtual(Class.class, "isRecord", methodType(boolean.class));
             MH_getRecordComponents = LOOKUP.findVirtual(Class.class, "getRecordComponents",
-                                               methodType(Array.newInstance(c, 0).getClass()))
-                                           .asType(methodType(Object[].class, Class.class));
+                    methodType(Array.newInstance(c, 0).getClass()))
+                .asType(methodType(Object[].class, Class.class));
             MH_getName = LOOKUP.findVirtual(c, "getName", methodType(String.class))
-                               .asType(methodType(String.class, Object.class));
+                .asType(methodType(String.class, Object.class));
             MH_getType = LOOKUP.findVirtual(c, "getType", methodType(Class.class))
-                               .asType(methodType(Class.class, Object.class));
+                .asType(methodType(Class.class, Object.class));
             MH_getGenericType = LOOKUP.findVirtual(c, "getGenericType", methodType(Type.class))
-                                      .asType(methodType(Type.class, Object.class));
+                .asType(methodType(Type.class, Object.class));
             MH_getDeclaredAnnotation = LOOKUP.findVirtual(c, "getDeclaredAnnotations", methodType(Annotation[].class))
-                                             .asType(methodType(Annotation[].class, Object.class));
+                .asType(methodType(Annotation[].class, Object.class));
             MH_getAccessor = LOOKUP.findVirtual(c, "getAccessor", methodType(Method.class))
-                                   .asType(methodType(Method.class, Object.class));
+                .asType(methodType(Method.class, Object.class));
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             // pre-Java-14
             MH_isRecord = null;
@@ -107,8 +107,8 @@ public final class RecordUtils {
      * comparator is null, the order is that of the record components in the
      * record attribute of the class file.
      *
-     * @param <T> This is the type of the record
-     * @param type class type
+     * @param <T>        This is the type of the record
+     * @param type       class type
      * @param comparator how to sort the records
      * @return the record components
      */
@@ -138,7 +138,7 @@ public final class RecordUtils {
     /**
      * Retrieves the value of the record component for the given record object.
      *
-     * @param recordObject record object to get its values
+     * @param recordObject    record object to get its values
      * @param recordComponent components or records
      * @return record components
      */
@@ -159,10 +159,10 @@ public final class RecordUtils {
      * Invokes the canonical constructor of a record class with the
      * given argument values.
      *
-     * @param <T> This is the type of the record
-     * @param recordType type of record
+     * @param <T>              This is the type of the record
+     * @param recordType       type of record
      * @param recordComponents record components
-     * @param args objects used to create the  record
+     * @param args             objects used to create the  record
      * @return the record created
      */
     @SuppressWarnings("unchecked")
@@ -171,11 +171,11 @@ public final class RecordUtils {
                                                    Object[] args) {
         try {
             Class<?>[] paramTypes = Arrays.stream(recordComponents)
-                                          .map(RecComponent::type)
-                                          .toArray(Class<?>[]::new);
+                .map(RecComponent::type)
+                .toArray(Class<?>[]::new);
             MethodHandle MH_canonicalConstructor =
                 LOOKUP.findConstructor(recordType, methodType(void.class, paramTypes))
-                      .asType(methodType(Object.class, paramTypes));
+                    .asType(methodType(Object.class, paramTypes));
             return (T) MH_canonicalConstructor.invokeWithArguments(args);
         } catch (Throwable t) {
             throw new RuntimeException("Could not construct type (" + recordType.getName() + ")", t);

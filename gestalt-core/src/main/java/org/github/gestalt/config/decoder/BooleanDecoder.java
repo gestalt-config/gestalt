@@ -3,7 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Decode a boolean.
@@ -28,8 +28,8 @@ public final class BooleanDecoder extends LeafDecoder<Boolean> {
     }
 
     @Override
-    protected ValidateOf<Boolean> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Boolean> leafDecode(String path, ConfigNode node) {
         String value = node.getValue().orElse("");
-        return ValidateOf.valid(Boolean.parseBoolean(value));
+        return GResultOf.result(Boolean.parseBoolean(value));
     }
 }

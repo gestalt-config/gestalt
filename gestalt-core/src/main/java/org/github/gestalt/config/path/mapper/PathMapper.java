@@ -3,7 +3,7 @@ package org.github.gestalt.config.path.mapper;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.List;
 
@@ -25,10 +25,10 @@ public interface PathMapper {
     /**
      * Takes a sentance and converts it into a set of tokens to navigate.
      *
-     * @param path the current path we are looking in
+     * @param path     the current path we are looking in
      * @param sentence the next segment of the path to check
-     * @param lexer the sentence lexer used to tokenize the sentence.
+     * @param lexer    the sentence lexer used to tokenize the sentence.
      * @return the list of tokens to check in the path
      */
-    ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer);
+    GResultOf<List<Token>> map(String path, String sentence, SentenceLexer lexer);
 }

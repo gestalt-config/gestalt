@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.StringUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,11 +55,11 @@ public final class PathLexer extends SentenceLexer {
     /**
      * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
      *
-     * @param delimiter the character to split the sentence
+     * @param delimiter        the character to split the sentence
      * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
-     *     name = name of the element
-     *     array = if this element is an array
-     *     index = the index for the array
+     *                         name = name of the element
+     *                         array = if this element is an array
+     *                         index = the index for the array
      */
     public PathLexer(String delimiter, String pathPatternRegex) {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
@@ -79,44 +79,44 @@ public final class PathLexer extends SentenceLexer {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected ValidateOf<List<Token>> evaluator(String word, String sentence) {
+    protected GResultOf<List<Token>> evaluator(String word, String sentence) {
         if (sentence == null || sentence.isEmpty()) {
-            return ValidateOf.inValid(new ValidationError.EmptyPath());
+            return GResultOf.errors(new ValidationError.EmptyPath());
         } else if (word == null || word.isEmpty()) {
-            return ValidateOf.inValid(new ValidationError.EmptyElement(sentence));
+            return GResultOf.errors(new ValidationError.EmptyElement(sentence));
         }
 
         Matcher matcher = pathPattern.matcher(word);
         if (!matcher.find()) {
-            return ValidateOf.inValid(new ValidationError.FailedToTokenizeElement(word, sentence));
+            return GResultOf.errors(new ValidationError.FailedToTokenizeElement(word, sentence));
         }
 
         String name = matcher.group("name");
         if (name == null || name.isEmpty()) {
-            return ValidateOf.inValid(new ValidationError.UnableToParseName(sentence));
+            return GResultOf.errors(new ValidationError.UnableToParseName(sentence));
         }
 
         String array = matcher.group("array");
         String arrayIndex = matcher.group("index");
 
-        @SuppressWarnings("rawtypes") ValidateOf results;
+        @SuppressWarnings("rawtypes") GResultOf results;
         if (array != null && arrayIndex != null && !arrayIndex.isEmpty()) {
             if (StringUtils.isInteger(arrayIndex)) {
                 int index = Integer.parseInt(arrayIndex);
                 if (index >= 0) {
-                    results = ValidateOf.valid(List.of(new ObjectToken(name), new ArrayToken(index)));
+                    results = GResultOf.result(List.of(new ObjectToken(name), new ArrayToken(index)));
                 } else {
-                    results = ValidateOf.inValid(new ValidationError.InvalidArrayNegativeIndexToken(word, index, sentence));
+                    results = GResultOf.errors(new ValidationError.InvalidArrayNegativeIndexToken(word, index, sentence));
                 }
             } else {
-                results = ValidateOf.inValid(new ValidationError.InvalidArrayToken(word, arrayIndex, sentence));
+                results = GResultOf.errors(new ValidationError.InvalidArrayToken(word, arrayIndex, sentence));
             }
         } else if (array != null) {
-            results = ValidateOf.inValid(new ValidationError.InvalidArrayIndexToken(word, sentence));
+            results = GResultOf.errors(new ValidationError.InvalidArrayIndexToken(word, sentence));
         } else {
             ObjectToken object = new ObjectToken(name);
             List<ObjectToken> list = Collections.singletonList(object);
-            results = ValidateOf.valid(list);
+            results = GResultOf.result(list);
         }
 
         return results;

@@ -9,7 +9,7 @@ import org.github.gestalt.config.google.config.GoogleModuleConfig;
 import org.github.gestalt.config.google.errors.ExceptionProcessingGCPSecret;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.Transformer;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Allows you to substitute a GCP secret using ${gcpSecret:key}.
@@ -43,7 +43,7 @@ public final class GCPSecretTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
         if (key != null) {
             try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
                 SecretVersionName secretVersionName = SecretVersionName.of(projectId, key, "latest");
@@ -52,12 +52,12 @@ public final class GCPSecretTransformer implements Transformer {
 
                 String secret = response.getPayload().getData().toStringUtf8();
 
-                return ValidateOf.valid(secret);
+                return GResultOf.result(secret);
             } catch (Exception ex) {
-                return ValidateOf.inValid(new ExceptionProcessingGCPSecret(path, key, name(), ex));
+                return GResultOf.errors(new ExceptionProcessingGCPSecret(path, key, name(), ex));
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
     }
 }

@@ -7,7 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +45,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -81,7 +81,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -116,7 +116,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader(ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON));
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -146,7 +146,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -163,7 +163,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -183,7 +183,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -203,7 +203,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -241,7 +241,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -258,7 +258,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 

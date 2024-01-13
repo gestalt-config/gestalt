@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,7 +33,7 @@ public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected ValidateOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
+    protected GResultOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
         String value = node.getValue().orElse("");
         try {
             Class<?> klass = type.getRawType();
@@ -43,19 +43,19 @@ public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
             for (Object enumConst : enumConstants) {
                 Object enumName = m.invoke(enumConst);
                 if (enumName instanceof String && value.equalsIgnoreCase((String) enumName)) {
-                    return ValidateOf.valid((T) enumConst);
+                    return GResultOf.result((T) enumConst);
                 }
             }
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            return ValidateOf.inValid(new ValidationError.ExceptionDecodingEnum(path, value, type.getRawType(), e));
+            return GResultOf.errors(new ValidationError.ExceptionDecodingEnum(path, value, type.getRawType(), e));
         }
 
-        return ValidateOf.inValid(new ValidationError.EnumValueNotFound(path, value, type.getRawType()));
+        return GResultOf.errors(new ValidationError.EnumValueNotFound(path, value, type.getRawType()));
     }
 
     @Override
-    protected ValidateOf<T> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<T> leafDecode(String path, ConfigNode node) {
         // not called.
         return null;
     }
