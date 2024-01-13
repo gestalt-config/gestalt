@@ -5,7 +5,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public interface ConfigNodeService {
      * @return newly merged node
      * @throws GestaltException any exceptions
      */
-    ValidateOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException;
+    GResultOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException;
 
     /**
      * Apply a list of Post Processors on the root node. This allows a post processor to modify the config tree in any way.
@@ -36,7 +36,7 @@ public interface ConfigNodeService {
      * @return if the post process has completed successfully
      * @throws GestaltException any exceptions
      */
-    ValidateOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException;
+    GResultOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException;
 
     /**
      * Reload a node, if there are more than one node it will merge it into the config tree in the same order as the existing node.
@@ -46,37 +46,37 @@ public interface ConfigNodeService {
      * @return the new root node
      * @throws GestaltException any exceptions
      */
-    ValidateOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException;
+    GResultOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException;
 
     /**
      * navigate to a node for a path from the root.
      *
-     * @param path to navigate to
+     * @param path   to navigate to
      * @param tokens list of tokens to navigate to.
-     * @param tags list of tags to match
-     * @return ValidateOf node or any errors.
+     * @param tags   list of tags to match
+     * @return GResultOf node or any errors.
      */
-    ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags);
+    GResultOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags);
 
     /**
      * From a given node navigate to the next node.
      * If an ArrayToken and the config node is an ArrayNode it will return the next node by index.
      * If a ObjectToken and the config node is a MapNode it will return the next node by key.
      *
-     * @param path to here for logging.
-     * @param token token for the next node
+     * @param path        to here for logging.
+     * @param token       token for the next node
      * @param currentNode current node we want to navigate from
-     * @return ValidateOf node or any errors.
+     * @return GResultOf node or any errors.
      */
-    ValidateOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode);
+    GResultOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode);
 
     /**
      * From a given node navigate to the next node.
      *
-     * @param path to here for logging.
-     * @param tokens list of token for the next node
+     * @param path        to here for logging.
+     * @param tokens      list of token for the next node
      * @param currentNode current node we want to navigate from
-     * @return ValidateOf node or any errors.
+     * @return GResultOf node or any errors.
      */
-    ValidateOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, ConfigNode currentNode);
+    GResultOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, ConfigNode currentNode);
 }

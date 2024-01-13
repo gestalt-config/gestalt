@@ -13,7 +13,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,11 +63,11 @@ public final class YamlLoader implements ConfigLoader {
      * Pass these into the ConfigCompiler to build a config node tree.
      *
      * @param source source we want to load with this config loader.
-     * @return ValidateOf config node or errors.
+     * @return GResultOf config node or errors.
      * @throws GestaltException any errors.
      */
     @Override
-    public ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
 
         if (source.hasStream()) {
             try (InputStream is = source.loadStream()) {
@@ -77,17 +77,11 @@ public final class YamlLoader implements ConfigLoader {
                 }
 
                 if (jsonNode.getNodeType() == MISSING) {
-                    return ValidateOf.valid(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
+                    return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
                 }
 
-                ValidateOf<ConfigNode> node = buildConfigTree("", jsonNode);
-
-                if (node.hasResults()) {
-                    return ValidateOf.validateOf(
-                        List.of(new ConfigNodeContainer(node.results(), source)), node.getErrors());
-                } else {
-                    return ValidateOf.inValid(node.getErrors());
-                }
+                GResultOf<ConfigNode> node = buildConfigTree("", jsonNode);
+                return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source)));
             } catch (IOException | NullPointerException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
@@ -96,7 +90,7 @@ public final class YamlLoader implements ConfigLoader {
         }
     }
 
-    private ValidateOf<ConfigNode> buildConfigTree(String path, JsonNode jsonNode) {
+    private GResultOf<ConfigNode> buildConfigTree(String path, JsonNode jsonNode) {
         switch (jsonNode.getNodeType()) {
             case ARRAY:
                 return buildArrayConfigTree(path, jsonNode);
@@ -109,13 +103,13 @@ public final class YamlLoader implements ConfigLoader {
             case BINARY:
             case BOOLEAN:
             case NUMBER:
-                return ValidateOf.valid(new LeafNode(jsonNode.asText()));
+                return GResultOf.result(new LeafNode(jsonNode.asText()));
 
             case MISSING:
             case NULL:
-                return ValidateOf.inValid(new ValidationError.NoResultsFoundForPath(path));
+                return GResultOf.errors(new ValidationError.NoResultsFoundForPath(path));
             default:
-                return ValidateOf.inValid(new ValidationError.UnknownNodeTypeDuringLoad(path, jsonNode.getNodeType().name()));
+                return GResultOf.errors(new ValidationError.UnknownNodeTypeDuringLoad(path, jsonNode.getNodeType().name()));
         }
     }
 
@@ -123,7 +117,7 @@ public final class YamlLoader implements ConfigLoader {
         return sentence.toLowerCase(Locale.getDefault());
     }
 
-    private ValidateOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {
+    private GResultOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {
         List<ValidationError> errors = new ArrayList<>();
         List<ConfigNode> array = new ArrayList<>();
         int arraySize = jsonNode.size();
@@ -131,7 +125,7 @@ public final class YamlLoader implements ConfigLoader {
             String currentPath = PathUtil.pathForIndex(path, i);
 
             JsonNode arrayNodes = jsonNode.get(i);
-            ValidateOf<ConfigNode> node = buildConfigTree(currentPath, arrayNodes);
+            GResultOf<ConfigNode> node = buildConfigTree(currentPath, arrayNodes);
             errors.addAll(node.getErrors());
             if (!node.hasResults()) {
                 errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
@@ -140,10 +134,10 @@ public final class YamlLoader implements ConfigLoader {
             }
         }
         ConfigNode arrayNode = new ArrayNode(array);
-        return ValidateOf.validateOf(arrayNode, errors);
+        return GResultOf.resultOf(arrayNode, errors);
     }
 
-    private ValidateOf<ConfigNode> buildObjectConfigTree(String path, JsonNode jsonNode) {
+    private GResultOf<ConfigNode> buildObjectConfigTree(String path, JsonNode jsonNode) {
         List<ValidationError> errors = new ArrayList<>();
         Map<String, ConfigNode> mapNode = new HashMap<>();
 
@@ -154,7 +148,7 @@ public final class YamlLoader implements ConfigLoader {
 
             String currentPath = PathUtil.pathForKey(path, key);
 
-            ValidateOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
+            GResultOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
             errors.addAll(node.getErrors());
             if (!node.hasResults()) {
                 errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
@@ -164,6 +158,6 @@ public final class YamlLoader implements ConfigLoader {
         }
 
         ConfigNode mapConfigNode = new MapNode(mapNode);
-        return ValidateOf.validateOf(mapConfigNode, errors);
+        return GResultOf.resultOf(mapConfigNode, errors);
     }
 }

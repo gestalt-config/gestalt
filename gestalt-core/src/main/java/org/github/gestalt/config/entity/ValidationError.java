@@ -410,11 +410,11 @@ public abstract class ValidationError {
     /**
      * While mapping a value the key was null.
      */
-    public static class MappingValueNull extends ValidationError {
+    public static class MappingPathEmpty extends ValidationError {
         private final String path;
         private final String mapper;
 
-        public MappingValueNull(String path, String mapper) {
+        public MappingPathEmpty(String path, String mapper) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.mapper = mapper;
@@ -422,7 +422,34 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Mapper: " + mapper + " key was null on path: " + path;
+            return "Mapper: " + mapper + " token was null or empty on path: " + path;
+        }
+    }
+
+    /**
+     * While trying to map a path no results were found.
+     */
+    public static class NoResultsMappingPath extends ValidationError {
+        private final String path;
+
+        private final String nextPath;
+        private final String area;
+
+        public NoResultsMappingPath(String path, String nextPath, String area) {
+            super(ValidationLevel.MISSING_VALUE);
+            this.path = path;
+            this.nextPath = nextPath;
+            this.area = area;
+        }
+
+        @Override
+        public String description() {
+            return "No results from mapping path: " + path + ", with next path: " + nextPath + ", during " + area;
+        }
+
+        @Override
+        public boolean hasNoResults() {
+            return true;
         }
     }
 

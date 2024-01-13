@@ -80,16 +80,6 @@ public final class Tags {
     }
 
     /**
-     * Get the tags.
-     *
-     * @return tags
-     */
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-
-    /**
      * Create and return a new tag of type profile with value.
      *
      * @param value the profile
@@ -143,6 +133,15 @@ public final class Tags {
                     .collect(Collectors.toList())
             );
         }
+    }
+
+    /**
+     * Get the tags.
+     *
+     * @return tags
+     */
+    public Set<Tag> getTags() {
+        return tags;
     }
 
     @Override

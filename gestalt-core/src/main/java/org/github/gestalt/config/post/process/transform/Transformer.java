@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
 import org.github.gestalt.config.post.process.PostProcessorConfig;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Allows you to add your own custom source for the TransformerPostProcessor.
@@ -22,12 +22,12 @@ public interface Transformer {
      * When a match is found for ${name:key} the key and the path are passed into the process method.
      * The returned value replaces the whole ${name:key}
      *
-     * @param path the current path
-     * @param key the key to lookup int this transform.
+     * @param path     the current path
+     * @param key      the key to lookup int this transform.
      * @param rawValue the whole raw value of the current string to transform.
      * @return the value to replace the ${name:key}
      */
-    ValidateOf<String> process(String path, String key, String rawValue);
+    GResultOf<String> process(String path, String key, String rawValue);
 
     /**
      * Apply the PostProcessorConfig to the Transformer. Needed when building via the ServiceLoader

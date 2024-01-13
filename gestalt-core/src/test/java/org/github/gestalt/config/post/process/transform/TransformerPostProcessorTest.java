@@ -4,7 +4,7 @@ import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:test}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -40,7 +40,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place}!");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -56,7 +56,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello Earth!");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -74,7 +74,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -90,7 +90,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=world} it is ${weather:=sunny} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -106,7 +106,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=world} it is ${weather:=} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -124,7 +124,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=abc:=} it is ${weather:=aaa.*} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -140,7 +140,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=world:=} it is ${weather:=sunny.*} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -158,7 +158,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=earth} it is ${weather:=overcast} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -177,7 +177,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:place:world}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
@@ -198,7 +198,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
@@ -215,7 +215,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:noValue}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
@@ -232,7 +232,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${noTransform:value}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
@@ -260,7 +260,7 @@ class TransformerPostProcessorTest {
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
             List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
         LeafNode node = new LeafNode("hello ${place} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -286,7 +286,7 @@ class TransformerPostProcessorTest {
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
             List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
         LeafNode node = new LeafNode("\\${map:weather}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -312,7 +312,7 @@ class TransformerPostProcessorTest {
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
             List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
         LeafNode node = new LeafNode("hello ${place} it is \\${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -338,7 +338,7 @@ class TransformerPostProcessorTest {
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
             List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
         LeafNode node = new LeafNode("hello ${noValue} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
@@ -364,7 +364,7 @@ class TransformerPostProcessorTest {
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
             List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
         LeafNode node = new LeafNode("hello ${location} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
@@ -392,7 +392,7 @@ class TransformerPostProcessorTest {
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(
             List.of(customMapTransformer, systemPropertiesTransformer, environmentVariablesTransformer, customTransformer));
         LeafNode node = new LeafNode("hello ${place@} it is ${map:weather.*} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -411,7 +411,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:${variable}} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -431,7 +431,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${${source}:${variable}} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -452,7 +452,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${${source}:${variable1}} it is ${map:weather} today");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -471,7 +471,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path.${this.path}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -491,7 +491,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here}}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -510,7 +510,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -531,7 +531,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -551,7 +551,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here.${their.${test}}}}}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(6, validateNode.getErrors().size());
@@ -571,7 +571,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(2, validateNode.getErrors().size());
@@ -591,7 +591,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("\\${my.path.${your.path}.night\\}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -609,7 +609,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -627,7 +627,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());
@@ -643,7 +643,7 @@ class TransformerPostProcessorTest {
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
-        ValidateOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
         Assertions.assertTrue(validateNode.hasResults());

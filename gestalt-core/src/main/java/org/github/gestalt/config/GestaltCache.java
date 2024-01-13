@@ -25,7 +25,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     /**
      * Constructor for the GestaltCache that accepts a delegate.
      *
-     * @param delegate real Gestalt to call for configs to cache.
+     * @param delegate    real Gestalt to call for configs to cache.
      * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCache(Gestalt delegate, Tags defaultTags) {

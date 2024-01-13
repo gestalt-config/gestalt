@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,36 +64,36 @@ class BooleanDecoderTest {
     void decode() {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", Tags.of(), new LeafNode("true"),
-                TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.results());
+        GResultOf<Boolean> result = decoder.decode("db.enabled", Tags.of(), new LeafNode("true"),
+            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.results());
     }
 
     @Test
     void decodeFalse() {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", Tags.of(), new LeafNode("false"),
-                TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertFalse(validate.results());
+        GResultOf<Boolean> result = decoder.decode("db.enabled", Tags.of(), new LeafNode("false"),
+            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertFalse(result.results());
     }
 
     @Test
     void decodeFalseNull() {
         BooleanDecoder decoder = new BooleanDecoder();
 
-        ValidateOf<Boolean> validate = decoder.decode("db.enabled", Tags.of(), new LeafNode(null),
-                TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertNull(validate.results());
-        Assertions.assertNotNull(validate.getErrors());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        GResultOf<Boolean> result = decoder.decode("db.enabled", Tags.of(), new LeafNode(null),
+            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null));
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertNull(result.results());
+        Assertions.assertNotNull(result.getErrors());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Leaf on path: db.enabled, has no value attempting to decode Boolean",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 }

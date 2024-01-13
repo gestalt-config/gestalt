@@ -5,7 +5,7 @@ import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,62 +17,62 @@ class PathLexerTest {
     public void testTokenizer() {
         PathLexer pathLexer = new PathLexer();
 
-        List<String> validate = pathLexer.tokenizer("the.quick[].brown.fox");
+        List<String> result = pathLexer.tokenizer("the.quick[].brown.fox");
 
-        Assertions.assertEquals(4, validate.size());
-        Assertions.assertEquals("the", validate.get(0));
-        Assertions.assertEquals("quick[]", validate.get(1));
-        Assertions.assertEquals("brown", validate.get(2));
-        Assertions.assertEquals("fox", validate.get(3));
+        Assertions.assertEquals(4, result.size());
+        Assertions.assertEquals("the", result.get(0));
+        Assertions.assertEquals("quick[]", result.get(1));
+        Assertions.assertEquals("brown", result.get(2));
+        Assertions.assertEquals("fox", result.get(3));
     }
 
     @Test
     public void testTokenizerAlternate() {
         PathLexer pathLexer = new PathLexer("_");
 
-        List<String> validate = pathLexer.tokenizer("the_quick[]_brown_fox");
+        List<String> result = pathLexer.tokenizer("the_quick[]_brown_fox");
 
-        Assertions.assertEquals(4, validate.size());
-        Assertions.assertEquals("the", validate.get(0));
-        Assertions.assertEquals("quick[]", validate.get(1));
-        Assertions.assertEquals("brown", validate.get(2));
-        Assertions.assertEquals("fox", validate.get(3));
+        Assertions.assertEquals(4, result.size());
+        Assertions.assertEquals("the", result.get(0));
+        Assertions.assertEquals("quick[]", result.get(1));
+        Assertions.assertEquals("brown", result.get(2));
+        Assertions.assertEquals("fox", result.get(3));
     }
 
     @Test
     public void testEmptyTokenizer() {
         PathLexer pathLexer = new PathLexer(".");
 
-        List<String> validate = pathLexer.tokenizer("");
-        Assertions.assertEquals(0, validate.size());
+        List<String> result = pathLexer.tokenizer("");
+        Assertions.assertEquals(0, result.size());
 
-        validate = pathLexer.tokenizer(null);
-        Assertions.assertEquals(0, validate.size());
+        result = pathLexer.tokenizer(null);
+        Assertions.assertEquals(0, result.size());
     }
 
     @Test
     public void testEvaluatorEmptyWord() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator(null, "the.quick[].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator(null, "the.quick[].brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        List<ValidationError> errors = validate.getErrors();
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals(ValidationLevel.WARN, errors.get(0).level());
         Assertions.assertEquals("empty element for path: the.quick[].brown.fox", errors.get(0).description());
 
-        validate.getErrors(ValidationLevel.WARN);
+        result.getErrors(ValidationLevel.WARN);
         Assertions.assertEquals(ValidationLevel.WARN, errors.get(0).level());
         Assertions.assertEquals("empty element for path: the.quick[].brown.fox", errors.get(0).description());
 
-        validate = pathLexer.evaluator(null, "the.quick[0].brown.fox");
+        result = pathLexer.evaluator(null, "the.quick[0].brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        errors = validate.getErrors();
+        errors = result.getErrors();
         Assertions.assertEquals("empty element for path: the.quick[0].brown.fox", errors.get(0).description());
     }
 
@@ -80,20 +80,20 @@ class PathLexerTest {
     public void testEvaluatorEmptySentence() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("the", null);
+        GResultOf<List<Token>> result = pathLexer.evaluator("the", null);
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        List<ValidationError> errors = validate.getErrors();
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("empty path provided", errors.get(0).description());
 
-        validate = pathLexer.evaluator("the", "");
+        result = pathLexer.evaluator("the", "");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        errors = validate.getErrors();
+        errors = result.getErrors();
         Assertions.assertEquals("empty path provided", errors.get(0).description());
     }
 
@@ -101,11 +101,11 @@ class PathLexerTest {
     public void testEvaluatorObject() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("the", "the.quick[].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("the", "the.quick[].brown.fox");
 
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<Token> tokens = validate.results();
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<Token> tokens = result.results();
         Assertions.assertEquals(1, tokens.size());
         Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
         Assertions.assertEquals("the", ((ObjectToken) tokens.get(0)).getName());
@@ -115,11 +115,11 @@ class PathLexerTest {
     public void testEvaluatorArrayNoIndex() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[0]", "the.quick[0].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("quick[0]", "the.quick[0].brown.fox");
 
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<Token> tokens = validate.results();
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<Token> tokens = result.results();
         Assertions.assertEquals(2, tokens.size());
         Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
         Assertions.assertEquals("quick", ((ObjectToken) tokens.get(0)).getName());
@@ -131,11 +131,11 @@ class PathLexerTest {
     public void testEvaluatorArrayIndex() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[2]", "the.quick[2].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("quick[2]", "the.quick[2].brown.fox");
 
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<Token> tokens = validate.results();
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<Token> tokens = result.results();
         Assertions.assertEquals(2, tokens.size());
         Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
         Assertions.assertEquals("quick", ((ObjectToken) tokens.get(0)).getName());
@@ -147,26 +147,26 @@ class PathLexerTest {
     public void testEvaluatorNegativeArrayIndex() {
         PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>-\\d*)])?)$");
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[-2]", "the.quick[-2].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("quick[-2]", "the.quick[-2].brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        Assertions.assertEquals(1, validate.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Array index can not be negative: -2 provided provided for element: quick[-2] " +
-            "for path: the.quick[-2].brown.fox", validate.getErrors().get(0).description());
+            "for path: the.quick[-2].brown.fox", result.getErrors().get(0).description());
     }
 
     @Test
     public void testEvaluatorBadWord() {
         PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$");
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("$%#@%", "the.$%#@%.brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("$%#@%", "the.$%#@%.brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        List<ValidationError> errors = validate.getErrors();
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("Unable to tokenize element $%#@% for path: the.$%#@%.brown.fox", errors.get(0).description());
     }
 
@@ -175,12 +175,12 @@ class PathLexerTest {
         // we can only test a bad name if we provide a bad regex, otherwise it wont match.
         PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "((?<name>\\w?)(?<array>\\[(?<index>\\d*)])?)$");
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("[0]", "the.quick[0].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("[0]", "the.quick[0].brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        List<ValidationError> errors = validate.getErrors();
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("unable to parse the name for path: the.quick[0].brown.fox", errors.get(0).description());
     }
 
@@ -189,12 +189,12 @@ class PathLexerTest {
         // we can only test a bad array index if we provide a bad regex.
         PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\w*)])?)$");
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[a]", "the.quick[a].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("quick[a]", "the.quick[a].brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        List<ValidationError> errors = validate.getErrors();
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("Array index provided: a for element quick[a] but unable to parse as int for path: " +
             "the.quick[a].brown.fox", errors.get(0).description());
     }
@@ -204,12 +204,12 @@ class PathLexerTest {
         // we can only test a bad array index if we provide a bad regex.
         PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\w*)])?)$");
 
-        ValidateOf<List<Token>> validate = pathLexer.evaluator("quick[]", "the.quick[].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.evaluator("quick[]", "the.quick[].brown.fox");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
 
-        List<ValidationError> errors = validate.getErrors();
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("Array index not provided provided for element quick[] for path: " +
             "the.quick[].brown.fox", errors.get(0).description());
     }
@@ -218,11 +218,11 @@ class PathLexerTest {
     public void testDefaultTokenizer() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.scan("the.quick[0].brown.fox");
+        GResultOf<List<Token>> result = pathLexer.scan("the.quick[0].brown.fox");
 
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<Token> tokens = validate.results();
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<Token> tokens = result.results();
         Assertions.assertEquals(5, tokens.size());
         Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
         Assertions.assertEquals("the", ((ObjectToken) tokens.get(0)).getName());
@@ -240,11 +240,11 @@ class PathLexerTest {
     public void testDefaultTokenizerCaseChange() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.scan("The.Quick[0].BROWN.fox");
+        GResultOf<List<Token>> result = pathLexer.scan("The.Quick[0].BROWN.fox");
 
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<Token> tokens = validate.results();
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<Token> tokens = result.results();
         Assertions.assertEquals(5, tokens.size());
         Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
         Assertions.assertEquals("the", ((ObjectToken) tokens.get(0)).getName());
@@ -262,11 +262,11 @@ class PathLexerTest {
     public void testScanNull() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.scan(null);
+        GResultOf<List<Token>> result = pathLexer.scan(null);
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.hasResults());
-        List<ValidationError> errors = validate.getErrors();
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.hasResults());
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("empty path provided", errors.get(0).description());
     }
 
@@ -274,14 +274,14 @@ class PathLexerTest {
     public void testScanEmptyElement() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.scan("the.quick..brown");
+        GResultOf<List<Token>> result = pathLexer.scan("the.quick..brown");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<ValidationError> errors = validate.getErrors();
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("empty element for path: the.quick..brown", errors.get(0).description());
 
-        List<Token> tokens = validate.results();
+        List<Token> tokens = result.results();
         Assertions.assertEquals(3, tokens.size());
         Assertions.assertEquals(ObjectToken.class, tokens.get(0).getClass());
         Assertions.assertEquals("the", ((ObjectToken) tokens.get(0)).getName());
@@ -295,14 +295,14 @@ class PathLexerTest {
     public void testInvalidSentence() {
         PathLexer pathLexer = new PathLexer(PathLexer.DELIMITER, "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$");
 
-        ValidateOf<List<Token>> validate = pathLexer.scan("the.@#*&");
+        GResultOf<List<Token>> result = pathLexer.scan("the.@#*&");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<ValidationError> errors = validate.getErrors();
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("Unable to tokenize element @#*& for path: the.@#*&", errors.get(0).description());
 
-        List<Token> tokens = validate.results();
+        List<Token> tokens = result.results();
         Assertions.assertEquals(1, tokens.size());
     }
 
@@ -310,14 +310,14 @@ class PathLexerTest {
     public void testArrayNegativeIndex() {
         PathLexer pathLexer = new PathLexer();
 
-        ValidateOf<List<Token>> validate = pathLexer.scan("the.test[-2]");
+        GResultOf<List<Token>> result = pathLexer.scan("the.test[-2]");
 
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertTrue(validate.hasResults());
-        List<ValidationError> errors = validate.getErrors();
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertTrue(result.hasResults());
+        List<ValidationError> errors = result.getErrors();
         Assertions.assertEquals("Unable to tokenize element test[-2] for path: the.test[-2]", errors.get(0).description());
 
-        List<Token> tokens = validate.results();
+        List<Token> tokens = result.results();
         Assertions.assertEquals(1, tokens.size());
     }
 }

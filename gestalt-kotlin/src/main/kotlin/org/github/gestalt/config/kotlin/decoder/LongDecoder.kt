@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.StringUtils
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Long Decoder.
@@ -32,18 +32,18 @@ class LongDecoder : LeafDecoder<Long>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Long> {
-        val results: ValidateOf<Long>
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Long> {
+        val results: GResultOf<Long>
         val value = node.value.orElse("")
         results = if (StringUtils.isInteger(value)) {
             try {
                 val longVal = value.toLong()
-                ValidateOf.valid(longVal)
+                GResultOf.result(longVal)
             } catch (e: NumberFormatException) {
-                ValidateOf.inValid(ValidationError.DecodingNumberFormatException(path, node, name()))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name()))
             }
         } else {
-            ValidateOf.inValid(ValidationError.DecodingNumberParsing(path, node, name()))
+            GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))
         }
         return results
     }

@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.List;
 
@@ -50,5 +50,5 @@ public interface ConfigLoader {
      * @return the validated config node.
      * @throws GestaltException any exceptions
      */
-    ValidateOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException;
+    GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException;
 }

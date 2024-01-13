@@ -3,7 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,8 +31,8 @@ public final class PathDecoder extends LeafDecoder<Path> {
     }
 
     @Override
-    protected ValidateOf<Path> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Path> leafDecode(String path, ConfigNode node) {
         Path file = Paths.get(node.getValue().orElse(""));
-        return ValidateOf.valid(file);
+        return GResultOf.result(file);
     }
 }

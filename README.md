@@ -769,7 +769,7 @@ To register your own default ConfigLoaders add them to the builder, or add it to
 | OptionalLong        | Decodes an optional Long, if no value is found it will return an OptionalLong.empty()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | Path                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Pattern             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| Proxy (interface)   | Will create a proxy for an interface that will return the config value based on the java bean method name. So a method "getCar()" would match a config named "car". If a config is missing it will call the default method if provided. Has 2 modes, Cached and pass-through, the default is Cached. Cached  will receive a cache of all values on creation and return those from an internal cache. Pass-though will validate the object on creation, but when calling to get the values it will call gestalt for each value. This allows you to always get the most recent values. To set the mode on the builder use `Gestalt gestalt = builder.setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)` |
+| Proxy (interface)   | Will create a proxy for an interface that will return the config value based on the java bean method name. So a method "getCar()" would match a config named "car". If a config is missing it will call the default method if provided. Has 2 modes, Cached and pass-through, the default is Cached. Cached  will receive a cache of all values on creation and return those from an internal cache. Pass-though will result the object on creation, but when calling to get the values it will call gestalt for each value. This allows you to always get the most recent values. To set the mode on the builder use `Gestalt gestalt = builder.setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)` |
 | Record              | Decodes a Java record. All members of the record must have a value or construction will fail.So unlike the Object decoder it will not have the option to default to null or provide defaults. Will construct the record even if there are extra values, it will ignore all extra values.                                                                                                                                                                                                                                                                                                                                                                                                              |
 | SequencedCollection | A SequencedCollection with any Generic class, Can decode simple types from a single comma separated value, or from an array node. Provides a ArrayList.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | SequencedMap        | A map, Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int. The value can be any type we can decode. Provides a LinkedHashMap. Json, Toml, and Properties dont support sorted maps. Only Hocon supports sorted maps.                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -1005,7 +1005,7 @@ Each source must have a unique ID, that Gestalt uses to keep track of the source
 
 
 ## ConfigLoader
-A ConfigLoader accepts a specific source format. It reads in the config source as either a list or input stream. It is then responsible for converting the sources into a ValidateOf with either a config node tree or validation errors.
+A ConfigLoader accepts a specific source format. It reads in the config source as either a list or input stream. It is then responsible for converting the sources into a GResultOf with either a config node tree or validation errors.
 You can write your own ConfigLoader by implementing the interface and accepting a specific format. Then read in the provided ConfigSource InputStream or list and parse the values. For example you can add a json loader that takes an InputStream and uses Jackson to load and build a config tree.
 ```java
   /**
@@ -1023,7 +1023,7 @@ You can write your own ConfigLoader by implementing the interface and accepting 
      * @return the validated config node.
      * @throws GestaltException any exceptions
      */
-    ValidateOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
+    GResultOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
 ```
 
 
@@ -1054,9 +1054,9 @@ You can create your own decoder by implementing the Decoder interface. By return
    * @param node the current node we are decoding.
    * @param type the type of object we are decoding.
    * @param decoderService decoder Service used to decode members if needed. Such as class fields.
-   * @return ValidateOf the current node with details of either success or failures.
+   * @return GResultOf the current node with details of either success or failures.
    */
-  ValidateOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService);
+  GResultOf<T> decode(String path, ConfigNode node, TypeCapture<?> type, DecoderService decoderService);
 ```
 
 
@@ -1066,7 +1066,7 @@ You are able to reload a single source and rebuild the config tree by implementi
 
 ## ConfigNodeService
 The ConfigNodeService is the central storage for the merged config node tree along with holding the original config nodes stored in a ConfigNodeContainer with the original source id. This is so when we reload a config source, we can link the source being reloaded with the config tree it produces.
-Gestalt uses the ConfigNodeService to save, merge, validate the config tree, navigate and find the node Gestalt is looking for.
+Gestalt uses the ConfigNodeService to save, merge, result the config tree, navigate and find the node Gestalt is looking for.
 
 
 ## Gestalt
@@ -1092,7 +1092,7 @@ To implement your own Post Processor you need to inherit from PostProcessor.
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface PostProcessor {
-  ValidateOf<ConfigNode> process(String path, ConfigNode currentNode);
+  GResultOf<ConfigNode> process(String path, ConfigNode currentNode);
 
   /**
    * Apply the GestaltConfig to the Post Processor. Needed when building via the ServiceLoader

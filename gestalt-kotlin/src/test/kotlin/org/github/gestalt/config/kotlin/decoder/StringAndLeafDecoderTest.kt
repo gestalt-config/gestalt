@@ -13,7 +13,7 @@ import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -58,7 +58,7 @@ internal class StringAndLeafDecoderTest {
     @Throws(GestaltException::class)
     fun decode() {
         val stringDecoder = StringDecoder()
-        val validate: ValidateOf<String> = stringDecoder.decode(
+        val result: GResultOf<String> = stringDecoder.decode(
             "db.user", Tags.of(),
             LeafNode("test"),
             TypeCapture.of(
@@ -66,17 +66,17 @@ internal class StringAndLeafDecoderTest {
             ),
             DecoderContext(decoderService, null),
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertFalse(validate.hasErrors())
-        Assertions.assertEquals("test", validate.results())
-        Assertions.assertEquals(0, validate.errors.size)
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasErrors())
+        Assertions.assertEquals("test", result.results())
+        Assertions.assertEquals(0, result.errors.size)
     }
 
     @Test
     @Throws(GestaltException::class)
     fun `invalid Leaf Node`() {
         val stringDecoder = StringDecoder()
-        val validate: ValidateOf<String> = stringDecoder.decode(
+        val result: GResultOf<String> = stringDecoder.decode(
             "db.user", Tags.of(),
             LeafNode(null),
             TypeCapture.of(
@@ -84,14 +84,14 @@ internal class StringAndLeafDecoderTest {
             ),
             DecoderContext(decoderService, null),
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertNull(validate.results())
-        Assertions.assertNotNull(validate.errors)
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.errors[0].level())
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertNull(result.results())
+        Assertions.assertNotNull(result.errors)
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.errors[0].level())
         Assertions.assertEquals(
             "Leaf on path: db.user, has no value attempting to decode kString",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
     }
 
@@ -99,7 +99,7 @@ internal class StringAndLeafDecoderTest {
     @Throws(GestaltException::class)
     fun `decode Invalid Node`() {
         val stringDecoder = StringDecoder()
-        val validate: ValidateOf<String> = stringDecoder.decode(
+        val result: GResultOf<String> = stringDecoder.decode(
             "db.user", Tags.of(),
             MapNode(HashMap()),
             TypeCapture.of(
@@ -107,14 +107,14 @@ internal class StringAndLeafDecoderTest {
             ),
             DecoderContext(decoderService, null),
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertNull(validate.results())
-        Assertions.assertNotNull(validate.errors)
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.errors[0].level())
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertNull(result.results())
+        Assertions.assertNotNull(result.errors)
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[0].level())
         Assertions.assertEquals(
             "Expected a leaf on path: db.user, received node type: map, attempting to decode kString",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
     }
 }

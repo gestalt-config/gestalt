@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
@@ -18,16 +18,16 @@ public final class Base64DecoderTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
         if (key != null) {
             try {
                 byte[] decodedBytes = Base64.getDecoder().decode(key);
-                return ValidateOf.valid(new String(decodedBytes, Charset.defaultCharset()));
+                return GResultOf.result(new String(decodedBytes, Charset.defaultCharset()));
             } catch (IllegalArgumentException e) {
-                return ValidateOf.inValid(new ValidationError.InvalidBase64DecodeString(path, key, e.getMessage()));
+                return GResultOf.errors(new ValidationError.InvalidBase64DecodeString(path, key, e.getMessage()));
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
     }
 }

@@ -7,7 +7,7 @@ import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 import java.nio.charset.Charset
 
 /**
@@ -32,13 +32,13 @@ class ByteDecoder : LeafDecoder<Byte>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Byte> {
-        val results: ValidateOf<Byte>
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Byte> {
+        val results: GResultOf<Byte>
         val value = node.value.orElse("")
         results = if (value.length == 1) {
-            ValidateOf.valid(value.toByteArray(Charset.defaultCharset())[0])
+            GResultOf.result(value.toByteArray(Charset.defaultCharset())[0])
         } else {
-            ValidateOf.inValid(
+            GResultOf.errors(
                 ValidationError.DecodingByteTooLong(
                     path,
                     node

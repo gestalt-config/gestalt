@@ -7,7 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +50,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -90,7 +90,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -130,7 +130,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader(new ObjectMapper(new TomlFactory()));
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -173,7 +173,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());

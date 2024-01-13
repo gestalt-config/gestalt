@@ -167,9 +167,9 @@ class GestaltCacheTest {
     void getConfigDefaultMissing() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
-               .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of()))
-               .thenThrow(new GestaltException("Does Not Exist"));
+            .thenThrow(new GestaltException("Does Not Exist"));
 
         Integer port = cache.getConfig("db.port", 100, TypeCapture.of(Integer.class));
         Integer port2 = cache.getConfig("db.port", 300, TypeCapture.of(Integer.class));
@@ -208,7 +208,7 @@ class GestaltCacheTest {
     void getConfig2Optional() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
-               .thenReturn(Optional.of(100));
+            .thenReturn(Optional.of(100));
 
         Optional<Integer> port = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
         Optional<Integer> port2 = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
@@ -227,9 +227,9 @@ class GestaltCacheTest {
     void getConfigOptionalEmpty() throws GestaltException {
         GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
-               .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of()))
-               .thenThrow(new GestaltException("Does Not Exist"));
+            .thenThrow(new GestaltException("Does Not Exist"));
 
         Optional<Integer> port = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));
         Optional<Integer> port2 = cache.getConfigOptional("db.port", TypeCapture.of(Integer.class));

@@ -2,7 +2,7 @@ package org.github.gestalt.config.lexer;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.List;
 import java.util.Locale;
@@ -34,11 +34,11 @@ public abstract class SentenceLexer {
     /**
      * Takes in an elements such as abc or def[3] then converts it into a Token.
      *
-     * @param word The First string in the method params is the word in the string we are evaluating
+     * @param word     The First string in the method params is the word in the string we are evaluating
      * @param sentence second string in the method params is the path the word is in.
-     * @return ValidateOf list of tokens from a word.
+     * @return GResultOf list of tokens from a word.
      */
-    protected abstract ValidateOf<List<Token>> evaluator(String word, String sentence);
+    protected abstract GResultOf<List<Token>> evaluator(String word, String sentence);
 
     /**
      * Takes a sentence and normalize it so we can match tokens from all various systems.
@@ -56,31 +56,31 @@ public abstract class SentenceLexer {
      * @param sentence sentence to scan
      * @return list of token
      */
-    public ValidateOf<List<Token>> scan(String sentence) {
+    public GResultOf<List<Token>> scan(String sentence) {
 
         if (sentence == null || sentence.isEmpty()) {
-            return ValidateOf.inValid(new ValidationError.EmptyPath());
+            return GResultOf.errors(new ValidationError.EmptyPath());
         }
 
         String normalizedSentence = normalizeSentence(sentence);
 
         List<String> tokenList = tokenizer(normalizedSentence);
 
-        List<ValidateOf<List<Token>>> tokenWithValidations = tokenList
+        List<GResultOf<List<Token>>> tokenWithValidations = tokenList
             .stream()
             .map(word -> evaluator(word, normalizedSentence))
             .collect(Collectors.toList());
 
-        List<Token> tokens = tokenWithValidations.stream().filter(ValidateOf::hasResults)
-                                                 .map(ValidateOf::results)
-                                                 .flatMap(List::stream)
-                                                 .collect(Collectors.toList());
+        List<Token> tokens = tokenWithValidations.stream().filter(GResultOf::hasResults)
+            .map(GResultOf::results)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
 
-        List<ValidationError> validations = tokenWithValidations.stream().filter(ValidateOf::hasErrors)
-                                                                .map(ValidateOf::getErrors)
-                                                                .flatMap(List::stream)
-                                                                .collect(Collectors.toList());
+        List<ValidationError> validations = tokenWithValidations.stream().filter(GResultOf::hasErrors)
+            .map(GResultOf::getErrors)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
 
-        return ValidateOf.validateOf(tokens, validations);
+        return GResultOf.resultOf(tokens, validations);
     }
 }

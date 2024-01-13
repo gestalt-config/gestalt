@@ -130,7 +130,7 @@ public class GestaltConfigExtension implements Extension {
         configPropertiesBeans.forEach(properties -> abd.addBean(new GestaltConfigsInjectionBean<>(properties)));
     }
 
-    protected void validate(@Observes AfterDeploymentValidation adv) {
+    protected void result(@Observes AfterDeploymentValidation adv) {
 
     }
 

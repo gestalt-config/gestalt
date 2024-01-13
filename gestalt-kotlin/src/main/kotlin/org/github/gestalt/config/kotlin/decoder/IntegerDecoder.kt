@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.StringUtils
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Int Decoder.
@@ -32,18 +32,18 @@ class IntegerDecoder : LeafDecoder<Int>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Int> {
-        val results: ValidateOf<Int>
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Int> {
+        val results: GResultOf<Int>
         val value = node.value.orElse("")
         results = if (StringUtils.isInteger(value)) {
             try {
                 val intVal = value.toInt()
-                ValidateOf.valid(intVal)
+                GResultOf.result(intVal)
             } catch (e: NumberFormatException) {
-                ValidateOf.inValid(ValidationError.DecodingNumberFormatException(path, node, name()))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name()))
             }
         } else {
-            ValidateOf.inValid(ValidationError.DecodingNumberParsing(path, node, name()))
+            GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))
         }
         return results
     }

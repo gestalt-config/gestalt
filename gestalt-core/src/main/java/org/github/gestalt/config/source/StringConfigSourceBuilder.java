@@ -13,11 +13,11 @@ import org.github.gestalt.config.exceptions.GestaltException;
  *
  * <p>If the format is json the string would be
  * {
- *   db {
- *       "port" = 1234
- *       "password" = "password"
- *       "user" = "notroot"
- *   }.
+ * db {
+ * "port" = 1234
+ * "password" = "password"
+ * "user" = "notroot"
+ * }.
  * }
  *
  * <p>A format for the data in the string must also be provided.

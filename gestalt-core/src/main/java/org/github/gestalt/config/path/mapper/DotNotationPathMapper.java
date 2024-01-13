@@ -3,9 +3,8 @@ package org.github.gestalt.config.path.mapper;
 import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,25 +21,26 @@ public final class DotNotationPathMapper implements PathMapper {
 
     @SuppressWarnings("StringSplitter")
     @Override
-    public ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
-        if (sentence == null) {
-            return ValidateOf.inValid(new ValidationError.MappingValueNull(path, "KebabCasePathMapper"));
+    public GResultOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
+        if (sentence == null || sentence.isEmpty()) {
+            return GResultOf.errors(new ValidationError.MappingPathEmpty(path, "DotNotationPathMapper"));
         }
 
         String[] camelCaseWords = regex.split(sentence);
         List<Token> tokens = new ArrayList<>();
         for (String word : camelCaseWords) {
-            ValidateOf<List<Token>> lexedValidateOf = lexer.scan(word);
-            // if there are errors, add them to the error list abd do not add the merge results
-            if (lexedValidateOf.hasErrors()) {
-                return ValidateOf.inValid(lexedValidateOf.getErrors());
+            GResultOf<List<Token>> lexedGResultOf = lexer.scan(word);
+
+            // if there are errors, add them to the error list and do not add the merge results
+            if (lexedGResultOf.hasErrors()) {
+                return GResultOf.errors(lexedGResultOf.getErrors());
             }
 
-            if (!lexedValidateOf.hasResults()) {
-                return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "decoding"));
+            if (!lexedGResultOf.hasResults()) {
+                return GResultOf.errors(new ValidationError.NoResultsMappingPath(path, sentence, "dot notation path mapping"));
             }
-            tokens.addAll(lexedValidateOf.results());
+            tokens.addAll(lexedGResultOf.results());
         }
-        return ValidateOf.valid(tokens);
+        return GResultOf.result(tokens);
     }
 }

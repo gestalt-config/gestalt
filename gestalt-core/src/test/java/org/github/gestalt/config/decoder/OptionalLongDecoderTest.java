@@ -10,7 +10,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,42 +69,42 @@ class OptionalLongDecoderTest {
     void decodeLeafLong() {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
-        ValidateOf<OptionalLong> validate = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalLong>() {
+        GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalLong>() {
         }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertTrue(validate.results().isPresent());
-        Assertions.assertEquals(124L, validate.results().getAsLong());
-        Assertions.assertEquals(0, validate.getErrors().size());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertTrue(result.results().isPresent());
+        Assertions.assertEquals(124L, result.results().getAsLong());
+        Assertions.assertEquals(0, result.getErrors().size());
     }
 
     @Test
     void decodeLeafLongEmpty() {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
-        ValidateOf<OptionalLong> validate = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalLong>() {
+        GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalLong>() {
         }, new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.results().isPresent());
-        Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.getErrors().get(0).level());
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.results().isPresent());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Leaf on path: db.port, has no value attempting to decode Long",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 
     @Test
     void decodeLeafLongNull() {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
-        ValidateOf<OptionalLong> validate = decoder.decode("db.port", Tags.of(), null,
-                TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertFalse(validate.results().isPresent());
-        Assertions.assertEquals(1, validate.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), null,
+            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertFalse(result.results().isPresent());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Expected a leaf on path: db.port, received node type: null, attempting to decode Long",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 }

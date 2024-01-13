@@ -1,9 +1,10 @@
 package org.github.gestalt.config.path.mapper;
 
+import org.github.gestalt.config.lexer.NoResultSentenceLexer;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class SnakeCasePathMapperTest {
     @Test
     void map() {
         SnakeCasePathMapper mapper = new SnakeCasePathMapper();
-        ValidateOf<List<Token>> results = mapper.map("my.path", "helloWorld", new PathLexer());
+        GResultOf<List<Token>> results = mapper.map("my.path", "helloWorld", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
@@ -30,7 +31,7 @@ class SnakeCasePathMapperTest {
     @Test
     void mapNoChange() {
         SnakeCasePathMapper mapper = new SnakeCasePathMapper();
-        ValidateOf<List<Token>> results = mapper.map("my.path", "hello", new PathLexer());
+        GResultOf<List<Token>> results = mapper.map("my.path", "hello", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
@@ -43,7 +44,7 @@ class SnakeCasePathMapperTest {
     @Test
     void mapMultiple() {
         SnakeCasePathMapper mapper = new SnakeCasePathMapper();
-        ValidateOf<List<Token>> results = mapper.map("my.path", "helloWorldHowAreYou", new PathLexer());
+        GResultOf<List<Token>> results = mapper.map("my.path", "helloWorldHowAreYou", new PathLexer());
 
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
@@ -56,28 +57,56 @@ class SnakeCasePathMapperTest {
     @Test
     void mapEmpty() {
         SnakeCasePathMapper mapper = new SnakeCasePathMapper();
-        ValidateOf<List<Token>> results = mapper.map("my.path", "", new PathLexer());
-
-        Assertions.assertFalse(results.hasResults());
-        Assertions.assertTrue(results.hasErrors());
-
-        Assertions.assertEquals(1, results.getErrors().size());
-        Assertions.assertEquals(MISSING_VALUE, results.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: my.path, for class: MapNode, during Snake case path mapping",
-            results.getErrors().get(0).description());
-    }
-
-    @Test
-    void mapNull() {
-        SnakeCasePathMapper mapper = new SnakeCasePathMapper();
-        ValidateOf<List<Token>> results = mapper.map("my.path", null, new PathLexer());
+        GResultOf<List<Token>> results = mapper.map("my.path", "", new PathLexer());
 
         Assertions.assertFalse(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
 
         Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals(ERROR, results.getErrors().get(0).level());
-        Assertions.assertEquals("Mapper: SnakeCasePathMapper key was null on path: my.path",
+        Assertions.assertEquals("Mapper: SnakeCasePathMapper token was null or empty on path: my.path",
+            results.getErrors().get(0).description());
+    }
+
+    @Test
+    void mapNull() {
+        SnakeCasePathMapper mapper = new SnakeCasePathMapper();
+        GResultOf<List<Token>> results = mapper.map("my.path", null, new PathLexer());
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("Mapper: SnakeCasePathMapper token was null or empty on path: my.path",
+            results.getErrors().get(0).description());
+    }
+
+    @Test
+    void mapLexEmpty() {
+        SnakeCasePathMapper mapper = new SnakeCasePathMapper();
+        GResultOf<List<Token>> results = mapper.map("my.path", "hello", new NoResultSentenceLexer());
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(MISSING_VALUE, results.getErrors().get(0).level());
+        Assertions.assertEquals("No results from mapping path: my.path, with next path: hello, during Snake case path mapping",
+            results.getErrors().get(0).description());
+    }
+
+    @Test
+    void mapLexError() {
+        SnakeCasePathMapper mapper = new SnakeCasePathMapper();
+        GResultOf<List<Token>> results = mapper.map("my.path", "???", new PathLexer());
+
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to tokenize element ??? for path: ???",
             results.getErrors().get(0).description());
     }
 

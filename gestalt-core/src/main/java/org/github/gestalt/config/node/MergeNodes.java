@@ -1,12 +1,12 @@
 package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
 
-import static org.github.gestalt.config.utils.ValidateOf.validateOf;
+import static org.github.gestalt.config.utils.GResultOf.resultOf;
 
 /**
  * Utility class for merging nodes.
@@ -25,14 +25,14 @@ public final class MergeNodes {
     /**
      * Merge two nodes and return the results of the merge. The values in node1 will be overridden by the values in node2
      *
-     * @param path the path of the nodes we are merging.
+     * @param path  the path of the nodes we are merging.
      * @param node1 the base node, its properties will be overridden by the node2
      * @param node2 the node to override the values of.
      * @return the merged nodes.
      */
-    public static ValidateOf<ConfigNode> mergeNodes(String path, ConfigNode node1, ConfigNode node2) {
+    public static GResultOf<ConfigNode> mergeNodes(String path, ConfigNode node1, ConfigNode node2) {
         if (node1.getClass() != node2.getClass()) {
-            return ValidateOf.inValid(
+            return GResultOf.errors(
                 new ValidationError.UnableToMergeDifferentNodes(node1.getClass(), node2.getClass()));
         } else {
             if (node1 instanceof ArrayNode) {
@@ -42,12 +42,12 @@ public final class MergeNodes {
             } else if (node1 instanceof LeafNode) {
                 return mergeLeafNodes(path, (LeafNode) node1, (LeafNode) node2);
             } else {
-                return ValidateOf.inValid(new ValidationError.UnknownNodeType(path, node1.getClass().getName()));
+                return GResultOf.errors(new ValidationError.UnknownNodeType(path, node1.getClass().getName()));
             }
         }
     }
 
-    private static ValidateOf<ConfigNode> mergeArrayNodes(String path, ArrayNode arrayNode1, ArrayNode arrayNode2) {
+    private static GResultOf<ConfigNode> mergeArrayNodes(String path, ArrayNode arrayNode1, ArrayNode arrayNode2) {
         // get the maximum array size of both the nodes.
         int maxSize = Math.max(arrayNode1.size(), arrayNode2.size());
         ConfigNode[] values = new ConfigNode[maxSize];
@@ -62,7 +62,7 @@ public final class MergeNodes {
             Optional<ConfigNode> array2AtIndex = arrayNode2.getIndex(i);
             if (array1AtIndex.isPresent() && array2AtIndex.isPresent()) {
                 String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<ConfigNode> result = mergeNodes(nextPath, array1AtIndex.get(), array2AtIndex.get());
+                GResultOf<ConfigNode> result = mergeNodes(nextPath, array1AtIndex.get(), array2AtIndex.get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
                 errors.addAll(result.getErrors());
@@ -81,10 +81,10 @@ public final class MergeNodes {
         }
 
         ArrayNode results = new ArrayNode(Arrays.asList(values));
-        return validateOf(results, errors);
+        return resultOf(results, errors);
     }
 
-    private static ValidateOf<ConfigNode> mergeMapNodes(String path, MapNode mapNode1, MapNode mapNode2) {
+    private static GResultOf<ConfigNode> mergeMapNodes(String path, MapNode mapNode1, MapNode mapNode2) {
         Map<String, ConfigNode> mergedNode = new HashMap<>();
         List<ValidationError> errors = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public final class MergeNodes {
                 errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
             } else if (mapNode2.getKey(key).isPresent()) {
                 String nextPath = PathUtil.pathForKey(path, key);
-                ValidateOf<ConfigNode> result = mergeNodes(nextPath, mapNode1.getKey(key).get(), mapNode2.getKey(key).get());
+                GResultOf<ConfigNode> result = mergeNodes(nextPath, mapNode1.getKey(key).get(), mapNode2.getKey(key).get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
                 errors.addAll(result.getErrors());
@@ -126,16 +126,16 @@ public final class MergeNodes {
             }
         }
 
-        return validateOf(new MapNode(mergedNode), errors);
+        return resultOf(new MapNode(mergedNode), errors);
     }
 
-    private static ValidateOf<ConfigNode> mergeLeafNodes(String path, LeafNode node1, LeafNode node2) {
+    private static GResultOf<ConfigNode> mergeLeafNodes(String path, LeafNode node1, LeafNode node2) {
         if (node2.getValue().isPresent()) {
-            return ValidateOf.valid(node2);
+            return GResultOf.result(node2);
         } else if (node1.getValue().isPresent()) {
-            return ValidateOf.valid(node1);
+            return GResultOf.result(node1);
         } else {
-            return ValidateOf.inValid(new ValidationError.LeafNodesHaveNoValues(path));
+            return GResultOf.errors(new ValidationError.LeafNodesHaveNoValues(path));
         }
     }
 }

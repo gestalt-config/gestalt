@@ -7,7 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -81,7 +81,7 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -116,7 +116,7 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader(new ObjectMapper(new YAMLFactory()));
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -144,7 +144,7 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
         Assertions.assertTrue(resultContainer.hasErrors());
         Assertions.assertEquals("Unable to find node matching path: age", resultContainer.getErrors().get(0).description());
@@ -166,7 +166,7 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
         Assertions.assertTrue(resultContainer.hasErrors());
         Assertions.assertEquals("Unable to find node matching path: cars", resultContainer.getErrors().get(0).description());
@@ -217,7 +217,7 @@ class YamlLoaderTest {
 
         YamlLoader yamlLoader = new YamlLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = yamlLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());

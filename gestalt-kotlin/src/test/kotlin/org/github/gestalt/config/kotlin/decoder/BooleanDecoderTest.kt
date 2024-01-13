@@ -13,7 +13,7 @@ import org.github.gestalt.config.path.mapper.DotNotationPathMapper
 import org.github.gestalt.config.path.mapper.StandardPathMapper
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -62,7 +62,7 @@ internal class BooleanDecoderTest {
     @Throws(GestaltException::class)
     fun decode() {
         val decoder = BooleanDecoder()
-        val validate: ValidateOf<Boolean> = decoder.decode(
+        val result: GResultOf<Boolean> = decoder.decode(
             "db.enabled", Tags.of(),
             LeafNode("true"),
             TypeCapture.of(
@@ -70,16 +70,16 @@ internal class BooleanDecoderTest {
             ),
             DecoderContext(decoderService, null),
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertFalse(validate.hasErrors())
-        Assertions.assertTrue(validate.results())
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasErrors())
+        Assertions.assertTrue(result.results())
     }
 
     @Test
     @Throws(GestaltException::class)
     fun decodeFalse() {
         val decoder = BooleanDecoder()
-        val validate: ValidateOf<Boolean> = decoder.decode(
+        val result: GResultOf<Boolean> = decoder.decode(
             "db.enabled", Tags.of(),
             LeafNode("false"),
             TypeCapture.of(
@@ -87,16 +87,16 @@ internal class BooleanDecoderTest {
             ),
             DecoderContext(decoderService, null),
         )
-        Assertions.assertTrue(validate.hasResults())
-        Assertions.assertFalse(validate.hasErrors())
-        Assertions.assertFalse(validate.results())
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasErrors())
+        Assertions.assertFalse(result.results())
     }
 
     @Test
     @Throws(GestaltException::class)
     fun decodeFalseNull() {
         val decoder = BooleanDecoder()
-        val validate: ValidateOf<Boolean> = decoder.decode(
+        val result: GResultOf<Boolean> = decoder.decode(
             "db.enabled", Tags.of(),
             LeafNode(null),
             TypeCapture.of(
@@ -104,14 +104,14 @@ internal class BooleanDecoderTest {
             ),
             DecoderContext(decoderService, null),
         )
-        Assertions.assertFalse(validate.hasResults())
-        Assertions.assertTrue(validate.hasErrors())
-        Assertions.assertNull(validate.results())
-        Assertions.assertNotNull(validate.errors)
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, validate.errors[0].level())
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+        Assertions.assertNull(result.results())
+        Assertions.assertNotNull(result.errors)
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.errors[0].level())
         Assertions.assertEquals(
             "Leaf on path: db.enabled, has no value attempting to decode kBoolean",
-            validate.errors[0].description()
+            result.errors[0].description()
         )
     }
 }

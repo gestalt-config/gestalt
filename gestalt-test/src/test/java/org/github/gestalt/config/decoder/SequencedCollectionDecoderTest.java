@@ -7,7 +7,7 @@ import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,7 +84,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<String>>() {
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<String>>() {
         }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -112,7 +112,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<Double>>() {
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<Double>>() {
         }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -141,7 +141,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<Double>>() {
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<Double>>() {
         }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
@@ -166,7 +166,7 @@ class SequencedCollectionDecoderTest {
     void arrayDecodeLeaf() {
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"),
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"),
             new TypeCapture<SequencedCollection<Double>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -186,7 +186,7 @@ class SequencedCollectionDecoderTest {
     void arrayDecodeLeafWithEscapeComma() {
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"),
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"),
             new TypeCapture<SequencedCollection<String>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -208,7 +208,7 @@ class SequencedCollectionDecoderTest {
     void arrayDecodeNullLeaf() {
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null),
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null),
             new TypeCapture<SequencedCollection<Double>>() {  }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
@@ -223,7 +223,7 @@ class SequencedCollectionDecoderTest {
     void arrayDecodeNullNode() {
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), null,
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), null,
             new TypeCapture<SequencedCollection<Double>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
@@ -239,7 +239,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of());
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
             new TypeCapture<SequencedCollection<String>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -252,7 +252,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(null);
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
             new TypeCapture<SequencedCollection<String>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -265,7 +265,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new LeafNode("");
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
             new TypeCapture<SequencedCollection<String>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -290,7 +290,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
             new TypeCapture<SequencedCollection<Double>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
@@ -320,7 +320,7 @@ class SequencedCollectionDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes,
             new TypeCapture<SequencedCollection<Double>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
@@ -341,7 +341,7 @@ class SequencedCollectionDecoderTest {
     void arrayDecodeMapNode() {
         SequencedCollectionDecoder decoder = new SequencedCollectionDecoder();
 
-        ValidateOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new MapNode(new HashMap<>()),
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new MapNode(new HashMap<>()),
             new TypeCapture<SequencedCollection<Double>>() { }, new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());

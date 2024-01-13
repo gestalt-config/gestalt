@@ -7,7 +7,7 @@ import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.substitution.SubstitutionNode;
 import org.github.gestalt.config.post.process.transform.substitution.SubstitutionTreeBuilder;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.*;
 import java.util.function.Function;
@@ -87,29 +87,27 @@ public final class TransformerPostProcessor implements PostProcessor {
     }
 
     @Override
-    public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+    public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
         if (!(currentNode instanceof LeafNode) || currentNode.getValue().isEmpty()) {
-            return ValidateOf.valid(currentNode);
+            return GResultOf.result(currentNode);
         }
 
         String leafValue = currentNode.getValue().get();
 
-        ValidateOf<List<SubstitutionNode>> substitutionNodes = substitutionTreeBuilder.build(path, leafValue);
+        GResultOf<List<SubstitutionNode>> substitutionNodes = substitutionTreeBuilder.build(path, leafValue);
         if (substitutionNodes.hasResults()) {
             var results = buildSubstitutedStringList(path, currentNode, substitutionNodes.results(), 0);
-            if (results.hasResults()) {
-                return ValidateOf.validateOf(new LeafNode(results.results()), results.getErrors());
-            } else {
-                return ValidateOf.inValid(results.getErrors());
-            }
+
+            return results.mapWithError(LeafNode::new);
+
         } else {
-            return ValidateOf.inValid(substitutionNodes.getErrors());
+            return GResultOf.errors(substitutionNodes.getErrors());
         }
     }
 
-    private ValidateOf<String> buildSubstitutedStringList(String path, ConfigNode originalNode, List<SubstitutionNode> nodes, int depth) {
+    private GResultOf<String> buildSubstitutedStringList(String path, ConfigNode originalNode, List<SubstitutionNode> nodes, int depth) {
         if (depth > maxRecursionDepth) {
-            return ValidateOf.inValid(new ValidationError.ExceededMaximumNestedSubstitutionDepth(path, depth, originalNode));
+            return GResultOf.errors(new ValidationError.ExceededMaximumNestedSubstitutionDepth(path, depth, originalNode));
         }
 
         StringBuilder result = new StringBuilder();
@@ -120,18 +118,18 @@ public final class TransformerPostProcessor implements PostProcessor {
             } else if (resolveNode instanceof SubstitutionNode.TransformNode) {
                 List<SubstitutionNode> nodes1 = ((SubstitutionNode.TransformNode) resolveNode).getSubNodes();
 
-                ValidateOf<String> recursiveResults = buildSubstitutedStringList(path, originalNode, nodes1, depth + 1);
+                GResultOf<String> recursiveResults = buildSubstitutedStringList(path, originalNode, nodes1, depth + 1);
                 errors.addAll(recursiveResults.getErrors());
                 if (recursiveResults.hasResults()) {
-                    ValidateOf<String> transformedString = transformString(path, recursiveResults.results());
+                    GResultOf<String> transformedString = transformString(path, recursiveResults.results());
                     errors.addAll(transformedString.getErrors());
                     if (transformedString.hasResults()) {
-                        ValidateOf<List<SubstitutionNode>> substitutionNodes =
+                        GResultOf<List<SubstitutionNode>> substitutionNodes =
                             substitutionTreeBuilder.build(path, transformedString.results());
 
                         errors.addAll(substitutionNodes.getErrors());
                         if (substitutionNodes.hasResults()) {
-                            ValidateOf<String> nestedSub =
+                            GResultOf<String> nestedSub =
                                 buildSubstitutedStringList(path, originalNode, substitutionNodes.results(), depth + 1);
                             errors.addAll(nestedSub.getErrors());
                             if (nestedSub.hasResults()) {
@@ -145,10 +143,10 @@ public final class TransformerPostProcessor implements PostProcessor {
             }
         }
 
-        return ValidateOf.validateOf(result.toString(), errors);
+        return GResultOf.resultOf(result.toString(), errors);
     }
 
-    private ValidateOf<String> transformString(String path, String input) {
+    private GResultOf<String> transformString(String path, String input) {
         Matcher matcher = pattern.matcher(input);
         StringBuilder newLeafValue = new StringBuilder();
         boolean foundMatch = false;
@@ -161,7 +159,7 @@ public final class TransformerPostProcessor implements PostProcessor {
             // if we have a named transform look it up in the map.
             if (transformName != null) {
                 if (transformers.containsKey(transformName)) {
-                    ValidateOf<String> transformValue = transformers.get(transformName).process(path, key, input);
+                    GResultOf<String> transformValue = transformers.get(transformName).process(path, key, input);
                     if (transformValue.hasResults()) {
                         newLeafValue.append(transformValue.results());
                         foundMatch = true;
@@ -174,18 +172,18 @@ public final class TransformerPostProcessor implements PostProcessor {
                             if (transformValue.hasErrors()) {
                                 return transformValue;
                             } else {
-                                return ValidateOf.inValid(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
+                                return GResultOf.errors(new ValidationError.NoKeyFoundForTransform(path, transformName, key));
                             }
                         }
                     }
                 } else {
-                    return ValidateOf.inValid(new ValidationError.NoMatchingTransformFound(path, transformName));
+                    return GResultOf.errors(new ValidationError.NoMatchingTransformFound(path, transformName));
                 }
             } else {
                 boolean foundTransformer = false;
                 // if the transform isn't named look for it in priority order.
                 for (Transformer transform : orderedDefaultTransformers) {
-                    ValidateOf<String> transformValue = transform.process(path, key, input);
+                    GResultOf<String> transformValue = transform.process(path, key, input);
                     if (transformValue.hasResults()) {
                         newLeafValue.append(transformValue.results());
                         foundTransformer = true;
@@ -200,16 +198,16 @@ public final class TransformerPostProcessor implements PostProcessor {
                         foundMatch = true;
                         newLeafValue.append(defaultValue);
                     } else {
-                        return ValidateOf.inValid(new ValidationError.NoMatchingDefaultTransformFound(path, key));
+                        return GResultOf.errors(new ValidationError.NoMatchingDefaultTransformFound(path, key));
                     }
                 }
             }
         }
 
         if (foundMatch) {
-            return ValidateOf.valid(newLeafValue.toString());
+            return GResultOf.result(newLeafValue.toString());
         } else {
-            return ValidateOf.inValid(new ValidationError.TransformDoesntMatchRegex(path, input));
+            return GResultOf.errors(new ValidationError.TransformDoesntMatchRegex(path, input));
         }
     }
 }

@@ -111,7 +111,7 @@ public final class ClassUtils {
      * VMs running Java versions &gt; 1.5.
      * </p>
      *
-     * @param cls the Class to check, may be null
+     * @param cls     the Class to check, may be null
      * @param toClass the Class to try to assign into, returns false if null
      * @return {@code true} if assignment possible
      */
@@ -144,8 +144,8 @@ public final class ClassUtils {
      * Specification</a></em>, sections 5.1.1, 5.1.2 and 5.1.4 for details.
      * </p>
      *
-     * @param cls the Class to check, may be null
-     * @param toClass the Class to try to assign into, returns false if null
+     * @param cls        the Class to check, may be null
+     * @param toClass    the Class to try to assign into, returns false if null
      * @param autoboxing whether to use implicit autoboxing/unboxing between primitives and wrappers
      * @return {@code true} if assignment possible
      */
@@ -251,7 +251,7 @@ public final class ClassUtils {
      *
      * @param type The class to query or null.
      * @return true if the given {@code type} is a primitive or primitive wrapper ({@link Boolean}, {@link Byte},
-     *         {@link Character}, {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     *     {@link Character}, {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
      * @since 3.1
      */
     public static boolean isPrimitiveOrWrapper(final Class<?> type) {
@@ -267,7 +267,7 @@ public final class ClassUtils {
      *
      * @param type The class to query or null.
      * @return true if the given {@code type} is a primitive wrapper ({@link Boolean}, {@link Byte}, {@link Character},
-     *         {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     *     {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
      * @since 3.1
      */
     public static boolean isPrimitiveWrapper(final Class<?> type) {

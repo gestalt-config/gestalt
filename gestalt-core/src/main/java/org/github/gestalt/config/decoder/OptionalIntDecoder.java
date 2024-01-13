@@ -3,7 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.OptionalInt;
 
@@ -30,15 +30,15 @@ public final class OptionalIntDecoder implements Decoder<OptionalInt> {
     }
 
     @Override
-    public ValidateOf<OptionalInt> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+    public GResultOf<OptionalInt> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
-        ValidateOf<Integer> optionalValue = decoderContext.getDecoderService()
+        GResultOf<Integer> optionalValue = decoderContext.getDecoderService()
             .decodeNode(path, tags, node, TypeCapture.of(Integer.class), decoderContext);
 
         if (optionalValue.hasResults()) {
-            return ValidateOf.validateOf(OptionalInt.of(optionalValue.results()), optionalValue.getErrors());
+            return GResultOf.resultOf(OptionalInt.of(optionalValue.results()), optionalValue.getErrors());
         } else {
-            return ValidateOf.validateOf(OptionalInt.empty(), optionalValue.getErrors());
+            return GResultOf.resultOf(OptionalInt.empty(), optionalValue.getErrors());
         }
     }
 }

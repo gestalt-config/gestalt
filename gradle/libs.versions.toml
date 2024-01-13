@@ -2,11 +2,11 @@
 java = "11"
 javaLatest = "21"
 # @pin
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 # @pin
 kotlinDokka = "1.9.10"
 # Kotlin DI
-kodeinDI = "7.21.1"
+kodeinDI = "7.21.2"
 koinDI = "3.5.3"
 # Java DI
 guice = "7.0.0"

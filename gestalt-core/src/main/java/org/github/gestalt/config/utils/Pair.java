@@ -16,7 +16,7 @@ public final class Pair<A, B> {
     /**
      * Create a pair of values.
      *
-     * @param first first of pair
+     * @param first  first of pair
      * @param second second of pair
      */
     public Pair(A first, B second) {

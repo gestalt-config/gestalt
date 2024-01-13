@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Interface for decoders so we can tell which classes this decoder supports and functionality to decode them.
@@ -40,10 +40,10 @@ public interface Decoder<T> {
     /**
      * true if this decoder matches the type capture.
      *
-     * @param path           the current path
-     * @param tags           the tags for the current request
-     * @param node           the current node we are decoding.
-     * @param type           the type of object we are decoding.
+     * @param path the current path
+     * @param tags the tags for the current request
+     * @param node the current node we are decoding.
+     * @param type the type of object we are decoding.
      * @return true if this decoder matches the type capture
      */
     boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type);
@@ -56,7 +56,7 @@ public interface Decoder<T> {
      * @param node           the current node we are decoding.
      * @param type           the type of object we are decoding.
      * @param decoderContext The context of the current decoder.
-     * @return ValidateOf the current node with details of either success or failures.
+     * @return GResultOf the current node with details of either success or failures.
      */
-    ValidateOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext);
+    GResultOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext);
 }

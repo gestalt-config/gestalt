@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +36,11 @@ public class TestCustomMapTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
         if (replacementVars.containsKey(key)) {
-            return ValidateOf.valid(replacementVars.get(key));
+            return GResultOf.result(replacementVars.get(key));
         } else {
-            return ValidateOf.inValid(new ValidationError.NoCustomPropertyFoundPostProcess(path, key));
+            return GResultOf.errors(new ValidationError.NoCustomPropertyFoundPostProcess(path, key));
         }
     }
 }

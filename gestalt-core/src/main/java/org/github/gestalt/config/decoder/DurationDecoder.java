@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.StringUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.time.Duration;
 
@@ -32,19 +32,19 @@ public final class DurationDecoder extends LeafDecoder<Duration> {
     }
 
     @Override
-    protected ValidateOf<Duration> leafDecode(String path, ConfigNode node) {
-        ValidateOf<Duration> results;
+    protected GResultOf<Duration> leafDecode(String path, ConfigNode node) {
+        GResultOf<Duration> results;
 
         String value = node.getValue().orElse("");
         if (StringUtils.isInteger(value)) {
             try {
                 long longVal = Long.parseLong(value);
-                results = ValidateOf.valid(Duration.ofMillis(longVal));
+                results = GResultOf.result(Duration.ofMillis(longVal));
             } catch (NumberFormatException e) {
-                results = ValidateOf.inValid(new ValidationError.ErrorDecodingException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingNumberParsing(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
         return results;
     }

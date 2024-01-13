@@ -24,8 +24,8 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ErrorsUtil;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
 
@@ -60,16 +60,16 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     /**
      * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
      *
-     * @param configLoaderService configLoaderService to hold all config loaders
+     * @param configLoaderService  configLoaderService to hold all config loaders
      * @param configSourcePackages sources we wish to load the configs from. We load the sources in the order they are provided.
-     *     Overriding older values with new one where needed
-     * @param decoderService decoderService to hold all decoders
-     * @param sentenceLexer sentenceLexer to parse the configuration paths when doing searches.
-     * @param gestaltConfig configuration for the Gestalt
-     * @param configNodeService configNodeService core functionality to manage nodes
-     * @param reloadStrategy reloadStrategy holds all reload listeners
-     * @param postProcessor postProcessor list of post processors
-     * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     *                             Overriding older values with new one where needed
+     * @param decoderService       decoderService to hold all decoders
+     * @param sentenceLexer        sentenceLexer to parse the configuration paths when doing searches.
+     * @param gestaltConfig        configuration for the Gestalt
+     * @param configNodeService    configNodeService core functionality to manage nodes
+     * @param reloadStrategy       reloadStrategy holds all reload listeners
+     * @param postProcessor        postProcessor list of post processors
+     * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
@@ -124,12 +124,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         for (ConfigSourcePackage sourcePackage : sourcePackages) {
             ConfigSource source = sourcePackage.getConfigSource();
             ConfigLoader configLoader = configLoaderService.getLoader(source.format());
-            ValidateOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(source);
+            GResultOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(source);
 
             validateLoadResultsForErrors(newNode, source);
             if (newNode.hasResults()) {
                 for (ConfigNodeContainer node : newNode.results()) {
-                    ValidateOf<ConfigNode> mergedNode = configNodeService.addNode(node);
+                    GResultOf<ConfigNode> mergedNode = configNodeService.addNode(node);
                     validateLoadResultsForErrors(mergedNode, source);
                     loadErrors.addAll(mergedNode.getErrors());
                 }
@@ -163,20 +163,16 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         ConfigLoader configLoader = configLoaderService.getLoader(reloadSource.format());
-        ValidateOf<List<ConfigNodeContainer>> reloadNodes = configLoader.loadSource(reloadSource);
+        GResultOf<List<ConfigNodeContainer>> reloadNodes = configLoader.loadSource(reloadSource);
         validateLoadResultsForErrors(reloadNodes, reloadSource);
 
-        if (!reloadNodes.hasResults()) {
-            throw new GestaltException("no results found reloading source " + reloadSource.name());
-        }
+        reloadNodes.throwIfNoResults(() -> new GestaltException("no results found reloading source " + reloadSource.name()));
 
         for (ConfigNodeContainer reloadNode : reloadNodes.results()) {
-            ValidateOf<ConfigNode> mergedNode = configNodeService.reloadNode(reloadNode);
+            GResultOf<ConfigNode> mergedNode = configNodeService.reloadNode(reloadNode);
             validateLoadResultsForErrors(mergedNode, reloadSource);
 
-            if (!mergedNode.hasResults()) {
-                throw new GestaltException("no results found merging source " + reloadSource.name());
-            }
+            mergedNode.throwIfNoResults(() -> new GestaltException("no results found merging source " + reloadSource.name()));
 
             postProcessConfigs();
         }
@@ -185,7 +181,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     }
 
     void postProcessConfigs() throws GestaltException {
-        ValidateOf<Boolean> results = configNodeService.postProcess(postProcessors);
+        GResultOf<Boolean> results = configNodeService.postProcess(postProcessors);
 
         if (checkErrorsShouldFail(results)) {
             throw new GestaltException("Failed post processing config nodes with errors ",
@@ -197,16 +193,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             logger.log(DEBUG, errorMsg);
         }
 
-        if (!results.hasResults()) {
-            throw new GestaltException("no results found post processing the config nodes");
-        }
-
-        if (!results.results()) {
-            throw new GestaltException("Post processing failed");
-        }
+        results.throwIfNoResults(() -> new GestaltException("no results found post processing the config nodes"));
     }
 
-    private void validateLoadResultsForErrors(ValidateOf<?> results, ConfigSource source)
+    private void validateLoadResultsForErrors(GResultOf<?> results, ConfigSource source)
         throws GestaltConfigurationException {
         if ((gestaltConfig.isTreatWarningsAsErrors() && results.hasErrors()) || // NOPMD
             (results.hasErrors(ValidationLevel.ERROR) && source.failOnErrors())) {  // NOPMD
@@ -218,9 +208,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             logger.log(WARNING, errorMsg);
         }
 
-        if (!results.hasResults()) {
-            throw new GestaltConfigurationException("No results found for node");
-        }
+        results.throwIfNoResults(() -> new GestaltConfigurationException("No results found for node"));
     }
 
     private <T> String buildPathWithConfigPrefix(TypeCapture<T> klass, String path) {
@@ -352,11 +340,11 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(tags);
 
         String combinedPath = buildPathWithConfigPrefix(klass, path);
-        ValidateOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
+        GResultOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
         if (tokens.hasErrors()) {
             throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
         } else {
-            ValidateOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
+            GResultOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
 
             if (checkErrorsShouldFail(results)) {
                 if (failOnErrors) {
@@ -396,13 +384,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
-    private <T> ValidateOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
-        ValidateOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
+    private <T> GResultOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
+        GResultOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
 
         if (!node.hasErrors() || node.hasErrors(MISSING_VALUE)) {
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
-            ValidateOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
+            GResultOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
 
             // if we don't have a result and we received missing node errors.
             // return the errors from the call to navigate to node.
@@ -416,16 +404,16 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 errors.addAll(decodedResults.getErrors());
             }
 
-            return ValidateOf.validateOf(decodedResults.results(), errors);
+            return GResultOf.resultOf(decodedResults.results(), errors);
         } else {
 
             // if we have errors other than the missing values,
             // return the errors and do not attempt to decode.
-            return ValidateOf.inValid(node.getErrors());
+            return GResultOf.errors(node.getErrors());
         }
     }
 
-    private <T> boolean checkErrorsShouldFail(ValidateOf<T> results) {
+    private <T> boolean checkErrorsShouldFail(GResultOf<T> results) {
         if (results.hasErrors()) {
             return !results.getErrors().stream().allMatch(this::ignoreError) || !results.hasResults();
         } else {

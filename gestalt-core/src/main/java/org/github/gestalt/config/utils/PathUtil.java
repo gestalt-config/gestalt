@@ -49,7 +49,7 @@ public final class PathUtil {
      * used to generate a path wit the next key in the format path.key .
      *
      * @param path current path
-     * @param key current key
+     * @param key  current key
      * @return path for key
      */
     public static String pathForKey(String path, String key) {
@@ -59,7 +59,7 @@ public final class PathUtil {
     /**
      * used to generate a path wit the next index in the format path[index] .
      *
-     * @param path current path
+     * @param path  current path
      * @param index current index
      * @return path for index
      */

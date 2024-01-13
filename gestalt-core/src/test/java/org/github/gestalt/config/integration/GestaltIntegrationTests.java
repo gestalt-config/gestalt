@@ -9,7 +9,9 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
-import org.github.gestalt.config.reload.*;
+import org.github.gestalt.config.reload.CoreReloadListener;
+import org.github.gestalt.config.reload.FileChangeReloadStrategy;
+import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
@@ -1157,6 +1159,7 @@ public class GestaltIntegrationTests {
     public static class MaxTotal {
 
         private Integer maxTotal;
+
         public MaxTotal(String maxTotal) {
             this.maxTotal = Integer.parseInt(maxTotal);
         }

@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.StringUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 /**
  * Decode a Float.
@@ -30,19 +30,19 @@ public final class FloatDecoder extends LeafDecoder<Float> {
     }
 
     @Override
-    protected ValidateOf<Float> leafDecode(String path, ConfigNode node) {
-        ValidateOf<Float> results;
+    protected GResultOf<Float> leafDecode(String path, ConfigNode node) {
+        GResultOf<Float> results;
 
         String value = node.getValue().orElse("");
         if (StringUtils.isReal(value)) {
             try {
                 Float floatVal = Float.parseFloat(value);
-                results = ValidateOf.valid(floatVal);
+                results = GResultOf.result(floatVal);
             } catch (NumberFormatException e) {
-                results = ValidateOf.inValid(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingNumberParsing(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
 
         return results;

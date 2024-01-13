@@ -6,7 +6,7 @@ import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.TestMapConfigSource;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,17 +28,17 @@ class CompilerConfigTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
         // run the code under test.
-        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.results().size());
-        Assertions.assertEquals(2, validateOfResults.results().get(0).getConfigNode().size());
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(2, results.results().get(0).getConfigNode().size());
 
         Assertions.assertEquals("value",
-            validateOfResults.results().get(0).getConfigNode().getKey("test").get().getValue().get());
+            results.results().get(0).getConfigNode().getKey("test").get().getValue().get());
         Assertions.assertEquals("redis",
-            validateOfResults.results().get(0).getConfigNode().getKey("db").get().getKey("name").get().getValue().get());
+            results.results().get(0).getConfigNode().getKey("db").get().getKey("name").get().getValue().get());
     }
 
     @Test
@@ -54,14 +54,14 @@ class CompilerConfigTest {
             = new MapConfigLoader(new PathLexer(".", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
-        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("Unable to tokenize element test@3 for path: test@3",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
 
     }
 
@@ -78,19 +78,19 @@ class CompilerConfigTest {
             = new MapConfigLoader(new PathLexer(".", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
         // run the code under test.
-        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));
 
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("Unable to tokenize element test@3 for path: test@3",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
 
-        Assertions.assertEquals(1, validateOfResults.results().size());
-        Assertions.assertFalse(validateOfResults.results().get(0).getConfigNode().getKey("test").isPresent());
-        Assertions.assertEquals("redis", validateOfResults.results().get(0).getConfigNode().getKey("db").get().getKey("name")
-                                                          .get().getValue().get());
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertFalse(results.results().get(0).getConfigNode().getKey("test").isPresent());
+        Assertions.assertEquals("redis", results.results().get(0).getConfigNode().getKey("db").get().getKey("name")
+            .get().getValue().get());
 
     }
 
@@ -107,14 +107,14 @@ class CompilerConfigTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
         // run the code under test.
-        ValidateOf<List<ConfigNodeContainer>> validateOfResults = mapConfigLoader.loadSource(new MapConfigSource(data));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("Mismatched path lengths received for path: db, this could be because a node is both a leaf " +
-            "and an object", validateOfResults.getErrors().get(0).description());
+            "and an object", results.getErrors().get(0).description());
     }
 
     private static class MapConfigSourceWarn extends TestMapConfigSource {

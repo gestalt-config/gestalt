@@ -15,25 +15,25 @@ class ClasspathTransformerTest {
     void process() {
 
         ClasspathTransformer transformer = new ClasspathTransformer();
-        var validateOfResults = transformer.process("db", "myFile.txt", "classpath:myFile.txt");
+        var resultsOf = transformer.process("db", "myFile.txt", "classpath:myFile.txt");
 
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertNotNull(validateOfResults.results());
-        String results = validateOfResults.results();
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertNotNull(resultsOf.results());
+        String results = resultsOf.results();
         Assertions.assertTrue(results.startsWith("hello world"));
     }
 
     @Test
     void processNull() {
         ClasspathTransformer transformer = new ClasspathTransformer();
-        var validateOfResults = transformer.process("db", null, "classpath:");
+        var resultsOf = transformer.process("db", null, "classpath:");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(resultsOf.hasResults());
+        Assertions.assertTrue(resultsOf.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, resultsOf.getErrors().size());
         Assertions.assertEquals("Invalid string: classpath:, on path: db in transformer: classpath",
-            validateOfResults.getErrors().get(0).description());
+            resultsOf.getErrors().get(0).description());
     }
 }

@@ -6,7 +6,7 @@ import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Boolean Decoder.
@@ -30,8 +30,8 @@ class BooleanDecoder : LeafDecoder<Boolean>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Boolean> {
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Boolean> {
         val value = node.value.orElse("")
-        return ValidateOf.valid(java.lang.Boolean.parseBoolean(value))
+        return GResultOf.result(java.lang.Boolean.parseBoolean(value))
     }
 }

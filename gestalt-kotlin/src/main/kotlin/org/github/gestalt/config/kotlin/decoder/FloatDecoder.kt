@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.StringUtils
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Float Decoder.
@@ -32,18 +32,18 @@ class FloatDecoder : LeafDecoder<Float>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Float> {
-        val results: ValidateOf<Float>
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Float> {
+        val results: GResultOf<Float>
         val value = node.value.orElse("")
         results = if (StringUtils.isReal(value)) {
             try {
                 val floatVal = value.toFloat()
-                ValidateOf.valid(floatVal)
+                GResultOf.result(floatVal)
             } catch (e: NumberFormatException) {
-                ValidateOf.inValid(ValidationError.DecodingNumberFormatException(path, node, name()))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name()))
             }
         } else {
-            ValidateOf.inValid(ValidationError.DecodingNumberParsing(path, node, name()))
+            GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))
         }
         return results
     }

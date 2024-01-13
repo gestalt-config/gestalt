@@ -40,7 +40,7 @@ public class GestaltException extends Exception {
      * Create GestaltException with a message and exception.
      *
      * @param message message for the exception
-     * @param e Exception to wrap
+     * @param e       Exception to wrap
      */
     public GestaltException(String message, Exception e) {
         super(message, e);
@@ -50,7 +50,7 @@ public class GestaltException extends Exception {
      * Create GestaltException with a list of validation errors and a message.
      *
      * @param message message for the exception
-     * @param errors list of validation errors
+     * @param errors  list of validation errors
      */
     public GestaltException(String message, List<ValidationError> errors) {
         super(ErrorsUtil.buildErrorMessage(message, errors));

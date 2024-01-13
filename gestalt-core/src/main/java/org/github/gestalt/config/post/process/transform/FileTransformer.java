@@ -1,7 +1,7 @@
 package org.github.gestalt.config.post.process.transform;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -22,16 +22,16 @@ public final class FileTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
         if (key != null) {
             try {
                 String filePath = rawValue.substring(prefixLength);
-                return ValidateOf.valid(Files.readString(Path.of(filePath), Charset.defaultCharset()));
+                return GResultOf.result(Files.readString(Path.of(filePath), Charset.defaultCharset()));
             } catch (Exception e) {
-                return ValidateOf.inValid(new ValidationError.ExceptionReadingFileDuringTransform(path, key, e.getMessage()));
+                return GResultOf.errors(new ValidationError.ExceptionReadingFileDuringTransform(path, key, e.getMessage()));
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
     }
 }

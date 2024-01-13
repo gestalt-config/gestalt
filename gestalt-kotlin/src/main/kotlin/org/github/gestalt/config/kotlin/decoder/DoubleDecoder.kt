@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
 import org.github.gestalt.config.utils.StringUtils
-import org.github.gestalt.config.utils.ValidateOf
+import org.github.gestalt.config.utils.GResultOf
 
 /**
  * Kotlin Double Decoder.
@@ -32,18 +32,18 @@ class DoubleDecoder : LeafDecoder<Double>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): ValidateOf<Double> {
-        val results: ValidateOf<Double>
+    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Double> {
+        val results: GResultOf<Double>
         val value = node.value.orElse("")
         results = if (StringUtils.isReal(value)) {
             try {
                 val longVal = value.toDouble()
-                ValidateOf.valid(longVal)
+                GResultOf.result(longVal)
             } catch (e: NumberFormatException) {
-                ValidateOf.inValid(ValidationError.DecodingNumberFormatException(path, node, name()))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name()))
             }
         } else {
-            ValidateOf.inValid(ValidationError.DecodingNumberParsing(path, node, name()))
+            GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))
         }
         return results
     }

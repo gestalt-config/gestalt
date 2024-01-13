@@ -17,13 +17,12 @@ import java.util.Objects;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T extends ConfigSource> { //NOPMD
-    protected ConfigSource source;
-
-    protected Tags tags = Tags.of();
     protected final List<ConfigReloadStrategy> configReloadStrategies = new ArrayList<>();
+    protected ConfigSource source;
+    protected Tags tags = Tags.of();
 
     /**
-     *  Get the tags for the builder.
+     * Get the tags for the builder.
      *
      * @return the tags for the builder
      */
@@ -73,7 +72,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     /**
      * Add a ConfigReloadStrategyBuilder to the builder.
      *
-     * @param configReloadStrategy  ConfigReloadStrategyBuilder to add to the builder
+     * @param configReloadStrategy ConfigReloadStrategyBuilder to add to the builder
      * @return the builder
      */
     public SELF addConfigReloadStrategy(ConfigReloadStrategy configReloadStrategy) {
@@ -86,7 +85,6 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
      * Build the ConfigSourcePackage with the config source, tags and any reload strategies.
      *
      * @return the ConfigSourcePackage with the config source, tags and any reload strategies.
-     *
      * @throws GestaltException exceptions if any of the required properties are not set.
      */
     public abstract ConfigSourcePackage build() throws GestaltException;

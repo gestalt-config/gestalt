@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.nio.charset.Charset;
 
@@ -31,14 +31,14 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
     }
 
     @Override
-    protected ValidateOf<Byte> leafDecode(String path, ConfigNode node) {
-        ValidateOf<Byte> results;
+    protected GResultOf<Byte> leafDecode(String path, ConfigNode node) {
+        GResultOf<Byte> results;
 
         String value = node.getValue().orElse("");
         if (value.length() == 1) {
-            results = ValidateOf.valid(value.getBytes(Charset.defaultCharset())[0]);
+            results = GResultOf.result(value.getBytes(Charset.defaultCharset())[0]);
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingByteTooLong(path, node));
+            results = GResultOf.errors(new ValidationError.DecodingByteTooLong(path, node));
         }
 
         return results;

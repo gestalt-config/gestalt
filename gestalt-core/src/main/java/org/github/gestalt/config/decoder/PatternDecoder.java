@@ -3,7 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.regex.Pattern;
 
@@ -30,8 +30,8 @@ public final class PatternDecoder extends LeafDecoder<Pattern> {
     }
 
     @Override
-    protected ValidateOf<Pattern> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Pattern> leafDecode(String path, ConfigNode node) {
         Pattern pattern = Pattern.compile(node.getValue().orElse(""), Pattern.CASE_INSENSITIVE);
-        return ValidateOf.valid(pattern);
+        return GResultOf.result(pattern);
     }
 }

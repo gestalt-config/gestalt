@@ -5,7 +5,7 @@ import io.github.jopenlibs.vault.response.LogicalResponse;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.Transformer;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.github.gestalt.config.vault.errors.VaultValidationErrors;
 
@@ -45,20 +45,20 @@ public final class VaultSecretTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String secretName, String rawValue) {
+    public GResultOf<String> process(String path, String secretName, String rawValue) {
         if (secretName != null) {
             try {
                 String[] secretParts = secretName.split(":");
 
                 if (secretParts.length != 2) {
-                    return ValidateOf.inValid(new VaultValidationErrors.VaultSecretInvalid(path, rawValue, secretParts));
+                    return GResultOf.errors(new VaultValidationErrors.VaultSecretInvalid(path, rawValue, secretParts));
                 }
 
                 String secretPath = secretParts[0];
                 String secretKey = secretParts[1];
 
                 if (vault == null) {
-                    return ValidateOf.inValid(new VaultValidationErrors.VaultModuleConfigNotSet(path, rawValue));
+                    return GResultOf.errors(new VaultValidationErrors.VaultModuleConfigNotSet(path, rawValue));
                 }
 
                 // get the values for the secret path
@@ -67,19 +67,19 @@ public final class VaultSecretTransformer implements Transformer {
 
                 // check to see if the secret key exists
                 if (!secretPathValues.getData().containsKey(secretKey)) {
-                    return ValidateOf.inValid(new VaultValidationErrors.VaultSecretDoesNotExist(path, secretPath, secretKey, rawValue));
+                    return GResultOf.errors(new VaultValidationErrors.VaultSecretDoesNotExist(path, secretPath, secretKey, rawValue));
                 }
 
                 // get and return the secret key
                 String value = secretPathValues.getData().get(secretKey);
 
-                return ValidateOf.valid(value);
+                return GResultOf.result(value);
 
             } catch (Exception e) {
-                return ValidateOf.inValid(new VaultValidationErrors.ExceptionProcessingVaultSecret(path, rawValue, name(), e));
+                return GResultOf.errors(new VaultValidationErrors.ExceptionProcessingVaultSecret(path, rawValue, name(), e));
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
     }
 }

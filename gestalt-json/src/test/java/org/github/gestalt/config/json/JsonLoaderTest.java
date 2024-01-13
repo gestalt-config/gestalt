@@ -7,7 +7,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +45,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -80,7 +80,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -116,7 +116,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -151,7 +151,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader(new ObjectMapper());
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -180,7 +180,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -201,7 +201,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -223,7 +223,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        ValidateOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());

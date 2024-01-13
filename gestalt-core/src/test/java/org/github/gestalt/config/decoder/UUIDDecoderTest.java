@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,12 +66,12 @@ class UUIDDecoderTest {
 
 
         UUID uuid = UUID.randomUUID();
-        ValidateOf<UUID> validate = decoder.decode("db.port", Tags.of(), new LeafNode(uuid.toString()),
-                TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertEquals(uuid, validate.results());
-        Assertions.assertEquals(0, validate.getErrors().size());
+        GResultOf<UUID> result = decoder.decode("db.port", Tags.of(), new LeafNode(uuid.toString()),
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals(uuid, result.results());
+        Assertions.assertEquals(0, result.getErrors().size());
     }
 
     @Test
@@ -79,14 +79,14 @@ class UUIDDecoderTest {
         UUIDDecoder decoder = new UUIDDecoder();
 
 
-        ValidateOf<UUID> validate = decoder.decode("db.port", Tags.of(), new LeafNode("asdfasdfsdf"),
-                TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertNull(validate.results());
-        Assertions.assertNotNull(validate.getErrors());
-        Assertions.assertEquals(ValidationLevel.ERROR, validate.getErrors().get(0).level());
+        GResultOf<UUID> result = decoder.decode("db.port", Tags.of(), new LeafNode("asdfasdfsdf"),
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertNull(result.results());
+        Assertions.assertNotNull(result.getErrors());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to decode a UUID on path: db.port, from node: LeafNode{value='asdfasdfsdf'}",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 }

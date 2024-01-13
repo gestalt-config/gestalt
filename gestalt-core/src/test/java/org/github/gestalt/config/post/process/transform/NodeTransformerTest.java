@@ -10,7 +10,7 @@ import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,51 +43,51 @@ class NodeTransformerTest {
     void processOk() {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.result(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-               .thenReturn(ValidateOf.valid(new LeafNode("new value")));
+            .thenReturn(GResultOf.result(new LeafNode("new value")));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> resultsOf = transformer.process("hello", "test", "");
 
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertFalse(resultsOf.hasErrors());
 
-        Assertions.assertEquals("new value", validateOfResults.results());
+        Assertions.assertEquals("new value", resultsOf.results());
     }
 
     @Test
     void processNoConfig() {
         NodeTransformer transformer = new NodeTransformer();
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("node Transform PostProcessorConfig is null, unable to transform path: hello with: test",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 
     @Test
     void processNull() {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.result(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-               .thenReturn(ValidateOf.valid(new LeafNode("new value")));
+            .thenReturn(GResultOf.result(new LeafNode("new value")));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", null, "node:");
+        GResultOf<String> results = transformer.process("hello", null, "node:");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("Invalid string: node:, on path: hello in transformer: node",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 
     @Test
@@ -95,58 +95,58 @@ class NodeTransformerTest {
         NodeTransformer transformer = new NodeTransformer();
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
         Mockito.when(lexer.scan("test"))
-               .thenReturn(ValidateOf.inValid(new ValidationError.FailedToTokenizeElement("hello", "test")));
+            .thenReturn(GResultOf.errors(new ValidationError.FailedToTokenizeElement("hello", "test")));
 
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(2, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Unable to tokenize element hello for path: test", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(2, results.getErrors().size());
+        Assertions.assertEquals("Unable to tokenize element hello for path: test", results.getErrors().get(0).description());
         Assertions.assertEquals("Errors generating tokens while running node transform path: hello with: test",
-            validateOfResults.getErrors().get(1).description());
+            results.getErrors().get(1).description());
     }
 
     @Test
     void processErrorTokenizingNoResults() {
         NodeTransformer transformer = new NodeTransformer();
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.errors(new ValidationError.EmptyPath()));
 
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(2, validateOfResults.getErrors().size());
-        Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(2, results.getErrors().size());
+        Assertions.assertEquals("empty path provided", results.getErrors().get(0).description());
         Assertions.assertEquals("No results generating tokens while running node transform path: hello with: test",
-            validateOfResults.getErrors().get(1).description());
+            results.getErrors().get(1).description());
     }
 
     @Test
     void processErrorNavigateToNode() {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.result(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-               .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test", MapNode.class, "post processing")));
+            .thenReturn(GResultOf.errors(new ValidationError.NoResultsFoundForNode("test", MapNode.class, "post processing")));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(2, validateOfResults.getErrors().size());
+        Assertions.assertEquals(2, results.getErrors().size());
         Assertions.assertEquals("Unable to find node matching path: test, for class: MapNode, during post processing",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
         Assertions.assertEquals("Errors navigating to node while running node transform path: hello with: test",
-            validateOfResults.getErrors().get(1).description());
+            results.getErrors().get(1).description());
     }
 
     @Test
@@ -154,60 +154,60 @@ class NodeTransformerTest {
 
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.result(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-               .thenReturn(ValidateOf.inValid(new ValidationError.EmptyPath()));
+            .thenReturn(GResultOf.errors(new ValidationError.EmptyPath()));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(2, validateOfResults.getErrors().size());
-        Assertions.assertEquals("empty path provided", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(2, results.getErrors().size());
+        Assertions.assertEquals("empty path provided", results.getErrors().get(0).description());
         Assertions.assertEquals("Unable to find node matching path: hello, for class: test, during NodeTransformer",
-            validateOfResults.getErrors().get(1).description());
+            results.getErrors().get(1).description());
     }
 
     @Test
     void processErrorWrongNodeType() {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.result(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-               .thenReturn(ValidateOf.valid(new MapNode(new HashMap<>())));
+            .thenReturn(GResultOf.result(new MapNode(new HashMap<>())));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("Non leaf node found while running node transform path: hello with: test",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 
     @Test
     void processErrorEmptyLeafNode() {
         List<Token> tokens = Collections.singletonList(new ObjectToken("test"));
         Mockito.when(lexer.normalizeSentence("test")).thenReturn("test");
-        Mockito.when(lexer.scan("test")).thenReturn(ValidateOf.valid(tokens));
+        Mockito.when(lexer.scan("test")).thenReturn(GResultOf.result(tokens));
         Mockito.when(configNodeService.navigateToNode("hello", tokens, Tags.of()))
-               .thenReturn(ValidateOf.valid(new LeafNode(null)));
+            .thenReturn(GResultOf.result(new LeafNode(null)));
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new PostProcessorConfig(config, configNodeService, lexer));
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("leaf node has no value while running node transform path: hello with: test",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 }

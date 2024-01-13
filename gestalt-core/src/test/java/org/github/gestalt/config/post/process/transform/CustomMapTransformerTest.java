@@ -1,6 +1,6 @@
 package org.github.gestalt.config.post.process.transform;
 
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +20,14 @@ class CustomMapTransformerTest {
     void defaultCustomTransformer() {
         CustomMapTransformer transformer = new CustomMapTransformer();
 
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> results = transformer.process("hello", "test", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("No custom Property found for: test, on path: hello during post process",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 
     @Test
@@ -35,12 +35,12 @@ class CustomMapTransformerTest {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
-        ValidateOf<String> validateOfResults = transformer.process("hello", "test", "");
+        GResultOf<String> resultsOf = transformer.process("hello", "test", "");
 
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertNotNull(validateOfResults.results());
-        String results = validateOfResults.results();
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertNotNull(resultsOf.results());
+        String results = resultsOf.results();
         Assertions.assertEquals("value", results);
     }
 
@@ -49,14 +49,14 @@ class CustomMapTransformerTest {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
-        ValidateOf<String> validateOfResults = transformer.process("hello", "noExist", "");
+        GResultOf<String> results = transformer.process("hello", "noExist", "");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("No custom Property found for: noExist, on path: hello during post process",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 
     @Test
@@ -64,13 +64,13 @@ class CustomMapTransformerTest {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
-        ValidateOf<String> validateOfResults = transformer.process("hello", null, "map:");
+        GResultOf<String> results = transformer.process("hello", null, "map:");
 
-        Assertions.assertFalse(validateOfResults.hasResults());
-        Assertions.assertTrue(validateOfResults.hasErrors());
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
+        Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals("No custom Property found for: null, on path: hello during post process",
-            validateOfResults.getErrors().get(0).description());
+            results.getErrors().get(0).description());
     }
 }

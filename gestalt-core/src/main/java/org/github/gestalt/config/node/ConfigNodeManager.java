@@ -9,13 +9,13 @@ import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.CollectionUtils;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.github.gestalt.config.utils.ValidateOf.validateOf;
+import static org.github.gestalt.config.utils.GResultOf.resultOf;
 
 
 /**
@@ -35,7 +35,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
     }
 
     @Override
-    public ValidateOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException {
+    public GResultOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException {
         if (newNode == null) {
             throw new GestaltException("No node provided");
         }
@@ -49,7 +49,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         } else {
             // If there is already a config node in the root, merge the nodes together then save them.
             ConfigNode rootForTokens = roots.get(newNode.getTags());
-            ValidateOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", rootForTokens, newNode.getConfigNode());
+            GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", rootForTokens, newNode.getConfigNode());
 
             if (mergedNode.hasResults()) {
                 roots.put(newNode.getTags(), mergedNode.results());
@@ -61,18 +61,18 @@ public final class ConfigNodeManager implements ConfigNodeService {
         errors.addAll(validateNode(roots.get(newNode.getTags())));
         errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
 
-        return validateOf(roots.get(newNode.getTags()), errors);
+        return resultOf(roots.get(newNode.getTags()), errors);
     }
 
     @Override
     @SuppressWarnings("ModifyCollectionInEnhancedForLoop")
-    public ValidateOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException {
+    public GResultOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException {
         if (postProcessors == null) {
             throw new GestaltException("No postProcessors provided");
         }
 
         if (postProcessors.isEmpty()) {
-            return ValidateOf.valid(true);
+            return GResultOf.result(true);
         }
 
         boolean ppSuccessful = true;
@@ -81,7 +81,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         for (Map.Entry<Tags, ConfigNode> entry : roots.entrySet()) {
             Tags tags = entry.getKey();
             ConfigNode root = entry.getValue();
-            ValidateOf<ConfigNode> results = postProcess("", root, postProcessors);
+            GResultOf<ConfigNode> results = postProcess("", root, postProcessors);
 
             // If we have results we want to update the root to the new post processed config tree.
             errors.addAll(results.getErrors());
@@ -93,10 +93,10 @@ public final class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return validateOf(ppSuccessful, errors);
+        return resultOf(ppSuccessful, errors);
     }
 
-    private ValidateOf<ConfigNode> postProcess(String path, ConfigNode node, List<PostProcessor> postProcessors) {
+    private GResultOf<ConfigNode> postProcess(String path, ConfigNode node, List<PostProcessor> postProcessors) {
         ConfigNode currentNode = node;
         List<ValidationError> errors = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         // If there are multiple post processors, apply them in order, each post processor operates on the result node from the
         // last post processor.
         for (PostProcessor it : postProcessors) {
-            ValidateOf<ConfigNode> processedNode = it.process(path, currentNode);
+            GResultOf<ConfigNode> processedNode = it.process(path, currentNode);
 
             errors.addAll(processedNode.getErrors());
             if (processedNode.hasResults()) {
@@ -120,13 +120,13 @@ public final class ConfigNodeManager implements ConfigNodeService {
         } else if (currentNode instanceof MapNode) {
             return postProcessMap(path, (MapNode) currentNode, postProcessors);
         } else if (currentNode instanceof LeafNode) {
-            return validateOf(currentNode, errors);
+            return resultOf(currentNode, errors);
         } else {
-            return ValidateOf.inValid(new ValidationError.UnknownNodeTypePostProcess(path, node.getClass().getName()));
+            return GResultOf.errors(new ValidationError.UnknownNodeTypePostProcess(path, node.getClass().getName()));
         }
     }
 
-    private ValidateOf<ConfigNode> postProcessArray(String path, ArrayNode node, List<PostProcessor> postProcessors) {
+    private GResultOf<ConfigNode> postProcessArray(String path, ArrayNode node, List<PostProcessor> postProcessors) {
         int size = node.size();
         List<ValidationError> errors = new ArrayList<>();
         ConfigNode[] processedNode = new ConfigNode[size];
@@ -135,7 +135,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             Optional<ConfigNode> currentNodeOption = node.getIndex(i);
             if (currentNodeOption.isPresent()) {
                 String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<ConfigNode> newNode = postProcess(nextPath, currentNodeOption.get(), postProcessors);
+                GResultOf<ConfigNode> newNode = postProcess(nextPath, currentNodeOption.get(), postProcessors);
 
                 errors.addAll(newNode.getErrors());
                 if (newNode.hasResults()) {
@@ -146,17 +146,17 @@ public final class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return validateOf(new ArrayNode(Arrays.asList(processedNode)), errors);
+        return resultOf(new ArrayNode(Arrays.asList(processedNode)), errors);
     }
 
-    private ValidateOf<ConfigNode> postProcessMap(String path, MapNode node, List<PostProcessor> postProcessors) {
+    private GResultOf<ConfigNode> postProcessMap(String path, MapNode node, List<PostProcessor> postProcessors) {
         Map<String, ConfigNode> processedNode = new HashMap<>();
         List<ValidationError> errors = new ArrayList<>();
 
         for (Map.Entry<String, ConfigNode> entry : node.getMapNode().entrySet()) {
             String key = entry.getKey();
             String nextPath = PathUtil.pathForKey(path, key);
-            ValidateOf<ConfigNode> newNode = postProcess(nextPath, entry.getValue(), postProcessors);
+            GResultOf<ConfigNode> newNode = postProcess(nextPath, entry.getValue(), postProcessors);
 
             errors.addAll(newNode.getErrors());
             if (newNode.hasResults()) {
@@ -166,12 +166,12 @@ public final class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return validateOf(new MapNode(processedNode), errors);
+        return resultOf(new MapNode(processedNode), errors);
     }
 
 
     @Override
-    public ValidateOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException {
+    public GResultOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException {
         ConfigNode newRoot = null;
         List<ValidationError> errors = new ArrayList<>();
 
@@ -196,7 +196,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             if (newRoot == null) {
                 newRoot = currentNode;
             } else {
-                ValidateOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", newRoot, currentNode);
+                GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", newRoot, currentNode);
 
                 errors.addAll(mergedNode.getErrors());
                 if (mergedNode.hasResults()) {
@@ -212,7 +212,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
 
         roots.put(reloadNode.getTags(), newRoot);
-        return validateOf(newRoot, errors);
+        return resultOf(newRoot, errors);
     }
 
     private List<ValidationError> validateNode(ConfigNode node) {
@@ -275,10 +275,10 @@ public final class ConfigNodeManager implements ConfigNodeService {
     }
 
     @Override
-    public ValidateOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags) {
-        ValidateOf<ConfigNode> results;
+    public GResultOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags) {
+        GResultOf<ConfigNode> results;
         // first check with the tags provided.
-        ValidateOf<ConfigNode> resultsForTags = navigateToNodeInternal(path, tokens, tags);
+        GResultOf<ConfigNode> resultsForTags = navigateToNodeInternal(path, tokens, tags);
 
         // if the current set of tags are the default empty tags: Tags.of()
         // then return the current resultsForTags.
@@ -286,7 +286,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         if (Tags.of().equals(tags)) {
             results = resultsForTags;
         } else {
-            ValidateOf<ConfigNode> resultsForDefault = navigateToNodeInternal(path, tokens, Tags.of());
+            GResultOf<ConfigNode> resultsForDefault = navigateToNodeInternal(path, tokens, Tags.of());
 
             if (!resultsForTags.hasResults()) {
                 results = resultsForDefault;
@@ -300,16 +300,16 @@ public final class ConfigNodeManager implements ConfigNodeService {
         return results;
     }
 
-    private ValidateOf<ConfigNode> navigateToNodeInternal(String path, List<Token> tokens, Tags tags) {
+    private GResultOf<ConfigNode> navigateToNodeInternal(String path, List<Token> tokens, Tags tags) {
         ConfigNode currentNode = roots.get(tags);
         List<ValidationError> errors = new ArrayList<>();
 
         for (Token token : tokens) {
-            ValidateOf<ConfigNode> result = navigateToNextNode(path, token, currentNode);
+            GResultOf<ConfigNode> result = navigateToNextNode(path, token, currentNode);
 
             // if there are errors, add them to the error list and do not add the merge results
             if (result.hasErrors()) {
-                return ValidateOf.inValid(result.getErrors());
+                return GResultOf.errors(result.getErrors());
             }
 
             if (result.hasResults()) {
@@ -319,28 +319,28 @@ public final class ConfigNodeManager implements ConfigNodeService {
             }
         }
 
-        return validateOf(currentNode, errors);
+        return resultOf(currentNode, errors);
     }
 
     @Override
-    public ValidateOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode) {
+    public GResultOf<ConfigNode> navigateToNextNode(String path, Token token, ConfigNode currentNode) {
 
         ConfigNode node = currentNode;
 
         if (node == null) {
-            return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
+            return GResultOf.errors(new ValidationError.NullNodeForPath(path));
         } else if (token == null) {
-            return ValidateOf.inValid(new ValidationError.NullTokenForPath(path));
+            return GResultOf.errors(new ValidationError.NullTokenForPath(path));
         } else if (token instanceof ArrayToken) {
             if (node instanceof ArrayNode) {
                 Optional<ConfigNode> nextNode = node.getIndex(((ArrayToken) token).getIndex());
                 if (nextNode.isPresent()) {
                     node = nextNode.get();
                 } else {
-                    return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, token.getClass(), "navigating to next node"));
+                    return GResultOf.errors(new ValidationError.NoResultsFoundForNode(path, token.getClass(), "navigating to next node"));
                 }
             } else {
-                return ValidateOf.inValid(
+                return GResultOf.errors(
                     new ValidationError.MismatchedObjectNodeForPath(path, ArrayNode.class, node.getClass()));
             }
         } else if (token instanceof ObjectToken) {
@@ -349,34 +349,34 @@ public final class ConfigNodeManager implements ConfigNodeService {
                 if (nextNode.isPresent()) {
                     node = nextNode.get();
                 } else {
-                    return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, token.getClass(), "navigating to next node"));
+                    return GResultOf.errors(new ValidationError.NoResultsFoundForNode(path, token.getClass(), "navigating to next node"));
                 }
             } else {
-                return ValidateOf.inValid(new ValidationError.MismatchedObjectNodeForPath(path, MapNode.class, node.getClass()));
+                return GResultOf.errors(new ValidationError.MismatchedObjectNodeForPath(path, MapNode.class, node.getClass()));
             }
         } else {
-            return ValidateOf.inValid(new ValidationError.UnsupportedTokenType(path, token));
+            return GResultOf.errors(new ValidationError.UnsupportedTokenType(path, token));
         }
 
-        return ValidateOf.valid(node);
+        return GResultOf.result(node);
     }
 
     @Override
-    public ValidateOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, final ConfigNode currentNode) {
+    public GResultOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, final ConfigNode currentNode) {
         if (currentNode == null) {
-            return ValidateOf.inValid(new ValidationError.NullNodeForPath(path));
+            return GResultOf.errors(new ValidationError.NullNodeForPath(path));
         } else if (tokens == null) {
-            return ValidateOf.inValid(new ValidationError.NullTokenForPath(path));
+            return GResultOf.errors(new ValidationError.NullTokenForPath(path));
         } else {
             ConfigNode node = currentNode;
             List<ValidationError> errors = new ArrayList<>();
 
             for (Token token : tokens) {
-                ValidateOf<ConfigNode> result = navigateToNextNode(path, token, node);
+                GResultOf<ConfigNode> result = navigateToNextNode(path, token, node);
 
                 // if there are errors, add them to the error list abd do not add the merge results
                 if (result.hasErrors()) {
-                    return ValidateOf.inValid(result.getErrors());
+                    return GResultOf.errors(result.getErrors());
                 }
 
                 if (result.hasResults()) {
@@ -385,7 +385,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
                     errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "navigating to node"));
                 }
             }
-            return validateOf(node, errors);
+            return resultOf(node, errors);
         }
     }
 }

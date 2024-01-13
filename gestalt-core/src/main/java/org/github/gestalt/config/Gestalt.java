@@ -27,9 +27,9 @@ public interface Gestalt {
     /**
      * Get a config for a path and a given class.
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass class to get the class for.
-     * @param <T> type of class to get.
+     * @param <T>   type of class to get.
      * @return the configuration.
      * @throws GestaltException any errors such as if there are no configs.
      */
@@ -38,10 +38,10 @@ public interface Gestalt {
     /**
      * Get a config for a path and a given class.
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass class to get the class for.
-     * @param tags the tags to match while searching for configs
-     * @param <T> type of class to get.
+     * @param tags  the tags to match while searching for configs
+     * @param <T>   type of class to get.
      * @return the configuration.
      * @throws GestaltException any errors such as if there are no configs.
      */
@@ -50,9 +50,9 @@ public interface Gestalt {
     /**
      * Get a config for a path and a given TypeCapture.
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass TypeCapture to get the class for.
-     * @param <T> type of class to get.
+     * @param <T>   type of class to get.
      * @return the configuration.
      * @throws GestaltException any errors such as if there are no configs.
      */
@@ -61,10 +61,10 @@ public interface Gestalt {
     /**
      * Get a config for a path and a given TypeCapture.
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass TypeCapture to get the class for.
-     * @param tags the tags to match while searching for configs
-     * @param <T> type of class to get.
+     * @param tags  the tags to match while searching for configs
+     * @param <T>   type of class to get.
      * @return the configuration.
      * @throws GestaltException any errors such as if there are no configs.
      */
@@ -74,10 +74,10 @@ public interface Gestalt {
      * Get a config for a path and a given class.
      * If the config is missing or invalid it will return the default value.
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path       path to get the config for. The path is not case sensitive.
      * @param defaultVal the default value to return if the config is invalid.
-     * @param klass class to get the class for.
-     * @param <T> type of class to get.
+     * @param klass      class to get the class for.
+     * @param <T>        type of class to get.
      * @return the configuration, or the default if the configuration is not found.
      */
     <T> T getConfig(String path, T defaultVal, Class<T> klass);
@@ -86,11 +86,11 @@ public interface Gestalt {
      * Get a config for a path and a given class.
      * If the config is missing or invalid it will return the default value.
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path       path to get the config for. The path is not case sensitive.
      * @param defaultVal the default value to return if the config is invalid.
-     * @param klass class to get the class for.
-     * @param tags the tags to match while searching for configs
-     * @param <T> type of class to get.
+     * @param klass      class to get the class for.
+     * @param tags       the tags to match while searching for configs
+     * @param <T>        type of class to get.
      * @return the configuration, or the default if the configuration is not found.
      */
     <T> T getConfig(String path, T defaultVal, Class<T> klass, Tags tags);
@@ -99,10 +99,10 @@ public interface Gestalt {
      * Get a config for a path and a given class.
      * If the config is missing or invalid it will return the default value.
      *
-     * @param path path to get the config for.
+     * @param path       path to get the config for.
      * @param defaultVal the default value to return if the config is invalid.
-     * @param klass TypeCapture to get the class for.
-     * @param <T> type of class to get.
+     * @param klass      TypeCapture to get the class for.
+     * @param <T>        type of class to get.
      * @return the configuration, or the default if the configuration is not found.
      */
     <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass);
@@ -111,11 +111,11 @@ public interface Gestalt {
      * Get a config for a path and a given class.
      * If the config is missing or invalid it will return the default value.
      *
-     * @param path path to get the config for.
+     * @param path       path to get the config for.
      * @param defaultVal the default value to return if the config is invalid.
-     * @param klass TypeCapture to get the class for.
-     * @param tags the tags to match while searching for configs
-     * @param <T> type of class to get.
+     * @param klass      TypeCapture to get the class for.
+     * @param tags       the tags to match while searching for configs
+     * @param <T>        type of class to get.
      * @return the configuration, or the default if the configuration is not found.
      */
     <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass, Tags tags);
@@ -123,9 +123,9 @@ public interface Gestalt {
     /**
      * Get a config Optional for a path and a given class. If there are any exceptions or errors it will return an Optional.empty()
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass class to get the class for.
-     * @param <T> type of class to get.
+     * @param <T>   type of class to get.
      * @return the configuration or Optional.empty() if it failed.
      */
     <T> Optional<T> getConfigOptional(String path, Class<T> klass);
@@ -133,10 +133,10 @@ public interface Gestalt {
     /**
      * Get a config Optional for a path and a given class. If there are any exceptions or errors it will return an Optional.empty()
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass class to get the class for.
-     * @param tags the tags to match while searching for configs
-     * @param <T> type of class to get.
+     * @param tags  the tags to match while searching for configs
+     * @param <T>   type of class to get.
      * @return the configuration or Optional.empty() if it failed.
      */
     <T> Optional<T> getConfigOptional(String path, Class<T> klass, Tags tags);
@@ -144,9 +144,9 @@ public interface Gestalt {
     /**
      * Get a config Optional for a path and a given TypeCapture. If there are any exceptions or errors it will return an Optional.empty()
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass TypeCapture to get the class for.
-     * @param <T> type of class to get.
+     * @param <T>   type of class to get.
      * @return the configuration or Optional.empty() if it failed.
      */
     <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass);
@@ -154,10 +154,10 @@ public interface Gestalt {
     /**
      * Get a config Optional for a path and a given TypeCapture. If there are any exceptions or errors it will return an Optional.empty()
      *
-     * @param path path to get the config for. The path is not case sensitive.
+     * @param path  path to get the config for. The path is not case sensitive.
      * @param klass TypeCapture to get the class for.
-     * @param tags the tags to match while searching for configs
-     * @param <T> type of class to get.
+     * @param tags  the tags to match while searching for configs
+     * @param <T>   type of class to get.
      * @return the configuration or Optional.empty() if it failed.
      */
     <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags);

@@ -13,7 +13,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.CollectionUtils;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,10 +36,10 @@ public final class DecoderRegistry implements DecoderService {
     /**
      * Constructor to build Decoder Registry.
      *
-     * @param decoders list of all supported decoders
+     * @param decoders          list of all supported decoders
      * @param configNodeService config node service that holds the config nodes.
-     * @param lexer sentence lexer to decode
-     * @param pathMappers path mappers to test
+     * @param lexer             sentence lexer to decode
+     * @param pathMappers       path mappers to test
      * @throws GestaltConfigurationException any configuration exceptions for empty parameters.
      */
     public DecoderRegistry(List<Decoder<?>> decoders,
@@ -100,7 +100,7 @@ public final class DecoderRegistry implements DecoderService {
      * get a decode for a specific class.
      *
      * @param klass TypeCapture class to search for a decoder
-     * @param <T> the generic type of the class
+     * @param <T>   the generic type of the class
      * @return a list of decoders that match the class
      */
     @SuppressWarnings("rawtypes")
@@ -113,18 +113,18 @@ public final class DecoderRegistry implements DecoderService {
 
 
     @Override
-    public <T> ValidateOf<T> decodeNode(String path, Tags tags, String configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
+    public <T> GResultOf<T> decodeNode(String path, Tags tags, String configNode, TypeCapture<T> klass, DecoderContext decoderContext) {
         return decodeNode(path, tags, new LeafNode(configNode), klass, decoderContext);
     }
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public <T> ValidateOf<T> decodeNode(String path, Tags tags, ConfigNode configNode, TypeCapture<T> klass,
-                                        DecoderContext decoderContext) {
+    public <T> GResultOf<T> decodeNode(String path, Tags tags, ConfigNode configNode, TypeCapture<T> klass,
+                                       DecoderContext decoderContext) {
         List<Decoder> classDecoder = getDecoderForClass(path, tags, configNode, klass);
         classDecoder.sort(Comparator.comparingInt(v -> v.priority().ordinal()));
         if (classDecoder.isEmpty()) {
-            return ValidateOf.inValid(new ValidationError.NoDecodersFound(klass.getName(), configNode));
+            return GResultOf.errors(new ValidationError.NoDecodersFound(klass.getName(), configNode));
         } else if (classDecoder.size() > 1) {
             logger.log(System.Logger.Level.TRACE, "Found multiple decoders for {0}, found: {1}, using {2}: ",
                 klass, classDecoder, classDecoder.get(0));
@@ -134,22 +134,20 @@ public final class DecoderRegistry implements DecoderService {
     }
 
     @Override
-    public ValidateOf<ConfigNode> getNextNode(String path, String nextString, ConfigNode configNode) {
-        ValidateOf<ConfigNode> result;
+    public GResultOf<ConfigNode> getNextNode(String path, String nextPath, ConfigNode configNode) {
+        GResultOf<ConfigNode> result;
         List<ValidationError> errors = new ArrayList<>();
         for (PathMapper pathMapper : pathMappers) {
-            ValidateOf<List<Token>> pathValidateOf = pathMapper.map(path, nextString, lexer);
+            GResultOf<List<Token>> pathGResultOf = pathMapper.map(path, nextPath, lexer);
 
             // if there are errors, add them to the error list and do not add the merge results
-            if (pathValidateOf.hasErrors()) {
-                errors.addAll(pathValidateOf.getErrors());
-            }
+            errors.addAll(pathGResultOf.getErrors());
 
-            if (!pathValidateOf.hasResults()) {
+            if (!pathGResultOf.hasResults()) {
                 continue;
             }
 
-            List<Token> nextTokens = pathValidateOf.results();
+            List<Token> nextTokens = pathGResultOf.results();
             result = configNodeService.navigateToNextNode(path, nextTokens, configNode);
 
             // if there are errors, add them to the error list and do not add the merge results
@@ -165,15 +163,15 @@ public final class DecoderRegistry implements DecoderService {
 
         //Will only reach here if there is no result.
         if (!errors.isEmpty()) {
-            result = ValidateOf.inValid(errors);
+            result = GResultOf.errors(errors);
         } else {
-            result = ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, configNode.getNodeType().getType(), "decoding"));
+            result = GResultOf.errors(new ValidationError.NoResultsFoundForNode(path, configNode.getNodeType().getType(), "decoding"));
         }
         return result;
     }
 
     @Override
-    public ValidateOf<ConfigNode> getNextNode(String path, int nextIndex, ConfigNode configNode) {
+    public GResultOf<ConfigNode> getNextNode(String path, int nextIndex, ConfigNode configNode) {
         Token nextToken = new ArrayToken(nextIndex);
 
         return configNodeService.navigateToNextNode(path, List.of(nextToken), configNode);

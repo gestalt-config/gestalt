@@ -19,7 +19,7 @@ public final class ErrorsUtil {
      * Create an error message from a message and the list of errors.
      *
      * @param message to prepend the error
-     * @param errors list of validation errors.
+     * @param errors  list of validation errors.
      * @return string of the error
      */
     public static String buildErrorMessage(String message, List<ValidationError> errors) {
@@ -34,6 +34,6 @@ public final class ErrorsUtil {
      */
     public static String buildErrorMessage(List<ValidationError> errors) {
         return errors.stream()
-                     .map(error -> "level: " + error.level() + ", message: " + error.description()).collect(Collectors.joining("\n - "));
+            .map(error -> "level: " + error.level() + ", message: " + error.description()).collect(Collectors.joining("\n - "));
     }
 }

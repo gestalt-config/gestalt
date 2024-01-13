@@ -24,7 +24,7 @@ import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -355,7 +355,7 @@ class GestaltBuilderTest {
     public void buildDefaultWithCacheFalse() throws GestaltException {
         ConfigNodeManager configNodeService = Mockito.mock(ConfigNodeManager.class);
 
-        Mockito.when(configNodeService.navigateToNode(any(), any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
+        Mockito.when(configNodeService.navigateToNode(any(), any(), any())).thenReturn(GResultOf.result(new LeafNode("value")));
 
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -392,7 +392,7 @@ class GestaltBuilderTest {
     public void buildDefaultWithCacheTrue() throws GestaltException {
         ConfigNodeManager configNodeService = Mockito.mock(ConfigNodeManager.class);
 
-        Mockito.when(configNodeService.navigateToNode(any(), any(), any())).thenReturn(ValidateOf.valid(new LeafNode("value")));
+        Mockito.when(configNodeService.navigateToNode(any(), any(), any())).thenReturn(GResultOf.result(new LeafNode("value")));
 
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");

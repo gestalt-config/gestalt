@@ -3,7 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Decode a String.
@@ -28,7 +28,7 @@ public final class StringDecoder extends LeafDecoder<String> {
     }
 
     @Override
-    protected ValidateOf<String> leafDecode(String path, ConfigNode node) {
-        return ValidateOf.valid(node.getValue().orElse(""));
+    protected GResultOf<String> leafDecode(String path, ConfigNode node) {
+        return GResultOf.result(node.getValue().orElse(""));
     }
 }

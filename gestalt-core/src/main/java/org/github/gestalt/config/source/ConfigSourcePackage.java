@@ -17,7 +17,7 @@ public class ConfigSourcePackage {
     /**
      * Constructor for the ConfigSourcePackage that requires the config source and the configReloadStrategies.
      *
-     * @param configSource the config source
+     * @param configSource           the config source
      * @param configReloadStrategies the configReloadStrategies
      */
     public ConfigSourcePackage(ConfigSource configSource, List<ConfigReloadStrategy> configReloadStrategies) {

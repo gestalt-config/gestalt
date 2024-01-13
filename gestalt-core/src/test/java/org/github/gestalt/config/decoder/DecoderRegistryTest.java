@@ -16,7 +16,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -166,11 +166,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("test");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.result(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -187,7 +187,7 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("value");
 
-        ValidateOf<String> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(String.class),
+        GResultOf<String> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(String.class),
             new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
@@ -202,7 +202,7 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("100");
 
-        ValidateOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
+        GResultOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
             new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
@@ -218,7 +218,7 @@ class DecoderRegistryTest {
 
         ConfigNode leaf = new LeafNode("100");
 
-        ValidateOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
+        GResultOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
             new DecoderContext(decoderRegistry, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
@@ -242,11 +242,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("value");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.inValid(new ValidationError.FailedToTokenizeElement("run", "test.run")));
-        Mockito.when(configNodeService.navigateToNextNode("test", nextToken, leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.errors(new ValidationError.FailedToTokenizeElement("run", "test.run")));
+        Mockito.when(configNodeService.navigateToNextNode("test", nextToken, leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertFalse(test.hasResults());
         Assertions.assertTrue(test.hasErrors());
 
@@ -265,11 +265,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("value");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.validateOf(null, Collections.emptyList()));
-        Mockito.when(configNodeService.navigateToNextNode("test", nextToken, leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
+        Mockito.when(configNodeService.navigateToNextNode("test", nextToken, leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertFalse(test.hasResults());
         Assertions.assertTrue(test.hasErrors());
 
@@ -289,11 +289,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("value");
 
         Token nextToken = new ArrayToken(1);
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.result(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", 1, leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", 1, leaf);
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -311,11 +311,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("test");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.result(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -333,11 +333,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("test");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.result(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -355,11 +355,11 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("test");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
-        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(ValidateOf.valid(leaf));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.result(Collections.singletonList(nextToken)));
+        Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf)).thenReturn(GResultOf.result(leaf));
 
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertFalse(test.hasResults());
         Assertions.assertTrue(test.hasErrors());
 
@@ -381,12 +381,12 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("test");
 
         Token nextToken = new ObjectToken("run");
-        Mockito.when(lexer.scan("run")).thenReturn(ValidateOf.valid(Collections.singletonList(nextToken)));
+        Mockito.when(lexer.scan("run")).thenReturn(GResultOf.result(Collections.singletonList(nextToken)));
         Mockito.when(configNodeService.navigateToNextNode("test", List.of(nextToken), leaf))
-            .thenReturn(ValidateOf.inValid(new ValidationError.NoResultsFoundForNode("test",
+            .thenReturn(GResultOf.errors(new ValidationError.NoResultsFoundForNode("test",
                 NodeType.LEAF.getType(), "navigate to next node")));
 
-        ValidateOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
+        GResultOf<ConfigNode> test = decoderRegistry.getNextNode("test", "run", leaf);
         Assertions.assertFalse(test.hasResults());
         Assertions.assertTrue(test.hasErrors());
 
@@ -403,8 +403,8 @@ class DecoderRegistryTest {
     @ConfigPriority(500)
     public static class TestPathMapper implements PathMapper {
         @Override
-        public ValidateOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
-            return ValidateOf.inValid(new ValidationError.NoResultsFoundForNode(path, NodeType.LEAF.getType(), "TestPathMapper"));
+        public GResultOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
+            return GResultOf.errors(new ValidationError.NoResultsFoundForNode(path, NodeType.LEAF.getType(), "TestPathMapper"));
         }
     }
 
@@ -427,8 +427,8 @@ class DecoderRegistryTest {
 
 
         @Override
-        protected ValidateOf<Long> leafDecode(String path, ConfigNode node) {
-            return ValidateOf.valid(10L);
+        protected GResultOf<Long> leafDecode(String path, ConfigNode node) {
+            return GResultOf.result(10L);
         }
     }
 
@@ -451,8 +451,8 @@ class DecoderRegistryTest {
 
 
         @Override
-        protected ValidateOf<Long> leafDecode(String path, ConfigNode node) {
-            return ValidateOf.valid(1000L);
+        protected GResultOf<Long> leafDecode(String path, ConfigNode node) {
+            return GResultOf.result(1000L);
         }
     }
 }

@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,53 +33,53 @@ public final class NodeTransformer implements Transformer {
     }
 
     @Override
-    public ValidateOf<String> process(String path, String key, String rawValue) {
+    public GResultOf<String> process(String path, String key, String rawValue) {
         if (config == null) {
-            return ValidateOf.inValid(new ValidationError.NodePostProcessingConfigMissing(path, key));
+            return GResultOf.errors(new ValidationError.NodePostProcessingConfigMissing(path, key));
         } else if (key == null) {
-            return ValidateOf.inValid(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
+            return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
         }
 
         String normalizedPath = config.getLexer().normalizeSentence(key);
-        ValidateOf<List<Token>> validateOfTokens = config.getLexer().scan(normalizedPath);
+        GResultOf<List<Token>> resultsOf = config.getLexer().scan(normalizedPath);
 
-        List<ValidationError> errors = new ArrayList<>(validateOfTokens.getErrors());
-        if (validateOfTokens.hasErrors(ValidationLevel.ERROR)) {
+        List<ValidationError> errors = new ArrayList<>(resultsOf.getErrors());
+        if (resultsOf.hasErrors(ValidationLevel.ERROR)) {
             errors.add(new ValidationError.NodePostProcessingBadTokens(path, key));
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
-        if (!validateOfTokens.hasResults()) {
+        if (!resultsOf.hasResults()) {
             errors.add(new ValidationError.NodePostProcessingNoResultsForTokens(path, key));
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
         // TODO figure out how to support tags in the NodeTransformer. maybe ${node:my.path[tagKey,tagValue]}
-        ValidateOf<ConfigNode> validateOfConfigNode = config.getConfigNodeService()
-                                                            .navigateToNode(path, validateOfTokens.results(), Tags.of());
+        GResultOf<ConfigNode> resultOfConfigNode = config.getConfigNodeService()
+            .navigateToNode(path, resultsOf.results(), Tags.of());
 
-        errors.addAll(validateOfConfigNode.getErrors());
-        if (validateOfConfigNode.hasErrors(ValidationLevel.MISSING_VALUE)) {
+        errors.addAll(resultOfConfigNode.getErrors());
+        if (resultOfConfigNode.hasErrors(ValidationLevel.MISSING_VALUE)) {
             errors.add(new ValidationError.NodePostProcessingErrorsNavigatingToNode(path, key));
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
-        if (!validateOfConfigNode.hasResults()) {
+        if (!resultOfConfigNode.hasResults()) {
             errors.add(new ValidationError.NoResultsFoundForNode(path, key, "NodeTransformer"));
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
-        ConfigNode node = validateOfConfigNode.results();
+        ConfigNode node = resultOfConfigNode.results();
         if (!(node instanceof LeafNode)) {
             errors.add(new ValidationError.NodePostProcessingNodeNotLeaf(path, key));
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
         if (node.getValue().isEmpty()) {
             errors.add(new ValidationError.NodePostProcessingNodeLeafHasNoValue(path, key));
-            return ValidateOf.inValid(errors);
+            return GResultOf.errors(errors);
         }
 
-        return ValidateOf.valid(node.getValue().get());
+        return GResultOf.result(node.getValue().get());
     }
 }

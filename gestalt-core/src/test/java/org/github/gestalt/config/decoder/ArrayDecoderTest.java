@@ -7,7 +7,7 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,8 +95,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
-                TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
+        GResultOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
+            TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -120,8 +120,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -146,8 +146,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -167,8 +167,8 @@ class ArrayDecoderTest {
     void arrayDecodeLeaf() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"),
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"),
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -184,8 +184,8 @@ class ArrayDecoderTest {
     void arrayDecodeNullLeaf() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null),
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null),
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -200,7 +200,7 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(List.of());
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
+        GResultOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
             TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -216,7 +216,7 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(null);
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
+        GResultOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
             new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -229,7 +229,7 @@ class ArrayDecoderTest {
         ConfigNode nodes = new LeafNode("");
         ArrayDecoder decoder = new ArrayDecoder();
 
-        ValidateOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
+        GResultOf<Object[]> values = decoder.decode("db.hosts", Tags.of(), nodes, TypeCapture.of(String[].class),
             new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -249,8 +249,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -278,8 +278,8 @@ class ArrayDecoderTest {
         ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), nodes,
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -300,8 +300,8 @@ class ArrayDecoderTest {
     void arrayDecodeMapNode() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(),
-                new MapNode(new HashMap<>()), TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(),
+            new MapNode(new HashMap<>()), TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -315,8 +315,8 @@ class ArrayDecoderTest {
     void arrayDecodeMapNodeNullInside() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new MapNode(null),
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new MapNode(null),
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -330,7 +330,7 @@ class ArrayDecoderTest {
     void arrayDecodeListNodeEmpty() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new ArrayNode(List.of()),
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new ArrayNode(List.of()),
             TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
@@ -343,8 +343,8 @@ class ArrayDecoderTest {
     void arrayDecodeListNodeNullInside() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new ArrayNode(null),
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), new ArrayNode(null),
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -356,8 +356,8 @@ class ArrayDecoderTest {
     void arrayDecodeNullNode() {
         ArrayDecoder<Double> decoder = new ArrayDecoder<>();
 
-        ValidateOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), null,
-                TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
+        GResultOf<Double[]> values = decoder.decode("db.hosts", Tags.of(), null,
+            TypeCapture.of(Double[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -371,8 +371,8 @@ class ArrayDecoderTest {
     void arrayDecodeLeafWithEscapeComma() {
         ArrayDecoder<String> decoder = new ArrayDecoder<>();
 
-        ValidateOf<String[]> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"),
-                TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
+        GResultOf<String[]> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"),
+            TypeCapture.of(String[].class), new DecoderContext(decoderService, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());

@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.StringUtils;
-import org.github.gestalt.config.utils.ValidateOf;
 
 /**
  * Decode a double.
@@ -30,19 +30,19 @@ public final class DoubleDecoder extends LeafDecoder<Double> {
     }
 
     @Override
-    protected ValidateOf<Double> leafDecode(String path, ConfigNode node) {
-        ValidateOf<Double> results;
+    protected GResultOf<Double> leafDecode(String path, ConfigNode node) {
+        GResultOf<Double> results;
 
         String value = node.getValue().orElse("");
         if (StringUtils.isReal(value)) {
             try {
                 Double longVal = Double.parseDouble(value);
-                results = ValidateOf.valid(longVal);
+                results = GResultOf.result(longVal);
             } catch (NumberFormatException e) {
-                results = ValidateOf.inValid(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
             }
         } else {
-            results = ValidateOf.inValid(new ValidationError.DecodingNumberParsing(path, node, name()));
+            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
 
         return results;

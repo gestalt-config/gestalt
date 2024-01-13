@@ -4,8 +4,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
-import org.github.gestalt.config.utils.ValidateOf;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
     }
 
     @Override
-    protected ValidateOf<Set<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass, DecoderContext decoderContext) {
+    protected GResultOf<Set<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass, DecoderContext decoderContext) {
         List<ValidationError> errors = new ArrayList<>();
         Set<Object> results = new HashSet<>(node.size());
 
@@ -38,12 +38,12 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
             if (node.getIndex(i).isPresent()) {
                 ConfigNode currentNode = node.getIndex(i).get();
                 String nextPath = PathUtil.pathForIndex(path, i);
-                ValidateOf<?> validateOf = decoderContext.getDecoderService()
+                GResultOf<?> resultOf = decoderContext.getDecoderService()
                     .decodeNode(nextPath, tags, currentNode, klass.getFirstParameterType(), decoderContext);
 
-                errors.addAll(validateOf.getErrors());
-                if (validateOf.hasResults()) {
-                    results.add(validateOf.results());
+                errors.addAll(resultOf.getErrors());
+                if (resultOf.hasResults()) {
+                    results.add(resultOf.results());
                 }
 
             } else {
@@ -52,6 +52,6 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
         }
 
 
-        return ValidateOf.validateOf(results, errors);
+        return GResultOf.resultOf(results, errors);
     }
 }

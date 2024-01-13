@@ -10,7 +10,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,19 +36,19 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode results2 = results.results();
+        Assertions.assertEquals(2, results2.size());
 
-        Assertions.assertEquals("test", results.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("test", results2.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals("John", results.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Steve", results.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve", results2.getKey("admin").get().getIndex(1).get().getValue().get());
     }
 
     @Test
@@ -67,20 +67,20 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults =
+        GResultOf<ConfigNode> results =
             configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode results2 = results.results();
+        Assertions.assertEquals(2, results2.size());
 
-        Assertions.assertEquals("test", results.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("test", results2.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals("John", results.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Steve", results.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve", results2.getKey("admin").get().getIndex(1).get().getValue().get());
     }
 
     @Test
@@ -99,10 +99,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -117,22 +117,22 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
     }
 
     @Test
@@ -151,11 +151,11 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults =
+        GResultOf<ConfigNode> results =
             configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -170,23 +170,23 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 =
+        GResultOf<ConfigNode> results2 =
             configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
     }
 
     @Test
@@ -205,11 +205,11 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults =
+        GResultOf<ConfigNode> results =
             configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -224,26 +224,26 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 =
+        GResultOf<ConfigNode> results2 =
             configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "car"))));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
-        Assertions.assertEquals(1, validateOfResults2.getErrors().size());
-        Assertions.assertEquals("Missing array index: 0 for path: admin", validateOfResults2.getErrors().get(0).description());
+        Assertions.assertEquals(1, results2.getErrors().size());
+        Assertions.assertEquals("Missing array index: 0 for path: admin", results2.getErrors().get(0).description());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertTrue(results2.getKey("db").get().getKey("port").isEmpty());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertTrue(resultsCN.getKey("db").get().getKey("port").isEmpty());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertTrue(results2.getKey("admin").get().getIndex(0).isEmpty());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertTrue(resultsCN.getKey("admin").get().getIndex(0).isEmpty());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
     }
 
     @Test
@@ -270,10 +270,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         Map<String, ConfigNode> redisNode1a = new HashMap<>();
         redisNode1a.put("uri", new LeafNode("redis1a"));
@@ -296,25 +296,25 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("redis1a", results2.getKey("admin").get().getIndex(0).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("aaaa", results2.getKey("admin").get().getIndex(0).get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("redis2", results2.getKey("admin").get().getIndex(1).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("2222", results2.getKey("admin").get().getIndex(1).get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("redis3", results2.getKey("admin").get().getIndex(2).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("3333", results2.getKey("admin").get().getIndex(2).get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("redis1a", resultsCN.getKey("admin").get().getIndex(0).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("aaaa", resultsCN.getKey("admin").get().getIndex(0).get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("redis2", resultsCN.getKey("admin").get().getIndex(1).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("2222", resultsCN.getKey("admin").get().getIndex(1).get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("redis3", resultsCN.getKey("admin").get().getIndex(2).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("3333", resultsCN.getKey("admin").get().getIndex(2).get().getKey("port").get().getValue().get());
     }
 
     @Test
@@ -341,13 +341,13 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Missing array index: 2 for path: admin", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals("Missing array index: 2 for path: admin", results.getErrors().get(0).description());
 
 
         Map<String, ConfigNode> redisNode1a = new HashMap<>();
@@ -371,29 +371,29 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("redis1a", results2.getKey("admin").get().getIndex(0).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("aaaa", results2.getKey("admin").get().getIndex(0).get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("redis2", results2.getKey("admin").get().getIndex(1).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("2222", results2.getKey("admin").get().getIndex(1).get().getKey("port").get().getValue().get());
-        Assertions.assertFalse(results2.getKey("admin").get().getIndex(2).isPresent());
-        Assertions.assertEquals("redis3", results2.getKey("admin").get().getIndex(3).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("3333", results2.getKey("admin").get().getIndex(3).get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("redis1a", resultsCN.getKey("admin").get().getIndex(0).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("aaaa", resultsCN.getKey("admin").get().getIndex(0).get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("redis2", resultsCN.getKey("admin").get().getIndex(1).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("2222", resultsCN.getKey("admin").get().getIndex(1).get().getKey("port").get().getValue().get());
+        Assertions.assertFalse(resultsCN.getKey("admin").get().getIndex(2).isPresent());
+        Assertions.assertEquals("redis3", resultsCN.getKey("admin").get().getIndex(3).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("3333", resultsCN.getKey("admin").get().getIndex(3).get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals(1, validateOfResults2.getErrors().size());
-        Assertions.assertEquals("Missing array index: 2 for path: admin", validateOfResults2.getErrors().get(0).description());
+        Assertions.assertEquals(1, results2.getErrors().size());
+        Assertions.assertEquals("Missing array index: 2 for path: admin", results2.getErrors().get(0).description());
     }
 
     @Test
@@ -420,14 +420,14 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        Assertions.assertEquals(2, validateOfResults.getErrors().size());
+        Assertions.assertEquals(2, results.getErrors().size());
 
-        assertThat(validateOfResults.getErrors())
+        assertThat(results.getErrors())
             .anyMatch(it -> "Leaf nodes are empty for path: admin[0].port".equals(it.description()))
             .anyMatch(it -> "Missing array index: 2 for path: admin".equals(it.description()));
 
@@ -452,27 +452,27 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("redis1a", results2.getKey("admin").get().getIndex(0).get().getKey("uri").get().getValue().get());
-        Assertions.assertFalse(results2.getKey("admin").get().getIndex(0).get().getKey("port").get().getValue().isPresent());
-        Assertions.assertEquals("redis2", results2.getKey("admin").get().getIndex(1).get().getKey("uri").get().getValue().get());
-        Assertions.assertEquals("2222", results2.getKey("admin").get().getIndex(1).get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("redis1a", resultsCN.getKey("admin").get().getIndex(0).get().getKey("uri").get().getValue().get());
+        Assertions.assertFalse(resultsCN.getKey("admin").get().getIndex(0).get().getKey("port").get().getValue().isPresent());
+        Assertions.assertEquals("redis2", resultsCN.getKey("admin").get().getIndex(1).get().getKey("uri").get().getValue().get());
+        Assertions.assertEquals("2222", resultsCN.getKey("admin").get().getIndex(1).get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals(2, validateOfResults2.getErrors().size());
+        Assertions.assertEquals(2, results2.getErrors().size());
 
-        assertThat(validateOfResults2.getErrors())
+        assertThat(results2.getErrors())
             .anyMatch(it -> "Leaf nodes are empty for path: admin[0].port".equals(it.description()))
             .anyMatch(it -> "Unable to find node matching path: admin[0], for class: MapNode, during merging maps"
                 .equals(it.description()));
@@ -505,10 +505,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Scott");
@@ -523,14 +523,14 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
 
         ConfigNode[] arrayNode3 = new ConfigNode[1];
@@ -545,22 +545,22 @@ class ConfigNodeManagerTest {
         rootNode3.put("admin", new ArrayNode(Arrays.asList(arrayNode3)));
         ConfigNode root3 = new MapNode(rootNode3);
 
-        ValidateOf<ConfigNode> validateOfResults3 = configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource()));
-        Assertions.assertFalse(validateOfResults3.hasErrors());
-        Assertions.assertTrue(validateOfResults3.hasResults());
-        Assertions.assertNotNull(validateOfResults3.results());
+        GResultOf<ConfigNode> results3 = configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource()));
+        Assertions.assertFalse(results3.hasErrors());
+        Assertions.assertTrue(results3.hasResults());
+        Assertions.assertNotNull(results3.results());
 
-        ConfigNode results3 = validateOfResults3.results();
-        Assertions.assertEquals(2, results3.size());
+        ConfigNode resultsCN1 = results3.results();
+        Assertions.assertEquals(2, resultsCN1.size());
 
-        Assertions.assertEquals("New Name", results3.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results3.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results3.getKey("db").get().getKey("password").get().getValue().get());
-        Assertions.assertEquals("5000", results3.getKey("db").get().getKey("timeout").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN1.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN1.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN1.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("5000", resultsCN1.getKey("db").get().getKey("timeout").get().getValue().get());
 
-        Assertions.assertEquals("Matt", results3.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Scott", results3.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results3.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN1.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Scott", resultsCN1.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN1.getKey("admin").get().getIndex(2).get().getValue().get());
     }
 
     @Test
@@ -579,11 +579,11 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults =
+        GResultOf<ConfigNode> results =
             configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Scott");
@@ -598,15 +598,15 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 =
+        GResultOf<ConfigNode> results2 =
             configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
 
         ConfigNode[] arrayNode3 = new ConfigNode[1];
@@ -621,22 +621,22 @@ class ConfigNodeManagerTest {
         rootNode3.put("admin", new ArrayNode(Arrays.asList(arrayNode3)));
         ConfigNode root3 = new MapNode(rootNode3);
 
-        ValidateOf<ConfigNode> validateOfResults3 =
+        GResultOf<ConfigNode> results3 =
             configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource()));
-        Assertions.assertFalse(validateOfResults3.hasErrors());
-        Assertions.assertTrue(validateOfResults3.hasResults());
-        Assertions.assertNotNull(validateOfResults3.results());
+        Assertions.assertFalse(results3.hasErrors());
+        Assertions.assertTrue(results3.hasResults());
+        Assertions.assertNotNull(results3.results());
 
-        ConfigNode results3 = validateOfResults3.results();
-        Assertions.assertEquals(2, results3.size());
+        ConfigNode resultsCN1 = results3.results();
+        Assertions.assertEquals(2, resultsCN1.size());
 
-        Assertions.assertEquals("New Name", results3.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertTrue(results3.getKey("db").get().getKey("port").isEmpty());
-        Assertions.assertTrue(results3.getKey("db").get().getKey("password").isEmpty());
-        Assertions.assertEquals("5000", results3.getKey("db").get().getKey("timeout").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN1.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertTrue(resultsCN1.getKey("db").get().getKey("port").isEmpty());
+        Assertions.assertTrue(resultsCN1.getKey("db").get().getKey("password").isEmpty());
+        Assertions.assertEquals("5000", resultsCN1.getKey("db").get().getKey("timeout").get().getValue().get());
 
-        Assertions.assertEquals(1, results3.getKey("admin").get().size());
-        Assertions.assertEquals("Matt", results3.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals(1, resultsCN1.getKey("admin").get().size());
+        Assertions.assertEquals("Matt", resultsCN1.getKey("admin").get().getIndex(0).get().getValue().get());
     }
 
     @Test
@@ -655,10 +655,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         Map<String, ConfigNode> dbNode2 = new HashMap<>();
         dbNode2.put("name", new LeafNode("New Name"));
@@ -669,21 +669,21 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new LeafNode("test"));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("leaf", results2.getKey("admin").get().getNodeType().getType());
+        Assertions.assertEquals("leaf", resultsCN.getKey("admin").get().getNodeType().getType());
 
         Assertions.assertEquals("Unable to merge different nodes, of type: ArrayNode and type: LeafNode",
-            validateOfResults2.getErrors().get(0).description());
+            results2.getErrors().get(0).description());
     }
 
 
@@ -703,10 +703,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -721,24 +721,24 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("test", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("test", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
-        Assertions.assertEquals(0, validateOfResults2.getErrors().size());
+        Assertions.assertEquals(0, results.getErrors().size());
     }
 
     @Test
@@ -757,13 +757,13 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Leaf nodes are empty for path: db.name", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals("Leaf nodes are empty for path: db.name", results.getErrors().get(0).description());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -778,25 +778,25 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertFalse(results2.getKey("db").get().getKey("name").get().getValue().isPresent());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertFalse(resultsCN.getKey("db").get().getKey("name").get().getValue().isPresent());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
-        Assertions.assertEquals(2, validateOfResults2.getErrors().size());
-        assertThat(validateOfResults2.getErrors())
+        Assertions.assertEquals(2, results2.getErrors().size());
+        assertThat(results2.getErrors())
             .anyMatch(it -> "Unable to find node matching path: db, for class: MapNode, during merging maps".equals(it.description()))
             .anyMatch(it -> "Leaf nodes are empty for path: db.name".equals(it.description()));
     }
@@ -817,10 +817,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -835,26 +835,26 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("test", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("test", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
-        Assertions.assertEquals(1, validateOfResults2.getErrors().size());
+        Assertions.assertEquals(1, results2.getErrors().size());
         Assertions.assertEquals("Empty node value provided for path: db.name",
-            validateOfResults2.getErrors().get(0).description());
+            results2.getErrors().get(0).description());
     }
 
     @Test
@@ -873,13 +873,13 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Empty node value provided for path: db.name", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals("Empty node value provided for path: db.name", results.getErrors().get(0).description());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -895,25 +895,25 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertFalse(results2.getKey("db").get().getKey("name").isPresent());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertFalse(resultsCN.getKey("db").get().getKey("name").isPresent());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
-        Assertions.assertEquals(2, validateOfResults2.getErrors().size());
-        assertThat(validateOfResults2.getErrors())
+        Assertions.assertEquals(2, results2.getErrors().size());
+        assertThat(results2.getErrors())
             .anyMatch(it -> "Empty node value provided for path: db.name".equals(it.description()))
             .anyMatch(it -> "Empty node value provided for path: db.autoCommit".equals(it.description()));
     }
@@ -934,10 +934,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -952,25 +952,25 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("test", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("1234", results2.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("test", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("1234", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
-        Assertions.assertEquals(1, validateOfResults2.getErrors().size());
+        Assertions.assertEquals(1, results2.getErrors().size());
         Assertions.assertEquals("Empty node name provided for path: db",
-            validateOfResults2.getErrors().get(0).description());
+            results2.getErrors().get(0).description());
     }
 
     @Test
@@ -990,13 +990,13 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Empty node name provided for path: db", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals("Empty node name provided for path: db", results.getErrors().get(0).description());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -1011,24 +1011,24 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("test", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("1234", results2.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("test", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("1234", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
-        Assertions.assertEquals(1, validateOfResults2.getErrors().size());
-        Assertions.assertEquals("Empty node name provided for path: db", validateOfResults2.getErrors().get(0).description());
+        Assertions.assertEquals(1, results2.getErrors().size());
+        Assertions.assertEquals("Empty node name provided for path: db", results2.getErrors().get(0).description());
     }
 
     @Test
@@ -1047,13 +1047,13 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Leaf nodes are empty for path: admin[0]", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals("Leaf nodes are empty for path: admin[0]", results.getErrors().get(0).description());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -1068,25 +1068,25 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
-        Assertions.assertTrue(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        Assertions.assertTrue(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
-        Assertions.assertEquals(1, validateOfResults.getErrors().size());
-        Assertions.assertEquals("Leaf nodes are empty for path: admin[0]", validateOfResults.getErrors().get(0).description());
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals("Leaf nodes are empty for path: admin[0]", results.getErrors().get(0).description());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertFalse(results2.getKey("admin").get().getIndex(0).get().getValue().isPresent());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertFalse(results2.getKey("admin").get().getIndex(2).get().getValue().isPresent());
+        Assertions.assertFalse(resultsCN.getKey("admin").get().getIndex(0).get().getValue().isPresent());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertFalse(resultsCN.getKey("admin").get().getIndex(2).get().getValue().isPresent());
     }
 
 
@@ -1106,16 +1106,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new ObjectToken("name"));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of());
 
         Assertions.assertFalse(navigateValidate.hasErrors());
         Assertions.assertTrue(navigateValidate.hasResults());
@@ -1149,11 +1149,11 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults =
+        GResultOf<ConfigNode> results =
             configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[2];
         arrayNode2[0] = new LeafNode("Matt");
@@ -1169,19 +1169,19 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        ValidateOf<ConfigNode> validateOfResults2 =
+        GResultOf<ConfigNode> results2 =
             configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new ObjectToken("name"));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of());
 
         Assertions.assertFalse(navigateValidate.hasErrors());
         Assertions.assertTrue(navigateValidate.hasResults());
@@ -1241,16 +1241,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("admin"), new ArrayToken(2));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("admin[0]", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("admin[0]", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1275,16 +1275,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new ObjectToken("password"));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.password", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.password", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1309,16 +1309,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("admin"), new ObjectToken("user"));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("admin.user", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("admin.user", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1343,16 +1343,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new ArrayToken(0));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db[0]", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db[0]", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1377,16 +1377,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = resultsOf.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new TestToken());
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1411,16 +1411,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = resultsOf.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), null);
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1445,16 +1445,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        ConfigNode results = validateOfResults.results();
+        ConfigNode results = resultsOf.results();
         Assertions.assertEquals(2, results.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new ObjectToken(null));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1479,16 +1479,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new ObjectToken("name"));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.name", tokens, Tags.of());
 
         Assertions.assertFalse(navigateValidate.hasErrors());
         Assertions.assertTrue(navigateValidate.hasResults());
@@ -1522,16 +1522,16 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertTrue(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertTrue(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         List<Token> tokens = Arrays.asList(new ObjectToken("admin"), new ArrayToken(2));
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("array[2]", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("array[2]", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1545,7 +1545,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         List<Token> tokens = Arrays.asList(new ObjectToken("db"), new TestToken());
-        ValidateOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
+        GResultOf<ConfigNode> navigateValidate = configNodeManager.navigateToNode("db.test", tokens, Tags.of());
 
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
@@ -1571,19 +1571,19 @@ class ConfigNodeManagerTest {
         TestSource source = new TestSource(UUID.randomUUID());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, source));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, source));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        ConfigNode results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        ConfigNode resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("test", results.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("test", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals("John", results.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Steve", results.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
 
         // reload
         Map<String, ConfigNode> dbNode2 = new HashMap<>();
@@ -1593,20 +1593,20 @@ class ConfigNodeManagerTest {
         root2Node.put("db", new MapNode(dbNode2));
         root2Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root2 = new MapNode(root2Node);
-        validateOfResults = configNodeManager.reloadNode(new ConfigNodeContainer(root2, new TestSource()));
+        results = configNodeManager.reloadNode(new ConfigNodeContainer(root2, new TestSource()));
 
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        results = validateOfResults.results();
-        Assertions.assertEquals(2, results.size());
+        resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("test", results.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("test", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
 
-        Assertions.assertEquals("John", results.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Steve", results.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Steve", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
     }
 
     @Test
@@ -1625,10 +1625,10 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ValidateOf<ConfigNode> validateOfResults = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         ConfigNode[] arrayNode2 = new ConfigNode[3];
         arrayNode2[1] = new LeafNode("Matt");
@@ -1644,21 +1644,21 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         ConfigSource s2 = new TestSource();
-        ValidateOf<ConfigNode> validateOfResults2 = configNodeManager.addNode(new ConfigNodeContainer(root2, s2));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, s2));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abc", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abc", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
 
         ConfigNode[] arrayNode2reload = new ConfigNode[4];
         arrayNode2reload[1] = new LeafNode("Matt");
@@ -1674,22 +1674,22 @@ class ConfigNodeManagerTest {
         rootNode2Reload.put("admin", new ArrayNode(Arrays.asList(arrayNode2reload)));
         ConfigNode root2Reload = new MapNode(rootNode2Reload);
 
-        validateOfResults2 = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        results = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
-        results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        resultsCN = results.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
-        Assertions.assertEquals("New Name2", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abcefg", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name2", resultsCN.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abcefg", resultsCN.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
-        Assertions.assertEquals("June", results2.getKey("admin").get().getIndex(3).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("June", resultsCN.getKey("admin").get().getIndex(3).get().getValue().get());
     }
 
     @Test
@@ -1711,11 +1711,11 @@ class ConfigNodeManagerTest {
         // add source 1 to the configNodeManager with tags
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         ConfigSource s1 = new TestSource(Tags.of("toy", "ball"));
-        ValidateOf<ConfigNode> validateOfResults =
+        GResultOf<ConfigNode> results =
             configNodeManager.addNode(new ConfigNodeContainer(root1, s1));
-        Assertions.assertFalse(validateOfResults.hasErrors());
-        Assertions.assertTrue(validateOfResults.hasResults());
-        Assertions.assertNotNull(validateOfResults.results());
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
 
         // create source 2
         ConfigNode[] arrayNode2 = new ConfigNode[3];
@@ -1733,14 +1733,14 @@ class ConfigNodeManagerTest {
 
         // add source 2 to the configNodeManager with tags
         ConfigSource s2 = new TestSource(Tags.of("toy", "ball"));
-        ValidateOf<ConfigNode> validateOfResults2 =
+        GResultOf<ConfigNode> results2 =
             configNodeManager.addNode(new ConfigNodeContainer(root2, s2));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
-        ConfigNode results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        ConfigNode resultsCN = results2.results();
+        Assertions.assertEquals(2, resultsCN.size());
 
         // create source 2
         ConfigNode[] arrayNode3 = new ConfigNode[1];
@@ -1757,23 +1757,23 @@ class ConfigNodeManagerTest {
 
         // add source 2 to the configNodeManager without tags
         ConfigSource s3 = new TestSource();
-        ValidateOf<ConfigNode> validateOfResults3 =
+        GResultOf<ConfigNode> results3 =
             configNodeManager.addNode(new ConfigNodeContainer(root3, s3));
-        Assertions.assertFalse(validateOfResults3.hasErrors());
-        Assertions.assertTrue(validateOfResults3.hasResults());
-        Assertions.assertNotNull(validateOfResults3.results());
+        Assertions.assertFalse(results3.hasErrors());
+        Assertions.assertTrue(results3.hasResults());
+        Assertions.assertNotNull(results3.results());
 
-        ConfigNode results3 = validateOfResults3.results();
-        Assertions.assertEquals(2, results3.size());
+        ConfigNode resultsCN2 = results3.results();
+        Assertions.assertEquals(2, resultsCN2.size());
 
-        //validate results are not merged with the tagged results.
-        Assertions.assertEquals("New Name", results3.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertTrue(results3.getKey("db").get().getKey("port").isEmpty());
-        Assertions.assertTrue(results3.getKey("db").get().getKey("password").isEmpty());
-        Assertions.assertEquals("5000", results3.getKey("db").get().getKey("timeout").get().getValue().get());
+        //result results are not merged with the tagged results.
+        Assertions.assertEquals("New Name", resultsCN2.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertTrue(resultsCN2.getKey("db").get().getKey("port").isEmpty());
+        Assertions.assertTrue(resultsCN2.getKey("db").get().getKey("password").isEmpty());
+        Assertions.assertEquals("5000", resultsCN2.getKey("db").get().getKey("timeout").get().getValue().get());
 
-        Assertions.assertEquals(1, results3.getKey("admin").get().size());
-        Assertions.assertEquals("Matt", results3.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals(1, resultsCN2.getKey("admin").get().size());
+        Assertions.assertEquals("Matt", resultsCN2.getKey("admin").get().getIndex(0).get().getValue().get());
 
         // update source 2
         ConfigNode[] arrayNode2reload = new ConfigNode[4];
@@ -1791,23 +1791,23 @@ class ConfigNodeManagerTest {
         ConfigNode root2Reload = new MapNode(rootNode2Reload);
 
         // reload source 2 with tags.
-        validateOfResults2 = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
-        Assertions.assertFalse(validateOfResults2.hasErrors());
-        Assertions.assertTrue(validateOfResults2.hasResults());
-        Assertions.assertNotNull(validateOfResults2.results());
+        results2 = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
 
-        // validate we merge with the tag nodes, but not the untagged nodes.
-        results2 = validateOfResults2.results();
-        Assertions.assertEquals(2, results2.size());
+        // result we merge with the tag nodes, but not the untagged nodes.
+        resultsCN2 = results2.results();
+        Assertions.assertEquals(2, resultsCN2.size());
 
-        Assertions.assertEquals("New Name2", results2.getKey("db").get().getKey("name").get().getValue().get());
-        Assertions.assertEquals("3306", results2.getKey("db").get().getKey("port").get().getValue().get());
-        Assertions.assertEquals("123abcefg", results2.getKey("db").get().getKey("password").get().getValue().get());
+        Assertions.assertEquals("New Name2", resultsCN2.getKey("db").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("3306", resultsCN2.getKey("db").get().getKey("port").get().getValue().get());
+        Assertions.assertEquals("123abcefg", resultsCN2.getKey("db").get().getKey("password").get().getValue().get());
 
-        Assertions.assertEquals("John", results2.getKey("admin").get().getIndex(0).get().getValue().get());
-        Assertions.assertEquals("Matt", results2.getKey("admin").get().getIndex(1).get().getValue().get());
-        Assertions.assertEquals("Paul", results2.getKey("admin").get().getIndex(2).get().getValue().get());
-        Assertions.assertEquals("June", results2.getKey("admin").get().getIndex(3).get().getValue().get());
+        Assertions.assertEquals("John", resultsCN2.getKey("admin").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Matt", resultsCN2.getKey("admin").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Paul", resultsCN2.getKey("admin").get().getIndex(2).get().getValue().get());
+        Assertions.assertEquals("June", resultsCN2.getKey("admin").get().getIndex(3).get().getValue().get());
     }
 
     @Test
@@ -1828,29 +1828,29 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"),
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"),
             new TestPostProcessor("def")));
-        Assertions.assertFalse(validateOf.hasErrors());
-        Assertions.assertTrue(validateOf.hasResults());
-        Assertions.assertNotNull(validateOf.results());
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        Boolean results = validateOf.results();
+        Boolean results = resultsOf.results();
 
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test abc def",
             configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("3306 abc def",
             configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
         Assertions.assertEquals("John abc def",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("Steve abc def",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
     }
 
     @Test
@@ -1880,28 +1880,28 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Collections.emptyList());
-        Assertions.assertFalse(validateOf.hasErrors());
-        Assertions.assertTrue(validateOf.hasResults());
-        Assertions.assertNotNull(validateOf.results());
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Collections.emptyList());
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        Boolean results = validateOf.results();
+        Boolean results = resultsOf.results();
 
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test",
             configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("3306",
             configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
         Assertions.assertEquals("John",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("Steve",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
     }
 
     @Test
@@ -1922,33 +1922,33 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(),
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(),
             new TestPostProcessor("abc")));
-        Assertions.assertTrue(validateOf.hasErrors());
-        Assertions.assertTrue(validateOf.hasResults());
-        Assertions.assertNotNull(validateOf.results());
+        Assertions.assertTrue(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        Boolean results = validateOf.results();
+        Boolean results = resultsOf.results();
 
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test abc",
             configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("3306 abc",
             configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
         Assertions.assertEquals("John abc",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("Steve abc",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
 
-        Assertions.assertEquals(4, validateOf.getErrors().size());
-        assertThat(validateOf.getErrors().get(0).description()).startsWith("Leaf nodes are empty for path: ");
+        Assertions.assertEquals(4, resultsOf.getErrors().size());
+        assertThat(resultsOf.getErrors().get(0).description()).startsWith("Leaf nodes are empty for path: ");
     }
 
     @Test
@@ -1969,18 +1969,18 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(),
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(),
             new TestPostProcessor("abc")));
-        Assertions.assertTrue(validateOf.hasErrors());
-        Assertions.assertTrue(validateOf.hasResults());
-        Assertions.assertNotNull(validateOf.results());
+        Assertions.assertTrue(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        Boolean results = validateOf.results();
+        Boolean results = resultsOf.results();
 
         Assertions.assertTrue(results);
 
-        Assertions.assertEquals(4, validateOf.getErrors().size());
-        assertThat(validateOf.getErrors().get(0).description()).startsWith("Unable to find node matching path");
+        Assertions.assertEquals(4, resultsOf.getErrors().size());
+        assertThat(resultsOf.getErrors().get(0).description()).startsWith("Unable to find node matching path");
     }
 
     @Test
@@ -2001,32 +2001,32 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
-        Assertions.assertTrue(validateOf.hasErrors());
-        Assertions.assertTrue(validateOf.hasResults());
-        Assertions.assertNotNull(validateOf.results());
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
+        Assertions.assertTrue(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        Boolean results = validateOf.results();
+        Boolean results = resultsOf.results();
 
         Assertions.assertTrue(results);
 
         Assertions.assertEquals("test abc",
             configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("3306 abc",
             configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
         Assertions.assertEquals("John abc",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
-        Assertions.assertEquals(2, validateOf.getErrors().size());
+        Assertions.assertEquals(2, resultsOf.getErrors().size());
         Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
                 "on Path: admin[1] while post processing",
-            validateOf.getErrors().get(0).description());
+            resultsOf.getErrors().get(0).description());
         Assertions.assertEquals("Unable to find node matching path: admin, for class: ArrayNode, during post processing",
-            validateOf.getErrors().get(1).description());
+            resultsOf.getErrors().get(1).description());
     }
 
     @Test
@@ -2047,33 +2047,33 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
 
-        ValidateOf<Boolean> validateOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
-        Assertions.assertTrue(validateOf.hasErrors());
-        Assertions.assertTrue(validateOf.hasResults());
-        Assertions.assertNotNull(validateOf.results());
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
+        Assertions.assertTrue(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
 
-        Boolean results = validateOf.results();
+        Boolean results = resultsOf.results();
 
         Assertions.assertTrue(results);
 
 
         Assertions.assertEquals("test abc",
             configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
         Assertions.assertEquals("John abc",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
         Assertions.assertEquals("Steve abc",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
-                             .results().getValue().get());
+                .results().getValue().get());
 
-        Assertions.assertEquals(2, validateOf.getErrors().size());
+        Assertions.assertEquals(2, resultsOf.getErrors().size());
         Assertions.assertEquals("Unknown node type: org.github.gestalt.config.node.ConfigNodeManagerTest$TestNode " +
                 "on Path: db.port while post processing",
-            validateOf.getErrors().get(0).description());
+            resultsOf.getErrors().get(0).description());
         Assertions.assertEquals("Unable to find node matching path: db, for class: MapNode, during post processing",
-            validateOf.getErrors().get(1).description());
+            resultsOf.getErrors().get(1).description());
     }
 
     public static class TestToken extends Token {
@@ -2118,11 +2118,11 @@ class ConfigNodeManagerTest {
         }
 
         @Override
-        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
-                return ValidateOf.valid(new LeafNode(currentNode.getValue().get() + " " + add));
+                return GResultOf.result(new LeafNode(currentNode.getValue().get() + " " + add));
             }
-            return ValidateOf.valid(currentNode);
+            return GResultOf.result(currentNode);
         }
     }
 
@@ -2131,12 +2131,12 @@ class ConfigNodeManagerTest {
         }
 
         @Override
-        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
-                return ValidateOf.validateOf(currentNode,
-                        List.of(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
+                return GResultOf.resultOf(currentNode,
+                    List.of(new ValidationError.LeafNodesHaveNoValues(currentNode.getValue().get())));
             }
-            return ValidateOf.valid(currentNode);
+            return GResultOf.result(currentNode);
         }
     }
 
@@ -2145,11 +2145,11 @@ class ConfigNodeManagerTest {
         }
 
         @Override
-        public ValidateOf<ConfigNode> process(String path, ConfigNode currentNode) {
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof LeafNode) {
-                return ValidateOf.valid(null);
+                return GResultOf.result(null);
             }
-            return ValidateOf.valid(currentNode);
+            return GResultOf.result(currentNode);
         }
     }
 }

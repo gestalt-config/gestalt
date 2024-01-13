@@ -5,7 +5,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -63,14 +63,14 @@ public final class LocalDateDecoder extends LeafDecoder<LocalDate> {
     }
 
     @Override
-    protected ValidateOf<LocalDate> leafDecode(String path, ConfigNode node) {
-        ValidateOf<LocalDate> results;
+    protected GResultOf<LocalDate> leafDecode(String path, ConfigNode node) {
+        GResultOf<LocalDate> results;
 
         String value = node.getValue().orElse("");
         try {
-            results = ValidateOf.valid(LocalDate.parse(value, formatter));
+            results = GResultOf.result(LocalDate.parse(value, formatter));
         } catch (DateTimeParseException e) {
-            results = ValidateOf.inValid(new ValidationError.ErrorDecodingException(path, node, name()));
+            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
         }
         return results;
     }

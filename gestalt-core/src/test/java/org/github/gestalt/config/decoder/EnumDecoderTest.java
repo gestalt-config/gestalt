@@ -9,7 +9,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.Colours;
 import org.github.gestalt.config.test.classes.DBInfo;
-import org.github.gestalt.config.utils.ValidateOf;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,12 +64,12 @@ class EnumDecoderTest {
 
         EnumDecoder decoder = new EnumDecoder();
 
-        ValidateOf<Colours> validate = decoder.decode("db.port", Tags.of(), new LeafNode("RED"),
-                TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
-        Assertions.assertTrue(validate.hasResults());
-        Assertions.assertFalse(validate.hasErrors());
-        Assertions.assertEquals(Colours.RED, validate.results());
-        Assertions.assertEquals(0, validate.getErrors().size());
+        GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("RED"),
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals(Colours.RED, result.results());
+        Assertions.assertEquals(0, result.getErrors().size());
     }
 
     @Test
@@ -77,14 +77,14 @@ class EnumDecoderTest {
 
         EnumDecoder decoder = new EnumDecoder();
 
-        ValidateOf<Colours> validate = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
-                TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertEquals(1, validate.getErrors().size());
+        GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("ENUM org.github.gestalt.config.test.classes.Colours " +
                 "could not be created with value pink for Path: db.port",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 
     @Test
@@ -92,13 +92,13 @@ class EnumDecoderTest {
 
         EnumDecoder decoder = new EnumDecoder();
 
-        ValidateOf<Colours> validate = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
-                TypeCapture.of(String.class), new DecoderContext(decoderService, null));
-        Assertions.assertFalse(validate.hasResults());
-        Assertions.assertTrue(validate.hasErrors());
-        Assertions.assertEquals(1, validate.getErrors().size());
+        GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Exception on Path: db.port, decoding enum: java.lang.String " +
                 "could not be created with value pink exception was: java.lang.String.name()",
-            validate.getErrors().get(0).description());
+            result.getErrors().get(0).description());
     }
 }
