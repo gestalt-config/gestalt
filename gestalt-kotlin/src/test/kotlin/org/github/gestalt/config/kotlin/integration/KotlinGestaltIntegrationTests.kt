@@ -15,6 +15,7 @@ import java.io.File
 class KotlinGestaltIntegrationTests {
     @Test
     @Throws(GestaltException::class)
+    @SuppressWarnings("LongMethod")
     fun integrationTest() {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.hosts[0].password"] = "1234"
@@ -226,6 +227,7 @@ class KotlinGestaltIntegrationTests {
 
     @Test
     @Throws(GestaltException::class)
+    @SuppressWarnings("LongMethod")
     fun integrationTestEnvVars() {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.hosts[0].password"] = "1234"

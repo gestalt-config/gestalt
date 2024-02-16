@@ -58,8 +58,12 @@ public abstract class SentenceLexer {
      */
     public GResultOf<List<Token>> scan(String sentence) {
 
-        if (sentence == null || sentence.isEmpty()) {
+        if (sentence == null) {
             return GResultOf.errors(new ValidationError.EmptyPath());
+        }
+
+        if (sentence.isEmpty()) {
+            return GResultOf.result(List.of());
         }
 
         String normalizedSentence = normalizeSentence(sentence);
