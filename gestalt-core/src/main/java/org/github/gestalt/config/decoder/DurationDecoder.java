@@ -44,7 +44,11 @@ public final class DurationDecoder extends LeafDecoder<Duration> {
                 results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
             }
         } else {
-            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
+            try {
+                results = GResultOf.result(Duration.parse(value));
+            } catch (Exception e) {
+                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
+            }
         }
         return results;
     }

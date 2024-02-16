@@ -73,6 +73,18 @@ class DurationDecoderTest {
     }
 
     @Test
+    void decodeISO8601() {
+        DurationDecoder decoder = new DurationDecoder();
+
+        GResultOf<Duration> result = decoder.decode("db.port", Tags.of(), new LeafNode("PT20S"),
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals(Duration.ofSeconds(20), result.results());
+        Assertions.assertEquals(0, result.getErrors().size());
+    }
+
+    @Test
     void decodeInvalidNode() {
         DurationDecoder decoder = new DurationDecoder();
 
@@ -83,8 +95,7 @@ class DurationDecoderTest {
         Assertions.assertNull(result.results());
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
-                "attempting to decode Duration",
+        Assertions.assertEquals("Unable to decode a Duration on path: db.port, from node: LeafNode{value='12s4'}",
             result.getErrors().get(0).description());
     }
 
