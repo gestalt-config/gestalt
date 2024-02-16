@@ -246,6 +246,57 @@ class GestaltTest {
     }
 
     @Test
+    public void testGettingEmptyPath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("password", "test");
+        configs.put("uri", "somedatabase");
+        configs.put("port", "3306");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer();
+
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
+            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
+            new DecoderRegistry(
+                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
+                configNodeManager, lexer, List.of(new StandardPathMapper())),
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), Tags.of());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        DBInfo dbInfo = gestalt.getConfig("", DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfo.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfo.getUri());
+        Assertions.assertEquals(3306, dbInfo.getPort());
+
+        // test different accessors
+        Optional<DBInfo> dbInfoOptional = gestalt.getConfigOptional("", DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfoOptional.get().getPassword());
+        Assertions.assertEquals("somedatabase", dbInfoOptional.get().getUri());
+        Assertions.assertEquals(3306, dbInfoOptional.get().getPort());
+
+        DBInfo defaultVal = new DBInfo();
+        defaultVal.setPassword("test");
+        defaultVal.setUri("somedatabase");
+        defaultVal.setPort(3306);
+
+        DBInfo dbInfoDefault = gestalt.getConfig("", defaultVal, DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfoDefault.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfoDefault.getUri());
+        Assertions.assertEquals(3306, dbInfoDefault.getPort());
+    }
+
+    @Test
     public void testPrefixAnnotation() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();

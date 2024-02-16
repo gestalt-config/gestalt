@@ -4,8 +4,10 @@ import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.builder.GestaltBuilder;
-import org.github.gestalt.config.decoder.ProxyDecoderMode;
+import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.loader.ConfigLoaderRegistry;
+import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -14,6 +16,7 @@ import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -77,6 +80,30 @@ public class GestaltIntegrationTests {
         gestalt.loadConfigs();
 
         validateResults(gestalt);
+    }
+
+    @Test
+    public void testGettingEmptyPath() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("password", "test");
+        configs.put("uri", "somedatabase");
+        configs.put("port", "3306");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        DBInfo dbInfo = gestalt.getConfig("", DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfo.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfo.getUri());
+        Assertions.assertEquals(3306, dbInfo.getPort());
     }
 
     //to run this test it must be run as an administrator.
