@@ -2,7 +2,6 @@ package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.source.ConfigSource;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.List;
  */
 public abstract class ConfigReloadStrategy {  ///NOPMD
 
-    private static final System.Logger logger = System.getLogger(ConfigLoaderRegistry.class.getName());
+    private static final System.Logger logger = System.getLogger(ConfigReloadStrategy.class.getName());
 
     /**
      * The listeners for the Config Reload.

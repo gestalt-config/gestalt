@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public final class RandomTransformer implements Transformer {
 
     private static final Pattern randomPattern = Pattern.compile(
-        "^(?<type>[A-Za-z]+)(\\((?<p1>[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)),?(?<p2>[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))?\\))?$");
+            "^(?<type>[A-Za-z]+)(\\((?<p1>[+-]?(\\d+([.]\\d*)?|[.]\\d+)),?(?<p2>[+-]?(\\d+([.]\\d*)?|[.]\\d+))?\\))?$");
     private final Random random;
 
     /**

@@ -19,12 +19,6 @@ public final class ConfigLoaderRegistry implements ConfigLoaderService {
 
     private List<ConfigLoader> configLoaders = new ArrayList<>();
 
-    /**
-     * Default constructor for the ConfigLoaderRegistry.
-     */
-    public ConfigLoaderRegistry() {
-    }
-
     @Override
     public void addLoaders(List<ConfigLoader> configLoaders) {
         this.configLoaders.addAll(configLoaders);

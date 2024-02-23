@@ -28,12 +28,6 @@ public final class ConfigNodeManager implements ConfigNodeService {
     // We store the node roots by tags. The default will be an empty Tags.
     private final Map<Tags, ConfigNode> roots = new HashMap<>();
 
-    /**
-     * Default constructor for the ConfigNodeManager.
-     */
-    public ConfigNodeManager() {
-    }
-
     @Override
     public GResultOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException {
         if (newNode == null) {
@@ -236,11 +230,12 @@ public final class ConfigNodeManager implements ConfigNodeService {
         List<ValidationError> errors = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            if (node.getIndex(i).isEmpty()) {
+            var valueOptional = node.getIndex(i);
+            if (valueOptional.isEmpty()) {
                 errors.add(new ValidationError.ArrayMissingIndex(i, path));
             } else {
                 String nextPath = PathUtil.pathForIndex(path, i);
-                errors.addAll(validateNode(nextPath, node.getIndex(i).get()));
+                errors.addAll(validateNode(nextPath, valueOptional.get()));
             }
         }
         return errors;

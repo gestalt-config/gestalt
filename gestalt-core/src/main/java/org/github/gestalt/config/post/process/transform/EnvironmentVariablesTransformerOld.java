@@ -9,9 +9,10 @@ import org.github.gestalt.config.utils.GResultOf;
  * where the key is used to lookup into the Environment Variables.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @deprecated use {@link EnvironmentVariablesTransformer}
  */
 @ConfigPriority(100)
-@Deprecated
+@Deprecated(since = "0.20.1", forRemoval = true)
 public final class EnvironmentVariablesTransformerOld implements Transformer {
     @Override
     public String name() {

@@ -12,6 +12,8 @@ import java.util.Arrays;
  */
 public final class AWSValidationErrors {
 
+    private AWSValidationErrors() { }
+
     public static class AWSModuleConfigNotSet extends ValidationError {
         private final String path;
         private final String rawSubstitution;

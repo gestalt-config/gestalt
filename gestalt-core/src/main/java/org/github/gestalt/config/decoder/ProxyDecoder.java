@@ -215,7 +215,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                 result = decoderContext.getGestalt().getConfigOptional(nextPath, TypeCapture.of(genericType), tags);
             }
 
-            if (result != null && result.isPresent()) {
+            if (result.isPresent()) {
                 return result;
             } else {
 

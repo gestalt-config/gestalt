@@ -173,10 +173,9 @@ public class GestaltBuilder {
     /**
      * Add a single source to the builder.
      *
-     * <p>Deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder
-     *
      * @param source add a single sources
      * @return GestaltBuilder builder
+     * @deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder
      */
     @Deprecated(since = "0.23.4")
     public GestaltBuilder addSource(ConfigSource source) {
@@ -225,11 +224,10 @@ public class GestaltBuilder {
     /**
      * Add a config reload strategy to the builder.
      *
-     * <p>Deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder.
-     * Use the source builder to add a reload strategy
-     *
      * @param configReloadStrategy add a config reload strategy.
      * @return GestaltBuilder builder
+     * @deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder.
+     *     Use the source builder to add a reload strategy
      */
     @Deprecated(since = "0.23.4", forRemoval = true)
     public GestaltBuilder addReloadStrategy(ConfigReloadStrategy configReloadStrategy) {
@@ -240,11 +238,11 @@ public class GestaltBuilder {
 
     /**
      * Add a list of config reload strategies to the builder.
-     * Deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder.
-     * Use the source builder to add a reload strategy
      *
      * @param reloadStrategies list of config reload strategies.
      * @return GestaltBuilder builder
+     * @deprecated prefer the use of {@link GestaltBuilder#addSource(ConfigSourcePackage) addSource} with a source builder.
+     *     Use the source builder to add a reload strategy
      */
     @Deprecated(since = "0.23.4", forRemoval = true)
     public GestaltBuilder addReloadStrategies(List<ConfigReloadStrategy> reloadStrategies) {

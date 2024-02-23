@@ -87,7 +87,7 @@ public final class GResultOf<T> {
      *
      * @return true if the GResultOf has errors
      */
-    public Boolean hasErrors() {
+    public boolean hasErrors() {
         return !errors.isEmpty();
     }
 
@@ -97,7 +97,7 @@ public final class GResultOf<T> {
      * @param level level of the error we are checking for.
      * @return true if the GResultOf has errors of level
      */
-    public Boolean hasErrors(ValidationLevel level) {
+    public boolean hasErrors(ValidationLevel level) {
         return errors.stream().anyMatch(it -> it.level().equals(level));
     }
 
