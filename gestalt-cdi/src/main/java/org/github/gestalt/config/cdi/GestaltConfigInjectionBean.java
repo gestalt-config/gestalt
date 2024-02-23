@@ -132,7 +132,7 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
 
     @Override
     public void destroy(T instance, CreationalContext<T> context) {
-
+        // not implmented
     }
 
     @Override

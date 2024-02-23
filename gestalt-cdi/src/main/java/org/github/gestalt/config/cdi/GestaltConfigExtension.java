@@ -51,9 +51,6 @@ public class GestaltConfigExtension implements Extension {
      */
     private final Set<ConfigClassWithPrefix> configPropertiesBeans = new HashSet<>();
 
-    public GestaltConfigExtension() {
-    }
-
 
     protected void beforeBeanDiscovery(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
         AnnotatedType<GestaltConfigProducer> configBean = bm.createAnnotatedType(GestaltConfigProducer.class);
