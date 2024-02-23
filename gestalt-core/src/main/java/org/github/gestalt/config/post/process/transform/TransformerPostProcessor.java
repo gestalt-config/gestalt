@@ -33,7 +33,7 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  */
 public final class TransformerPostProcessor implements PostProcessor {
 
-    public static final String defaultSubstitutionRegex =
+    public static final String DEFAULT_SUBSTITUTION_REGEX =
         "^((?<transform>\\w+):(?!=))?(?<key>.+?)(:=(?<default>.*))?$";
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
@@ -54,7 +54,7 @@ public final class TransformerPostProcessor implements PostProcessor {
         });
 
         this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformersList, false);
-        this.pattern = Pattern.compile(defaultSubstitutionRegex);
+        this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class TransformerPostProcessor implements PostProcessor {
         }
 
         this.substitutionTreeBuilder = new SubstitutionTreeBuilder("${", "}");
-        this.pattern = Pattern.compile(defaultSubstitutionRegex);
+        this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
     }
 
     @Override
@@ -83,7 +83,7 @@ public final class TransformerPostProcessor implements PostProcessor {
             config.getConfig().getSubstitutionClosingToken());
 
         this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
-        this.pattern = Pattern.compile(defaultSubstitutionRegex);
+        this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
     }
 
     @Override
