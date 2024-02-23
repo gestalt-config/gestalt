@@ -530,7 +530,7 @@ db.uri=jdbc:mysql://${DB_HOST}:${DB_PORT}/${environment}
 
 ### Specifying the Transformer
 You can specify the substitution in the format ${transform:key} or ${key}. If you provide a transform name it will only check that one transform. Otherwise, it will check all the Transformer annotated with a `@ConfigPriority` in descending order and will return the first matching value.
-Unlike the rest of Gestalt, this is case-sensitive, and it does not tokenize the string (except the node transform). The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER, db.user or db_user will not match.
+Unlike the rest of Gestalt, this is case-sensitive, and it does not tokenize the string (except the node transform). The key expects an exact match, so if the Environment Variable name is DB_USER you need to use the key DB_USER. Using db.user or db_user will not match.
 
 ```properties
 db.uri=jdbc:mysql://${DB_HOST}:${map:DB_PORT}/${sys:environment}
@@ -704,7 +704,7 @@ If you provide 2 tags in the source, when retrieving the configuration you must 
   float defaultGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class);  // not found
 ```
 
-* Note: The post processor string replacement doesn't accept tags, so it will always replace the configs with the tag-less ones.
+* **Note**: The post processor string replacement doesn't accept tags, so it will always replace the configs with the tag-less ones.
 
 
 ## Supported config sources
@@ -964,6 +964,79 @@ However, we override with a command line parameter of: `-Dhttp.pool.maxTotal=200
 
 In the end we should get the value 200 based on the overridden command line parameter. 
 
+## Dynamic overriding config values with Environment Variables (Env Var)
+
+In a similar vein as overriding with command line variables, you can override with an Environment Variable. 
+There is two ways of doing this. You can use string substitution but an alternative is to use the `EnvironmentConfigSource`.
+
+
+### String Substitution
+In this example we provide a config source for default that uses string substitution to load an Env Var. It expects the Env Var to be an exact match, it does not translate it in any way. You can also provide a default that will be used if the Env Var is not found.  
+
+with the property values
+```properties
+# default
+http.pool.maxTotal=${HTTP_POOL_MAXTOTAL:=1000}
+```
+
+Using an Environment Variable of: `HTTP_POOL_MAXTOTAL=200`
+```java
+  GestaltBuilder builder = new GestaltBuilder();
+  Gestalt gestalt = builder
+      .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+      .build();
+
+  // Load the configurations, this will throw exceptions if there are any errors.
+  gestalt.loadConfigs();
+
+  GestaltConfigTest.HttpPool pool = gestalt.getConfig("http.pool", GestaltConfigTest.HttpPool.class);
+  
+  Assertions.assertEquals(200, pool.maxTotal);
+```
+
+In the end we should get the value 200 based on the Env Var. If we didnt provide the Env Var, it would default to 1000.
+
+### Override using Environment Variables from a EnvironmentConfigSource
+
+If you wish to use Env Vars to directly override values in your config you can use the `EnvironmentConfigSource` as the last source in Gestalt. This way it will have the highest priority and override all previous sources. 
+
+The Environment Variables are expected to be Screaming Snake Case, then the path is created from the key split up by the underscore "_".
+
+So `HTTP_POOL_MAXTOTAL` becomes an equivalent path of http.pool.maxtotal
+
+In this example we provide a config source for default and dev, but allow for the overriding those with the Env Var.
+
+with the property values
+```properties
+# default
+http.pool.maxTotal=100
+# dev
+http.pool.maxTotal=1000
+```
+
+However, we override with an Env Var of: `HTTP_POOL_MAXTOTAL=200`
+```java
+  // for this to work you need to set the following command line Options
+  // -Dhttp.pool.maxTotal=200
+  GestaltBuilder builder = new GestaltBuilder();
+  Gestalt gestalt = builder
+      .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+      .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+      .addSource(EnvironmentConfigSource.builder().build())
+      .build();
+
+  // Load the configurations, this will throw exceptions if there are any errors.
+  gestalt.loadConfigs();
+
+  GestaltConfigTest.HttpPool pool = gestalt.getConfig("http.pool", GestaltConfigTest.HttpPool.class);
+  
+  Assertions.assertEquals(200, pool.maxTotal);
+```
+
+In the end we should get the value 200 based on the overridden Environment Variable.
+
+If you wish to use a different case then Screaming Snake Case, you would need to provide your own EnvironmentVarsLoader with your specific SentenceLexer lexer. 
+
 
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample-java-latest/src/test)
@@ -985,22 +1058,22 @@ Each source must have a unique ID, that Gestalt uses to keep track of the source
  */
   String format();
 
-    /**
-     * If this config source has a stream, this will return the stream of data.
-     * Or if not supported it will throw an exception.
-     *
-     * @return input stream of data
-     * @throws GestaltException if there are any IO or if this is an unsupported operation
-     */
-    InputStream loadStream() throws GestaltException;
+  /**
+   * If this config source has a stream, this will return the stream of data.
+   * Or if not supported it will throw an exception.
+   *
+   * @return input stream of data
+   * @throws GestaltException if there are any IO or if this is an unsupported operation
+   */
+  InputStream loadStream() throws GestaltException;
 
-    /**
-     * provides a list of config values.
-     *
-     * @return provides a list of config values
-     * @throws GestaltException if there are any IO or if this is an unsupported operation
-     */
-    List<Pair<String, String>> loadList() throws GestaltException;
+  /**
+   * provides a list of config values.
+   *
+   * @return provides a list of config values
+   * @throws GestaltException if there are any IO or if this is an unsupported operation
+   */
+  List<Pair<String, String>> loadList() throws GestaltException;
 ```
 
 
@@ -1016,14 +1089,14 @@ You can write your own ConfigLoader by implementing the interface and accepting 
  */
   boolean accepts(String format);
 
-    /**
-     * Load a ConfigSource then build the validated config node.
-     *
-     * @param source source we want to load with this config loader.
-     * @return the validated config node.
-     * @throws GestaltException any exceptions
-     */
-    GResultOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
+  /**
+   * Load a ConfigSource then build the validated config node.
+   *
+   * @param source source we want to load with this config loader.
+   * @return the validated config node.
+   * @throws GestaltException any exceptions
+   */
+  GResultOf<ConfigNode> loadSource(ConfigSource source) throws GestaltException;
 ```
 
 
