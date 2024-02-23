@@ -148,7 +148,7 @@ public final class RecordUtils {
             MethodHandle MH_get = LOOKUP.findVirtual(recordObject.getClass(),
                 recordComponent.name(),
                 methodType(recordComponent.type()));
-            return (Object) MH_get.invoke(recordObject);
+            return MH_get.invoke(recordObject);
         } catch (Throwable t) {
             throw new RuntimeException("Could not retrieve record components (" + recordObject.getClass().getName() + ")", t);
         }
