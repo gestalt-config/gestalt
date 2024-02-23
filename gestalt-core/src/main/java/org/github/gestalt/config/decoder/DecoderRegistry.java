@@ -1,6 +1,5 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class DecoderRegistry implements DecoderService {
-    private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());
+    private static final System.Logger logger = System.getLogger(DecoderRegistry.class.getName());
 
     private final ConfigNodeService configNodeService;
     private final SentenceLexer lexer;

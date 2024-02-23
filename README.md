@@ -2,6 +2,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.gestalt-config/gestalt-core?label=MavenCentral&logo=apache-maven)](https://search.maven.org/artifact/com.github.gestalt-config/gestalt-core)
 [![License](https://img.shields.io/github/license/gestalt-config/gestalt.svg)](LICENSE)
 [![codecov](https://codecov.io/gh/gestalt-config/gestalt/branch/main/graph/badge.svg)](https://codecov.io/gh/gestalt-config/gestalt)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gestalt-config_gestalt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gestalt-config_gestalt)
 
 Gestalt is a powerful Java configuration library designed to simplify the way you handle and manage configurations in your software projects. In the rapidly evolving landscape of software development, having a flexible and reliable configuration management system is essential for ensuring the smooth operation of your applications.
 

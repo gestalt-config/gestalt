@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class SubstitutionNode {
 
+    private SubstitutionNode() { }
+
     public static class TextNode extends SubstitutionNode {
         private final String text;
 

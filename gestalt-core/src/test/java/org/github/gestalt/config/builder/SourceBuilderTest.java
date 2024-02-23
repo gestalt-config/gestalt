@@ -81,7 +81,7 @@ public class SourceBuilderTest {
         sourceBuilder.addTag(tag);
         Tags tags = sourceBuilder.getTags();
         assertNotNull(tags);
-        assertTrue(tags.getTags().contains(tag));
+        assertTrue(tags.getInternalTags().contains(tag));
     }
 
     @Test

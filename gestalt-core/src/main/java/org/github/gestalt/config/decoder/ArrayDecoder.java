@@ -44,8 +44,9 @@ public final class ArrayDecoder<T> implements Decoder<T[]> {
         if (node instanceof ArrayNode) {
             results = arrayDecode(path, tags, node, type, decoderContext);
         } else if (node instanceof LeafNode) {
-            if (node.getValue().isPresent()) {
-                String value = node.getValue().get();
+            var valueOptional = node.getValue();
+            if (valueOptional.isPresent()) {
+                String value = valueOptional.get();
                 String[] array = value.split("(?<!\\\\),");
                 List<ConfigNode> leafNodes = Arrays.stream(array)
                     .map(String::trim)
@@ -79,8 +80,9 @@ public final class ArrayDecoder<T> implements Decoder<T[]> {
         T[] results = (T[]) Array.newInstance(klass.getComponentType(), node.size());
 
         for (int i = 0; i < node.size(); i++) {
-            if (node.getIndex(i).isPresent()) {
-                ConfigNode currentNode = node.getIndex(i).get();
+            var valueOptional = node.getIndex(i);
+            if (valueOptional.isPresent()) {
+                ConfigNode currentNode = valueOptional.get();
                 String nextPath = PathUtil.pathForIndex(path, i);
                 GResultOf<?> resultOf = decoderContext.getDecoderService()
                     .decodeNode(nextPath, tags, currentNode, TypeCapture.of(klass.getComponentType()), decoderContext);

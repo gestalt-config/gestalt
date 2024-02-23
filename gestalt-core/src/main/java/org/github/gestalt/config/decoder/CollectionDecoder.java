@@ -32,8 +32,9 @@ public abstract class CollectionDecoder<T extends Collection<?>> implements Deco
         if (node instanceof ArrayNode) {
             results = arrayDecode(path, tags, node, type, decoderContext);
         } else if (node instanceof LeafNode) {
-            if (node.getValue().isPresent()) {
-                String value = node.getValue().get();
+            var valueOptional = node.getValue();
+            if (valueOptional.isPresent()) {
+                String value = valueOptional.get();
                 String[] array = value.split("(?<!\\\\),");
                 List<ConfigNode> leafNodes = Arrays.stream(array)
                     .map(String::trim)

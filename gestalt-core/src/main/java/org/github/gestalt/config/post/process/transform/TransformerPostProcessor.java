@@ -88,11 +88,12 @@ public final class TransformerPostProcessor implements PostProcessor {
 
     @Override
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
-        if (!(currentNode instanceof LeafNode) || currentNode.getValue().isEmpty()) {
+        var valueOptional = currentNode.getValue();
+        if (!(currentNode instanceof LeafNode) || valueOptional.isEmpty()) {
             return GResultOf.result(currentNode);
         }
 
-        String leafValue = currentNode.getValue().get();
+        String leafValue = valueOptional.get();
 
         GResultOf<List<SubstitutionNode>> substitutionNodes = substitutionTreeBuilder.build(path, leafValue);
         if (substitutionNodes.hasResults()) {
