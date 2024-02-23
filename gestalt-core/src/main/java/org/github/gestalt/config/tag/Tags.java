@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class Tags {
-    private static final Tags defaultTags = new Tags(Set.of());
+    private static final Tags DEFAULT_TAGS = new Tags(Set.of());
     private final Set<Tag> internalTags;
 
     private Tags(Set<Tag> tags) {
@@ -25,7 +25,7 @@ public final class Tags {
      * @return Tags
      */
     public static Tags of() {                   //NOPMD
-        return defaultTags;
+        return DEFAULT_TAGS;
     }
 
     /**

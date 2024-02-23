@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public final class SubstitutionTreeBuilder {
 
-    private static final int escapeChar = '\\';
+    private static final int ESCAPE_CHAR = '\\';
     private final String openingToken;
     private final String closingToken;
     private final int firstOpeningToken;
@@ -36,8 +36,8 @@ public final class SubstitutionTreeBuilder {
         this.firstClosingToken = closingToken.codePointAt(0);
         this.closingTokenLength = closingToken.length();
 
-        this.patternReplaceOpen = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + openingToken));
-        this.patternReplaceClose = Pattern.compile(Pattern.quote(Character.toString(escapeChar) + closingToken));
+        this.patternReplaceOpen = Pattern.compile(Pattern.quote(Character.toString(ESCAPE_CHAR) + openingToken));
+        this.patternReplaceClose = Pattern.compile(Pattern.quote(Character.toString(ESCAPE_CHAR) + closingToken));
     }
 
     public GResultOf<List<SubstitutionNode>> build(String path, String value) {
@@ -63,7 +63,7 @@ public final class SubstitutionTreeBuilder {
 
             // check if this is the opening token
             if (firstOpeningToken == codePointAt &&
-                (i == 0 || value.codePointAt(i - 1) != escapeChar) &&
+                (i == 0 || value.codePointAt(i - 1) != ESCAPE_CHAR) &&
                 value.startsWith(openingToken, i)) {
                 if (i - lastNodeEnd > 0) {
                     String text = getEscapedText(value, lastNodeEnd, i);
@@ -84,7 +84,7 @@ public final class SubstitutionTreeBuilder {
                 i = nestedNodes.results().getSecond() - 1;
                 lastNodeEnd = nestedNodes.results().getSecond();
             } else if (firstClosingToken == codePointAt &&
-                (i == 0 || value.codePointAt(i - 1) != escapeChar) &&
+                (i == 0 || value.codePointAt(i - 1) != ESCAPE_CHAR) &&
                 value.startsWith(closingToken, i)) {
 
                 if (depth == 0) {
