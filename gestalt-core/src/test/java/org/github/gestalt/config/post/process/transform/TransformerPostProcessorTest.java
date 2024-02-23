@@ -655,7 +655,6 @@ class TransformerPostProcessorTest {
     void processEmptyListOfTransformers() {
         Map<String, String> customMap = new HashMap<>();
         customMap.put("test", "value");
-        CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(null);
         LeafNode node = new LeafNode("${map:test}");
