@@ -27,12 +27,6 @@ import java.util.stream.IntStream;
 public final class MapConfigParser implements ConfigParser {
     private static final System.Logger logger = System.getLogger(MapConfigParser.class.getName());
 
-    /**
-     * Default constructor for the MapConfigParser.
-     */
-    public MapConfigParser() {
-    }
-
     @Override
     public GResultOf<ConfigNode> parse(List<Pair<List<Token>, ConfigValue>> configs, boolean failOnErrors) {
         return buildConfigTree(configs, 0, failOnErrors);

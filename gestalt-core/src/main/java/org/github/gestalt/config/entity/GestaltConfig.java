@@ -42,7 +42,7 @@ public class GestaltConfig {
     private int maxSubstitutionNestedDepth = 5;
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
-    private String substitutionRegex = TransformerPostProcessor.defaultSubstitutionRegex;
+    private String substitutionRegex = TransformerPostProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
     /**
      * Treat all warnings as errors.

@@ -52,10 +52,8 @@ class KTypeCapture<T> private constructor(val kType: KType) : TypeCapture<Any>(k
      * @return the TypeCapture of the second generic parameter or null if there is none.
      */
     override fun getSecondParameterType(): TypeCapture<*>? {
-        if (kType.arguments.isNotEmpty()) {
-            if (kType.arguments.size > 1 && kType.arguments[1].type != null) {
-                return of<Any>(kType.arguments[1].type!!)
-            }
+        if (kType.arguments.isNotEmpty() && (kType.arguments.size > 1 && kType.arguments[1].type != null)) {
+            return of<Any>(kType.arguments[1].type!!)
         }
         return null
     }

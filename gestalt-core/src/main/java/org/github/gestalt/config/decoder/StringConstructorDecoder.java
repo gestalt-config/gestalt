@@ -18,9 +18,6 @@ import java.util.Arrays;
  */
 public final class StringConstructorDecoder implements Decoder<Object> {
 
-    public StringConstructorDecoder() {
-    }
-
     @Override
     public Priority priority() {
         return Priority.LOW;

@@ -23,6 +23,13 @@ jobs:
           mkdir -p ~/.gradle/
           echo "${{secrets.OSSRH_GPG_SECRET_KEY}}" > ~/.gradle/secring.gpg.b64
           base64 -d ~/.gradle/secring.gpg.b64 > ~/.gradle/secring.gpg
+          
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
