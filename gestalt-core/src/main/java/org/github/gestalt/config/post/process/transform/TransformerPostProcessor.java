@@ -89,7 +89,7 @@ public final class TransformerPostProcessor implements PostProcessor {
     @Override
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
         var valueOptional = currentNode.getValue();
-        if (!(currentNode instanceof LeafNode) || valueOptional.isEmpty()) {
+        if (transformers.isEmpty() || !(currentNode instanceof LeafNode) || valueOptional.isEmpty()) {
             return GResultOf.result(currentNode);
         }
 
