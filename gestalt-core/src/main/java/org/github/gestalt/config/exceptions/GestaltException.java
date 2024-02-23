@@ -16,7 +16,7 @@ public class GestaltException extends Exception {
     /**
      * Any nested exceptions.
      */
-    final List<GestaltException> exceptions = new ArrayList<>();
+    private final List<GestaltException> exceptions = new ArrayList<>();
 
     /**
      * Create GestaltException with a message.
