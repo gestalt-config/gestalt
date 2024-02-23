@@ -28,7 +28,7 @@ public final class ConfigDecoder implements Decoder<ConfigContainer<?>> {
 
     @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
-        return Optional.class.isAssignableFrom(type.getRawType());
+        return ConfigContainer.class.isAssignableFrom(type.getRawType());
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class ConfigDecoder implements Decoder<ConfigContainer<?>> {
         GResultOf<?> configValue = decoderContext.getDecoderService()
             .decodeNode(path, tags, node, type.getFirstParameterType(), decoderContext);
 
-            return configValue.mapWithError((it) -> new ConfigContainer(path, tags, decoderContext, it.results(), type));
+            return configValue.mapWithError((result) -> new ConfigContainer(path, tags, decoderContext, result, type));
         }
     }
 }
