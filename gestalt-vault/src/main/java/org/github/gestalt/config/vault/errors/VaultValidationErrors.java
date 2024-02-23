@@ -12,6 +12,8 @@ import java.util.Arrays;
  */
 public final class VaultValidationErrors {
 
+    private VaultValidationErrors() { }
+
     public static class VaultModuleConfigNotSet extends ValidationError {
         private final String path;
         private final String rawSubstitution;

@@ -653,9 +653,6 @@ class TransformerPostProcessorTest {
 
     @Test
     void processEmptyListOfTransformers() {
-        Map<String, String> customMap = new HashMap<>();
-        customMap.put("test", "value");
-
         TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(null);
         LeafNode node = new LeafNode("${map:test}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);

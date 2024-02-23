@@ -14,12 +14,6 @@ public class CoreReloadListenersContainer {
     protected final WeakHashMap<Integer, CoreReloadListener> listeners = new WeakHashMap<>();
 
     /**
-     * Default constructor for CoreReloadStrategy.
-     */
-    public CoreReloadListenersContainer() {
-    }
-
-    /**
      * register a core event listener.
      *
      * @param listener to register
