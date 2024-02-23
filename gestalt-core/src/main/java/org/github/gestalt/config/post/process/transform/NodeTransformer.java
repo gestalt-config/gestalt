@@ -75,11 +75,12 @@ public final class NodeTransformer implements Transformer {
             return GResultOf.errors(errors);
         }
 
-        if (node.getValue().isEmpty()) {
+        var valueOptional = node.getValue();
+        if (valueOptional.isEmpty()) {
             errors.add(new ValidationError.NodePostProcessingNodeLeafHasNoValue(path, key));
             return GResultOf.errors(errors);
         }
 
-        return GResultOf.result(node.getValue().get());
+        return GResultOf.result(valueOptional.get());
     }
 }

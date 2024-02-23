@@ -53,7 +53,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
         if (tags == null) {
             tags = Tags.of(tag);
         } else {
-            var existingTags = tags.getTags();
+            var existingTags = tags.getInternalTags();
             existingTags.add(tag);
             tags = Tags.of(existingTags);
         }

@@ -99,7 +99,7 @@ public final class MergeNodes {
                 errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
             } else if (mapNode2.getKey(key).isPresent()) {
                 String nextPath = PathUtil.pathForKey(path, key);
-                GResultOf<ConfigNode> result = mergeNodes(nextPath, mapNode1.getKey(key).get(), mapNode2.getKey(key).get());
+                GResultOf<ConfigNode> result = mergeNodes(nextPath, entry.getValue(), mapNode2.getKey(key).get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
                 errors.addAll(result.getErrors());

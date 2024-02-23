@@ -34,8 +34,9 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
         List<Object> results = new ArrayList<>(node.size());
 
         for (int i = 0; i < node.size(); i++) {
-            if (node.getIndex(i).isPresent()) {
-                ConfigNode currentNode = node.getIndex(i).get();
+            var valueOptional = node.getIndex(i);
+            if (valueOptional.isPresent()) {
+                ConfigNode currentNode = valueOptional.get();
                 String nextPath = PathUtil.pathForIndex(path, i);
                 GResultOf<?> resultOf = decoderContext.getDecoderService()
                     .decodeNode(nextPath, tags, currentNode, klass.getFirstParameterType(), decoderContext);

@@ -651,6 +651,21 @@ class TransformerPostProcessorTest {
         Assertions.assertEquals("the weather is rainy", validateNode.results().getValue().get());
     }
 
+    @Test
+    void processEmptyListOfTransformers() {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("test", "value");
+
+        TransformerPostProcessor transformerPostProcessor = new TransformerPostProcessor(null);
+        LeafNode node = new LeafNode("${map:test}");
+        GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
+
+        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasResults());
+        Assertions.assertTrue(validateNode.results().getValue().isPresent());
+        Assertions.assertEquals("${map:test}", validateNode.results().getValue().get());
+    }
+
     @ConfigPriority(10)
     public static class CustomTransformer extends TestCustomMapTransformer {
         public CustomTransformer(Map<String, String> replacementVars) {

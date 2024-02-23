@@ -58,7 +58,8 @@ public final class StringConstructorDecoder implements Decoder<Object> {
     public GResultOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
 
         LeafNode leafNode = (LeafNode) node;
-        if (leafNode.getValue().isEmpty()) {
+        var valueOptional = leafNode.getValue();
+        if (valueOptional.isEmpty()) {
             return GResultOf.errors(new ValidationError.LeafNodesIsNullDecoding(path, type));
         }
 
@@ -66,7 +67,7 @@ public final class StringConstructorDecoder implements Decoder<Object> {
 
         try {
             Constructor<?> stringConstructor = klass.getConstructor(String.class);
-            return GResultOf.result(stringConstructor.newInstance(node.getValue().get()));
+            return GResultOf.result(stringConstructor.newInstance(valueOptional.get()));
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             return GResultOf.errors(new ValidationError.StringConstructorNotFound(path, type));
         }

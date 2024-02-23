@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
  */
 public final class Tags {
     private static final Tags defaultTags = new Tags(Set.of());
-    private final Set<Tag> tags;
+    private final Set<Tag> internalTags;
 
     private Tags(Set<Tag> tags) {
-        this.tags = new HashSet<>(tags);
+        this.internalTags = new HashSet<>(tags);
     }
 
     /**
@@ -140,8 +140,8 @@ public final class Tags {
      *
      * @return tags
      */
-    public Set<Tag> getTags() {
-        return tags;
+    public Set<Tag> getInternalTags() {
+        return internalTags;
     }
 
     @Override
@@ -153,11 +153,11 @@ public final class Tags {
             return false;
         }
         Tags tags1 = (Tags) o;
-        return tags.equals(tags1.tags);
+        return internalTags.equals(tags1.internalTags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tags);
+        return Objects.hash(internalTags);
     }
 }

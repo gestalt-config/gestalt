@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public final class MapNode implements ConfigNode {
 
-    private final Map<String, ConfigNode> mapNode;
+    private final Map<String, ConfigNode> nodes;
 
     /**
      * Construct the MapNode by providing a map for the current tree.
@@ -20,7 +20,7 @@ public final class MapNode implements ConfigNode {
      * @param mapNode map for the current tree
      */
     public MapNode(Map<String, ConfigNode> mapNode) {
-        this.mapNode = Objects.requireNonNullElse(mapNode, Collections.emptyMap());
+        this.nodes = Objects.requireNonNullElse(mapNode, Collections.emptyMap());
     }
 
     @Override
@@ -40,8 +40,8 @@ public final class MapNode implements ConfigNode {
 
     @Override
     public Optional<ConfigNode> getKey(String key) {
-        if (mapNode.containsKey(key)) {
-            return Optional.ofNullable(mapNode.get(key));
+        if (nodes.containsKey(key)) {
+            return Optional.ofNullable(nodes.get(key));
         } else {
             return Optional.empty();
         }
@@ -49,7 +49,7 @@ public final class MapNode implements ConfigNode {
 
     @Override
     public int size() {
-        return mapNode.size();
+        return nodes.size();
     }
 
     /**
@@ -58,7 +58,7 @@ public final class MapNode implements ConfigNode {
      * @return Get the map node
      */
     public Map<String, ConfigNode> getMapNode() {
-        return mapNode;
+        return nodes;
     }
 
     @Override
@@ -70,18 +70,18 @@ public final class MapNode implements ConfigNode {
             return false;
         }
         MapNode mapNode1 = (MapNode) o;
-        return Objects.equals(mapNode, mapNode1.mapNode);
+        return Objects.equals(nodes, mapNode1.nodes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mapNode);
+        return Objects.hash(nodes);
     }
 
     @Override
     public String toString() {
         return "MapNode{" +
-            "mapNode=" + mapNode +
+            "mapNode=" + nodes +
             '}';
     }
 }
