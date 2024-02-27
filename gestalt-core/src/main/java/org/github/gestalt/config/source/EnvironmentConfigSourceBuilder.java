@@ -18,6 +18,8 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
 
     private String prefix = "";
 
+    private boolean ignoreCaseOnPrefix = false;
+
     private boolean removePrefix = false;
 
     /**
@@ -65,6 +67,7 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
         return prefix;
     }
 
+
     /**
      * Set the prefix we scan for. This will only include the environment variables that match the prefix.
      *
@@ -73,6 +76,26 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
      */
     public EnvironmentConfigSourceBuilder setPrefix(String prefix) {
         this.prefix = prefix;
+        return this;
+    }
+
+    /**
+     * Gets if we should ignore the case when matching the prefix.
+     *
+     * @return if we should ignore the case when matching the prefix.
+     */
+    public boolean isIgnoreCaseOnPrefix() {
+        return ignoreCaseOnPrefix;
+    }
+
+    /**
+     * Sets if we should ignore the case when matching the prefix.
+     *
+     * @param ignoreCaseOnPrefix if we should ignore the case when matching the prefix.
+     * @return the builder
+     */
+    public EnvironmentConfigSourceBuilder setIgnoreCaseOnPrefix(boolean ignoreCaseOnPrefix) {
+        this.ignoreCaseOnPrefix = ignoreCaseOnPrefix;
         return this;
     }
 
@@ -98,6 +121,6 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
 
     @Override
     public ConfigSourcePackage build() throws GestaltException {
-        return buildPackage(new EnvironmentConfigSource(prefix, removePrefix, failOnErrors, tags));
+        return buildPackage(new EnvironmentConfigSource(prefix, ignoreCaseOnPrefix, removePrefix, failOnErrors, tags));
     }
 }

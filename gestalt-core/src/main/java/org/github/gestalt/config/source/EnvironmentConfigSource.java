@@ -3,6 +3,7 @@ package org.github.gestalt.config.source;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.utils.StringUtils;
 import org.github.gestalt.config.utils.SystemWrapper;
 
 import java.io.InputStream;
@@ -30,6 +31,8 @@ public final class EnvironmentConfigSource implements ConfigSource {
 
     private final String prefix;
 
+    private final boolean ignoreCaseOnPrefix;
+
     private final boolean removePrefix;
 
     private final Tags tags;
@@ -40,7 +43,7 @@ public final class EnvironmentConfigSource implements ConfigSource {
      * are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource() {
-        this("", false, false, Tags.of());
+        this("", false, false, false, Tags.of());
     }
 
     /**
@@ -50,42 +53,56 @@ public final class EnvironmentConfigSource implements ConfigSource {
      *                     are often uncontrolled and may not follow expected conventions of this library.
      */
     public EnvironmentConfigSource(boolean failOnErrors) {
-        this("", false, failOnErrors, Tags.of());
+        this("", false, false, failOnErrors, Tags.of());
     }
 
     /**
      * Specify if you want to only parse the Environment variables that have a prefix.
-     * By default it will remove the prefix from the output.
+     * By default, it will remove the prefix from the output and ignores the case on matching the prefix.
      *
      * @param prefix       only use the Environment variables that have a prefix.
      * @param removePrefix if we should remove the prefix
      */
     public EnvironmentConfigSource(String prefix, boolean removePrefix) {
-        this(prefix, removePrefix, false, Tags.of());
+        this(prefix, false, removePrefix, false, Tags.of());
     }
 
     /**
      * Specify if you want to only parse the Environment variables that have a prefix.
-     * By default it will remove the prefix from the output.
+     * By default, it will remove the prefix from the output and ignores the case on matching the prefix.
+     *
+     * @param prefix             only use the Environment variables that have a prefix.
+     * @param ignoreCaseOnPrefix Ignore the case on matching the prefix
+     * @param removePrefix       if we should remove the prefix
+     */
+    public EnvironmentConfigSource(String prefix, boolean ignoreCaseOnPrefix, boolean removePrefix) {
+        this(prefix, ignoreCaseOnPrefix, removePrefix, false, Tags.of());
+    }
+
+    /**
+     * Specify if you want to only parse the Environment variables that have a prefix.
+     * By default it will remove the prefix from the output, and it will only match the exact case.
      *
      * @param prefix only use the Environment variables that have a prefix.
      */
     public EnvironmentConfigSource(String prefix) {
-        this(prefix, true, false, Tags.of());
+        this(prefix, false, true, false, Tags.of());
     }
 
     /**
      * Specify if you want to only parse the Environment variables that have a prefix.
      *
-     * @param prefix       only use the Environment variables that have a prefix.
-     * @param removePrefix If you should remove the prefix from the output
-     * @param failOnErrors Do not fail on errors while loading Env Vars since they
-     *                     are often uncontrolled and may not follow expected conventions of this library.
-     * @param tags         set of tags associated with this source.
+     * @param prefix             only use the Environment variables that have a prefix.
+     * @param ignoreCaseOnPrefix Ignore the case on matching the prefix
+     * @param removePrefix       If you should remove the prefix from the output
+     * @param failOnErrors       Do not fail on errors while loading Env Vars since they
+     *                           are often uncontrolled and may not follow expected conventions of this library.
+     * @param tags               set of tags associated with this source.
      */
-    public EnvironmentConfigSource(String prefix, boolean removePrefix, boolean failOnErrors, Tags tags) {
+    public EnvironmentConfigSource(String prefix, boolean ignoreCaseOnPrefix, boolean removePrefix, boolean failOnErrors, Tags tags) {
         this.failOnErrors = failOnErrors;
         this.prefix = prefix;
+        this.ignoreCaseOnPrefix = ignoreCaseOnPrefix;
         this.removePrefix = removePrefix;
         this.tags = tags;
     }
@@ -119,7 +136,7 @@ public final class EnvironmentConfigSource implements ConfigSource {
     public List<Pair<String, String>> loadList() {
         return SystemWrapper.getEnvVars().entrySet()
             .stream()
-            .filter(envVar -> envVar.getKey().startsWith(prefix))
+            .filter(envVar -> StringUtils.startsWith(envVar.getKey(), prefix, ignoreCaseOnPrefix))
             .map(envVar -> {
                 String key = envVar.getKey();
                 if (removePrefix) {

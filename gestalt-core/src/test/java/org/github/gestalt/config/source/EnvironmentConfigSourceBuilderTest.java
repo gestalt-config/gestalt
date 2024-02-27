@@ -11,18 +11,21 @@ class EnvironmentConfigSourceBuilderTest {
     void testBuild() throws GestaltException {
         // Given
         String prefix = "TEST";
+        boolean ignorePrefixCase = false;
         boolean removePrefix = true;
         boolean failOnErrors = false;
 
         // When
         EnvironmentConfigSourceBuilder builder = EnvironmentConfigSourceBuilder.builder()
             .setPrefix(prefix)
+            .setIgnoreCaseOnPrefix(ignorePrefixCase)
             .setRemovePrefix(removePrefix)
             .setFailOnErrors(failOnErrors);
 
         // Then
         assertAll(
             () -> assertEquals(prefix, builder.getPrefix()),
+            () -> assertEquals(ignorePrefixCase, builder.isIgnoreCaseOnPrefix()),
             () -> assertEquals(removePrefix, builder.isRemovePrefix()),
             () -> assertEquals(failOnErrors, builder.isFailOnErrors())
         );
@@ -34,3 +37,4 @@ class EnvironmentConfigSourceBuilderTest {
         assertNotNull(result.getConfigSource());
     }
 }
+
