@@ -167,7 +167,7 @@ The API to retrieve configurations:
 
 # Config Sources
 Adding a ConfigSource to the builder is the minimum step needed to build the Gestalt Library.
-You can add several ConfigSources to the builder and Gestalt, and they will be loaded in the order they are added. Where each new source will be merged with the existing source and where applicable overwrite the values of the previous sources.
+You can add several ConfigSources to the builder and Gestalt, and they will be loaded in the order they are added. Where each new source will be merged with the existing source and where applicable overwrite the values of the previous sources. Each Config Source can be a diffrent format such as json, properties or Snake Case Env Vars, then internally they are converted into a common config tree. 
 
 ```java
   Gestalt gestalt = builder
