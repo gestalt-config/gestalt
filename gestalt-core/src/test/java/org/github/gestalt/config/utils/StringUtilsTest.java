@@ -55,5 +55,29 @@ class StringUtilsTest {
         Assertions.assertFalse(StringUtils.isReal("3.54s4"));
         Assertions.assertFalse(StringUtils.isReal("3.."));
     }
+
+    @Test
+    void startsWith() {
+        var stringToMatch = "ABC_DEF";
+        Assertions.assertFalse(StringUtils.startsWith(stringToMatch, "DEF", false));
+        Assertions.assertFalse(StringUtils.startsWith(stringToMatch, "DEF", true));
+
+        Assertions.assertTrue(StringUtils.startsWith(stringToMatch, "ABC", false));
+        Assertions.assertTrue(StringUtils.startsWith(stringToMatch, "ABC", true));
+
+        Assertions.assertFalse(StringUtils.startsWith(stringToMatch, "abc", false));
+        Assertions.assertTrue(StringUtils.startsWith(stringToMatch, "abc", true));
+
+        Assertions.assertFalse(StringUtils.startsWith(stringToMatch, "this is a really long prefix", false));
+    }
+
+    @Test
+    void startsWithNull() {
+        Assertions.assertTrue(StringUtils.startsWith(null, null, false));
+        Assertions.assertTrue(StringUtils.startsWith(null, null, true));
+
+        Assertions.assertFalse(StringUtils.startsWith("ABC_DEF", null, false));
+        Assertions.assertFalse(StringUtils.startsWith(null, "ABC", true));
+    }
 }
 

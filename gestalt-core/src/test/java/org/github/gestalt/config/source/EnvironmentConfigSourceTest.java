@@ -87,13 +87,13 @@ class EnvironmentConfigSourceTest {
     }
 
     @Test
-    void testHasPrefix() {
+    void testHasPrefixCaseSensitive() {
         try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
             Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
-                "prefix_key3", "value3", "prefix_key4", "value4", "prefix.key5", "value5");
+                "prefix_key3", "value3", "prefix_key4", "value4", "prefix.key5", "value5", "PREFIX.key6", "value6");
             mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
 
-            EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
+            EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix", false, true);
             var results = envConfig.loadList();
 
             var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
@@ -101,6 +101,24 @@ class EnvironmentConfigSourceTest {
 
             assertThat(resultKeys).contains("key3", "key4", "key5");
             assertThat(resultValues).contains("value3", "value4", "value5");
+        }
+    }
+
+    @Test
+    void testHasPrefixCaseInSensitive() {
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
+                "prefix_key3", "value3", "prefix_key4", "value4", "prefix.key5", "value5", "PREFIX.key6", "value6");
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
+
+            EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix", true, true);
+            var results = envConfig.loadList();
+
+            var resultKeys = results.stream().map(Pair::getFirst).collect(Collectors.toList());
+            var resultValues = results.stream().map(Pair::getSecond).collect(Collectors.toList());
+
+            assertThat(resultKeys).contains("key3", "key4", "key5", "key6");
+            assertThat(resultValues).contains("value3", "value4", "value5", "value6");
         }
     }
 
@@ -123,10 +141,10 @@ class EnvironmentConfigSourceTest {
     }
 
     @Test
-    void testHasPrefixKeepPrefix2() {
+    void testHasPrefixRemovePrefix() {
         try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
             Map<String, String> envVars = Map.of("key1", "value1", "key2", "value2",
-                "prefix.key3", "value3", "prefix.key4", "value4");
+                "prefix.key3", "value3", "prefix.key4", "value4", "PREFIX.key5", "value5");
             mocked.when(SystemWrapper::getEnvVars).thenReturn(envVars);
 
             EnvironmentConfigSource envConfig = new EnvironmentConfigSource("prefix");
@@ -142,7 +160,7 @@ class EnvironmentConfigSourceTest {
 
     @Test
     void tags() throws GestaltException {
-        EnvironmentConfigSource envConfig = new EnvironmentConfigSource("", false, false, Tags.of("toy", "ball"));
+        EnvironmentConfigSource envConfig = new EnvironmentConfigSource("", true, false, false, Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), envConfig.getTags());
     }
 

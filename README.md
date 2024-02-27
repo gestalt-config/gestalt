@@ -1038,6 +1038,15 @@ In the end we should get the value 200 based on the overridden Environment Varia
 
 If you wish to use a different case then Screaming Snake Case, you would need to provide your own EnvironmentVarsLoader with your specific SentenceLexer lexer. 
 
+There are several configuration options on the `EnvironmentConfigSource`, 
+
+| Configuration Name | Default | Description                                                                                                                                   |
+|--------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| failOnErrors       | false   | If we should fail on errors. By default the Environment Config Source pulls in all Environment variables, and several may not parse correctly |
+| prefix             | ""      | By provide a prefix only Env Vars that start with the prefix will be included.                                                                |
+| ignoreCaseOnPrefix | false   | Define if we want to ignore the case when matching the prefix.                                                                                |
+| removePrefix       | false   | If we should remove the prefix and the following "_" or"." from the imported configuration                                                    |
+
 
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample-java-latest/src/test)
@@ -1212,3 +1221,4 @@ public interface Transformer {
 To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
 
 the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}
+
