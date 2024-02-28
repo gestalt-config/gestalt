@@ -173,14 +173,14 @@ You can add several ConfigSources to the builder and Gestalt, and they will be l
   Gestalt gestalt = builder
     .addSource(FileConfigSourceBuilder.builder().setFile(defaults).build())
     .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
-    .addSource(EnvironmentConfigSourceBuilder.builder().setPrefix("my.app.config").build())
+    .addSource(EnvironmentConfigSourceBuilder.builder().setPrefix("MY_APP_CONFIG").build())
     .build();
 ```
 In the above example we first load a file defaults, then load a file devFile and overwrite any defaults, then overwrite any values from the Environment Variables.
 The priority will be Env Vars > devFile > defaults.
 
 # Config Tree
-The config files are loaded and merged into a config tree. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have both a node and a leaf at the same place.    
+The config files are loaded and merged into a config tree. While loading into the config tree all node names and paths are converted to lower case. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have two leafs or both a node and a leaf at the same place. If this is detected Gestalt will throw an exception on loading with details on the path.    
 
 Valid:
 ```properties
@@ -202,6 +202,7 @@ db=userTable                #invalid the path db is both a node and a leaf.
 
 http.pool.maxTotal=1000
 http.pool.maxPerRoute=50
+HTTP.pool.maxPerRoute=75    #invalid duplicate nodes at the same path.
 ```
 
 All paths are converted to lower case as different sources have different naming conventions, Env Vars are typically Screaming Snake Case, properties are dot notation, json is camelCase. By normalizing them to lowercase it is easier to merge. 

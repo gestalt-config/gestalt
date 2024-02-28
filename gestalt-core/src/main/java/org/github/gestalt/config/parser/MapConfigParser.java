@@ -59,8 +59,8 @@ public final class MapConfigParser implements ConfigParser {
             return GResultOf.result(new LeafNode(configValue.getValue()));
         }
 
-        // result any mis-matched path's, this is most like when a path is both a leaf and an object and an array.
-        List<ValidationError> mismatchedPathLengthErrors = getMismatchedPathLengthErrors(tokens, index, currentPath);
+        // result any mis-matched path's, this is most like when a path is both a duplicate, or leaf and an object and an array.
+        List<ValidationError> mismatchedPathLengthErrors = getPathLengthErrors(tokens, index, currentPath);
         if (!mismatchedPathLengthErrors.isEmpty()) {
             return GResultOf.errors(mismatchedPathLengthErrors);
         }
@@ -250,16 +250,16 @@ public final class MapConfigParser implements ConfigParser {
 
     // We can not have paths with a different lengths, as this means we are at
     // both a leaf and object for the same group of tokens.
-    private List<ValidationError> getMismatchedPathLengthErrors(List<Pair<List<Token>, ConfigValue>> tokens,
-                                                                int index, String currentPath) {
-        List<Pair<List<Token>, ConfigValue>> nodesWithMismatchedPathLengths =
+    private List<ValidationError> getPathLengthErrors(List<Pair<List<Token>, ConfigValue>> tokens,
+                                                      int index, String currentPath) {
+        List<Pair<List<Token>, ConfigValue>> nodesWithSamePathLengths =
             tokens.stream()
                 .filter(tokenPair -> tokenPair.getFirst().size() < index + 1)
                 .collect(Collectors.toList());
 
         List<ValidationError> errorList = new ArrayList<>();
-        if (!nodesWithMismatchedPathLengths.isEmpty()) {
-            errorList.add(new ValidationError.MismatchedPathLength(currentPath));
+        if (!nodesWithSamePathLengths.isEmpty()) {
+            errorList.add(new ValidationError.PathLengthErrors(currentPath));
         }
 
         return errorList;

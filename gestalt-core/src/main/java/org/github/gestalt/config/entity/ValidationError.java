@@ -225,17 +225,18 @@ public abstract class ValidationError {
     /**
      * Mismatched path lengths received for path, this could be because a node is both a leaf and an object.
      */
-    public static class MismatchedPathLength extends ValidationError {
+    public static class PathLengthErrors extends ValidationError {
         private final String paths;
 
-        public MismatchedPathLength(String paths) {
+        public PathLengthErrors(String paths) {
             super(ValidationLevel.ERROR);
             this.paths = paths;
         }
 
         @Override
         public String description() {
-            return "Mismatched path lengths received for path: " + paths + ", this could be because a node is both a leaf and an object";
+            return "Parsing path length errors for path: " + paths +
+                ", there could be several causes such as: duplicate paths, or a node is both a leaf and an object";
         }
     }
 
