@@ -20,8 +20,8 @@ weldCore = "4.0.3.Final"
 jackson = "2.16.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.24.4"
-gcpLibraries = "26.32.0"
+awsBom = "2.24.12"
+gcpLibraries = "26.33.0"
 # vault
 vault = "6.2.0"
 # Git support
@@ -35,9 +35,9 @@ mockk = "1.13.9"
 koTestAssertions = "5.8.0"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.19.5"
+testcontainers = "1.19.6"
 # static code analysis
-errorprone = "2.24.1"
+errorprone = "2.25.0"
 gradleErrorProne = "3.1.0"
 detekt = "1.23.5"
 checkStyle = "10.10.0"
@@ -45,7 +45,7 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.24.5"
+gestalt = "0.24.6"
 # Gradle utility
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"
