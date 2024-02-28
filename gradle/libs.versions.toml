@@ -20,7 +20,7 @@ weldCore = "4.0.3.Final"
 jackson = "2.16.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.24.9"
+awsBom = "2.24.12"
 gcpLibraries = "26.33.0"
 # vault
 vault = "6.2.0"
@@ -45,7 +45,7 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.24.4"
+gestalt = "0.24.6"
 # Gradle utility
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"

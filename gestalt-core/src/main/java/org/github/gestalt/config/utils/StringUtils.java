@@ -6,9 +6,8 @@ package org.github.gestalt.config.utils;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class StringUtils {
-    private StringUtils() {
 
-    }
+    private StringUtils() { }
 
     /**
      * Returns true if a string is an integer.
@@ -107,5 +106,15 @@ public final class StringUtils {
             }
         }
         return true;
+    }
+
+    public static boolean startsWith(String str, String prefix, boolean ignoreCase) {
+        if (str == null || prefix == null) {
+            return str == null && prefix == null;
+        }
+        if (prefix.length() > str.length()) {
+            return false;
+        }
+        return str.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());
     }
 }

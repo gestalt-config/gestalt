@@ -7,6 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
  * ConfigSourceBuilder for the Class Path Config Source.
  *
  * <p>Convert the Environment Variables to a property file.
+ * By default, it expects the Environment Variables to be in Screaming Snake Case.
  * Apply the supplied transforms as we convert it.
  * Then write that as an input stream for the next stage in the parsing.
  *
@@ -17,6 +18,8 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
     private boolean failOnErrors = false;
 
     private String prefix = "";
+
+    private boolean ignoreCaseOnPrefix = false;
 
     private boolean removePrefix = false;
 
@@ -65,6 +68,7 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
         return prefix;
     }
 
+
     /**
      * Set the prefix we scan for. This will only include the environment variables that match the prefix.
      *
@@ -73,6 +77,26 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
      */
     public EnvironmentConfigSourceBuilder setPrefix(String prefix) {
         this.prefix = prefix;
+        return this;
+    }
+
+    /**
+     * Gets if we should ignore the case when matching the prefix.
+     *
+     * @return if we should ignore the case when matching the prefix.
+     */
+    public boolean isIgnoreCaseOnPrefix() {
+        return ignoreCaseOnPrefix;
+    }
+
+    /**
+     * Sets if we should ignore the case when matching the prefix.
+     *
+     * @param ignoreCaseOnPrefix if we should ignore the case when matching the prefix.
+     * @return the builder
+     */
+    public EnvironmentConfigSourceBuilder setIgnoreCaseOnPrefix(boolean ignoreCaseOnPrefix) {
+        this.ignoreCaseOnPrefix = ignoreCaseOnPrefix;
         return this;
     }
 
@@ -98,6 +122,6 @@ public final class EnvironmentConfigSourceBuilder extends SourceBuilder<Environm
 
     @Override
     public ConfigSourcePackage build() throws GestaltException {
-        return buildPackage(new EnvironmentConfigSource(prefix, removePrefix, failOnErrors, tags));
+        return buildPackage(new EnvironmentConfigSource(prefix, ignoreCaseOnPrefix, removePrefix, failOnErrors, tags));
     }
 }

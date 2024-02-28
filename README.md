@@ -167,7 +167,7 @@ The API to retrieve configurations:
 
 # Config Sources
 Adding a ConfigSource to the builder is the minimum step needed to build the Gestalt Library.
-You can add several ConfigSources to the builder and Gestalt, and they will be loaded in the order they are added. Where each new source will be merged with the existing source and where applicable overwrite the values of the previous sources.
+You can add several ConfigSources to the builder and Gestalt, and they will be loaded in the order they are added. Where each new source will be merged with the existing source and where applicable overwrite the values of the previous sources. Each Config Source can be a diffrent format such as json, properties or Snake Case Env Vars, then internally they are converted into a common config tree. 
 
 ```java
   Gestalt gestalt = builder
@@ -709,19 +709,19 @@ If you provide 2 tags in the source, when retrieving the configuration you must 
 
 
 ## Supported config sources
-| Config Source                | module                                                               | Details                                                                                                                                                                                                                                                                                                                 |
-|------------------------------|----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| ClassPathConfigSource        | gestalt-core                                                         | Load a file from the java class path. Uses getResourceAsStream to find and load the InputStream.                                                                                                                                                                                                                        |
-| EnvironmentConfigSource      | gestalt-core                                                         | Loads all Environment Variables in the system, will convert them to a list of key values from the Env Map for the config loader. You can provide a prefix to only load Environment Variables with the prefix. Then you can choose to keep the prefix or remove it.                                                      |
-| FileConfigSource             | gestalt-core                                                         | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.                                                                                       |
-| KubernetesSecretConfigSource | gestalt-core                                                         | Specify a path to search for [kubernetes secrets](https://kubernetes.io/docs/concepts/configuration/secret/) files. The directory is scanned and each file is added to the configuration. The name of the file is treated as the key for configuration and the content of the file is the value for the configuration.  |
-| GCSConfigSource              | [`gestalt-google`](https://search.maven.org/search?q=gestalt-google) | Load a config from Google Cloud Storage. Requires a bucketName and a objectName. A google Storage object is optional, otherwise it defaults to the default instance.                                                                                                                                                    |
-| GitConfigSource              | [`gestalt-git`](https://search.maven.org/search?q=gestalt-git)       | Syncs a remote repo locally then uses the files to build a configuration. This uses jgit and supports several forms of authentication. See GitConfigSourceTest.java for examples of use.                                                                                                                                |
-| MapConfigSource              | gestalt-core                                                         | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader.                                                                                                                                                                                                        |
-| StringConfigSource           | gestalt-core                                                         | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader.                                                                                                                                                                                              |
-| SystemPropertiesConfigSource | gestalt-core                                                         | Loads the Java System Properties and convert them to a list of key values or the config loader.                                                                                                                                                                                                                         |
-| S3ConfigSource               | [`gestalt-aws`](https://search.maven.org/search?q=gestalt-aws)       | Loads a config source from AWS S3, Must include package com.github.gestalt-config:gestalt-s3:version.                                                                                                                                                                                                                   |
-| URLConfigSource              | gestalt-core                                                         | Loads a config source from a URL.                                                                                                                                                                                                                                                                                       |
+| Config Source                | module                                                               | Details                                                                                                                                                                                                                                                                                                                                                             |
+|------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| ClassPathConfigSource        | gestalt-core                                                         | Load a file from the java class path. Uses getResourceAsStream to find and load the InputStream.                                                                                                                                                                                                                                                                    |
+| EnvironmentConfigSource      | gestalt-core                                                         | Loads all Environment Variables in the system. It expects Env Vars to be in screaming snake case, and will parse the "_" as a path delimiter.  will convert them to a list of key values from the Env Map for the config loader. You can provide a prefix to only load Environment Variables with the prefix. Then you can choose to keep the prefix or remove it.  |
+| FileConfigSource             | gestalt-core                                                         | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.                                                                                                                                   |
+| KubernetesSecretConfigSource | gestalt-core                                                         | Specify a path to search for [kubernetes secrets](https://kubernetes.io/docs/concepts/configuration/secret/) files. The directory is scanned and each file is added to the configuration. The name of the file is treated as the key for configuration and the content of the file is the value for the configuration.                                              |
+| GCSConfigSource              | [`gestalt-google`](https://search.maven.org/search?q=gestalt-google) | Load a config from Google Cloud Storage. Requires a bucketName and a objectName. A google Storage object is optional, otherwise it defaults to the default instance.                                                                                                                                                                                                |
+| GitConfigSource              | [`gestalt-git`](https://search.maven.org/search?q=gestalt-git)       | Syncs a remote repo locally then uses the files to build a configuration. This uses jgit and supports several forms of authentication. See GitConfigSourceTest.java for examples of use.                                                                                                                                                                            |
+| MapConfigSource              | gestalt-core                                                         | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader.                                                                                                                                                                                                                                                    |
+| StringConfigSource           | gestalt-core                                                         | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader.                                                                                                                                                                                                                                          |
+| SystemPropertiesConfigSource | gestalt-core                                                         | Loads the Java System Properties and convert them to a list of key values or the config loader.                                                                                                                                                                                                                                                                     |
+| S3ConfigSource               | [`gestalt-aws`](https://search.maven.org/search?q=gestalt-aws)       | Loads a config source from AWS S3, Must include package com.github.gestalt-config:gestalt-s3:version.                                                                                                                                                                                                                                                               |
+| URLConfigSource              | gestalt-core                                                         | Loads a config source from a URL.                                                                                                                                                                                                                                                                                                                                   |
 
 
 # Config Loader
@@ -795,13 +795,18 @@ To register your own default Decoders add them to the builder, or add it to a fi
 
 
 # Reload Strategies
-When adding a ConfigSource to the builder, if can you also add a reload strategy for the ConfigSource, when the source changes, or we receive an event to reload the config source Gestalt will get a notification and automatically attempt to reload the config.
+Gestalt is idempotent, as in on calling `loadConfigs()` a config tree is built and will not be updated, even if the underlying sources have changed.
+By using Reload strategies you can tell Gestalt when the specific config source has changed to dynamically update configuration on the fly. Once the config tree has been rebuilt, Gestalt will trigger its own Gestalt Core Reload Listener. So you can get an update that the reload has happened. 
+
+When adding a ConfigSource to the builder, you can choose to a reload strategy. The reload strategy triggers from either a file change, a timer event or a manual call from your code. Each reload strategy is for a specific source, and will not cause all sources to be reloaded, only that source. 
 Once Gestalt has reloaded the config it will send out its own Gestalt Core Reload event. you can add a listener to the builder to get a notification when a Gestalt Core Reload has completed. The Gestalt Cache uses this to clear the cache when a Config Source has changed.
 
 ```java
-  ConfigSourcePackage devFileSource = FileConfigSourceBuilder.builder().setFile(devFile).addConfigReloadStrategy(new FileChangeReloadStrategy()).build();
   Gestalt gestalt = builder
-  .addSource(devFileSource)
+  .addSource(FileConfigSourceBuilder.builder()
+      .setFile(devFile)
+      .addConfigReloadStrategy(new FileChangeReloadStrategy())
+      .build())
   .addCoreReloadListener(reloadListener)
   .build();
 ```
@@ -810,6 +815,34 @@ Once Gestalt has reloaded the config it will send out its own Gestalt Core Reloa
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
 | FileChangeReload          | Specify a FileConfigSource, and the  FileChangeReload will listen for changes on that file. When the file changes it will tell Gestalt to reload the file. Also works with symlink and will reload if the symlink change. |
 | TimedConfigReloadStrategy | Provide a ConfigSource and a Duration then the Reload Strategy will reload every period defined by the Duration                                                                                                           |
+| ManualConfigReloadStrategy| You can manually call reload to force a source to reload.                                                                                                                                                                 |
+
+## Dynamic Configuration with Reload Strategies
+
+For example if you want to use a Map Config Source, and have updated values reflected in calls to Gestalt, you can register a `ManualConfigReloadStrategy` with a Map Config Source. Then after you can update the values in the map call `reload()` on the `ManualConfigReloadStrategy` to tell Gestalt you want to rebuild its internal Config Tree. Future calls to Gestalt should reflect the updated values. 
+
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("some.value", "value1");
+
+var manualReload = new ManualConfigReloadStrategy();
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .addConfigReloadStrategy(manualReload)
+    .build())
+  .build();
+gestalt.loadConfigs();
+
+Assertions.assertEquals("value1", gestalt.getConfig("some.value", String.class));
+
+configs.put("some.value", "value2");
+
+manualReload.reload();
+Assertions.assertEquals("value2", gestalt.getConfig("some.value", String.class));
+```
 
 # Gestalt configuration
 | Configuration                 | default  | Details                                                                                                                                                                                                                                                                                                          |
@@ -1038,6 +1071,15 @@ In the end we should get the value 200 based on the overridden Environment Varia
 
 If you wish to use a different case then Screaming Snake Case, you would need to provide your own EnvironmentVarsLoader with your specific SentenceLexer lexer. 
 
+There are several configuration options on the `EnvironmentConfigSource`, 
+
+| Configuration Name | Default | Description                                                                                                                                   |
+|--------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| failOnErrors       | false   | If we should fail on errors. By default the Environment Config Source pulls in all Environment variables, and several may not parse correctly |
+| prefix             | ""      | By provide a prefix only Env Vars that start with the prefix will be included.                                                                |
+| ignoreCaseOnPrefix | false   | Define if we want to ignore the case when matching the prefix.                                                                                |
+| removePrefix       | false   | If we should remove the prefix and the following "_" or"." from the imported configuration                                                    |
+
 
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample-java-latest/src/test)
@@ -1212,3 +1254,4 @@ public interface Transformer {
 To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
 
 the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}
+
