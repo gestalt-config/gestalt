@@ -261,6 +261,32 @@ public class GestaltIntegrationTests {
     }
 
     @Test
+    public void integrationTestManualReload() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("some.value", "value1");
+
+        var manualReload = new ManualConfigReloadStrategy();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(manualReload)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("value1", gestalt.getConfig("some.value", String.class));
+
+        configs.put("some.value", "value2");
+
+        manualReload.reload();
+
+        Assertions.assertEquals("value2", gestalt.getConfig("some.value", String.class));
+    }
+
+    @Test
     public void integrationTestEmpty() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
