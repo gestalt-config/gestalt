@@ -1,6 +1,8 @@
 package org.github.gestalt.config.reload;
 
-import java.util.WeakHashMap;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Store all core reload listeners and functionality to call the on reload.
@@ -8,10 +10,11 @@ import java.util.WeakHashMap;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class CoreReloadListenersContainer {
+
     /**
      * Listeners for the core reload.
      */
-    protected final WeakHashMap<Integer, CoreReloadListener> listeners = new WeakHashMap<>();
+    protected final List<WeakReference<CoreReloadListener>> listeners = new ArrayList<>();
 
     /**
      * register a core event listener.
@@ -19,7 +22,7 @@ public class CoreReloadListenersContainer {
      * @param listener to register
      */
     public void registerListener(CoreReloadListener listener) {
-        listeners.put(listener.hashCode(), listener);
+        listeners.add(new WeakReference<>(listener));
     }
 
     /**
@@ -28,13 +31,36 @@ public class CoreReloadListenersContainer {
      * @param listener to remove
      */
     public void removeListener(CoreReloadListener listener) {
-        listeners.remove(listener.hashCode());
+        cleanup();
+        listeners.removeIf((it) -> it.get() == null || it.get() == listener);
+    }
+
+    /**
+     * cleanup the listeners and removes expired ones.
+     */
+    private void cleanup() {
+        listeners.removeIf((it) -> it.get() == null);
+    }
+
+    /**
+     * Get the current listeners.
+     *
+     * @return the current listeners
+     */
+    public List<WeakReference<CoreReloadListener>> getListeners() {
+        cleanup();
+        return listeners;
     }
 
     /**
      * called when the core has reloaded.
      */
     public void reload() {
-        listeners.forEach((k, v) -> v.reload());
+        listeners.forEach((it) -> {
+            var weakRef = it.get();
+            if (weakRef != null) {
+                weakRef.reload();
+            }
+        });
     }
 }

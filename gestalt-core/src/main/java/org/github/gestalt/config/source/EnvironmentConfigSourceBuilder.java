@@ -7,6 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
  * ConfigSourceBuilder for the Class Path Config Source.
  *
  * <p>Convert the Environment Variables to a property file.
+ * By default, it expects the Environment Variables to be in Screaming Snake Case.
  * Apply the supplied transforms as we convert it.
  * Then write that as an input stream for the next stage in the parsing.
  *
