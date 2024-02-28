@@ -315,8 +315,31 @@ class MapConfigParserTest {
         List<ValidationError> results = resultsOf.getErrors();
         assertEquals(1, results.size());
         assertEquals(ValidationLevel.ERROR, results.get(0).level());
-        assertEquals("Mismatched path lengths received for path: db.hosts, " +
-            "this could be because a node is both a leaf and an object", results.get(0).description());
+        assertEquals("Parsing path length errors for path: db.hosts, there could be several causes such as: duplicate paths, " +
+            "or a node is both a leaf and an object", results.get(0).description());
+    }
+
+    @Test
+    public void testValidateDuplicatePathLength() {
+        MapConfigParser mapConfigParser = new MapConfigParser();
+
+        List<Pair<List<Token>, ConfigValue>> test = List.of(
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("connections")), new ConfigValue("10")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("user")), new ConfigValue("test")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("password")), new ConfigValue("password")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB1")),
+            new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB2"))
+        );
+
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        assertFalse(resultsOf.hasResults());
+        assertTrue(resultsOf.hasErrors());
+        assertNull(resultsOf.results());
+        List<ValidationError> results = resultsOf.getErrors();
+        assertEquals(1, results.size());
+        assertEquals(ValidationLevel.ERROR, results.get(0).level());
+        assertEquals("Parsing path length errors for path: db.hosts, there could be several causes such as: duplicate paths, " +
+            "or a node is both a leaf and an object", results.get(0).description());
     }
 
     @Test
@@ -340,8 +363,8 @@ class MapConfigParserTest {
         List<ValidationError> results = resultsOf.getErrors();
         assertEquals(1, results.size());
         assertEquals(ValidationLevel.ERROR, results.get(0).level());
-        assertEquals("Mismatched path lengths received for path: db.hosts, " +
-            "this could be because a node is both a leaf and an object", results.get(0).description());
+        assertEquals("Parsing path length errors for path: db.hosts, there could be several causes such as: duplicate paths, " +
+            "or a node is both a leaf and an object", results.get(0).description());
     }
 
     @Test
@@ -363,8 +386,8 @@ class MapConfigParserTest {
         List<ValidationError> results = resultsOf.getErrors();
         assertEquals(1, results.size());
         assertEquals(ValidationLevel.ERROR, results.get(0).level());
-        assertEquals("Mismatched path lengths received for path: db, this could be because " +
-            "a node is both a leaf and an object", results.get(0).description());
+        assertEquals("Parsing path length errors for path: db, there could be several causes such as: duplicate paths, " +
+            "or a node is both a leaf and an object", results.get(0).description());
     }
 
     @Test

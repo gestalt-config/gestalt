@@ -113,8 +113,8 @@ class CompilerConfigTest {
         Assertions.assertTrue(results.hasErrors());
 
         Assertions.assertEquals(1, results.getErrors().size());
-        Assertions.assertEquals("Mismatched path lengths received for path: db, this could be because a node is both a leaf " +
-            "and an object", results.getErrors().get(0).description());
+        Assertions.assertEquals("Parsing path length errors for path: db, there could be several causes such as: duplicate paths, " +
+            "or a node is both a leaf and an object", results.getErrors().get(0).description());
     }
 
     private static class MapConfigSourceWarn extends TestMapConfigSource {
