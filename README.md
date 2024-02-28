@@ -180,7 +180,7 @@ In the above example we first load a file defaults, then load a file devFile and
 The priority will be Env Vars > devFile > defaults.
 
 # Config Tree
-The config files are loaded and merged into a config tree. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have two leafs or both a node and a leaf at the same place. If this is detected Gestalt will throw an exception on loading with details on the path.    
+The config files are loaded and merged into a config tree. While loading into the config tree all node names and paths are converted to lower case. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have two leafs or both a node and a leaf at the same place. If this is detected Gestalt will throw an exception on loading with details on the path.    
 
 Valid:
 ```properties
