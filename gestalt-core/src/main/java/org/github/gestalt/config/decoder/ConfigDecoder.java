@@ -1,13 +1,10 @@
 package org.github.gestalt.config.decoder;
 
-import org.github.gestalt.config.entity.Config;
 import org.github.gestalt.config.entity.ConfigContainer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
-
-import java.util.Optional;
 
 /**
  * Decodes a generic optional type.
@@ -23,7 +20,7 @@ public final class ConfigDecoder implements Decoder<ConfigContainer<?>> {
 
     @Override
     public String name() {
-        return "Config";
+        return "ConfigContainer";
     }
 
     @Override
@@ -31,13 +28,15 @@ public final class ConfigDecoder implements Decoder<ConfigContainer<?>> {
         return ConfigContainer.class.isAssignableFrom(type.getRawType());
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public GResultOf<ConfigContainer<?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+    public GResultOf<ConfigContainer<?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type,
+                                                DecoderContext decoderContext) {
         // decode the generic type of the optional. Then we will wrap the result into an Optional
         GResultOf<?> configValue = decoderContext.getDecoderService()
             .decodeNode(path, tags, node, type.getFirstParameterType(), decoderContext);
 
-            return configValue.mapWithError((result) -> new ConfigContainer(path, tags, decoderContext, result, type));
-        }
+        return configValue.mapWithError((result) -> new ConfigContainer(path, tags, decoderContext, result, type));
     }
 }
+

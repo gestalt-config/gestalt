@@ -961,7 +961,7 @@ val dbService1: DBService1 = myApp.koin.get()
 ```
 
 # Use Cases
-## Dynamic overriding config values with command line arguments
+## Overriding config values with command line arguments
 
 Often you may wish to override a configuration value with a value provided on the command line. 
 One way to do this is to add a `SystemPropertiesConfigSource` as the last source in Gestalt. This way it will have the highest priority and override all previous sources.
@@ -999,7 +999,7 @@ However, we override with a command line parameter of: `-Dhttp.pool.maxTotal=200
 
 In the end we should get the value 200 based on the overridden command line parameter. 
 
-## Dynamic overriding config values with Environment Variables (Env Var)
+## Overriding config values with Environment Variables (Env Var)
 
 In a similar vein as overriding with command line variables, you can override with an Environment Variable. 
 There is two ways of doing this. You can use string substitution but an alternative is to use the `EnvironmentConfigSource`.
@@ -1081,6 +1081,53 @@ There are several configuration options on the `EnvironmentConfigSource`,
 | ignoreCaseOnPrefix | false   | Define if we want to ignore the case when matching the prefix.                                                                                |
 | removePrefix       | false   | If we should remove the prefix and the following "_" or"." from the imported configuration                                                    |
 
+
+## Dynamically updating config values
+Typically, when you get a configuration from Gestalt, you maintain a reference to the value in your class. You typically dont want to call Gestalt each time you want to check the value of the configuration. Although Gestalt has a cache, there is overhead in calling Gestalt each time.
+However, when you cache locally if the configuration in Gestalt change via a reload, you will still have a reference to the old value. 
+
+So, instead of getting your specific configuration you could  request a ConfigContainer. 
+```java
+var myConfigValue = gestalt.getConfig("some.value", new TypeCapture<ConfigContainer<String>>() {});
+```
+The ConfigContainer will hold your configuration value with several options to get it. 
+```java
+var myValue = configContainer.orElseThrow();
+var myOptionalValue = configContainer.getOptional();
+```
+
+Then, when there is a reload, the ConfigContainer will get and cache the new configuration. Ensuring you always have the most recent value.  
+
+The following example shows a simple use case for ConfigContainer. 
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("some.value", "value1");
+
+var manualReload = new ManualConfigReloadStrategy();
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .addConfigReloadStrategy(manualReload)
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+
+var configContainer = gestalt.getConfig("some.value", new TypeCapture<ConfigContainer<String>>() {});
+
+Assertions.assertEquals("value1", configContainer.orElseThrow());
+
+// Change the values in the config map
+configs.put("some.value", "value2");
+
+// let gestalt know the values have changed so it can update the config tree. 
+manualReload.reload();
+
+// The config container is automatically updated. 
+Assertions.assertEquals("value2", configContainer.orElseThrow());
+```
 
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample-java-latest/src/test)
@@ -1255,4 +1302,5 @@ public interface Transformer {
 To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
 
 the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}
+
 

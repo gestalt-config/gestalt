@@ -5,6 +5,7 @@ import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.*;
+import org.github.gestalt.config.entity.ConfigContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
@@ -284,6 +285,37 @@ public class GestaltIntegrationTests {
         manualReload.reload();
 
         Assertions.assertEquals("value2", gestalt.getConfig("some.value", String.class));
+    }
+
+    @Test
+    public void integrationTestManualReloadWithConfigContainer() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("some.value", "value1");
+
+        var manualReload = new ManualConfigReloadStrategy();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(manualReload)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        var configContainer = gestalt.getConfig("some.value", new TypeCapture<ConfigContainer<String>>() {});
+
+        Assertions.assertEquals("value1", configContainer.orElseThrow());
+
+        // Change the values in the config map
+        configs.put("some.value", "value2");
+
+        // let gestalt know the values have changed so it can update the config tree.
+        manualReload.reload();
+
+        // The config container is automatically updated.
+        Assertions.assertEquals("value2", configContainer.orElseThrow());
     }
 
     @Test

@@ -25,35 +25,46 @@ public class ConfigContainer<T> implements CoreReloadListener {
     // Decoder Context hold gestalt to get the config on reload.
     protected final DecoderContext decoderContext;
     // Type of the Configuration value.
-    protected final TypeCapture<T> klass;
+    protected final TypeCapture<ConfigContainer<T>> klass;
+
+    protected final TypeCapture<T> configContainerType;
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     Optional<T> value;
 
-    public ConfigContainer(String path, Tags tags, DecoderContext decoderContext, T value, TypeCapture<T> klass) {
+    @SuppressWarnings("unchecked")
+    public ConfigContainer(String path, Tags tags, DecoderContext decoderContext, T value, TypeCapture<ConfigContainer<T>> klass) {
         this.path = path;
         this.tags = tags;
         this.decoderContext = decoderContext;
         this.klass = klass;
-        this.value = Optional.of(value);
+        this.value = Optional.ofNullable(value);
+
+        configContainerType = (TypeCapture<T>) klass.getFirstParameterType();
+
+        decoderContext.getGestalt().registerListener(this);
     }
 
-    public T getValue() throws GestaltException {
+    public boolean isPresent() {
+        return value.isPresent();
+    }
+
+    public T orElseThrow() throws GestaltException {
         return value.orElseThrow(() -> new GestaltException("No results for config path: " + path + ", tags: " + tags +
             ", and class: " + klass.getName()));
     }
 
-    public void setValue(T value) {
-        this.value = Optional.of(value);
+    public Optional<T> getOptional() {
+        return value;
     }
 
     @Override
     public void reload() {
-        value = decoderContext.getGestalt().getConfigOptional(path, klass, tags);
+        value = decoderContext.getGestalt().getConfigOptional(path, configContainerType, tags);
 
         if (value.isEmpty()) {
-           logger.log(System.Logger.Level.WARNING, "On Reload, no results for config path: " + path + ", tags: " + tags +
-               ", and class: " + klass.getName());
+            logger.log(System.Logger.Level.WARNING, "On Reload, no results for config path: " + path + ", tags: " + tags +
+                ", and class: " + klass.getName());
         }
     }
 }
