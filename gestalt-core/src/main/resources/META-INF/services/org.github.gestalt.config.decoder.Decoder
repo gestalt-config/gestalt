@@ -4,6 +4,7 @@ org.github.gestalt.config.decoder.BigIntegerDecoder
 org.github.gestalt.config.decoder.BooleanDecoder
 org.github.gestalt.config.decoder.ByteDecoder
 org.github.gestalt.config.decoder.CharDecoder
+org.github.gestalt.config.decoder.ConfigDecoder
 org.github.gestalt.config.decoder.DateDecoder
 org.github.gestalt.config.decoder.DoubleDecoder
 org.github.gestalt.config.decoder.DurationDecoder

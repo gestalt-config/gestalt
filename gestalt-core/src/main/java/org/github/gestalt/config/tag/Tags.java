@@ -160,4 +160,11 @@ public final class Tags {
     public int hashCode() {
         return Objects.hash(internalTags);
     }
+
+    @Override
+    public String toString() {
+        return "Tags{" +
+            "internalTags=" + internalTags +
+            '}';
+    }
 }

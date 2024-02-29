@@ -56,6 +56,7 @@ public class CoreReloadListenersContainer {
      * called when the core has reloaded.
      */
     public void reload() {
+        cleanup();
         listeners.forEach((it) -> {
             var weakRef = it.get();
             if (weakRef != null) {
