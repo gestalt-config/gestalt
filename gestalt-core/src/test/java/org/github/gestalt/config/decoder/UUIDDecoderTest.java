@@ -86,7 +86,8 @@ class UUIDDecoderTest {
         Assertions.assertNull(result.results());
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to decode a UUID on path: db.port, from node: LeafNode{value='asdfasdfsdf'}",
+        Assertions.assertEquals("Unable to decode a UUID on path: db.port, from node: LeafNode{value='asdfasdfsdf'}, with reason: " +
+                "Invalid UUID string: asdfasdfsdf",
             result.getErrors().get(0).description());
     }
 }

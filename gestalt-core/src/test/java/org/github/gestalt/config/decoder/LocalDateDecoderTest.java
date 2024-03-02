@@ -120,7 +120,8 @@ class LocalDateDecoderTest {
         Assertions.assertNull(result.results());
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to decode a LocalDate on path: db.user, from node: LeafNode{value='not a date'}",
+        Assertions.assertEquals("Unable to decode a LocalDate on path: db.user, from node: LeafNode{value='not a date'}, with reason: " +
+                "Text 'not a date' could not be parsed at index 0",
             result.getErrors().get(0).description());
     }
 

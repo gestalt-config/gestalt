@@ -70,7 +70,7 @@ public final class LocalDateTimeDecoder extends LeafDecoder<LocalDateTime> {
         try {
             results = GResultOf.result(LocalDateTime.parse(value, formatter));
         } catch (DateTimeParseException e) {
-            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
+            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
         }
         return results;
     }

@@ -40,7 +40,7 @@ public final class InstantDecoder extends LeafDecoder<Instant> {
             Instant instant = Instant.parse(value);
             results = GResultOf.result(instant);
         } catch (DateTimeParseException e) {
-            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
+            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
         }
         return results;
     }
