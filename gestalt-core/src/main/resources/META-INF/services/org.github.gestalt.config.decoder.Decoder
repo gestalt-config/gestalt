@@ -34,4 +34,6 @@ org.github.gestalt.config.decoder.SequencedSetDecoder
 org.github.gestalt.config.decoder.ShortDecoder
 org.github.gestalt.config.decoder.StringDecoder
 org.github.gestalt.config.decoder.StringConstructorDecoder
+org.github.gestalt.config.decoder.URLDecoder
+org.github.gestalt.config.decoder.URIDecoder
 org.github.gestalt.config.decoder.UUIDDecoder

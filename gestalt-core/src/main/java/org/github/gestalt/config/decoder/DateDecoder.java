@@ -75,7 +75,7 @@ public final class DateDecoder extends LeafDecoder<Date> {
             Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
             results = GResultOf.result(Date.from(instant));
         } catch (DateTimeParseException e) {
-            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
+            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
         }
         return results;
     }

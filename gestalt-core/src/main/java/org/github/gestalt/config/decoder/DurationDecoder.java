@@ -41,13 +41,13 @@ public final class DurationDecoder extends LeafDecoder<Duration> {
                 long longVal = Long.parseLong(value);
                 results = GResultOf.result(Duration.ofMillis(longVal));
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
             }
         } else {
             try {
                 results = GResultOf.result(Duration.parse(value));
             } catch (Exception e) {
-                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name()));
+                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
             }
         }
         return results;

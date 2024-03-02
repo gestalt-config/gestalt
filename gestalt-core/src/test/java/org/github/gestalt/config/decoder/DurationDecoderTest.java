@@ -95,7 +95,8 @@ class DurationDecoderTest {
         Assertions.assertNull(result.results());
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to decode a Duration on path: db.port, from node: LeafNode{value='12s4'}",
+        Assertions.assertEquals("Unable to decode a Duration on path: db.port, from node: LeafNode{value='12s4'}, with reason: " +
+                "Text cannot be parsed to a Duration",
             result.getErrors().get(0).description());
     }
 

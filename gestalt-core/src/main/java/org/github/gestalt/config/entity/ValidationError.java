@@ -644,17 +644,20 @@ public abstract class ValidationError {
         private final String path;
         private final ConfigNode node;
         private final String decoder;
+        private final String reason;
 
-        public ErrorDecodingException(String path, ConfigNode node, String decoder) {
+        public ErrorDecodingException(String path, ConfigNode node, String decoder, String reason) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
             this.decoder = decoder;
+            this.reason = reason;
         }
 
         @Override
         public String description() {
-            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " + node;
+            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " + node +
+                ", with reason: " + reason;
         }
     }
 

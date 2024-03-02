@@ -6,14 +6,15 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 
-import java.util.UUID;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
- * Decode a UUID.
+ * Decode a URL.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class UUIDDecoder extends LeafDecoder<UUID> {
+public final class URIDecoder extends LeafDecoder<URI> {
 
     @Override
     public Priority priority() {
@@ -22,22 +23,21 @@ public final class UUIDDecoder extends LeafDecoder<UUID> {
 
     @Override
     public String name() {
-        return "UUID";
+        return "URI";
     }
 
     @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
-        return UUID.class.isAssignableFrom(type.getRawType());
+        return URI.class.isAssignableFrom(type.getRawType());
     }
 
     @Override
-    protected GResultOf<UUID> leafDecode(String path, ConfigNode node) {
-        String value = node.getValue().orElse("");
-
+    protected GResultOf<URI> leafDecode(String path, ConfigNode node) {
+        var value = node.getValue().orElse("");
         try {
-            return GResultOf.result(UUID.fromString(value));
-        } catch (IllegalArgumentException e) {
-            return GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
+            return GResultOf.result(new URI(value));
+        } catch (URISyntaxException e) {
+            return GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage()));
         }
     }
 }
