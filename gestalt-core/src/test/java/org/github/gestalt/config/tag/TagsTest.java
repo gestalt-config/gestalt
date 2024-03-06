@@ -66,6 +66,7 @@ class TagsTest {
         Assertions.assertEquals(tags, tags);
         Assertions.assertEquals(tags, tags2);
         Assertions.assertNotEquals(tags, tags3);
+        Assertions.assertNotEquals(tags, 10);
     }
 
     @Test
@@ -79,5 +80,13 @@ class TagsTest {
         Assertions.assertEquals(tags.hashCode(), tags.hashCode());
         Assertions.assertEquals(tags.hashCode(), tags2.hashCode());
         Assertions.assertNotEquals(tags.hashCode(), tags3.hashCode());
+    }
+
+    @Test
+    void testToString() {
+        List<Tag> tagList = List.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"));
+        Tags tags = Tags.of(tagList);
+
+        Assertions.assertEquals("Tags{internalTags=[Tag{key='toy', value='ball'}, Tag{key='toy', value='bat'}]}", tags.toString());
     }
 }
