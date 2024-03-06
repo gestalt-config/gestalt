@@ -177,6 +177,27 @@ class TypeCaptureTest {
     }
 
     @Test
+    void getComponentType() {
+        TypeCapture typeIntArray = new TypeCapture<Integer[]>() {
+        };
+
+        Assertions.assertEquals(Integer.class, typeIntArray.getComponentType());
+
+        TypeCapture typeInteger = new TypeCapture<Integer>() {
+        };
+
+        Assertions.assertNull(typeInteger.getComponentType());
+    }
+
+    @Test
+    void getAnnotations() {
+        TypeCapture typeInteger = new TypeCapture<Integer>() {
+        };
+
+        Assertions.assertEquals(0, typeInteger.getAnnotations().length);
+    }
+
+    @Test
     void getEquals() {
         TypeCapture type1 = new TypeCapture<Pair<Integer, String>>() {
         };

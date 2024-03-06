@@ -1815,6 +1815,13 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
+        // increase code coverage for GestaltException
+        try {
+            throw new GestaltException(new Exception("test"));
+        } catch (GestaltException ex) {
+            Assertions.assertEquals("java.lang.Exception: test", ex.getMessage());
+        }
+
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
