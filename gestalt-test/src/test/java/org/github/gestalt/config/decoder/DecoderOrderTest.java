@@ -39,7 +39,6 @@ public class DecoderOrderTest {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will throw exceptions if there are any errors.
@@ -96,7 +95,6 @@ public class DecoderOrderTest {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will throw exceptions if there are any errors.

@@ -1,8 +1,8 @@
 package org.github.gestalt.config.test.classes;
 
-public class DBInfoExtended extends DBInfo {
-    private int timeout;
-    private String user;
+public class DBInfoExtendedDefault extends DBInfo {
+    private int timeout = 10000;
+    private String user = "admin";
 
     public int getTimeout() {
         return timeout;

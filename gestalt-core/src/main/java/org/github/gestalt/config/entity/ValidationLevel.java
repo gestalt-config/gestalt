@@ -15,6 +15,11 @@ public enum ValidationLevel {
      */
     MISSING_VALUE,
     /**
+     * Missing optional value validation level. Represents a class of errors where we are missing a value.
+     * But the value is optional, so in most cases it is ok.
+     */
+    MISSING_OPTIONAL_VALUE,
+    /**
      * Warning validation level.
      */
     WARN,

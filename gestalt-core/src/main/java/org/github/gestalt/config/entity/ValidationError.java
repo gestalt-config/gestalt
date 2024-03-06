@@ -59,6 +59,15 @@ public abstract class ValidationError {
     }
 
     /**
+     * Returns true if this error is for a missing an optional results issue.
+     *
+     * @return true if this error is for a missing an optional results issue
+     */
+    public boolean hasNoOptionalResults() {
+        return level.equals(ValidationLevel.MISSING_OPTIONAL_VALUE);
+    }
+
+    /**
      * Empty path provided to tokenizer. Parsing error.
      */
     public static class EmptyPath extends ValidationError {
@@ -409,6 +418,47 @@ public abstract class ValidationError {
     }
 
     /**
+     * Array is missing an index.
+     */
+    public static class OptionalMissingValueDecoding extends ValidationError {
+        private final String path;
+        private final ConfigNode node;
+        private final String decoder;
+        private final String className;
+
+        public OptionalMissingValueDecoding(String path, String decoder) {
+            this(path, null, decoder, null);
+        }
+
+
+        public OptionalMissingValueDecoding(String path, ConfigNode node, String decoder) {
+            this(path, node, decoder, null);
+        }
+
+        public OptionalMissingValueDecoding(String path, ConfigNode node, String decoder, String className) {
+            super(ValidationLevel.MISSING_OPTIONAL_VALUE);
+            this.path = path;
+            this.node = node;
+            this.decoder = decoder;
+            this.className = className;
+        }
+
+        @Override
+        public String description() {
+            StringBuilder description = new StringBuilder(62);
+            description.append("Missing Optional Value while decoding ").append(decoder).append(" on path: ").append(path);
+            if (node != null) {
+                description.append(", from node: ").append(node);
+            }
+            if (className != null) {
+                description.append(", with class: ").append(className);
+            }
+
+            return description.toString();
+        }
+    }
+
+    /**
      * While mapping a value the key was null.
      */
     public static class MappingPathEmpty extends ValidationError {
@@ -685,7 +735,7 @@ public abstract class ValidationError {
         private final String path;
 
         public DecodersMapValueNull(String path) {
-            super(ValidationLevel.WARN);
+            super(ValidationLevel.ERROR);
             this.path = path;
         }
 

@@ -76,7 +76,7 @@ public class GestaltBuilder {
     private Boolean treatWarningsAsErrors = null;
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
-    private Boolean treatNullValuesInClassAsErrors = null;
+    private Boolean treatMissingDiscretionaryValuesAsErrors = null;
 
     private Level logLevelForMissingValuesWhenDefaultOrOptional = null;
 
@@ -555,7 +555,17 @@ public class GestaltBuilder {
     /**
      * treat missing object values as errors.
      *
-     * @param treatMissingValuesAsErrors treat missing object values as errors
+     * @return treatMissingValuesAsErrors the settings for treating missing object values as errors.
+     */
+    public Boolean getTreatMissingValuesAsErrors() {
+        return treatMissingValuesAsErrors;
+    }
+
+
+    /**
+     * treat missing object values as errors.
+     *
+     * @param treatMissingValuesAsErrors the settings for treating missing values as errors.
      * @return GestaltBuilder builder
      */
     public GestaltBuilder setTreatMissingValuesAsErrors(Boolean treatMissingValuesAsErrors) {
@@ -564,13 +574,24 @@ public class GestaltBuilder {
     }
 
     /**
-     * Treat null values in classes after decoding as errors.
+     * Get treat missing discretionary values (optional, fields with defaults, fields with default annotations) as an error.
+     * If this is false you will be able to get the configuration with default values or an empty Optional.
+     * If this is true, if a field is missing and would have had a default it will fail and throw an exception.
      *
-     * @param treatNullValuesInClassAsErrors treat null values in classes after decoding as errors
-     * @return GestaltBuilder builder
+     * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
      */
-    public GestaltBuilder setTreatNullValuesInClassAsErrors(Boolean treatNullValuesInClassAsErrors) {
-        this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
+    public Boolean getTreatMissingDiscretionaryValuesAsErrors() {
+        return treatMissingDiscretionaryValuesAsErrors;
+    }
+
+    /**
+     * Set treat missing object values as errors.
+     *
+     * @param treatMissingDiscretionaryValuesAsErrors treat missing object values as errors.
+     * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
+     */
+    public GestaltBuilder setTreatMissingDiscretionaryValuesAsErrors(boolean treatMissingDiscretionaryValuesAsErrors) {
+        this.treatMissingDiscretionaryValuesAsErrors = treatMissingDiscretionaryValuesAsErrors;
         return this;
     }
 
@@ -885,8 +906,8 @@ public class GestaltBuilder {
         newConfig.setTreatMissingValuesAsErrors(Objects.requireNonNullElseGet(treatMissingValuesAsErrors,
             () -> gestaltConfig.isTreatMissingValuesAsErrors()));
 
-        newConfig.setTreatNullValuesInClassAsErrors(Objects.requireNonNullElseGet(treatNullValuesInClassAsErrors,
-            () -> gestaltConfig.isTreatNullValuesInClassAsErrors()));
+        newConfig.setTreatMissingDiscretionaryValuesAsErrors(Objects.requireNonNullElseGet(treatMissingDiscretionaryValuesAsErrors,
+            () -> gestaltConfig.isTreatMissingDiscretionaryValuesAsErrors()));
 
         newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(
             Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,

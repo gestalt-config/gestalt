@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
@@ -114,22 +115,10 @@ public final class ProxyDecoder implements Decoder<Object> {
 
             GResultOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
 
-            errors.addAll(configNode.getErrors());
-            if (!configNode.hasResults()) {
+            // Add any errors that are not missing value ones.
+            errors.addAll(configNode.getErrorsNotLevel(ValidationLevel.MISSING_VALUE));
 
-                // if we have no value, check the config annotation for a default.
-                if (configAnnotation != null && configAnnotation.defaultVal() != null &&
-                    !configAnnotation.defaultVal().isEmpty()) {
-                    GResultOf<?> defaultGResultOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
-                        TypeCapture.of(returnType), decoderContext);
-
-                    errors.addAll(defaultGResultOf.getErrors());
-                    if (defaultGResultOf.hasResults()) {
-                        methodResults.put(methodName, defaultGResultOf.results());
-                        foundValue = true;
-                    }
-                }
-            } else {
+            if (configNode.hasResults()) {
                 GResultOf<?> fieldGResultOf = decoderService.decodeNode(nextPath, tags, configNode.results(),
                     TypeCapture.of(returnType), decoderContext);
 
@@ -138,10 +127,26 @@ public final class ProxyDecoder implements Decoder<Object> {
                     methodResults.put(methodName, fieldGResultOf.results());
                     foundValue = true;
                 }
+            } else {
+
+                // if we have no value, check the config annotation for a default.
+                if (configAnnotation != null && configAnnotation.defaultVal() != null && !configAnnotation.defaultVal().isEmpty()) {
+                    GResultOf<?> defaultGResultOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
+                        TypeCapture.of(returnType), decoderContext);
+
+                    errors.addAll(defaultGResultOf.getErrors());
+                    if (defaultGResultOf.hasResults()) {
+                        methodResults.put(methodName, defaultGResultOf.results());
+                        foundValue = true;
+                        errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
+                    }
+                }
             }
 
             if (!foundValue && !method.isDefault()) {
-                errors.add(new ValidationError.NullValueDecodingObject(nextPath, name, klass.getSimpleName()));
+                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, type.getRawType(), "proxy decoding"));
+            } else if (!foundValue && method.isDefault()) {
+                errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
             }
         }
 

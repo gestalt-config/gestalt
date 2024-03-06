@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ObjectDecoderTest {
 
     final SentenceLexer lexer = new PathLexer();
@@ -58,6 +60,9 @@ class ObjectDecoderTest {
         Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfo.class)));
         Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfoExtended.class)));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Long.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Boolean.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(boolean.class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Void.class)));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Long>() {
         }));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(long.class)));
@@ -70,6 +75,11 @@ class ObjectDecoderTest {
         }));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<DBInfoGeneric<String>>() {
         }));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String[].class)));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(ValidationLevel.class)));
+
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBPoolInterface.class)));
+
     }
 
     @Test
@@ -101,13 +111,89 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
         configs.put("user", new LeafNode("Ted"));
+        configs.put("timeout", new LeafNode("10"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        DBInfoExtended results = (DBInfoExtended) result.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals("Ted", results.getUser());
+        Assertions.assertEquals(10, results.getTimeout());
+    }
+
+    @Test
+    void decodeNoDefaultInherited() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+        configs.put("user", new LeafNode("Ted"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.timeout, for class: DBInfoExtended, " +
+            "during object decoding", result.getErrors().get(0).description());
+
         DBInfoExtended results = (DBInfoExtended) result.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals("Ted", results.getUser());
+        Assertions.assertEquals(0, results.getTimeout());
+    }
+
+    @Test
+    void decodeDefaultInherited() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+        configs.put("user", new LeafNode("Ted"));
+        configs.put("timeout", new LeafNode("10"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        DBInfoExtendedDefault results = (DBInfoExtendedDefault) result.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals("Ted", results.getUser());
+        Assertions.assertEquals(10, results.getTimeout());
+    }
+
+    @Test
+    void decodeDefaultInheritedMissingValue() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+        configs.put("user", new LeafNode("Ted"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        DBInfoExtendedDefault results = (DBInfoExtendedDefault) result.results();
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
@@ -115,10 +201,11 @@ class ObjectDecoderTest {
         Assertions.assertEquals(10000, results.getTimeout());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.timeout, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
-
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.timeout, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}, " +
+            "user=LeafNode{value='Ted'}}}, with class: DBInfoExtendedDefault",
+            result.getErrors().get(0).description());
     }
 
     @Test
@@ -170,23 +257,24 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, from node: " +
+            "MapNode{mapNode={port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoNoConstructor",
+            result.getErrors().get(0).description());
 
-        DBInforNoConstructor results = (DBInforNoConstructor) result.results();
+        DBInfoNoConstructor results = (DBInfoNoConstructor) result.results();
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("password", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
-    void decodeSetterModifyValue() {
+    void decodeSetterTakePriorityTestedByChangeValue() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -206,10 +294,11 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeGetterModifyValueNotNull() {
+    void decodeDefaultGetterModifyValueNotNull() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
+        //configs.put("port", new LeafNode("100")); missing
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
@@ -220,15 +309,48 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, " +
+            "with class: DBInfoIntegerPortNonNullGetter",
+            result.getErrors().get(0).description());
 
 
         DBInfoIntegerPortNonNullGetter results = (DBInfoIntegerPortNonNullGetter) result.results();
         Assertions.assertEquals(1234, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeDefaultGetterBooleanModifyValueNotNull() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+        configs.put("port", new LeafNode("100"));
+        //configs.put("enabled", new LeafNode("true")); missing
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoBooleanEnabledNonNullGetter.class), new DecoderContext(decoderService, null));
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.enabled, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}}, " +
+                "with class: DBInfoBooleanEnabledNonNullGetter",
+            result.getErrors().get(0).description());
+
+
+        DBInfoBooleanEnabledNonNullGetter results = (DBInfoBooleanEnabledNonNullGetter) result.results();
+        Assertions.assertEquals(100, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals(true, results.isEnabled());
     }
 
     @Test
@@ -241,7 +363,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -251,10 +373,43 @@ class ObjectDecoderTest {
             "LeafNode{value='aaaa'} attempting to decode Integer", result.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int, during object decoding",
+        Assertions.assertEquals(
+            "Unable to find node matching path: db.host.port, for class: DBInfo, during object decoding",
             result.getErrors().get(1).description());
 
-        DBInforNoConstructor results = (DBInforNoConstructor) result.results();
+        DBInfo results = (DBInfo) result.results();
+        Assertions.assertEquals(0, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeDefaultBadNodeNotAnInt() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("aaaa"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
+            "LeafNode{value='aaaa'} attempting to decode Integer", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals(
+            "Missing Optional Value while decoding Object on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}}, " +
+                "with class: DBInfoNoConstructor",
+            result.getErrors().get(1).description());
+
+        DBInfoNoConstructor results = (DBInfoNoConstructor) result.results();
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
@@ -279,9 +434,9 @@ class ObjectDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
             "LeafNode{value='aaaa'} attempting to decode Integer", result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Decoding object : DBInfoIntegerPort on path: db.host.port, field port results in null value",
-            result.getErrors().get(1).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: DBInfoIntegerPort, " +
+                "during object decoding", result.getErrors().get(1).description());
 
         DBInfoIntegerPort results = (DBInfoIntegerPort) result.results();
         Assertions.assertNull(results.getPort());
@@ -290,7 +445,7 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeStaticMethod() {
+    void decodeIgnoreStaticMethod() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -329,7 +484,7 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeOptionalMissingValues() {
+    void decodeDefaultOptionalMissingValues() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -340,26 +495,28 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         DBInfoOptional results = (DBInfoOptional) result.results();
-        Assertions.assertFalse(results.getPort().isPresent());
-        Assertions.assertFalse(results.getPassword().isPresent());
-        Assertions.assertFalse(results.getUri().isPresent());
+        Assertions.assertTrue(results.getPort().isEmpty());
+        Assertions.assertTrue(results.getPassword().isEmpty());
+        Assertions.assertTrue(results.getUri().isEmpty());
 
         Assertions.assertEquals(3, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, from node: " +
+                "MapNode{mapNode={}}, with class: DBInfoOptional",
             result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, from node: " +
+                "MapNode{mapNode={}}, with class: DBInfoOptional",
             result.getErrors().get(1).description());
 
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(2).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(2).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(2).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, from node: " +
+            "MapNode{mapNode={}}, with class: DBInfoOptional", result.getErrors().get(2).description());
     }
 
     @Test
-    void decodeOptionalPartialMissingValues() {
+    void decodeDefaultOptionalPartialMissingValues() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -372,17 +529,19 @@ class ObjectDecoderTest {
 
         DBInfoOptional results = (DBInfoOptional) result.results();
         Assertions.assertEquals(100, results.getPort().get());
-        Assertions.assertFalse(results.getPassword().isPresent());
-        Assertions.assertFalse(results.getUri().isPresent());
+        Assertions.assertTrue(results.getPassword().isEmpty());
+        Assertions.assertTrue(results.getUri().isEmpty());
 
         Assertions.assertEquals(2, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, from node: " +
+                "MapNode{mapNode={port=LeafNode{value='100'}}}, with class: DBInfoOptional",
             result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(1).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, from node: " +
+            "MapNode{mapNode={port=LeafNode{value='100'}}}, with class: DBInfoOptional",
+            result.getErrors().get(1).description());
     }
 
     @Test
@@ -395,7 +554,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -405,11 +564,11 @@ class ObjectDecoderTest {
             result.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: int, during object decoding",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: DBInfo, during object decoding",
             result.getErrors().get(1).description());
 
-        DBInforNoConstructor results = (DBInforNoConstructor) result.results();
-        Assertions.assertEquals(100, results.getPort());
+        DBInfo results = (DBInfo) result.results();
+        Assertions.assertEquals(0, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
     }
@@ -424,49 +583,51 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
-                "during navigating to next node",
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: DBInfo, during object decoding",
             result.getErrors().get(0).description());
 
-        DBInforNoConstructor results = (DBInforNoConstructor) result.results();
-        Assertions.assertEquals(100, results.getPort());
+        DBInfo results = (DBInfo) result.results();
+        Assertions.assertEquals(0, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
     }
 
     @Test
-    void decodeNullMapNodeWithDefaults() {
+    void decodeDefaultNullMapNode() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(null), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(null), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(3, result.getErrors().size());
 
-        org.assertj.core.api.Assertions.assertThat(result.getErrors().stream()
-            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_VALUE))).isTrue();
+        assertThat(result.getErrors().stream()
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE))).isTrue();
 
-        org.assertj.core.api.Assertions.assertThat(result.getErrors()).anyMatch(it ->
-            "Unable to find node matching path: db.host.uri, for class: ObjectToken, during navigating to next node"
+        assertThat(result.getErrors()).anyMatch(it ->
+            ("Missing Optional Value while decoding Object on path: db.host.port, from node: MapNode{mapNode={}}, " +
+                "with class: DBInfoNoConstructor")
                 .equals(it.description()));
 
-        org.assertj.core.api.Assertions.assertThat(result.getErrors()).anyMatch(it ->
-            "Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node"
+        assertThat(result.getErrors()).anyMatch(it ->
+            ("Missing Optional Value while decoding Object on path: db.host.uri, from node: MapNode{mapNode={}}, " +
+                "with class: DBInfoNoConstructor")
                 .equals(it.description()));
 
-        org.assertj.core.api.Assertions.assertThat(result.getErrors()).anyMatch(it ->
-            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node"
+        assertThat(result.getErrors()).anyMatch(it ->
+            ("Missing Optional Value while decoding Object on path: db.host.password, from node: MapNode{mapNode={}}, " +
+                "with class: DBInfoNoConstructor")
                 .equals(it.description()));
 
-        DBInforNoConstructor results = (DBInforNoConstructor) result.results();
+        DBInfoNoConstructor results = (DBInfoNoConstructor) result.results();
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("password", results.getPassword());
         Assertions.assertEquals("test", results.getUri());
@@ -481,24 +642,14 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(4, result.getErrors().size());
+        Assertions.assertEquals(2, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: ObjectToken, " +
-                "during navigating to next node",
+        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: DBInfoStatic, during object decoding",
             result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Decoding object : DBInfoStatic on path: db.host.uri, field uri results in null value",
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: DBInfoStatic, during object decoding",
             result.getErrors().get(1).description());
-
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(2).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.password, for class: ObjectToken, " +
-                "during navigating to next node",
-            result.getErrors().get(2).description());
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(3).level());
-        Assertions.assertEquals("Decoding object : DBInfoStatic on path: db.host.password, field password results in null value",
-            result.getErrors().get(3).description());
     }
 
     @Test
@@ -506,7 +657,7 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            null, TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            null, TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -521,7 +672,7 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new LeafNode("mysql.com"), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -548,9 +699,12 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.defaultWait, from node: " +
+                "MapNode{mapNode={maxperroute=LeafNode{value='10'}, keepalivetimeoutms=LeafNode{value='123'}, " +
+                "idletimeoutsec=LeafNode{value='1000'}, validateafterinactivity=LeafNode{value='60'}, maxtotal=LeafNode{value='100'}}}, " +
+                "with class: DBPool",
+            result.getErrors().get(0).description());
 
         DBPool results = (DBPool) result.results();
         Assertions.assertEquals(100, results.maxTotal);
@@ -615,9 +769,10 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}",
+            result.getErrors().get(0).description());
 
         DBInfoAnnotations results = (DBInfoAnnotations) result.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -640,9 +795,10 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}",
+            result.getErrors().get(0).description());
 
         DBInfoAnnotationsDefault results = (DBInfoAnnotationsDefault) result.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -664,13 +820,13 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer", result.getErrors().get(1).description());
+            "attempting to decode Integer", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: DBInfoBadAnnotations, " +
+            "during object decoding", result.getErrors().get(1).description());
 
         DBInfoBadAnnotations results = (DBInfoBadAnnotations) result.results();
         Assertions.assertEquals(0, results.getPort());
@@ -693,13 +849,15 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer", result.getErrors().get(1).description());
+            "attempting to decode Integer", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, " +
+            "with class: DBInfoBadAnnotationsWithClassDefault",
+            result.getErrors().get(1).description());
 
         DBInfoBadAnnotationsWithClassDefault results = (DBInfoBadAnnotationsWithClassDefault) result.results();
         Assertions.assertNotNull(results.getPort());
@@ -748,7 +906,7 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeWithMethodAnnotationDefault() {
+    void decodeDefaultWithMethodAnnotation() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
@@ -761,9 +919,10 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}",
+            result.getErrors().get(0).description());
 
         DBInfoMethodAnnotations results = (DBInfoMethodAnnotations) result.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -785,9 +944,10 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}",
+            result.getErrors().get(0).description());
 
         DBInfoMethodAnnotationsDefault results = (DBInfoMethodAnnotationsDefault) result.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -809,13 +969,13 @@ class ObjectDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer", result.getErrors().get(1).description());
+            "attempting to decode Integer", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: DBInfoBadMethodAnnotations, " +
+            "during object decoding", result.getErrors().get(1).description());
 
         DBInfoBadMethodAnnotations results = (DBInfoBadMethodAnnotations) result.results();
         Assertions.assertEquals(0, results.getPort());
@@ -824,11 +984,12 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeWithAnnotationPriority() {
+    void decodeWithAnnotationPriorityConfig() {
         ObjectDecoder decoder = new ObjectDecoder();
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("channel", new LeafNode("100"));
+        configs.put("socket", new LeafNode("200"));
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
@@ -842,4 +1003,183 @@ class ObjectDecoderTest {
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
     }
+
+    @Test
+    void decodeDefaultWithAnnotationPriorityConfig() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        //configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}",
+            result.getErrors().get(0).description());
+
+        DBInfoBothAnnotations results = (DBInfoBothAnnotations) result.results();
+        Assertions.assertEquals(1234, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeWithDefaultWrapper() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsWrapper.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(9, result.getErrors().size());
+        assertThat(result.getErrors().stream()
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE))).isTrue();
+
+        ObjectWithDefaultsWrapper results = (ObjectWithDefaultsWrapper) result.results();
+        Assertions.assertEquals((byte) 1, results.myByte);
+        Assertions.assertEquals((short) 2, results.myShort);
+        Assertions.assertEquals(3, results.myInteger);
+        Assertions.assertEquals(4L, results.myLong);
+        Assertions.assertEquals(5.5f, results.myFloat);
+        Assertions.assertEquals(6.6D, results.myDouble);
+        Assertions.assertEquals('a', results.myChar);
+        Assertions.assertEquals("a", results.myString);
+        Assertions.assertEquals(true, results.myBoolean);
+    }
+
+    @Test
+    void decodeWithDefaultPrimitive() {
+
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsPrimitive.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(8, result.getErrors().size());
+        assertThat(result.getErrors().stream()
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE))).isTrue();
+
+        ObjectWithDefaultsPrimitive results = (ObjectWithDefaultsPrimitive) result.results();
+        Assertions.assertEquals((byte) 1, results.myByte);
+        Assertions.assertEquals((short) 2, results.myShort);
+        Assertions.assertEquals(3, results.myInteger);
+        Assertions.assertEquals(4L, results.myLong);
+        Assertions.assertEquals(5.5f, results.myFloat);
+        Assertions.assertEquals(6.6D, results.myDouble);
+        Assertions.assertEquals('a', results.myChar);
+        Assertions.assertEquals(true, results.myBoolean);
+    }
+
+    @Test
+    void decodeWithOutDefaultPrimitive() {
+
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(ObjectWithWithoutDefaultsPrimitive.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(8, result.getErrors().size());
+        assertThat(result.getErrors().stream()
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_VALUE))).isTrue();
+
+        ObjectWithWithoutDefaultsPrimitive results = (ObjectWithWithoutDefaultsPrimitive) result.results();
+        Assertions.assertEquals((byte) 0, results.myByte);
+        Assertions.assertEquals((short) 0, results.myShort);
+        Assertions.assertEquals(0, results.myInteger);
+        Assertions.assertEquals(0L, results.myLong);
+        Assertions.assertEquals(0f, results.myFloat);
+        Assertions.assertEquals(0D, results.myDouble);
+        Assertions.assertEquals(Character.MIN_VALUE, results.myChar);
+        Assertions.assertEquals(false, results.myBoolean);
+    }
+
+    @Test
+    void decodeWithOutDefaultWrapper() {
+
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(ObjectWithoutDefaultsWrapper.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(9, result.getErrors().size());
+        assertThat(result.getErrors().stream()
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_VALUE))).isTrue();
+
+        ObjectWithoutDefaultsWrapper results = (ObjectWithoutDefaultsWrapper) result.results();
+        Assertions.assertNull(results.myByte);
+        Assertions.assertNull(results.myShort);
+        Assertions.assertNull(results.myInteger);
+        Assertions.assertNull(results.myLong);
+        Assertions.assertNull(results.myFloat);
+        Assertions.assertNull(results.myDouble);
+        Assertions.assertNull(results.myChar);
+        Assertions.assertNull(results.myString);
+        Assertions.assertNull(results.myBoolean);
+    }
+
+    @Test
+    void decodeWithZeroDefaultPrimitive() {
+
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("channel", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(ObjectWithZeroDefaultsWrapper.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(9, result.getErrors().size());
+        assertThat(result.getErrors().stream()
+            .allMatch(it -> it.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE))).isTrue();
+
+        ObjectWithZeroDefaultsWrapper results = (ObjectWithZeroDefaultsWrapper) result.results();
+        Assertions.assertEquals((byte) 0, results.myByte);
+        Assertions.assertEquals((short) 0, results.myShort);
+        Assertions.assertEquals(0, results.myInteger);
+        Assertions.assertEquals(0L, results.myLong);
+        Assertions.assertEquals(0f, results.myFloat);
+        Assertions.assertEquals(0D, results.myDouble);
+        Assertions.assertEquals(Character.MIN_VALUE, results.myChar);
+        Assertions.assertEquals("", results.myString);
+        Assertions.assertEquals(false, results.myBoolean);
+    }
+
 }

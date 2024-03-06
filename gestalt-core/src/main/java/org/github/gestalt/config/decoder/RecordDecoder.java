@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
@@ -54,6 +55,7 @@ public final class RecordDecoder implements Decoder<Object> {
         final Object[] values = new Object[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
             final RecComponent rc = recordComponents[i];
+            boolean foundValue = false;
 
             String name = rc.name();
             // if we have an annotation, use that for the path instead of the name.
@@ -67,19 +69,27 @@ public final class RecordDecoder implements Decoder<Object> {
             GResultOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
             var typeCapture = TypeCapture.of(fieldClass);
 
-            errors.addAll(configNode.getErrors());
-            if (!configNode.hasResults()) {
+            // Add any errors that are not missing value ones.
+            errors.addAll(configNode.getErrorsNotLevel(ValidationLevel.MISSING_VALUE));
+            if (configNode.hasResults()) {
+                GResultOf<?> fieldGResultOf = decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
+
+                errors.addAll(fieldGResultOf.getErrors());
+                if (fieldGResultOf.hasResults()) {
+                    foundValue = true;
+                    values[i] = fieldGResultOf.results();
+                }
+            } else {
                 // if we have no value, check the config annotation for a default.
-                if (configAnnotation != null && configAnnotation.defaultVal() != null &&
-                    !configAnnotation.defaultVal().isEmpty()) {
-                    GResultOf<?> defaultGResultOf = decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()),
-                        typeCapture, decoderContext);
+                if (configAnnotation != null && configAnnotation.defaultVal() != null && !configAnnotation.defaultVal().isEmpty()) {
+                    GResultOf<?> defaultGResultOf =
+                        decoderService.decodeNode(nextPath, tags, new LeafNode(configAnnotation.defaultVal()), typeCapture, decoderContext);
 
                     errors.addAll(defaultGResultOf.getErrors());
                     if (defaultGResultOf.hasResults()) {
+                        foundValue = true;
+                        errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
                         values[i] = defaultGResultOf.results();
-                    } else {
-                        hasAllValues = false;
                     }
                 } else {
                     // when we have no result for the field and no annotation default
@@ -87,22 +97,18 @@ public final class RecordDecoder implements Decoder<Object> {
                     GResultOf<?> decodedResults =
                         decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
                     if (decodedResults.hasResults()) {
+                        //only add the errors if we actually found a result, otherwise we dont care.
+                        errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
+                        errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
+                        foundValue = true;
                         values[i] = decodedResults.results();
-                    } else {
-                        hasAllValues = false;
                     }
                 }
-            } else {
-                GResultOf<?> fieldGResultOf =
-                    decoderService.decodeNode(nextPath, tags, configNode.results(), typeCapture, decoderContext);
+            }
 
-                errors.addAll(fieldGResultOf.getErrors());
-                if (fieldGResultOf.hasResults()) {
-                    values[i] = fieldGResultOf.results();
-                } else {
-                    hasAllValues = false;
-                    errors.add(new ValidationError.NoResultsFoundForNode(nextPath, fieldClass.getClass(), "record decoding"));
-                }
+            if (!foundValue) {
+                hasAllValues = false;
+                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "record decoding"));
             }
         }
 

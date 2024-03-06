@@ -88,9 +88,9 @@ class OptionalIntDecoderTest {
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Leaf on path: db.port, has no value attempting to decode Integer",
-            result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalInt on path: db.port, from node: " +
+            "LeafNode{value='null'}", result.getErrors().get(0).description());
     }
 
     @Test
@@ -103,8 +103,26 @@ class OptionalIntDecoderTest {
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalInt on path: db.port",
+            result.getErrors().get(0).description());
+    }
+
+    @Test
+    void notAnInteger() {
+        OptionalIntDecoder integerDecoder = new OptionalIntDecoder();
+
+        GResultOf<OptionalInt> result = integerDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
+            TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null));
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertEquals(OptionalInt.empty(), result.results());
+
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a leaf on path: db.port, received node type: null, attempting to decode Integer",
+        Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
+                "attempting to decode Integer",
             result.getErrors().get(0).description());
     }
 }

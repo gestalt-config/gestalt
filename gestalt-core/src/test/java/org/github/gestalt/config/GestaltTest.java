@@ -625,11 +625,14 @@ class GestaltTest {
 
         SentenceLexer lexer = new PathLexer(".");
 
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatMissingValuesAsErrors(false);
+
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null,
+            lexer, config, configNodeManager, null,
             Collections.singletonList(new TestPostProcessor("aaa")), Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
@@ -1105,8 +1108,7 @@ class GestaltTest {
         GestaltConfig config = new GestaltConfig();
         config.setTreatWarningsAsErrors(false);
         config.setTreatMissingArrayIndexAsError(false);
-        config.setTreatMissingValuesAsErrors(false);
-        config.setTreatNullValuesInClassAsErrors(true);
+        config.setTreatMissingValuesAsErrors(true);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
@@ -1128,13 +1130,11 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                    "during navigating to next node\n" +
-                    " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                    "during navigating to next node\n" +
-                    " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
-                    "field password results in null value");
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, " +
+                    "during object decoding\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: DBInfo, " +
+                    "during object decoding");
+
         }
     }
 
@@ -1154,7 +1154,6 @@ class GestaltTest {
         config.setTreatWarningsAsErrors(false);
         config.setTreatMissingArrayIndexAsError(false);
         config.setTreatMissingValuesAsErrors(false);
-        config.setTreatNullValuesInClassAsErrors(false);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
@@ -1192,7 +1191,7 @@ class GestaltTest {
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatMissingValuesAsErrors(false)
-            .setTreatNullValuesInClassAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -1219,7 +1218,7 @@ class GestaltTest {
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .setTreatMissingValuesAsErrors(true)
-            .setTreatNullValuesInClassAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
             .build();
 
         gestalt.loadConfigs();
@@ -1231,8 +1230,8 @@ class GestaltTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoOptional\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                    "during navigating to next node");
+                    " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, from node: " +
+                    "MapNode{mapNode={password=LeafNode{value='test'}, port=LeafNode{value='3306'}}}, with class: DBInfoOptional");
         }
     }
 

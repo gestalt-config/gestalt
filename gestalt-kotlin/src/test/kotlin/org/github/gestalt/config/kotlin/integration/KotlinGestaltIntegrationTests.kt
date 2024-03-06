@@ -31,7 +31,6 @@ class KotlinGestaltIntegrationTests {
             .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig<HttpPool>("http.pool")
@@ -56,7 +55,7 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout"))
         Assertions.assertEquals(123, db.idleTimeout)
         Assertions.assertEquals(60000.0f, db.maxLifetime)
-        Assertions.assertNull(db.isEnabled)
+        Assertions.assertTrue(db.isEnabled!!)
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true))
         Assertions.assertEquals(3, db.hosts!!.size)
         Assertions.assertEquals("credmond", db.hosts!![0].user)
@@ -84,15 +83,15 @@ class KotlinGestaltIntegrationTests {
         val noHosts: List<Host> = gestalt.getConfig("db.not.hosts", emptyList())
         Assertions.assertEquals(0, noHosts.size)
         val admin = gestalt.getConfig("admin", object : TypeCapture<User?>() {})!!
-        Assertions.assertEquals(3, admin.user?.size)
-        Assertions.assertEquals("Peter", admin.user!![0])
-        Assertions.assertEquals("Kim", admin.user!![1])
-        Assertions.assertEquals("Steve", admin.user!![2])
+        Assertions.assertEquals(3, admin.users?.size)
+        Assertions.assertEquals("Peter", admin.users!![0])
+        Assertions.assertEquals("Kim", admin.users!![1])
+        Assertions.assertEquals("Steve", admin.users!![2])
         Assertions.assertEquals(Role.LEVEL0, admin.accessRole)
         Assertions.assertTrue(admin.overrideEnabled)
-        val user = gestalt.getConfig("employee", object : TypeCapture<User?>() {})!!
-        Assertions.assertEquals(1, user.user?.size)
-        Assertions.assertEquals("Janice", user.user!![0])
+        val user:User = gestalt.getConfig("employee")
+        Assertions.assertEquals(1, user.users!!.size)
+        Assertions.assertEquals("Janice", user.users!![0])
         Assertions.assertEquals(Role.LEVEL1, user.accessRole)
         Assertions.assertFalse(user.overrideEnabled)
         Assertions.assertEquals(
@@ -243,7 +242,6 @@ class KotlinGestaltIntegrationTests {
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(EnvironmentConfigSourceBuilder.builder().build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         val pool = gestalt.getConfig("http.pool", HttpPool::class.java)
@@ -268,7 +266,7 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout"))
         Assertions.assertEquals(123, db.idleTimeout)
         Assertions.assertEquals(60000.0f, db.maxLifetime)
-        Assertions.assertNull(db.isEnabled)
+        Assertions.assertTrue(db.isEnabled!!)
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true))
         Assertions.assertEquals(3, db.hosts!!.size)
         Assertions.assertEquals("credmond", db.hosts!![0].user)
@@ -296,15 +294,15 @@ class KotlinGestaltIntegrationTests {
         val noHosts: List<Host> = gestalt.getConfig("db.not.hosts", emptyList())
         Assertions.assertEquals(0, noHosts.size)
         val admin: User = gestalt.getConfig("admin")!!
-        Assertions.assertEquals(3, admin.user?.size)
-        Assertions.assertEquals("Peter", admin.user!![0])
-        Assertions.assertEquals("Kim", admin.user!![1])
-        Assertions.assertEquals("Steve", admin.user!![2])
+        Assertions.assertEquals(3, admin.users?.size)
+        Assertions.assertEquals("Peter", admin.users!![0])
+        Assertions.assertEquals("Kim", admin.users!![1])
+        Assertions.assertEquals("Steve", admin.users!![2])
         Assertions.assertEquals(Role.LEVEL0, admin.accessRole)
         Assertions.assertTrue(admin.overrideEnabled)
         val user = gestalt.getConfig<User>("employee")
-        Assertions.assertEquals(1, user.user!!.size)
-        Assertions.assertEquals("Janice", user.user!![0])
+        Assertions.assertEquals(1, user.users!!.size)
+        Assertions.assertEquals("Janice", user.users!![0])
         Assertions.assertEquals(Role.LEVEL1, user.accessRole)
         Assertions.assertFalse(user.overrideEnabled)
         Assertions.assertEquals(
@@ -356,11 +354,11 @@ class KotlinGestaltIntegrationTests {
         var connectionTimeout = 0
         var idleTimeout: Int? = null
         var maxLifetime = 0f
-        var isEnabled: Boolean? = null
+        var isEnabled: Boolean? = true
     }
 
     data class User(
-        var user: Array<String>? = null,
+        var users: Array<String>? = null,
         var overrideEnabled: Boolean = false,
         var accessRole: Role? = null
     )

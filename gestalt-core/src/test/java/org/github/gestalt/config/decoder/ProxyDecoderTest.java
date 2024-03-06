@@ -110,8 +110,9 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, during navigating to next node",
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoInterface",
             result.getErrors().get(0).description());
 
         DBInfoInterface results = (DBInfoInterface) result.results();
@@ -134,11 +135,16 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(2, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
                 "LeafNode{value='aaaa'} attempting to decode Integer",
             result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}}, " +
+                "with class: DBInfoInterface",
+            result.getErrors().get(1).description());
 
         DBInfoInterface results = (DBInfoInterface) result.results();
         Assertions.assertEquals(10, results.getPort());
@@ -164,8 +170,9 @@ class ProxyDecoderTest {
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Leaf on path: db.host.uri, has no value attempting to decode String",
             result.getErrors().get(0).description());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Decoding object : DBInfoInterface on path: db.host.uri, field uri results in null value",
+
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.uri, for class: DBInfoInterface, during proxy decoding",
             result.getErrors().get(1).description());
 
         DBInfoInterface results = (DBInfoInterface) result.results();
@@ -199,9 +206,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
-                "during navigating to next node",
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, port=null, uri=LeafNode{value='mysql.com'}}}, " +
+                "with class: DBInfoInterface",
             result.getErrors().get(0).description());
 
         DBInfoInterface results = (DBInfoInterface) result.results();
@@ -215,7 +223,7 @@ class ProxyDecoderTest {
         ProxyDecoder decoder = new ProxyDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new LeafNode("mysql.com"), TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -230,7 +238,7 @@ class ProxyDecoderTest {
         ProxyDecoder decoder = new ProxyDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), null,
-            TypeCapture.of(DBInforNoConstructor.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -257,13 +265,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
-            " during navigating to next node", result.getErrors().get(0).description());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
-            " during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: DBPoolInterface, " +
+            "during proxy decoding", result.getErrors().get(0).description());
 
         DBPoolInterface results = (DBPoolInterface) result.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -302,14 +307,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
-            " during navigating to next node", result.getErrors().get(0).description());
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Decoding object : DBPoolGenericInterface on path: db.host.defaultWait, " +
-            "field defaultWait results in null value", result.getErrors().get(1).description());
+        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: DBPoolGenericInterface, " +
+            "during proxy decoding", result.getErrors().get(0).description());
 
         DBPoolGenericInterface results = (DBPoolGenericInterface) result.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -349,9 +350,12 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
-            " during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.defaultWait, from node: " +
+                "MapNode{mapNode={maxperroute=LeafNode{value='10'}, keepalivetimeoutms=LeafNode{value='123'}, " +
+                "idletimeoutsec=LeafNode{value='1000'}, validateafterinactivity=LeafNode{value='60'}, maxtotal=LeafNode{value='100'}, " +
+                "enabled=LeafNode{value='true'}}}, with class: DBPoolInterfaceDefault",
+            result.getErrors().get(0).description());
 
         DBPoolInterfaceDefault results = (DBPoolInterfaceDefault) result.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -382,9 +386,11 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.defaultWait, for class: ObjectToken," +
-            " during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.defaultWait, from node: " +
+            "MapNode{mapNode={maxperroute=LeafNode{value='10'}, keepalivetimeoutms=LeafNode{value='123'}, " +
+            "idletimeoutsec=LeafNode{value='1000'}, validateafterinactivity=LeafNode{value='60'}, maxtotal=LeafNode{value='100'}, " +
+            "enabled=LeafNode{value='true'}}}, with class: DBPoolInterfaceDefaultGeneric", result.getErrors().get(0).description());
 
         DBPoolInterfaceDefaultGeneric results = (DBPoolInterfaceDefaultGeneric) result.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -430,9 +436,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.channel, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: IDBInfoAnnotations",
+            result.getErrors().get(0).description());
 
         IDBInfoAnnotations results = (IDBInfoAnnotations) result.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -454,16 +461,13 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
-        Assertions.assertEquals(3, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to parse a number on Path: db.host.channel, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer", result.getErrors().get(1).description());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(2).level());
-        Assertions.assertEquals("Decoding object : IDBInfoBadAnnotations on path: db.host.channel, " +
-            "field channel results in null value", result.getErrors().get(2).description());
+            "attempting to decode Integer", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.channel, for class: IDBInfoBadAnnotations, " +
+            "during proxy decoding", result.getErrors().get(1).description());
 
         IDBInfoBadAnnotations results = (IDBInfoBadAnnotations) result.results();
         Assertions.assertEquals("pass", results.getPassword());
@@ -474,7 +478,7 @@ class ProxyDecoderTest {
             Assertions.fail("Should throw an exception");
         } catch (UndeclaredThrowableException e) {
             Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
-            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+            Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
             Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getPort " +
                     "with type: int in path: db.host.",
                 e.getUndeclaredThrowable().getMessage());
@@ -515,9 +519,10 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: IDBInfoMethodAnnotations",
+            result.getErrors().get(0).description());
 
         IDBInfoMethodAnnotations results = (IDBInfoMethodAnnotations) result.results();
         Assertions.assertEquals(1234, results.getPort());
@@ -544,7 +549,6 @@ class ProxyDecoderTest {
                 .setCustomConfig(configs)
                 .addConfigReloadStrategy(reload)
                 .build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.CACHE)
             .build();
 
@@ -584,7 +588,6 @@ class ProxyDecoderTest {
                 .setCustomConfig(configs)
                 .addConfigReloadStrategy(reload)
                 .build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.CACHE)
             .build();
 
@@ -625,7 +628,6 @@ class ProxyDecoderTest {
                 .setCustomConfig(configs)
                 .addConfigReloadStrategy(reload)
                 .build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.CACHE)
             .build();
 

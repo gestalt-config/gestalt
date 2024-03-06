@@ -48,7 +48,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
 
@@ -75,7 +74,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -99,7 +97,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -108,7 +105,10 @@ class ProxyDecoderPassThroughTest {
 
         Assertions.assertEquals("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterface\n" +
                 " - level: ERROR, message: Unable to parse a number on Path: db.port, from node: LeafNode{value='aaaa'} " +
-                "attempting to decode Integer",
+                "attempting to decode Integer\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}}, " +
+                "with class: DBInfoInterface",
             exception.getMessage());
     }
 
@@ -127,8 +127,8 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .setTreatMissingValuesAsErrors(false)
             .build();
         gestalt.loadConfigs();
 
@@ -168,7 +168,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(true)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -176,12 +175,9 @@ class ProxyDecoderPassThroughTest {
         GestaltException exception = Assertions.assertThrows(GestaltException.class,
             () -> gestalt.getConfig("db", DBPoolInterface.class));
 
-        Assertions.assertEquals("Failed getting config path: db, for class: " +
-                "org.github.gestalt.config.test.classes.DBPoolInterface\n" +
-                " - level: MISSING_VALUE, message: Unable to find node matching path: db.defaultWait, for class: ObjectToken, " +
-                "during navigating to next node\n" +
-                " - level: ERROR, message: Decoding object : DBPoolInterface on path: db.defaultWait, " +
-                "field defaultWait results in null value",
+        Assertions.assertEquals("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBPoolInterface\n" +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: db.defaultWait, for class: DBPoolInterface, " +
+                "during proxy decoding",
             exception.getMessage());
     }
 
@@ -193,6 +189,7 @@ class ProxyDecoderPassThroughTest {
         configs.put("db.validateafterinactivity", "60");
         configs.put("db.keepalivetimeoutms", "123");
         configs.put("db.idletimeoutsec", "1000");
+        //configs.put("db.defaultWait", "30.1");
         configs.put("db.enabled", "true");
 
         // using the builder to layer on the configuration files.
@@ -200,8 +197,8 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .setTreatMissingValuesAsErrors(false)
             .build();
         gestalt.loadConfigs();
 
@@ -211,6 +208,7 @@ class ProxyDecoderPassThroughTest {
         Assertions.assertEquals(10, results.getMaxPerRoute());
         Assertions.assertEquals(60, results.getValidateAfterInactivity());
         Assertions.assertEquals(123, results.getKeepAliveTimeoutMs());
+        //Assertions.assertEquals(30.1f, results.getDefaultWait());
         Assertions.assertEquals(1000, results.getIdleTimeoutSec().get());
         Assertions.assertTrue(results.isEnabled());
 
@@ -240,7 +238,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -272,7 +269,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -300,7 +296,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -323,7 +318,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -346,21 +340,18 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
 
         GestaltException exception = Assertions.assertThrows(GestaltException.class,
             () -> gestalt.getConfig("db", IDBInfoBadAnnotations.class));
-        Assertions.assertEquals("Failed getting config path: db, for class: " +
-            "org.github.gestalt.config.test.classes.IDBInfoBadAnnotations\n" +
-            " - level: MISSING_VALUE, message: Unable to find node matching path: db.channel, for class: ObjectToken, " +
-            "during navigating to next node\n" +
+        Assertions.assertEquals(
+            "Failed getting config path: db, for class: org.github.gestalt.config.test.classes.IDBInfoBadAnnotations\n" +
             " - level: ERROR, message: Unable to parse a number on Path: db.channel, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer\n" +
-            " - level: ERROR, message: Decoding object : IDBInfoBadAnnotations on path: db.channel, field channel " +
-            "results in null value", exception.getMessage());
+                "attempting to decode Integer\n" +
+            " - level: MISSING_VALUE, message: Unable to find node matching path: db.channel, for class: IDBInfoBadAnnotations, " +
+                "during proxy decoding", exception.getMessage());
     }
 
     @Test
@@ -375,7 +366,6 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -399,7 +389,7 @@ class ProxyDecoderPassThroughTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
+            .setTreatMissingValuesAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
         gestalt.loadConfigs();
@@ -431,7 +421,6 @@ class ProxyDecoderPassThroughTest {
                 .setCustomConfig(configs)
                 .addConfigReloadStrategy(reload)
                 .build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
 

@@ -153,7 +153,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -183,7 +182,6 @@ public class GestaltSample {
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .useCacheDecorator(false)
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -265,7 +263,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").setTags(Tags.profile("test")).build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).setTags(Tags.profile("test")).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.profile("test")).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setDefaultTags(Tags.profile("test"))
             .build();
 
@@ -320,7 +317,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
 
@@ -389,8 +385,8 @@ public class GestaltSample {
         Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+        Assertions.assertTrue(db.isEnabled);
+        Assertions.assertTrue(gestalt.getConfig("db.unkown", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -452,8 +448,8 @@ public class GestaltSample {
         Assertions.assertEquals(2222, gestalt.getConfig("db.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+        Assertions.assertTrue(db.isEnabled);
+        Assertions.assertTrue(gestalt.getConfig("db.unkown", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -510,7 +506,6 @@ public class GestaltSample {
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(EnvironmentConfigSourceBuilder.builder().build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -555,7 +550,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultMulti.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -588,7 +582,6 @@ public class GestaltSample {
             .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -612,7 +605,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.yml").build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -633,7 +625,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.json").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -660,7 +651,6 @@ public class GestaltSample {
             .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -687,7 +677,6 @@ public class GestaltSample {
             .addSource(FileConfigSourceBuilder.builder().setFile(defaultFile).build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -722,7 +711,6 @@ public class GestaltSample {
             .addSource(source)
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -758,7 +746,6 @@ public class GestaltSample {
                 .build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -807,7 +794,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(GCSConfigSourceBuilder.builder().setBucketName("gestalt-test").setObjectName("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -869,7 +855,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(S3ConfigSourceBuilder.builder().setS3(s3Client).setBucketName("gestalt-test").setKeyName("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
             .build();
 
@@ -935,8 +920,8 @@ public class GestaltSample {
         Assertions.assertEquals(600, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+        Assertions.assertTrue(db.isEnabled);
+        Assertions.assertTrue(gestalt.getConfig("db.doesNotExist", true, Boolean.class));
 
         // Test optional values.
         Assertions.assertEquals(600, gestalt.getConfigOptional("db.connectionTimeout", Integer.class).get());
@@ -967,7 +952,7 @@ public class GestaltSample {
         Assertions.assertEquals(600, dbPrefix.connectionTimeout);
         Assertions.assertEquals(123, dbPrefix.idleTimeout);
         Assertions.assertEquals(60000.0F, dbPrefix.maxLifetime);
-        Assertions.assertNull(dbPrefix.isEnabled);
+        Assertions.assertTrue(dbPrefix.isEnabled);
 
         Assertions.assertEquals(3, dbPrefix.hosts.size());
         Assertions.assertEquals("credmond", dbPrefix.hosts.get(0).getUser());
@@ -1127,8 +1112,8 @@ public class GestaltSample {
         Assertions.assertEquals(600, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+        Assertions.assertTrue(db.isEnabled);
+        Assertions.assertTrue(gestalt.getConfig("db.unkown", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -1169,7 +1154,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addDefaultPostProcessors()
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -1210,7 +1194,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -1241,7 +1224,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPNode.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -1270,7 +1252,6 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPVault.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .addModuleConfig(vaultModuleConfig)
             .build();
 
@@ -1570,7 +1551,7 @@ public class GestaltSample {
         public int connectionTimeout;
         public Integer idleTimeout;
         public float maxLifetime;
-        public Boolean isEnabled;
+        public Boolean isEnabled = true;
 
 
         public DataBase() {
@@ -1583,7 +1564,7 @@ public class GestaltSample {
         public int connectionTimeout;
         public Integer idleTimeout;
         public float maxLifetime;
-        public Boolean isEnabled;
+        public Boolean isEnabled = true;
 
         public DataBasePrefix() {
         }

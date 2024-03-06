@@ -259,8 +259,6 @@ class GestaltBuilderTest {
             .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
             .setTreatWarningsAsErrors(false)
             .setTreatMissingArrayIndexAsError(false)
-            .setTreatMissingValuesAsErrors(false)
-            .setTreatNullValuesInClassAsErrors(true)
             .build();
 
         gestalt.loadConfigs();
@@ -271,13 +269,10 @@ class GestaltBuilderTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                    "during navigating to next node\n" +
-                    " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                    "during navigating to next node\n" +
-                    " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
-                    "field password results in null value");
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, " +
+                    "during object decoding\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: DBInfo, " +
+                    "during object decoding");
         }
     }
 
@@ -297,7 +292,6 @@ class GestaltBuilderTest {
         config.setTreatWarningsAsErrors(false);
         config.setTreatMissingArrayIndexAsError(false);
         config.setTreatMissingValuesAsErrors(false);
-        config.setTreatNullValuesInClassAsErrors(false);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");

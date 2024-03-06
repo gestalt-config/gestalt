@@ -1,6 +1,8 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
@@ -31,14 +33,18 @@ public final class OptionalLongDecoder implements Decoder<OptionalLong> {
 
     @Override
     public GResultOf<OptionalLong> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
-        // decode the generic type of the optional. Then we will wrap the result into an Optional
-        GResultOf<Long> optionalValue = decoderContext.getDecoderService()
-            .decodeNode(path, tags, node, TypeCapture.of(Long.class), decoderContext);
+        if (node instanceof LeafNode && node.getValue().isPresent()) {
+            // decode the generic type of the optional. Then we will wrap the result into an Optional
+            GResultOf<Long> optionalValue = decoderContext.getDecoderService()
+                .decodeNode(path, tags, node, TypeCapture.of(Long.class), decoderContext);
 
-        if (optionalValue.hasResults()) {
-            return GResultOf.resultOf(OptionalLong.of(optionalValue.results()), optionalValue.getErrors());
+            if (optionalValue.hasResults()) {
+                return GResultOf.resultOf(OptionalLong.of(optionalValue.results()), optionalValue.getErrors());
+            } else {
+                return GResultOf.resultOf(OptionalLong.empty(), optionalValue.getErrors());
+            }
         } else {
-            return GResultOf.resultOf(OptionalLong.empty(), optionalValue.getErrors());
+            return GResultOf.resultOf(OptionalLong.empty(), new ValidationError.OptionalMissingValueDecoding(path, node, name()));
         }
     }
 }
