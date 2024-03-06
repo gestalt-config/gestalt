@@ -15,7 +15,6 @@ class DecoderContextTest {
         DecoderService  decoderService2  = Mockito.mock();
         DecoderContext decoderContext = new DecoderContext(decoderService, gestalt);
         DecoderContext decoderContext1 = new DecoderContext(decoderService, gestalt);
-        DecoderContext decoderContext2 = new DecoderContext(decoderService2, gestalt2);
         DecoderContext decoderContext3 = new DecoderContext(decoderService, gestalt2);
         DecoderContext decoderContext4 = new DecoderContext(decoderService2, gestalt);
 
