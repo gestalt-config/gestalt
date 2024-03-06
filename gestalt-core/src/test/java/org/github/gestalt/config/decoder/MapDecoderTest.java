@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -47,6 +48,8 @@ class MapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map<String, Long>>() {
+        }));
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map>() {
         }));
 
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfo.class)));
@@ -313,6 +316,27 @@ class MapDecoderTest {
     }
 
     @Test
+    void decodeWrongTypeInt() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("300"));
+        configs.put("password", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<Integer>() {
+            }, new DecoderContext(decoderService, null));
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals("Expected a map node on path: db.host, received node type : MAP",
+            result.getErrors().get(0).description());
+    }
+
+    @Test
     void decodeMapNodeNullInside() {
         MapDecoder decoder = new MapDecoder();
 
@@ -339,6 +363,93 @@ class MapDecoderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals("Expected a map node on path: db.host, received node type : null",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeWrongKeyType() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("a", new LeafNode("100"));
+        configs.put("2", new LeafNode("300"));
+        configs.put("3", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<Map<Integer, Integer>>() {
+            }, new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to parse a number on Path: db.host.a, from node: LeafNode{value='a'} " +
+                "attempting to decode Integer",
+            result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
+        Assertions.assertEquals("Map key was null on path: db.host.a",
+            result.getErrors().get(1).description());
+
+        Map<Integer, Integer> results = (Map<Integer, Integer>) result.results();
+        Assertions.assertEquals(2, results.size());
+        Assertions.assertEquals(null, results.get(1));
+        Assertions.assertEquals(300, results.get(2));
+        Assertions.assertEquals(6000, results.get(3));
+    }
+
+    @Test
+    void decodeWrongValueType() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("1", new LeafNode("a"));
+        configs.put("2", new LeafNode("300"));
+        configs.put("3", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<Map<Integer, Integer>>() {
+            }, new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to parse a number on Path: db.host.1, from node: LeafNode{value='a'} " +
+                "attempting to decode Integer",
+            result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
+        Assertions.assertEquals("Map key was null on path: db.host.1",
+            result.getErrors().get(1).description());
+
+        Map<Integer, Integer> results = (Map<Integer, Integer>) result.results();
+        Assertions.assertEquals(3, results.size());
+        Assertions.assertEquals(null, results.get(1));
+        Assertions.assertEquals(300, results.get(2));
+        Assertions.assertEquals(6000, results.get(3));
+    }
+
+    @Test
+    void decodePathNull() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("1", new LeafNode("100"));
+        configs.put("2", new LeafNode("300"));
+        configs.put("3", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode(null, Tags.of(), new MapNode(configs),
+            new TypeCapture<Map<Integer, Integer>>() {
+            }, new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Map<Integer, Integer> results = (Map<Integer, Integer>) result.results();
+        Assertions.assertEquals(3, results.size());
+        Assertions.assertEquals(100, results.get(1));
+        Assertions.assertEquals(300, results.get(2));
+        Assertions.assertEquals(6000, results.get(3));
     }
 
     static class User {
