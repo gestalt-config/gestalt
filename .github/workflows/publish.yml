@@ -25,14 +25,14 @@ jobs:
           base64 -d ~/.gradle/secring.gpg.b64 > ~/.gradle/secring.gpg
           
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Publish package
         # wraped the signing.password with single quotes as the password could contain special characters
@@ -43,6 +43,6 @@ jobs:
 
       - name: Publish Coverage
         if: success()
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
