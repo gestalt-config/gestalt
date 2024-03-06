@@ -14,6 +14,7 @@ import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
+import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
@@ -572,6 +573,24 @@ class GestaltBuilderTest {
     }
 
     @Test
+    public void buildBadPostProcessorEmpty() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.addPostProcessors(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
+        }
+
+        try {
+            builder.setPostProcessors(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
+        }
+    }
+
+    @Test
     public void buildBadConfigLoaders() {
         GestaltBuilder builder = new GestaltBuilder();
         try {
@@ -586,6 +605,60 @@ class GestaltBuilderTest {
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No config loader provided while setting config loaders", e.getMessage());
+        }
+    }
+
+    @Test
+    public void buildBadConfigLoadersEmpty() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.addConfigLoaders(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No config loader provided while adding config loaders", e.getMessage());
+        }
+
+        try {
+            builder.setConfigLoaders(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No config loader provided while setting config loaders", e.getMessage());
+        }
+    }
+
+    @Test
+    public void buildBadPathMappers() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.setPathMappers(null);
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMappers provided while setting", e.getMessage());
+        }
+
+        try {
+            builder.addPathMapper((List<PathMapper>) null);
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMapper provided while adding", e.getMessage());
+        }
+    }
+
+    @Test
+    public void buildBadPathMappersEmpty() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.setPathMappers(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMappers provided while setting", e.getMessage());
+        }
+
+        try {
+            builder.addPathMapper(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMapper provided while adding", e.getMessage());
         }
     }
 

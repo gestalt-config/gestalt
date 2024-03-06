@@ -372,30 +372,6 @@ public abstract class ValidationError {
     }
 
     /**
-     * While decoding a leaf it is missing its value.
-     */
-    public static class DecodingArrayMissingValue extends ValidationError {
-        private final String path;
-        private final String decoderName;
-
-        public DecodingArrayMissingValue(String path, String decoderName) {
-            super(ValidationLevel.MISSING_VALUE);
-            this.path = path;
-            this.decoderName = decoderName;
-        }
-
-        @Override
-        public String description() {
-            return "Array on path: " + path + ", has no value attempting to decode " + decoderName;
-        }
-
-        @Override
-        public boolean hasNoResults() {
-            return true;
-        }
-    }
-
-    /**
      * No results found for path while building config node.
      */
     public static class NoResultsFoundForPath extends ValidationError {
