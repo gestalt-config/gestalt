@@ -23,6 +23,7 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
+import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
@@ -252,7 +253,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         // fail on errors if this is not an optional type.
         // get the default value used if this is an optional type
         // most likely an optional.empty()
-        Pair<Boolean, T> isOptionalAndDefault = isOptionalAndDefault(klass);
+        Pair<Boolean, T> isOptionalAndDefault = ClassUtils.isOptionalAndDefault(klass.getRawType());
 
         return getConfigInternal(path, !isOptionalAndDefault.getFirst(), isOptionalAndDefault.getSecond(), klass, tags);
     }
@@ -433,20 +434,5 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         return error.level() == ValidationLevel.WARN || error.level() == ValidationLevel.DEBUG;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Pair<Boolean, T> isOptionalAndDefault(TypeCapture<T> klass) {
-        if (Optional.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) Optional.empty());
-        } else if (OptionalInt.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) OptionalInt.empty());
-        } else if (OptionalLong.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) OptionalLong.empty());
-        } else if (OptionalDouble.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) OptionalDouble.empty());
-        } else {
-            return new Pair<>(false, null);
-        }
     }
 }

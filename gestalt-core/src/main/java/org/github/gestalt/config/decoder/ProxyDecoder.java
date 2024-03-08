@@ -11,7 +11,9 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.lang.invoke.MethodHandles;
@@ -34,6 +36,8 @@ public final class ProxyDecoder implements Decoder<Object> {
     // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
     private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
 
+    private GestaltConfig config;
+
 
     private static String getConfigNameFromMethod(String methodName, Type returnType) {
         String name = methodName;
@@ -54,6 +58,7 @@ public final class ProxyDecoder implements Decoder<Object> {
     @Override
     public void applyConfig(GestaltConfig config) {
         proxyDecoderMode = config.getProxyDecoderMode();
+        this.config = config;
     }
 
     /**
@@ -140,6 +145,20 @@ public final class ProxyDecoder implements Decoder<Object> {
                         foundValue = true;
                         errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
                     }
+                } else {
+                    // even though we have default value in the annotation lets try to decode the field,
+                    // as it may be an optional that can support null values.
+                    GResultOf<?> decodedResults = decoderService
+                        .decodeNode(nextPath, tags, configNode.results(), TypeCapture.of(returnType), decoderContext);
+
+                    // if the decoder supported nullable types (such as optional) set the field to the value.
+                    if (decodedResults.hasResults()) {
+                        //only add the errors if we actually found a result, otherwise we dont care.
+                        errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
+                        errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
+                        foundValue = true;
+                        methodResults.put(methodName, decodedResults.results());
+                    }
                 }
             }
 
@@ -154,13 +173,13 @@ public final class ProxyDecoder implements Decoder<Object> {
         switch (proxyDecoderMode) {
 
             case PASSTHROUGH: {
-                proxyHandler = new ProxyPassThroughInvocationHandler(path, tags, decoderContext);
+                proxyHandler = new ProxyPassThroughInvocationHandler(path, tags, decoderContext, config);
                 break;
             }
 
             case CACHE:
             default: {
-                proxyHandler = new ProxyCacheInvocationHandler(path, tags, decoderContext, methodResults);
+                proxyHandler = new ProxyCacheInvocationHandler(path, tags, decoderContext, config, methodResults);
                 if (decoderContext.getGestalt() != null) {
                     decoderContext.getGestalt().registerListener((ProxyCacheInvocationHandler) proxyHandler);
                 }
@@ -177,12 +196,14 @@ public final class ProxyDecoder implements Decoder<Object> {
         protected final String path;
         protected final Tags tags;
         protected final DecoderContext decoderContext;
+        protected final GestaltConfig config;
 
 
-        private ProxyPassThroughInvocationHandler(String path, Tags tags, DecoderContext decoderContext) {
+        private ProxyPassThroughInvocationHandler(String path, Tags tags, DecoderContext decoderContext, GestaltConfig config) {
             this.path = path;
             this.tags = tags;
             this.decoderContext = decoderContext;
+            this.config = config;
         }
 
         @Override
@@ -191,9 +212,28 @@ public final class ProxyDecoder implements Decoder<Object> {
             Class<?> returnType = method.getReturnType();
 
             Optional<Object> result = retrieveConfig(proxy, method, args);
-            return result.orElseThrow(() ->
-                new GestaltException("Failed to get pass through object from proxy config while calling method: " + methodName +
-                    " with type: " + returnType + " in path: " + path + "."));
+
+            Object gestaltResult = null;
+
+            if (result.isPresent()) {
+                gestaltResult = result.get();
+            } else {
+                Pair<Boolean, ?> optionalInfo = ClassUtils.isOptionalAndDefault(returnType);
+                if (optionalInfo.getFirst() && !config.isTreatMissingDiscretionaryValuesAsErrors()) {
+                    gestaltResult = optionalInfo.getSecond();
+                } else if (!config.isTreatMissingValuesAsErrors()) {
+                    if (returnType.isPrimitive()) {
+                        gestaltResult = ClassUtils.getDefaultValue(returnType);
+                    } else {
+                        //noinspection DataFlowIssue assigning null for ease of reading here
+                        gestaltResult = null;
+                    }
+                } else
+                    throw new GestaltException("Failed to get pass through object from proxy config while calling method: " + methodName +
+                        " with type: " + returnType + " in path: " + path + ".");
+            }
+
+            return gestaltResult;
         }
 
         protected Optional<Object> retrieveConfig(Object proxy, Method method, Object[] args) throws Throwable {
@@ -261,8 +301,8 @@ public final class ProxyDecoder implements Decoder<Object> {
         private final Map<String, Object> methodResults;
 
 
-        private ProxyCacheInvocationHandler(String path, Tags tags, DecoderContext decoderContext, Map<String, Object> methodResults) {
-            super(path, tags, decoderContext);
+        private ProxyCacheInvocationHandler(String path, Tags tags, DecoderContext decoderContext, GestaltConfig config, Map<String, Object> methodResults) {
+            super(path, tags, decoderContext, config);
             this.methodResults = methodResults;
         }
 
@@ -276,9 +316,26 @@ public final class ProxyDecoder implements Decoder<Object> {
                 return result;
             } else {
                 Optional<Object> resultOptional = retrieveConfig(proxy, method, args);
-                var gestaltResult = resultOptional.orElseThrow(() ->
-                    new GestaltException("Failed to get cached object from proxy config while calling method: " + methodName +
-                        " with type: " + returnType + " in path: " + path + "."));
+
+                Object gestaltResult = null;
+                if (resultOptional.isPresent()) {
+                    gestaltResult = resultOptional.get();
+                } else {
+                    Pair<Boolean, ?> optionalInfo = ClassUtils.isOptionalAndDefault(returnType);
+                    if (optionalInfo.getFirst() && !config.isTreatMissingDiscretionaryValuesAsErrors()) {
+                        gestaltResult = optionalInfo.getSecond();
+                    } else if (!config.isTreatMissingValuesAsErrors()) {
+                        if (returnType.isPrimitive()) {
+                            gestaltResult = ClassUtils.getDefaultValue(returnType);
+                        } else {
+                            //noinspection DataFlowIssue assigning null for ease of reading here
+                            gestaltResult = null;
+                        }
+                    } else {
+                        throw new GestaltException("Failed to get cached object from proxy config while calling method: " + methodName +
+                            " with type: " + returnType + " in path: " + path + ".");
+                    }
+                }
 
                 methodResults.put(methodName, gestaltResult);
 

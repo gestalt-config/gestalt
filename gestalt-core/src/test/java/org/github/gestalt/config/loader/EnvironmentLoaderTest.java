@@ -423,7 +423,7 @@ class EnvironmentLoaderTest {
         Assertions.assertEquals(1, results.results().size());
 
         Assertions.assertInstanceOf(MapNode.class, results.results().get(0).getConfigNode());
-        Assertions.assertEquals(0, ((MapNode)results.results().get(0).getConfigNode()).size());
+        Assertions.assertEquals(0, ((MapNode) results.results().get(0).getConfigNode()).size());
 
     }
 

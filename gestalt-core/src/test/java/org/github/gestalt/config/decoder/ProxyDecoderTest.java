@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ProxyDecoderTest {
 
@@ -59,7 +62,7 @@ class ProxyDecoderTest {
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map<Long, String>>() {
         }));
 
-        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfoInterface.class)));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfoInterfaceDefault.class)));
         Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBPoolInterface.class)));
         Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<DBPoolInterface>() {
         }));
@@ -79,6 +82,10 @@ class ProxyDecoderTest {
     @Test
     void decode() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("port", new LeafNode("100"));
@@ -86,11 +93,11 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
-        DBInfoInterface results = (DBInfoInterface) result.results();
+        DBInfoInterfaceDefault results = (DBInfoInterfaceDefault) result.results();
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
@@ -99,23 +106,27 @@ class ProxyDecoderTest {
     @Test
     void decodeDefaultMethodValues() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoInterface",
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoInterfaceDefault",
             result.getErrors().get(0).description());
 
-        DBInfoInterface results = (DBInfoInterface) result.results();
+        DBInfoInterfaceDefault results = (DBInfoInterfaceDefault) result.results();
         Assertions.assertEquals(10, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
@@ -124,6 +135,10 @@ class ProxyDecoderTest {
     @Test
     void decodeBadNodeNotAnInt() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("port", new LeafNode("aaaa"));
@@ -131,7 +146,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -143,10 +158,10 @@ class ProxyDecoderTest {
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
         Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
                 "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}}, " +
-                "with class: DBInfoInterface",
+                "with class: DBInfoInterfaceDefault",
             result.getErrors().get(1).description());
 
-        DBInfoInterface results = (DBInfoInterface) result.results();
+        DBInfoInterfaceDefault results = (DBInfoInterfaceDefault) result.results();
         Assertions.assertEquals(10, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
@@ -155,6 +170,10 @@ class ProxyDecoderTest {
     @Test
     void decodeNullLeafNodeValue() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("port", new LeafNode("100"));
@@ -194,9 +213,82 @@ class ProxyDecoderTest {
     @Test
     void decodeNullLeafNode() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("port", null);
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, port=null, uri=LeafNode{value='mysql.com'}}}, " +
+                "with class: DBInfoInterfaceDefault",
+            result.getErrors().get(0).description());
+
+        DBInfoInterfaceDefault results = (DBInfoInterfaceDefault) result.results();
+        Assertions.assertEquals(10, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
+
+    @Test
+    void decodeMissingLeafNodeValueInteger() {
+        ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        //configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterface2.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: DBInfoInterface2, " +
+            "during proxy decoding", result.getErrors().get(0).description());
+
+        DBInfoInterface2 results = (DBInfoInterface2) result.results();
+        Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals("pass", results.getPassword());
+
+        try {
+            results.getPort();
+            Assertions.fail("Should throw an exception");
+        } catch (UndeclaredThrowableException e) {
+            Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getPort with " +
+                "type: class java.lang.Integer in path: db.host.", e.getUndeclaredThrowable().getMessage());
+        }
+    }
+
+    @Test
+    void decodeMissingLeafNodeValueInt() {
+        ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        //configs.put("port", new LeafNode("100"));
         configs.put("uri", new LeafNode("mysql.com"));
         configs.put("password", new LeafNode("pass"));
 
@@ -206,21 +298,96 @@ class ProxyDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='pass'}, port=null, uri=LeafNode{value='mysql.com'}}}, " +
-                "with class: DBInfoInterface",
-            result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, for class: DBInfoInterface, " +
+            "during proxy decoding", result.getErrors().get(0).description());
 
         DBInfoInterface results = (DBInfoInterface) result.results();
-        Assertions.assertEquals(10, results.getPort());
-        Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("mysql.com", results.getUri());
+        Assertions.assertEquals("pass", results.getPassword());
+
+        try {
+            results.getPort();
+            Assertions.fail("Should throw an exception");
+        } catch (UndeclaredThrowableException e) {
+            Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: " +
+                "getPort with type: int in path: db.host.", e.getUndeclaredThrowable().getMessage());
+        }
+    }
+
+    @Test
+    void decodeMissingLeafNodeValueOptionalInteger() {
+        ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        //configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceOptional.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoInterfaceOptional",
+            result.getErrors().get(0).description());
+
+        DBInfoInterfaceOptional results = (DBInfoInterfaceOptional) result.results();
+        Assertions.assertEquals("mysql.com", results.getUri().get());
+        Assertions.assertEquals("pass", results.getPassword().get());
+        Assertions.assertTrue(results.getPort().isEmpty());
+    }
+
+    @Test
+    void decodeMissingLeafNodeValueOptionalIntegerAsError() {
+        ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(true);
+        decoder.applyConfig(gestaltConfig);
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        //configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceOptional.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoInterfaceOptional",
+            result.getErrors().get(0).description());
+
+        DBInfoInterfaceOptional results = (DBInfoInterfaceOptional) result.results();
+        Assertions.assertEquals("mysql.com", results.getUri().get());
+        Assertions.assertEquals("pass", results.getPassword().get());
+
+        // this behaviour is a little strange, since we TreatMissingDiscretionaryValuesAsErrors = true, this should
+        // throw an error, but it doesn't.
+        // instead using gestalt we wouldn't get here as it would throw an error and not give the result.
+        Assertions.assertTrue(results.getPort().isEmpty());
     }
 
     @Test
     void decodeWrongNodeType() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
             new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
@@ -236,6 +403,10 @@ class ProxyDecoderTest {
     @Test
     void decodeNullNode() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), null,
             TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
@@ -251,6 +422,10 @@ class ProxyDecoderTest {
     @Test
     void decodeHttpPool() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("maxtotal", new LeafNode("100"));
@@ -293,6 +468,10 @@ class ProxyDecoderTest {
     @Test
     void decodeHttpPoolGeneric() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("maxtotal", new LeafNode("100"));
@@ -333,8 +512,63 @@ class ProxyDecoderTest {
     }
 
     @Test
+    void decodeHttpPoolGenericWrapper() {
+        ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("maxtotal", new LeafNode("100"));
+        configs.put("maxperroute", new LeafNode("10"));
+        configs.put("validateafterinactivity", new LeafNode("60"));
+        configs.put("keepalivetimeoutms", new LeafNode("123"));
+        configs.put("idletimeoutsec", new LeafNode("1000"));
+        configs.put("enabled", new LeafNode("true"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
+            new MapNode(configs), TypeCapture.of(DBPoolInterfaceWrapper.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+
+        assertThat(result.getErrors())
+            .anyMatch(item -> item.description().equals("Unable to find node matching path: db.host.isEnabled, " +
+                "for class: DBPoolInterfaceWrapper, during proxy decoding") &&
+                item.level() == ValidationLevel.MISSING_VALUE)
+            .anyMatch(item -> item.description().equals("Unable to find node matching path: db.host.isEnabled, " +
+                "for class: DBPoolInterfaceWrapper, during proxy decoding") &&
+                item.level() == ValidationLevel.MISSING_VALUE);
+
+        DBPoolInterfaceWrapper results = (DBPoolInterfaceWrapper) result.results();
+        Assertions.assertEquals(100, results.getMaxTotal());
+        Assertions.assertEquals(10, results.getMaxPerRoute());
+        Assertions.assertEquals(60, results.getValidateAfterInactivity());
+        Assertions.assertEquals(123, results.getKeepAliveTimeoutMs());
+        Assertions.assertEquals(1000, results.getIdleTimeoutSec().get());
+
+        try {
+            results.getDefaultWait();
+            Assertions.fail("Should throw an exception");
+        } catch (UndeclaredThrowableException e) {
+            Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
+            Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+            Assertions.assertEquals("Failed to get cached object from proxy config while calling method: getDefaultWait with type: " +
+                    "class java.lang.Float in path: db.host.",
+                e.getUndeclaredThrowable().getMessage());
+        }
+    }
+
+    @Test
     void decodeHttpPoolDefault() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("maxtotal", new LeafNode("100"));
@@ -371,6 +605,10 @@ class ProxyDecoderTest {
     @Test
     void decodeHttpPoolDefaultGeneric() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("maxtotal", new LeafNode("100"));
@@ -405,6 +643,10 @@ class ProxyDecoderTest {
     @Test
     void decodeAnnotations() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("channel", new LeafNode("100"));
@@ -425,6 +667,10 @@ class ProxyDecoderTest {
     @Test
     void decodeAnnotationsDefault() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("uri", new LeafNode("mysql.com"));
@@ -438,7 +684,7 @@ class ProxyDecoderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.channel, from node: " +
-            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: IDBInfoAnnotations",
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: IDBInfoAnnotations",
             result.getErrors().get(0).description());
 
         IDBInfoAnnotations results = (IDBInfoAnnotations) result.results();
@@ -450,6 +696,10 @@ class ProxyDecoderTest {
     @Test
     void decodeBadAnnotationsDefault() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("uri", new LeafNode("mysql.com"));
@@ -488,6 +738,10 @@ class ProxyDecoderTest {
     @Test
     void decodeAnnotationsLong() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("channel", new MapNode(Map.of("port", new LeafNode("100"))));
@@ -508,6 +762,10 @@ class ProxyDecoderTest {
     @Test
     void decodeAnnotationsOnlyDefault() {
         ProxyDecoder decoder = new ProxyDecoder();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setTreatMissingValuesAsErrors(true);
+        gestaltConfig.setTreatMissingDiscretionaryValuesAsErrors(false);
+        decoder.applyConfig(gestaltConfig);
 
         Map<String, ConfigNode> configs = new HashMap<>();
         configs.put("uri", new LeafNode("mysql.com"));
@@ -521,7 +779,7 @@ class ProxyDecoderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, from node: " +
-            "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: IDBInfoMethodAnnotations",
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: IDBInfoMethodAnnotations",
             result.getErrors().get(0).description());
 
         IDBInfoMethodAnnotations results = (IDBInfoMethodAnnotations) result.results();
@@ -555,7 +813,7 @@ class ProxyDecoderTest {
         gestalt.loadConfigs();
 
 
-        DBInfoInterface results = gestalt.getConfig("db", DBInfoInterface.class);
+        DBInfoInterfaceDefault results = gestalt.getConfig("db", DBInfoInterfaceDefault.class);
 
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
@@ -594,7 +852,7 @@ class ProxyDecoderTest {
         gestalt.loadConfigs();
 
 
-        DBInfoInterface results = gestalt.getConfig("db", DBInfoInterface.class);
+        DBInfoInterfaceDefault results = gestalt.getConfig("db", DBInfoInterfaceDefault.class);
 
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
@@ -648,5 +906,407 @@ class ProxyDecoderTest {
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertEquals("postgresql.org", results.getUri());
     }
+
+
+    @Test
+    public void testInterfaceOptionalResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterfaceOptional dbInfo = gestalt.getConfig("db", DBInfoInterfaceOptional.class);
+            Assertions.assertEquals("test", dbInfo.getPassword().get());
+            Assertions.assertEquals(3306, dbInfo.getPort().get());
+            Assertions.assertTrue(dbInfo.getUri().isEmpty());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testInterfaceOptionalResultsForMissingFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
+
+        assertThat(ex).isInstanceOf(GestaltException.class)
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='test'}, port=LeafNode{value='3306'}}}, with class: DBInfoInterfaceOptional");
+
+    }
+
+    @Test
+    public void testInterfaceOptionalResultsForMissingOkNullFailMissingValuesAsErrors() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterfaceOptional dbInfo = gestalt.getConfig("db", DBInfoInterfaceOptional.class);
+            Assertions.assertEquals("test", dbInfo.getPassword().get());
+            Assertions.assertEquals(3306, dbInfo.getPort().get());
+            Assertions.assertTrue(dbInfo.getUri().isEmpty());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testInterfaceOptionalResultsForMissingFailMissingValuesAsNotErrors() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
+        assertThat(ex).isInstanceOf(GestaltException.class)
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='test'}, port=LeafNode{value='3306'}}}, with class: DBInfoInterfaceOptional");
+    }
+
+    @Test
+    public void testInterfaceResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterface2 dbInfo = gestalt.getConfig("db", DBInfoInterface2.class);
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(3306, dbInfo.getPort());
+            Assertions.assertNull(dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testInterfaceResultsForMissingFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterface2.class));
+
+        assertThat(ex).isInstanceOf(GestaltException.class)
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterface2\n" +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfoInterface2, " +
+                "during proxy decoding");
+
+    }
+
+    @Test
+    public void testInterfaceResultsForMissingOkNullFailMissingValuesAsErrors() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterface2.class));
+
+        assertThat(ex).isInstanceOf(GestaltException.class)
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterface2\n" +
+                " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfoInterface2, " +
+                "during proxy decoding");
+    }
+
+    @Test
+    public void testInterfaceResultsForMissingFailMissingValuesAsNotErrors() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterface2 dbInfo = gestalt.getConfig("db", DBInfoInterface2.class);
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(3306, dbInfo.getPort());
+            Assertions.assertNull(dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testInterfaceIntResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterface dbInfo = gestalt.getConfig("db", DBInfoInterface.class);
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(0, dbInfo.getPort());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testInterfaceIntegerResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterface2 dbInfo = gestalt.getConfig("db", DBInfoInterface2.class);
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertNull(dbInfo.getPort());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testInterfaceOptionalIntegerResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterfaceOptional dbInfo = gestalt.getConfig("db", DBInfoInterfaceOptional.class);
+            Assertions.assertEquals("test", dbInfo.getPassword().get());
+            Assertions.assertTrue(dbInfo.getPort().isEmpty());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri().get());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testReloadInterfaceIntResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        var manualReload = new ManualConfigReloadStrategy();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(manualReload)
+                .build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterface dbInfo = gestalt.getConfig("db", DBInfoInterface.class);
+
+            manualReload.reload();
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(0, dbInfo.getPort());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+
+    @Test
+    public void testReloadInterfaceIntegerResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        var manualReload = new ManualConfigReloadStrategy();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(manualReload)
+                .build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterface2 dbInfo = gestalt.getConfig("db", DBInfoInterface2.class);
+
+            manualReload.reload();
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(null, dbInfo.getPort());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testReloadInterfaceOptionalResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        var manualReload = new ManualConfigReloadStrategy();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(manualReload)
+                .build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterfaceOptional dbInfo = gestalt.getConfig("db", DBInfoInterfaceOptional.class);
+
+            manualReload.reload();
+            Assertions.assertEquals("test", dbInfo.getPassword().get());
+            Assertions.assertTrue(dbInfo.getPort().isEmpty());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri().get());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
+
+    @Test
+    public void testReloadInterfaceDefaultResultsForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "3306");
+        configs.put("db.uri", "mysql.com");
+
+        var manualReload = new ManualConfigReloadStrategy();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .addConfigReloadStrategy(manualReload)
+                .build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .build();
+
+        gestalt.loadConfigs();
+
+        try {
+            DBInfoInterfaceDefault dbInfo = gestalt.getConfig("db", DBInfoInterfaceDefault.class);
+
+            manualReload.reload();
+            Assertions.assertEquals("test", dbInfo.getPassword());
+            Assertions.assertEquals(10, dbInfo.getPort());
+            Assertions.assertEquals("mysql.com", dbInfo.getUri());
+        } catch (GestaltException e) {
+            Assertions.fail("Should not reach here");
+        }
+    }
 }
+
 

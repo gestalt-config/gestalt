@@ -46,7 +46,6 @@ public final class RecordDecoder implements Decoder<Object> {
             return GResultOf.errors(new ValidationError.DecodingExpectedLeafNodeType(path, node, name()));
         }
 
-        boolean hasAllValues = true;
         List<ValidationError> errors = new ArrayList<>();
         Class<?> klass = type.getRawType();
         DecoderService decoderService = decoderContext.getDecoderService();
@@ -107,13 +106,9 @@ public final class RecordDecoder implements Decoder<Object> {
             }
 
             if (!foundValue) {
-                hasAllValues = false;
                 errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "record decoding"));
+                values[i] = null;
             }
-        }
-
-        if (!hasAllValues) {
-            return GResultOf.errors(errors);
         }
 
         return GResultOf.resultOf(RecordUtils.invokeCanonicalConstructor(klass, recordComponents, values), errors);

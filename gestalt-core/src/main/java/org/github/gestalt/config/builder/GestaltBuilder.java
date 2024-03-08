@@ -564,6 +564,7 @@ public class GestaltBuilder {
 
     /**
      * treat missing object values as errors.
+     * TODO update messaging
      *
      * @param treatMissingValuesAsErrors the settings for treating missing values as errors.
      * @return GestaltBuilder builder

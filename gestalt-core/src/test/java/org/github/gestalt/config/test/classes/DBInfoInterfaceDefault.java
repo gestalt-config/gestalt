@@ -1,7 +1,9 @@
 package org.github.gestalt.config.test.classes;
 
-public interface DBInfoInterface {
-    int getPort();
+public interface DBInfoInterfaceDefault {
+    default int getPort() {
+        return 10;
+    }
 
     String getUri();
 

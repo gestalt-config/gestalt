@@ -152,13 +152,17 @@ class RecordDecoderTest {
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Person, during record decoding",
             result.getErrors().get(0).description());
+
+        Person results = (Person) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertNull(results.id());
 
     }
 
@@ -174,7 +178,7 @@ class RecordDecoderTest {
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
@@ -185,6 +189,10 @@ class RecordDecoderTest {
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Person, during record decoding",
             result.getErrors().get(1).description());
+
+        Person results = (Person) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(null, results.id());
     }
 
     @Test
@@ -253,7 +261,7 @@ class RecordDecoderTest {
             decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class),
                 new DecoderContext(registry, null));
 
-        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
@@ -264,6 +272,10 @@ class RecordDecoderTest {
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
         Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: PersonBadAnnotations, " +
             "during record decoding", result.getErrors().get(1).description());
+
+        PersonBadAnnotations results = (PersonBadAnnotations) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertNull(results.id());
     }
 
     @Test

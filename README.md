@@ -39,6 +39,8 @@ Let's dive in and explore how Gestalt can streamline your configuration manageme
 
 - **Java Modules:** Supports Java 9 modules with proper exports.
 
+- **Well Tested:** Our codebase boasts an impressive 89% code coverage, validated by over 1300 meaningful tests.
+
 
 
 # Getting Started
