@@ -121,6 +121,29 @@ public class GestaltConfig {
     }
 
     /**
+     * Treat null values in classes after decoding as errors.
+     *
+     * @return Treat null values in classes after decoding as errors.
+     * @deprecated This value is no longer used, Please use {@link #setTreatMissingDiscretionaryValuesAsErrors(boolean)}
+     * and {@link #setTreatMissingValuesAsErrors(boolean)}
+     */
+    @Deprecated(since = "0.25.0", forRemoval = true)
+    public boolean isTreatNullValuesInClassAsErrors() {
+        return false;
+    }
+
+    /**
+     * Treat null values in classes after decoding as errors.
+     *
+     * @param treatNullValuesInClassAsErrors Treat null values in classes after decoding as errors.
+     * @deprecated This value is no longer used, Please use {@link #setTreatMissingDiscretionaryValuesAsErrors(boolean)}
+     * and {@link #setTreatMissingValuesAsErrors(boolean)}
+     */
+    @Deprecated(since = "0.25.0", forRemoval = true)
+    public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
+    }
+
+    /**
      * Get For the proxy decoder mode, if we should use a cached value or call gestalt for the most recent value.
      *
      * @return the proxy decoder mode

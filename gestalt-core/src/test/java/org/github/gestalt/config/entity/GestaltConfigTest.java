@@ -29,4 +29,12 @@ class GestaltConfigTest {
             return "myConfig";
         }
     }
+
+    @SuppressWarnings("removal")
+    @Test
+    void codeCoverage() {
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatNullValuesInClassAsErrors(true);
+        config.isTreatNullValuesInClassAsErrors();
+    }
 }

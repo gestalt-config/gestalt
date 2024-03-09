@@ -672,6 +672,13 @@ class GestaltBuilderTest {
         }
     }
 
+    @SuppressWarnings("removal")
+    @Test
+    public void codeCoverage() {
+        GestaltBuilder builder = new GestaltBuilder();
+        builder.setTreatNullValuesInClassAsErrors(false);
+    }
+
     private static class CoreReloadListener implements org.github.gestalt.config.reload.CoreReloadListener {
 
         @Override

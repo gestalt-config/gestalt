@@ -563,8 +563,10 @@ public class GestaltBuilder {
 
 
     /**
-     * treat missing object values as errors.
-     * TODO update messaging
+     * treat missing field values in an object, proxy, record or data object as errors.
+     *
+     * <p> If this is true, any time a value that is not discretionary is missing, there will be an error.
+     * If this is false, a missing value will be returned as null or the default initialization. Null for objects and 0 for primitives.
      *
      * @param treatMissingValuesAsErrors the settings for treating missing values as errors.
      * @return GestaltBuilder builder
@@ -575,8 +577,10 @@ public class GestaltBuilder {
     }
 
     /**
-     * Get treat missing discretionary values (optional, fields with defaults, fields with default annotations) as an error.
-     * If this is false you will be able to get the configuration with default values or an empty Optional.
+     * Get treat missing discretionary values (optional, fields with defaults, fields with default annotations)
+     * in an object, proxy, record or data object as errors.
+     *
+     * <p> If this is false you will be able to get the configuration with default values or an empty Optional.
      * If this is true, if a field is missing and would have had a default it will fail and throw an exception.
      *
      * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
@@ -586,15 +590,31 @@ public class GestaltBuilder {
     }
 
     /**
-     * Set treat missing object values as errors.
+     * Sets treat missing discretionary values (optional, fields with defaults, fields with default annotations) as an error.
+     * If this is false you will be able to get the configuration with default values or an empty Optional.
+     * If this is true, if a field is missing and would have had a default it will fail and throw an exception.
      *
-     * @param treatMissingDiscretionaryValuesAsErrors treat missing object values as errors.
-     * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
+     * @param treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
+     * @return GestaltBuilder the builder
      */
     public GestaltBuilder setTreatMissingDiscretionaryValuesAsErrors(boolean treatMissingDiscretionaryValuesAsErrors) {
         this.treatMissingDiscretionaryValuesAsErrors = treatMissingDiscretionaryValuesAsErrors;
         return this;
     }
+
+    /**
+     * Treat null values in classes after decoding as errors.
+     *
+     * @param treatNullValuesInClassAsErrors treat null values in classes after decoding as errors
+     * @return GestaltBuilder builder
+     * @deprecated This value is no longer used, Please use {@link #setTreatMissingDiscretionaryValuesAsErrors(boolean)}
+     * and {@link #setTreatMissingValuesAsErrors(Boolean)}
+     */
+    @Deprecated(since = "0.25.0", forRemoval = true)
+    public GestaltBuilder setTreatNullValuesInClassAsErrors(Boolean treatNullValuesInClassAsErrors) {
+        return this;
+    }
+
 
     /**
      * Add a cache layer to gestalt.
