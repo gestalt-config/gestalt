@@ -121,6 +121,16 @@ public final class GResultOf<T> {
     }
 
     /**
+     * return a list of ValidationError not of a level.
+     *
+     * @param level of errors, we are not looking for.
+     * @return errors that do not match the level.
+     */
+    public List<ValidationError> getErrorsNotLevel(ValidationLevel level) {
+        return errors.stream().filter(it -> !it.level().equals(level)).collect(Collectors.toList());
+    }
+
+    /**
      * returns true if this GResultOf has results.
      *
      * @return true if this GResultOf has results.

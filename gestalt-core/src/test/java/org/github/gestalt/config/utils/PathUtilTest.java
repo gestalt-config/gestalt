@@ -16,4 +16,18 @@ class PathUtilTest {
         List<Token> tokens = List.of(new ObjectToken("obj"), new ArrayToken(1), new TagToken("tag", "value"));
         Assertions.assertEquals("obj[1]tag=value", PathUtil.toPath(tokens));
     }
+
+    @Test
+    void pathForKey() {
+        Assertions.assertEquals("my.path.test", PathUtil.pathForKey("my.path", "test"));
+        Assertions.assertEquals("test", PathUtil.pathForKey("", "test"));
+        Assertions.assertEquals("test", PathUtil.pathForKey(null, "test"));
+    }
+
+    @Test
+    void pathForIndex() {
+        Assertions.assertEquals("my.path[0]", PathUtil.pathForIndex("my.path", 0));
+        Assertions.assertEquals("[0]", PathUtil.pathForIndex("", 0));
+        Assertions.assertEquals("[0]", PathUtil.pathForIndex(null, 0));
+    }
 }

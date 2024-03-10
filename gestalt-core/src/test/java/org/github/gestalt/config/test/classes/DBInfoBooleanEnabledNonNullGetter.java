@@ -1,12 +1,14 @@
 package org.github.gestalt.config.test.classes;
 
-public class DBInforNoConstructor {
-    private int port = 100;
-    private String uri = "test";
-    private String password = "password";
+public class DBInfoBooleanEnabledNonNullGetter {
+    private Integer port;
+    private String uri;
+    private String password;
 
-    public int getPort() {
-        return port;
+    private Boolean enabled;
+
+    public Integer getPort() {
+        return port != null ? port : 1234;
     }
 
     public void setPort(int port) {
@@ -27,5 +29,13 @@ public class DBInforNoConstructor {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean isEnabled() {
+        return enabled == null || enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -39,6 +39,8 @@ Let's dive in and explore how Gestalt can streamline your configuration manageme
 
 - **Java Modules:** Supports Java 9 modules with proper exports.
 
+- **Well Tested:** Our codebase boasts an impressive 89% code coverage, validated by over 1300 meaningful tests.
+
 
 
 # Getting Started
@@ -247,10 +249,27 @@ String serviceMode = gestalt.getConfig("serviceMode", String.class);
 
 Gestalt will automatically decode and provide the value in the type you requested. 
 
-### Retrieving complex objects
-To get a complex object you need to pass in the class for gestalt to return. 
-Gestalt will automatically use reflection to create the object, determine all the fields in the class requested, then lookup the values in the configurations to inject into the object.
-It will attempt to use the setter fields first then fallback to directly setting the fields. 
+## Retrieving Complex Objects
+
+To retrieve a complex object, you need to pass in the class for Gestalt to return. Gestalt will automatically use reflection to create the object, determine all the fields in the requested class, and then lookup the values in the configurations to inject into the object. It will attempt to use the setter fields first, then fallback to directly setting the fields.
+
+There are two configuration options that allow you to control when errors are thrown when decoding complex objects.
+
+### `treatMissingValuesAsErrors`
+
+Treat missing field values in an object, proxy, record, or data object as errors. This will cause the API to either throw errors or return an empty optional.
+
+- If this is `true`, any time a value that is not discretionary is missing, it will fail and throw an exception.
+- If this is `false`, a missing value will be returned as `null` or the default initialization. `Null` for objects and `0` for primitives.
+
+### `treatMissingDiscretionaryValuesAsErrors`
+
+Treat missing discretionary values (optional, fields with defaults, fields with default annotations) in an object, proxy, record, or data object as errors.
+
+- If this is `false`, you will be able to get the configuration with default values or an empty Optional.
+- If this is `true`, if a field is missing and would have had a default, it will fail and throw an exception.
+
+
 
 ```java
 HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
@@ -847,19 +866,19 @@ Assertions.assertEquals("value2", gestalt.getConfig("some.value", String.class))
 ```
 
 # Gestalt configuration
-| Configuration                 | default  | Details                                                                                                                                                                                                                                                                                                          |
-|-------------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| treatWarningsAsErrors         | false    | if we treat warnings as errors Gestalt will fail on any warnings. When set to true it overrides the behaviour in the below configs.                                                                                                                                                                              |
-| treatMissingArrayIndexAsError | false    | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead                                                                                                                                                                    |
-| treatMissingValuesAsErrors    | false    | By default Gestalt will not update values in classes not found in the config. Null values will be left null and values with defaults will keep their defaults. By enabling this you will get an exception if any value is missing.                                                                               |
-| treatNullValuesInClassAsErrors | true     | Prior to v0.20.0 null values and values not in the config but have a default in classes were treated the same. By enabling this you will get an exception if a value is null after decoding an object. If the value is missing but has a default this will be caught under the config treatMissingValuesAsErrors |
-| dateDecoderFormat             | null     | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
-| localDateTimeFormat           | null     | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
-| localDateFormat               | null     | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                              |
-| substitutionOpeningToken      | ${       | Customize what tokens gestalt looks for when starting replacing substrings                                                                                                                                                                                                                                       |
-| substitutionClosingToken      | }        | Customize what tokens gestalt looks for when ending replacing substrings                                                                                                                                                                                                                                         |
-| maxSubstitutionNestedDepth    | 5        | Get the maximum string substitution nested depth. If you have nested or recursive substitutions that go deeper than this it will fail.                                                                                                                                                                           |
-| proxyDecoderMode              | CACHE    | Either CACHE or PASSTHROUGH, where cache means we serve results through a cache that is never updated or pass through where each call is forwarded to Gestalt to be looked up.                                                                                                                                   |
+| Configuration                 | default  | Details                                                                                                                                                                                                                                                                                                                              |
+|-------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| treatWarningsAsErrors         | false    | if we treat warnings as errors Gestalt will fail on any warnings. When set to true it overrides the behaviour in the below configs.                                                                                                                                                                                                  |
+| treatMissingArrayIndexAsError | false    | By default Gestalt will insert null values into an array or list that is missing an index. By enabling this you will get an exception instead                                                                                                                                                                                        |
+| treatMissingValuesAsErrors    | false    | By default Gestalt will not update values in classes not found in the config. Null values will be left null and values with defaults will keep their defaults. By enabling this you will get an exception if any value is missing.                                                                                                   |
+| treatMissingDiscretionaryValuesAsErrors | true     | Sets treat missing discretionary values (optional, fields with defaults, fields with default annotations) as an error. If this is false you will be able to get the configuration with default values or an empty Optional. If this is true, if a field is missing and would have had a default it will fail and throw an exception. |
+| dateDecoderFormat             | null     | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                                                  |
+| localDateTimeFormat           | null     | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                                                  |
+| localDateFormat               | null     | Pattern for a DateTimeFormatter, if left blank will use the default for the decoder                                                                                                                                                                                                                                                  |
+| substitutionOpeningToken      | ${       | Customize what tokens gestalt looks for when starting replacing substrings                                                                                                                                                                                                                                                           |
+| substitutionClosingToken      | }        | Customize what tokens gestalt looks for when ending replacing substrings                                                                                                                                                                                                                                                             |
+| maxSubstitutionNestedDepth    | 5        | Get the maximum string substitution nested depth. If you have nested or recursive substitutions that go deeper than this it will fail.                                                                                                                                                                                               |
+| proxyDecoderMode              | CACHE    | Either CACHE or PASSTHROUGH, where cache means we serve results through a cache that is never updated or pass through where each call is forwarded to Gestalt to be looked up.                                                                                                                                                       |
 
 # Logging
 Gestalt leverages [System.logger](https://docs.oracle.com/javase/9/docs/api/java/lang/System.Logger.html), the jdk logging library to provide a logging facade. Many logging libraries provide backends for System Logger.

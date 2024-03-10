@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
@@ -70,6 +71,8 @@ public final class ObjectDecoder implements Decoder<Object> {
         }
         Class<?> klass = type.getRawType();
 
+        DecoderService decoderSrv = decoderContext.getDecoderService();
+
         try {
             Constructor<?> constructor = klass.getDeclaredConstructor();
             if (Modifier.isPrivate(constructor.getModifiers())) {
@@ -84,6 +87,7 @@ public final class ObjectDecoder implements Decoder<Object> {
             for (Field field : classFields) {
                 int modifiers = field.getModifiers();
                 String fieldName = field.getName();
+                boolean foundValue = false;
 
                 if (Modifier.isStatic(modifiers)) {
                     logger.log(INFO, "Ignoring static field for class: " + klass.getName() + " field " + fieldName);
@@ -100,29 +104,23 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                 // check if there is a node in the map for this field.
                 String nextPath = PathUtil.pathForKey(path, name);
-                GResultOf<ConfigNode> configNode = decoderContext.getDecoderService().getNextNode(nextPath, name, node);
+                GResultOf<ConfigNode> configNode = decoderSrv.getNextNode(nextPath, name, node);
 
-                errors.addAll(configNode.getErrors());
+                // Add any errors that are not missing value ones.
+                errors.addAll(configNode.getErrorsNotLevel(ValidationLevel.MISSING_VALUE));
+
                 if (configNode.hasResults()) {
                     // if the map node has a value for the field.
                     //decode the field node.
-                    GResultOf<?> fieldGResultOf = decoderContext.getDecoderService()
-                        .decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
+                    GResultOf<?> decodeResultOf = decoderSrv.decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
 
-                    errors.addAll(fieldGResultOf.getErrors());
-                    if (fieldGResultOf.hasResults()) {
+                    errors.addAll(decodeResultOf.getErrors());
+                    if (decodeResultOf.hasResults()) {
+                        foundValue = true;
                         // set the field to the decoded value for the map node.
-                        setField(obj, field, klass, fieldGResultOf.results());
-                    } else {
-                        // if we have a node for this field but the decoding failed,
-                        // check to see if the field value result will be null. If so add a null value error
-                        Object value = getObject(obj, field, klass);
-                        if (value == null) {
-                            errors.add(new ValidationError.NullValueDecodingObject(nextPath, fieldName, klass.getSimpleName()));
-                        } else {
-                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, field.getType(), "object decoding"));
-                        }
+                        setField(obj, field, klass, decodeResultOf.results());
                     }
+
                 } else {
                     // if we have no value for this field, check the config annotation for a default.
                     // if we have an annotation, use that for the path instead of the name.
@@ -130,40 +128,41 @@ public final class ObjectDecoder implements Decoder<Object> {
 
                     if (!defaultValue.isEmpty()) {
                         // if we have a default value in the annotation attempt to decode it as a leaf of the field type.
-                        GResultOf<?> defaultGResultOf = decoderContext.getDecoderService()
+                        GResultOf<?> defaultGResultOf = decoderSrv
                             .decodeNode(nextPath, tags, new LeafNode(defaultValue), fieldType, decoderContext);
 
                         errors.addAll(defaultGResultOf.getErrors());
                         // if the default value decoded to the expected field type set the field to the default value.
                         if (defaultGResultOf.hasResults()) {
+                            foundValue = true;
                             setField(obj, field, klass, defaultGResultOf.results());
-                        } else {
-
-                            // if we failed to decode the default annotation value, check to see if the field value result will be null.
-                            // If so add a null value error
-                            Object value = getObject(obj, field, klass);
-                            if (value == null) {
-                                errors.add(new ValidationError.NullValueDecodingObject(nextPath, fieldName, klass.getSimpleName()));
-                            }
+                            errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name()));
                         }
                     } else {
-
                         // even though we have default value in the annotation lets try to decode the field,
                         // as it may be an optional that can support null values.
-                        GResultOf<?> decodedResults = decoderContext.getDecoderService()
+                        GResultOf<?> decodedResults = decoderSrv
                             .decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
 
                         // if the decoder supported nullable types (such as optional) set the field to the value.
                         if (decodedResults.hasResults()) {
+                            //only add the errors if we actually found a result, otherwise we dont care.
+                            errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
+                            errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
+                            foundValue = true;
                             setField(obj, field, klass, decodedResults.results());
-                        } else {
-                            // if we have no default and the type doesn't support null values,
-                            // check to see if the field value result will be null. If so add a null value error
-                            Object value = getObject(obj, field, klass);
-                            if (value == null) {
-                                errors.add(new ValidationError.NullValueDecodingObject(nextPath, fieldName, klass.getSimpleName()));
-                            }
                         }
+                    }
+                }
+
+                if (!foundValue) {
+                    // if we have not set the field
+                    // check to see if the field value result will be null. If so add a null value error
+                    boolean initialized = fieldHasInitializedValue(obj, field, klass);
+                    if (initialized) {
+                        errors.add(new ValidationError.OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName()));
+                    } else {
+                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "object decoding"));
                     }
                 }
             }
@@ -177,27 +176,55 @@ public final class ObjectDecoder implements Decoder<Object> {
         }
     }
 
-    private Object getObject(Object obj, Field field, Class<?> klass) throws IllegalAccessException {
-
+    private boolean fieldHasInitializedValue(Object obj, Field field, Class<?> klass) throws IllegalAccessException {
         String methodName;
-        if (field.getType().equals(boolean.class)) {
+        if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.class)) {
             methodName = "is" + field.getName();
         } else {
             methodName = "get" + field.getName();
         }
 
+        Object fieldValue = null;
         var method = getMethod(klass, methodName);
         if (method.isPresent()) {
             try {
-                return method.get().invoke(obj);
+                fieldValue = method.get().invoke(obj);
             } catch (InvocationTargetException e) {
                 logger.log(WARNING, "Failed to get value calling method " + methodName + ", on class " + klass.getSimpleName() +
                     ", for field " + field.getName());
             }
         }
 
-        field.setAccessible(true);
-        return field.get(obj);
+        if (fieldValue == null) {
+            field.setAccessible(true);
+            fieldValue = field.get(obj);
+        }
+
+        // Unfortunantly, there is no easy way to tell if primitives have been initialized.
+        // we check for 0, if it is 0 we assume that it has not been initialized.
+        // but what if the intended default was 0? We have no way of knowing. So we default to say it is not initialized.
+        if (field.getType().isPrimitive()) {
+            if (byte.class.isAssignableFrom(fieldValue.getClass()) || Byte.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((byte) fieldValue) != 0;
+            } else if (short.class.isAssignableFrom(fieldValue.getClass()) || Short.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((short) fieldValue) != 0;
+            } else if (int.class.isAssignableFrom(fieldValue.getClass()) || Integer.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((int) fieldValue) != 0;
+            } else if (long.class.isAssignableFrom(fieldValue.getClass()) || Long.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((long) fieldValue) != 0;
+            } else if (float.class.isAssignableFrom(fieldValue.getClass()) || Float.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((float) fieldValue) != 0;
+            } else if (double.class.isAssignableFrom(fieldValue.getClass()) || Double.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((double) fieldValue) != 0;
+            } else if (boolean.class.isAssignableFrom(fieldValue.getClass()) || Boolean.class.isAssignableFrom(fieldValue.getClass())) {
+                return (boolean) fieldValue;
+            } else if (char.class.isAssignableFrom(fieldValue.getClass()) || Character.class.isAssignableFrom(fieldValue.getClass())) {
+                return ((char) fieldValue) != 0;
+            }
+            return false;
+        } else {
+            return fieldValue != null;
+        }
 
     }
 

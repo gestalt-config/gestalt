@@ -14,6 +14,7 @@ import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
+import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
@@ -259,8 +260,6 @@ class GestaltBuilderTest {
             .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
             .setTreatWarningsAsErrors(false)
             .setTreatMissingArrayIndexAsError(false)
-            .setTreatMissingValuesAsErrors(false)
-            .setTreatNullValuesInClassAsErrors(true)
             .build();
 
         gestalt.loadConfigs();
@@ -271,13 +270,10 @@ class GestaltBuilderTest {
         } catch (GestaltException e) {
             assertThat(e).isInstanceOf(GestaltException.class)
                 .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: ObjectToken, " +
-                    "during navigating to next node\n" +
-                    " - level: ERROR, message: Decoding object : DBInfo on path: db.uri, field uri results in null value\n" +
-                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: ObjectToken, " +
-                    "during navigating to next node\n" +
-                    " - level: ERROR, message: Decoding object : DBInfo on path: db.password, " +
-                    "field password results in null value");
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, " +
+                    "during object decoding\n" +
+                    " - level: MISSING_VALUE, message: Unable to find node matching path: db.password, for class: DBInfo, " +
+                    "during object decoding");
         }
     }
 
@@ -297,7 +293,6 @@ class GestaltBuilderTest {
         config.setTreatWarningsAsErrors(false);
         config.setTreatMissingArrayIndexAsError(false);
         config.setTreatMissingValuesAsErrors(false);
-        config.setTreatNullValuesInClassAsErrors(false);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
@@ -578,6 +573,24 @@ class GestaltBuilderTest {
     }
 
     @Test
+    public void buildBadPostProcessorEmpty() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.addPostProcessors(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
+        }
+
+        try {
+            builder.setPostProcessors(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
+        }
+    }
+
+    @Test
     public void buildBadConfigLoaders() {
         GestaltBuilder builder = new GestaltBuilder();
         try {
@@ -596,6 +609,60 @@ class GestaltBuilderTest {
     }
 
     @Test
+    public void buildBadConfigLoadersEmpty() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.addConfigLoaders(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No config loader provided while adding config loaders", e.getMessage());
+        }
+
+        try {
+            builder.setConfigLoaders(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No config loader provided while setting config loaders", e.getMessage());
+        }
+    }
+
+    @Test
+    public void buildBadPathMappers() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.setPathMappers(null);
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMappers provided while setting", e.getMessage());
+        }
+
+        try {
+            builder.addPathMapper((List<PathMapper>) null);
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMapper provided while adding", e.getMessage());
+        }
+    }
+
+    @Test
+    public void buildBadPathMappersEmpty() {
+        GestaltBuilder builder = new GestaltBuilder();
+        try {
+            builder.setPathMappers(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMappers provided while setting", e.getMessage());
+        }
+
+        try {
+            builder.addPathMapper(List.of());
+            Assertions.fail("Should not hit this");
+        } catch (GestaltConfigurationException e) {
+            Assertions.assertEquals("No PathMapper provided while adding", e.getMessage());
+        }
+    }
+
+    @Test
     public void buildNoSources() {
         GestaltBuilder builder = new GestaltBuilder();
         try {
@@ -603,6 +670,13 @@ class GestaltBuilderTest {
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No sources provided", e.getMessage());
         }
+    }
+
+    @SuppressWarnings("removal")
+    @Test
+    public void codeCoverage() {
+        GestaltBuilder builder = new GestaltBuilder();
+        builder.setTreatNullValuesInClassAsErrors(false);
     }
 
     private static class CoreReloadListener implements org.github.gestalt.config.reload.CoreReloadListener {

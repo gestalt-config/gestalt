@@ -5,6 +5,8 @@ import org.github.gestalt.config.decoder.Decoder
 import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.entity.ValidationError
+import org.github.gestalt.config.entity.ValidationError.OptionalMissingValueDecoding
+import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.kotlin.entity.DataClassCanNotBeConstructed
 import org.github.gestalt.config.kotlin.entity.DataClassHasNoConstructor
 import org.github.gestalt.config.kotlin.entity.DataClassMissingRequiredMember
@@ -14,8 +16,8 @@ import org.github.gestalt.config.node.LeafNode
 import org.github.gestalt.config.node.MapNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
-import org.github.gestalt.config.utils.PathUtil
 import org.github.gestalt.config.utils.GResultOf
+import org.github.gestalt.config.utils.PathUtil
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
@@ -39,7 +41,7 @@ class DataClassDecoder : Decoder<Any> {
         return Priority.MEDIUM
     }
 
-    override fun canDecode(path: String, tags: Tags, configNode:ConfigNode?, klass: TypeCapture<*>): Boolean {
+    override fun canDecode(path: String, tags: Tags, configNode: ConfigNode?, klass: TypeCapture<*>): Boolean {
         if (klass is KTypeCapture<*>) {
             val classifier = klass.kType.classifier
 
@@ -91,10 +93,26 @@ class DataClassDecoder : Decoder<Any> {
                         val nextPath = PathUtil.pathForKey(path, paramName)
 
                         val configNode = decoderService.getNextNode(nextPath, paramName, node)
-                        errors.addAll(configNode.errors)
+                        errors.addAll(configNode.getErrorsNotLevel(ValidationLevel.MISSING_VALUE))
                         var results: Any? = null
                         when {
-                            !configNode.hasResults() && configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
+                            // if we have results for the config node.
+                            configNode.hasResults() -> {
+                                val parameter = decoderService.decodeNode(
+                                    nextPath, tags, configNode.results(),
+                                    KTypeCapture.of<Any>(it.type), decoderContext
+                                )
+                                errors.addAll(parameter.errors)
+
+                                if (parameter.hasResults()) {
+                                    results = parameter.results()
+                                } else {
+                                    missingMembers.add(it.name ?: "null")
+                                }
+                            }
+
+                            // if we dont have results for the config node, and the default annotation is not blank
+                            configAnnotation?.defaultVal?.isNotBlank() ?: false -> {
                                 val defaultGResultOf: GResultOf<*> = decoderService.decodeNode(
                                     nextPath,
                                     tags,
@@ -109,30 +127,22 @@ class DataClassDecoder : Decoder<Any> {
 
                                 if (defaultGResultOf.hasResults()) {
                                     results = defaultGResultOf.results()
+                                    errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }
                             }
 
-                            !it.isOptional && !configNode.hasResults() -> {
-                                missingMembers.add(paramName)
+                            // if we dont have results for the config node, and the value is not optional
+                            !it.isOptional -> {
+                                missingMembers.add(it.name ?: "null")
                             }
 
-                            configNode.hasResults() -> {
-                                val parameter = decoderService.decodeNode(nextPath, tags, configNode.results(),
-                                    KTypeCapture.of<Any>(it.type), decoderContext)
-                                if (parameter.hasErrors()) {
-                                    errors.addAll(parameter.errors)
-                                }
-
-                                if (!parameter.hasResults()) {
-                                    errors.add(
-                                        ValidationError.NoResultsFoundForNode(nextPath, it.type.classifier.toString(), "data decoding")
-                                    )
-                                } else {
-                                    results = parameter.results()
-                                }
+                            // if we dont have results for the config node, and the value is optional
+                            it.isOptional -> {
+                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
                             }
+
                         }
                         results
                     }

@@ -19,11 +19,11 @@ public class GestaltConfig {
     // Treat all warnings as errors
     private boolean treatWarningsAsErrors = false;
     // Treat missing array index's as errors. If false it will inject null values for missing array index's.
-    private boolean treatMissingArrayIndexAsError = false;
+    private boolean treatMissingArrayIndexAsError = true;
     // Treat missing object values as errors. If false it will leave the default values or null.
-    private boolean treatMissingValuesAsErrors = false;
-    // Treat null values in classes after decoding as errors.
-    private boolean treatNullValuesInClassAsErrors = true;
+    private boolean treatMissingValuesAsErrors = true;
+    // Treat missing discretionary values as errors
+    private boolean treatMissingDiscretionaryValuesAsErrors = false;
     // For the proxy decoder, if we should use a cached value or call gestalt for the most recent value.
     private ProxyDecoderMode proxyDecoderMode = ProxyDecoderMode.CACHE;
     // Provide the log level when we log a message when a config is missing, but we provided a default, or it is Optional.
@@ -99,21 +99,48 @@ public class GestaltConfig {
     }
 
     /**
+     * Gets treat missing discretionary values (optional, fields with defaults, fields with default annotations) as an error.
+     * If this is false you will be able to get the configuration with default values or an empty Optional.
+     * If this is true, if a field is missing and would have had a default it will fail and throw an exception.
+     *
+     * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
+     */
+    public boolean isTreatMissingDiscretionaryValuesAsErrors() {
+        return treatMissingDiscretionaryValuesAsErrors;
+    }
+
+    /**
+     * Sets treat missing discretionary values (optional, fields with defaults, fields with default annotations) as an error.
+     * If this is false you will be able to get the configuration with default values or an empty Optional.
+     * If this is true, if a field is missing and would have had a default it will fail and throw an exception.
+     *
+     * @param treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
+     */
+    public void setTreatMissingDiscretionaryValuesAsErrors(boolean treatMissingDiscretionaryValuesAsErrors) {
+        this.treatMissingDiscretionaryValuesAsErrors = treatMissingDiscretionaryValuesAsErrors;
+    }
+
+    /**
      * Treat null values in classes after decoding as errors.
      *
      * @return Treat null values in classes after decoding as errors.
+     * @deprecated This value is no longer used, Please use {@link #setTreatMissingDiscretionaryValuesAsErrors(boolean)}
+     * and {@link #setTreatMissingValuesAsErrors(boolean)}
      */
+    @Deprecated(since = "0.25.0", forRemoval = true)
     public boolean isTreatNullValuesInClassAsErrors() {
-        return treatNullValuesInClassAsErrors;
+        return false;
     }
 
     /**
      * Treat null values in classes after decoding as errors.
      *
      * @param treatNullValuesInClassAsErrors Treat null values in classes after decoding as errors.
+     * @deprecated This value is no longer used, Please use {@link #setTreatMissingDiscretionaryValuesAsErrors(boolean)}
+     * and {@link #setTreatMissingValuesAsErrors(boolean)}
      */
+    @Deprecated(since = "0.25.0", forRemoval = true)
     public void setTreatNullValuesInClassAsErrors(boolean treatNullValuesInClassAsErrors) {
-        this.treatNullValuesInClassAsErrors = treatNullValuesInClassAsErrors;
     }
 
     /**

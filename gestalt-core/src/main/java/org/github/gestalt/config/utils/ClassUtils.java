@@ -19,8 +19,8 @@
 
 package org.github.gestalt.config.utils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Operates on classes without using reflection.
@@ -251,7 +251,7 @@ public final class ClassUtils {
      *
      * @param type The class to query or null.
      * @return true if the given {@code type} is a primitive or primitive wrapper ({@link Boolean}, {@link Byte},
-     *     {@link Character}, {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     * {@link Character}, {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
      * @since 3.1
      */
     public static boolean isPrimitiveOrWrapper(final Class<?> type) {
@@ -267,10 +267,31 @@ public final class ClassUtils {
      *
      * @param type The class to query or null.
      * @return true if the given {@code type} is a primitive wrapper ({@link Boolean}, {@link Byte}, {@link Character},
-     *     {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
+     * {@link Short}, {@link Integer}, {@link Long}, {@link Double}, {@link Float}).
      * @since 3.1
      */
     public static boolean isPrimitiveWrapper(final Class<?> type) {
         return wrapperPrimitiveMap.containsKey(type);
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Pair<Boolean, T> isOptionalAndDefault(final Class<?> type) {
+        if (Optional.class.isAssignableFrom(type)) {
+            return new Pair<>(true, (T) Optional.empty());
+        } else if (OptionalInt.class.isAssignableFrom(type)) {
+            return new Pair<>(true, (T) OptionalInt.empty());
+        } else if (OptionalLong.class.isAssignableFrom(type)) {
+            return new Pair<>(true, (T) OptionalLong.empty());
+        } else if (OptionalDouble.class.isAssignableFrom(type)) {
+            return new Pair<>(true, (T) OptionalDouble.empty());
+        } else {
+            return new Pair<>(false, null);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getDefaultValue(Class<T> clazz) {
+        return (T) Array.get(Array.newInstance(clazz, 1), 0);
+    }
+
 }

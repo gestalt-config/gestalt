@@ -23,6 +23,7 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
+import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
@@ -31,8 +32,6 @@ import java.util.*;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.Logger.Level.WARNING;
-import static org.github.gestalt.config.entity.ValidationLevel.ERROR;
-import static org.github.gestalt.config.entity.ValidationLevel.MISSING_VALUE;
 
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
@@ -254,7 +253,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         // fail on errors if this is not an optional type.
         // get the default value used if this is an optional type
         // most likely an optional.empty()
-        Pair<Boolean, T> isOptionalAndDefault = isOptionalAndDefault(klass);
+        Pair<Boolean, T> isOptionalAndDefault = ClassUtils.isOptionalAndDefault(klass.getRawType());
 
         return getConfigInternal(path, !isOptionalAndDefault.getFirst(), isOptionalAndDefault.getSecond(), klass, tags);
     }
@@ -387,7 +386,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private <T> GResultOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
         GResultOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
 
-        if (!node.hasErrors() || node.hasErrors(MISSING_VALUE)) {
+        if (!node.hasErrors() || node.hasErrors(ValidationLevel.MISSING_VALUE)) {
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
             GResultOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
@@ -397,10 +396,11 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             // So we don't get too many "duplicate" errors
             // Otherwise if we have a result return both sets of errors.
             List<ValidationError> errors = new ArrayList<>();
-            if (!decodedResults.hasResults() && node.hasErrors(MISSING_VALUE)) {
+            if (!decodedResults.hasResults() && node.hasErrors(ValidationLevel.MISSING_VALUE)) {
                 errors.addAll(node.getErrors());
             } else {
-                errors.addAll(node.getErrors());
+                // if we have a result, only add non missing value errors.
+                errors.addAll(node.getErrorsNotLevel(ValidationLevel.MISSING_VALUE));
                 errors.addAll(decodedResults.getErrors());
             }
 
@@ -422,31 +422,17 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     }
 
     private boolean ignoreError(ValidationError error) {
-        if (gestaltConfig.isTreatWarningsAsErrors()) {
+        if (error.level().equals(ValidationLevel.WARN) && gestaltConfig.isTreatWarningsAsErrors()) {
             return false;
         } else if (error instanceof ValidationError.ArrayMissingIndex && !gestaltConfig.isTreatMissingArrayIndexAsError()) {
             return true;
         } else if (error.hasNoResults() && !gestaltConfig.isTreatMissingValuesAsErrors()) {
             return true;
-        } else if (error instanceof ValidationError.NullValueDecodingObject && !gestaltConfig.isTreatNullValuesInClassAsErrors()) {
+        } else if (error.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE) &&
+            !gestaltConfig.isTreatMissingDiscretionaryValuesAsErrors()) {
             return true;
         }
 
-        return error.level() != ERROR && error.level() != MISSING_VALUE;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Pair<Boolean, T> isOptionalAndDefault(TypeCapture<T> klass) {
-        if (Optional.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) Optional.empty());
-        } else if (OptionalInt.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) OptionalInt.empty());
-        } else if (OptionalLong.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) OptionalLong.empty());
-        } else if (OptionalDouble.class.isAssignableFrom(klass.getRawType())) {
-            return new Pair<>(true, (T) OptionalDouble.empty());
-        } else {
-            return new Pair<>(false, null);
-        }
+        return error.level() == ValidationLevel.WARN || error.level() == ValidationLevel.DEBUG;
     }
 }

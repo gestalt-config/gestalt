@@ -50,13 +50,11 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
      */
     public SELF addTag(Tag tag) {
         Objects.requireNonNull(tag, "tag must not be null");
-        if (tags == null) {
-            tags = Tags.of(tag);
-        } else {
-            var existingTags = tags.getInternalTags();
-            existingTags.add(tag);
-            tags = Tags.of(existingTags);
-        }
+
+        var existingTags = tags.getInternalTags();
+        existingTags.add(tag);
+        tags = Tags.of(existingTags);
+
         return self();
     }
 

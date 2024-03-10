@@ -93,7 +93,8 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));        Assertions.assertTrue(result.hasResults());
+            new DecoderContext(registry, null));
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
         Person results = (Person) result.results();
@@ -151,13 +152,18 @@ class RecordDecoderTest {
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().getFirst().level());
-        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().getFirst().description());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Person, during record decoding",
+            result.getErrors().get(0).description());
+
+        Person results = (Person) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertNull(results.id());
+
     }
 
     @Test
@@ -172,7 +178,7 @@ class RecordDecoderTest {
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
             new DecoderContext(registry, null));
-        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
@@ -181,8 +187,12 @@ class RecordDecoderTest {
             "attempting to decode Integer", result.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Class, during record decoding",
+        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: Person, during record decoding",
             result.getErrors().get(1).description());
+
+        Person results = (Person) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertEquals(null, results.id());
     }
 
     @Test
@@ -231,9 +241,9 @@ class RecordDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().getFirst().level());
-        Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().getFirst().description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().getFirst().level());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.identity, from node: " +
+            "MapNode{mapNode={name=LeafNode{value='tim'}}}, with class: PersonAnnotations", result.getErrors().getFirst().description());
 
         PersonAnnotations results = (PersonAnnotations) result.results();
         Assertions.assertEquals("tim", results.name());
@@ -250,17 +260,22 @@ class RecordDecoderTest {
         GResultOf<Object> result =
             decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class),
                 new DecoderContext(registry, null));
-        Assertions.assertFalse(result.hasResults());
+
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(2, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to parse a number on Path: user.admin.identity, from node: " +
+            "LeafNode{value='abc'} attempting to decode Integer", result.getErrors().get(0).description());
 
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Unable to parse a number on Path: user.admin.identity, from node: LeafNode{value='abc'} " +
-            "attempting to decode Integer", result.getErrors().get(1).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: user.admin.identity, for class: PersonBadAnnotations, " +
+            "during record decoding", result.getErrors().get(1).description());
+
+        PersonBadAnnotations results = (PersonBadAnnotations) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertNull(results.id());
     }
 
     @Test
@@ -312,9 +327,10 @@ class RecordDecoderTest {
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().getFirst().level());
-        Assertions.assertEquals("Unable to find node matching path: user.admin.id, for class: ObjectToken, " +
-            "during navigating to next node", result.getErrors().getFirst().description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.id, from node: " +
+                "MapNode{mapNode={name=LeafNode{value='tim'}}}, with class: PersonOptional",
+            result.getErrors().get(0).description());
 
         PersonOptional results = (PersonOptional) result.results();
         Assertions.assertEquals("tim", results.name().get());

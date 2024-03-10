@@ -7,6 +7,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
+import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
@@ -343,18 +344,16 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        try {
-            environmentVarsLoader.loadSource(source);
-            Assertions.fail("should not hit this");
-        } catch (GestaltException e) {
-            Assertions.assertEquals("Config source: mock does not have a list to load.", e.getMessage());
-        }
+        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> environmentVarsLoader.loadSource(source));
+        Assertions.assertEquals("Config source: mock does not have a list to load.", e.getMessage());
+
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
         Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
 
     }
+
 
     @Test
     void loadSourceMockDependenciesExceptionLoadList() throws GestaltException {
@@ -373,12 +372,8 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        try {
-            environmentVarsLoader.loadSource(source);
-            Assertions.fail("should not hit this");
-        } catch (GestaltException e) {
-            Assertions.assertEquals("bad stream", e.getMessage());
-        }
+        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> environmentVarsLoader.loadSource(source));
+        Assertions.assertEquals("bad stream", e.getMessage());
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
@@ -397,12 +392,39 @@ class EnvironmentLoaderTest {
         StringConfigSource source = new StringConfigSource(
             "path : ${DB_IDLETIMEOUT}", "conf");
 
-        try {
-            environmentVarsLoader.loadSource(source);
-            Assertions.fail("should not reach here");
-        } catch (Exception e) {
-            Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
-        }
+        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> environmentVarsLoader.loadSource(source));
+        Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
+    }
+
+    @Test
+    void loadSourceMockDependenciesEmpty() throws GestaltException {
+        // setup the input data, instead of loading from a file.
+        List<Pair<String, String>> data = new ArrayList<>();
+
+        // setup the mocks
+        SentenceLexer lexer = Mockito.mock(SentenceLexer.class);
+        ConfigParser parser = Mockito.mock(ConfigParser.class);
+        ConfigSource source = Mockito.mock(ConfigSource.class);
+
+
+        // mock the source so we return our test data stream.
+        Mockito.when(source.hasList()).thenReturn(true);
+        Mockito.when(source.loadList()).thenReturn(data);
+
+        // create our class to be tested
+        EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
+
+        // run the code under test.
+        GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+
+        Assertions.assertInstanceOf(MapNode.class, results.results().get(0).getConfigNode());
+        Assertions.assertEquals(0, ((MapNode) results.results().get(0).getConfigNode()).size());
+
     }
 
 }

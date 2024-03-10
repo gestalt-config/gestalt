@@ -51,7 +51,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -74,7 +73,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
-            .setTreatNullValuesInClassAsErrors(false)
             .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
             .build();
 
@@ -136,7 +134,6 @@ public class GestaltIntegrationTests {
                 .build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addCoreReloadListener(reloadListener)
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -167,7 +164,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(600, gestalt.getConfig("db.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
+        Assertions.assertTrue(db.isEnabled);
         Assertions.assertTrue(gestalt.getConfig("DB.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
@@ -230,7 +227,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(2222, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
+        Assertions.assertTrue(db.isEnabled);
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
@@ -335,7 +332,6 @@ public class GestaltIntegrationTests {
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
             .addSource(StringConfigSourceBuilder.builder().setConfig("").setFormat("properties").build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -366,7 +362,6 @@ public class GestaltIntegrationTests {
                 .setFormat("properties")
                 .addConfigReloadStrategy(reloadStrategy)
                 .build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -400,7 +395,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(EnvironmentConfigSourceBuilder.builder().setFailOnErrors(false).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -436,7 +430,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addDefaultPostProcessors()
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -477,7 +470,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -505,7 +497,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPNode.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -550,7 +541,6 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultMulti.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -600,8 +590,8 @@ public class GestaltIntegrationTests {
         }).get());
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
-        Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
+        Assertions.assertTrue(db.isEnabled);
+        Assertions.assertTrue(gestalt.getConfig("db.does.not.exist", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
         Assertions.assertEquals("credmond", db.hosts.get(0).getUser());
@@ -628,7 +618,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(600, dbPrefix.connectionTimeout);
         Assertions.assertEquals(123, dbPrefix.idleTimeout);
         Assertions.assertEquals(60000.0F, dbPrefix.maxLifetime);
-        Assertions.assertNull(dbPrefix.isEnabled);
+        Assertions.assertTrue(dbPrefix.isEnabled);
 
         Assertions.assertEquals(3, dbPrefix.hosts.size());
         Assertions.assertEquals("credmond", dbPrefix.hosts.get(0).getUser());
@@ -1134,7 +1124,7 @@ public class GestaltIntegrationTests {
         public int connectionTimeout;
         public Integer idleTimeout;
         public float maxLifetime;
-        public Boolean isEnabled;
+        public Boolean isEnabled = true;
 
 
         public DataBase() {
@@ -1147,7 +1137,7 @@ public class GestaltIntegrationTests {
         public int connectionTimeout;
         public Integer idleTimeout;
         public float maxLifetime;
-        public Boolean isEnabled;
+        public Boolean isEnabled = true;
 
         public DataBasePrefix() {
         }

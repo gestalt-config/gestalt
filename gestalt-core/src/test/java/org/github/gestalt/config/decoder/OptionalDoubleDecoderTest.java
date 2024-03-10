@@ -88,9 +88,9 @@ class OptionalDoubleDecoderTest {
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Leaf on path: db.port, has no value attempting to decode Double",
-            result.getErrors().get(0).description());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalDouble on path: db.port, from node: " +
+            "LeafNode{value='null'}", result.getErrors().get(0).description());
     }
 
     @Test
@@ -103,8 +103,25 @@ class OptionalDoubleDecoderTest {
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalDouble on path: db.port",
+            result.getErrors().get(0).description());
+    }
+
+    @Test
+    void notADouble() {
+        OptionalDoubleDecoder doubleDecoder = new OptionalDoubleDecoder();
+
+        GResultOf<OptionalDouble> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
+            TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertEquals(OptionalDouble.empty(), result.results());
+
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a leaf on path: db.port, received node type: null, attempting to decode Double",
+        Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
+                "attempting to decode Double",
             result.getErrors().get(0).description());
     }
 }

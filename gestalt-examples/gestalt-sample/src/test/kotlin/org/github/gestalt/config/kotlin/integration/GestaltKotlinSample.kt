@@ -50,7 +50,6 @@ class GestaltKotlinSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)
@@ -71,7 +70,6 @@ class GestaltKotlinSample {
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(EnvironmentConfigSourceBuilder.builder().build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)
@@ -224,8 +222,8 @@ class GestaltKotlinSample {
         assertEquals(600, gestalt.getConfig("db.connectionTimeout", Int::class.java))
         assertEquals(123, db.idleTimeout)
         assertEquals(60000.0f, db.maxLifetime)
-        assertNull(db.isEnabled)
-        assertTrue(gestalt.getConfig("db.isEnabled", true))
+        assertTrue(db.isEnabled!!)
+        assertTrue(gestalt.getConfig("db.unkown", true))
         assertEquals(3, db.hosts!!.size)
         assertEquals("credmond", db.hosts!![0].user)
         assertEquals("credmond", gestalt.getConfig("db.hosts[0].user", "test"))
@@ -279,7 +277,7 @@ class GestaltKotlinSample {
         assertEquals(1, user.user?.size)
         assertEquals("Janice", user.user!![0])
         assertEquals(Role.LEVEL1, user.accessRole)
-        assertFalse(user.overrideEnabled)
+        assertTrue(user.overrideEnabled)
         assertEquals(
             "active", gestalt.getConfig(
                 "serviceMode", TypeCapture.of(
@@ -326,12 +324,12 @@ class GestaltKotlinSample {
         var connectionTimeout = 0
         var idleTimeout: Int? = null
         var maxLifetime = 0f
-        var isEnabled: Boolean? = null
+        var isEnabled: Boolean? = true
     }
 
     class User {
         var user: Array<String>? = null
-        var overrideEnabled: Boolean = false
+        var overrideEnabled: Boolean = true
         var accessRole: Role? = null
     }
 

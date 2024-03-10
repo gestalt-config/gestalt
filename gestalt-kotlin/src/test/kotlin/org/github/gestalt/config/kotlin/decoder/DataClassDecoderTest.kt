@@ -3,6 +3,7 @@ package org.github.gestalt.config.kotlin.decoder
 import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.decoder.Priority
+import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltConfigurationException
 import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
 import org.github.gestalt.config.kotlin.test.classes.*
@@ -139,8 +140,11 @@ class DataClassDecoderTest {
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
+
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, " +
+                "from node: MapNode{mapNode={port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfo",
             result.errors[0].description()
         )
 
@@ -165,8 +169,9 @@ class DataClassDecoderTest {
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
+        Assertions.assertEquals(ValidationLevel.ERROR ,result.errors[0].level())
         Assertions.assertEquals(
-            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
+            "Data Class: DBInfoRequired, can not be constructed. Missing required members [password], on path: db.host",
             result.errors[0].description()
         )
     }
@@ -206,9 +211,12 @@ class DataClassDecoderTest {
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
+
         Assertions.assertEquals(1, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, from node: " +
+                "MapNode{mapNode={port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoNoDefaultOptional",
             result.errors[0].description()
         )
 
@@ -233,14 +241,12 @@ class DataClassDecoderTest {
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
-        Assertions.assertEquals(2, result.errors.size)
-        Assertions.assertEquals(
-            "Unable to find node matching path: db.host.password, for class: ObjectToken, during navigating to next node",
-            result.errors[0].description()
-        )
+
+        Assertions.assertEquals(1, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[0].level())
         Assertions.assertEquals(
             "Data Class: DBInfoNoDefault, can not be constructed. Missing required members [password], on path: db.host",
-            result.errors[1].description()
+            result.errors[0].description()
         )
     }
 
@@ -258,22 +264,51 @@ class DataClassDecoderTest {
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
+
         Assertions.assertEquals(2, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[0].level())
         Assertions.assertEquals(
             "Unable to parse a number on Path: db.host.port, from node: LeafNode{value='abc'} attempting to decode kInt",
             result.errors[0].description()
         )
+
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[1].level())
         Assertions.assertEquals(
-            "Unable to find node matching path: db.host.port, for class: class kotlin.Int, during data decoding",
+            "Data Class: DBInfo, can not be constructed. Missing required members [port], on path: db.host",
             result.errors[1].description()
         )
+    }
 
-        val results: DBInfo = result.results() as DBInfo
-        Assertions.assertEquals(0, results.port)
-        Assertions.assertEquals("pass", results.password)
-        Assertions.assertEquals("mysql.com", results.uri)
+    @Test
+    fun `decode failed bad Int not optional`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["port"] = LeafNode("abc")
+        configs["uri"] = LeafNode("mysql.com")
+        configs["password"] = LeafNode("pass")
+
+        val result = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoRequired>(),
+            DecoderContext(decoderService, null)
+        )
+        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+
+        Assertions.assertEquals(2, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[0].level())
+        Assertions.assertEquals(
+            "Unable to parse a number on Path: db.host.port, from node: LeafNode{value='abc'} attempting to decode kInt",
+            result.errors[0].description()
+        )
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[1].level())
+        Assertions.assertEquals(
+            "Data Class: DBInfoRequired, can not be constructed. Missing required members [port], on path: db.host",
+            result.errors[1].description()
+        )
     }
 
     @Test
@@ -290,22 +325,21 @@ class DataClassDecoderTest {
             kTypeCaptureOf<DBInfo>(),
             DecoderContext(decoderService, null)
         )
-        Assertions.assertTrue(result.hasResults())
+        Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
+
         Assertions.assertEquals(2, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.errors[0].level())
         Assertions.assertEquals(
             "Leaf on path: db.host.port, has no value attempting to decode kInt",
             result.errors[0].description()
         )
+
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[1].level())
         Assertions.assertEquals(
-            "Unable to find node matching path: db.host.port, for class: class kotlin.Int, during data decoding",
+            "Data Class: DBInfo, can not be constructed. Missing required members [port], on path: db.host",
             result.errors[1].description()
         )
-
-        val results: DBInfo = result.results() as DBInfo
-        Assertions.assertEquals(0, results.port)
-        Assertions.assertEquals("pass", results.password)
-        Assertions.assertEquals("mysql.com", results.uri)
     }
 
     @Test
@@ -347,8 +381,10 @@ class DataClassDecoderTest {
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
         Assertions.assertEquals(1, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Unable to find node matching path: db.host.channel, for class: ObjectToken, during navigating to next node",
+            "Missing Optional Value while decoding DataClass on path: db.host.channel, from node: " +
+                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoAnnotation",
             result.errors[0].description()
         )
 
