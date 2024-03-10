@@ -988,4 +988,143 @@ class MissingValuesConsistencyTest {
             Assertions.fail("Should not reach here");
         }
     }
+
+
+
+    // ---------- here ------------
+
+    @Test
+    public void testOptionalForMissingOkNullFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .build();
+
+        gestalt.loadConfigs();
+
+            Optional<DBInfoInterface2> dbInfo = gestalt.getConfigOptional("db", DBInfoInterface2.class);
+
+            Assertions.assertEquals("test", dbInfo.get().getPassword());
+            Assertions.assertEquals(3306, dbInfo.get().getPort());
+            Assertions.assertNull(dbInfo.get().getUri());
+
+            Assertions.assertTrue(dbInfo.isPresent());
+
+            Optional<DBInfoOptional> dbInfo2 = gestalt.getConfigOptional("db", DBInfoOptional.class);
+            Assertions.assertTrue(dbInfo2.isPresent());
+
+            Optional<DBInfo> dbInfo3 = gestalt.getConfigOptional("db", DBInfo.class);
+            Assertions.assertTrue(dbInfo3.isPresent());
+
+            Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
+            Assertions.assertTrue(dbInfo4.isPresent());
+
+            Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+            Assertions.assertTrue(dbInfo5.isPresent());
+    }
+
+    @Test
+    public void testOptionalForMissingFail() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Optional<DBInfoInterface2> dbInfo = gestalt.getConfigOptional("db", DBInfoInterface2.class);
+        Assertions.assertFalse(dbInfo.isPresent());
+
+        Optional<DBInfoOptional> dbInfo2 = gestalt.getConfigOptional("db", DBInfoOptional.class);
+        Assertions.assertFalse(dbInfo2.isPresent());
+
+        Optional<DBInfo> dbInfo3 = gestalt.getConfigOptional("db", DBInfo.class);
+        Assertions.assertFalse(dbInfo3.isPresent());
+
+        Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
+        Assertions.assertFalse(dbInfo4.isPresent());
+
+        Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+        Assertions.assertFalse(dbInfo5.isPresent());
+
+    }
+
+    @Test
+    public void testOptionalForMissingOkNullFailMissingValuesAsErrors() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Optional<DBInfoInterface2> dbInfo = gestalt.getConfigOptional("db", DBInfoInterface2.class);
+        Assertions.assertFalse(dbInfo.isPresent());
+
+        Optional<DBInfoOptional> dbInfo2 = gestalt.getConfigOptional("db", DBInfoOptional.class);
+        Assertions.assertTrue(dbInfo2.isPresent());
+
+        Optional<DBInfo> dbInfo3 = gestalt.getConfigOptional("db", DBInfo.class);
+        Assertions.assertFalse(dbInfo3.isPresent());
+
+        Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
+        Assertions.assertTrue(dbInfo4.isPresent());
+
+        Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+        Assertions.assertTrue(dbInfo5.isPresent());
+    }
+
+    @Test
+    public void testOptionalsForMissingFailMissingValuesAsNotErrors() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.PASSTHROUGH)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Optional<DBInfoInterface2> dbInfo = gestalt.getConfigOptional("db", DBInfoInterface2.class);
+
+        Assertions.assertEquals("test", dbInfo.get().getPassword());
+        Assertions.assertEquals(3306, dbInfo.get().getPort());
+        Assertions.assertNull(dbInfo.get().getUri());
+
+        Assertions.assertTrue(dbInfo.isPresent());
+
+        Optional<DBInfoOptional> dbInfo2 = gestalt.getConfigOptional("db", DBInfoOptional.class);
+        Assertions.assertFalse(dbInfo2.isPresent());
+
+        Optional<DBInfo> dbInfo3 = gestalt.getConfigOptional("db", DBInfo.class);
+        Assertions.assertTrue(dbInfo3.isPresent());
+
+        Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
+        Assertions.assertFalse(dbInfo4.isPresent());
+
+        Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+        Assertions.assertFalse(dbInfo5.isPresent());
+    }
 }
