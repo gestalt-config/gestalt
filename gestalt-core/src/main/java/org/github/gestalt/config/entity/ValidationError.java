@@ -423,9 +423,6 @@ public abstract class ValidationError {
         public String description() {
             StringBuilder description = new StringBuilder(62);
             description.append("Missing Optional Value while decoding ").append(decoder).append(" on path: ").append(path);
-            if (node != null) {
-                description.append(", from node: ").append(node);
-            }
             if (className != null) {
                 description.append(", with class: ").append(className);
             }

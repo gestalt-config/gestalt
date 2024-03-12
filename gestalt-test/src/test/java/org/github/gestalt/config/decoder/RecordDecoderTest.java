@@ -242,8 +242,8 @@ class RecordDecoderTest {
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().getFirst().level());
-        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.identity, from node: " +
-            "MapNode{mapNode={name=LeafNode{value='tim'}}}, with class: PersonAnnotations", result.getErrors().getFirst().description());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.identity, " +
+            "with class: PersonAnnotations", result.getErrors().getFirst().description());
 
         PersonAnnotations results = (PersonAnnotations) result.results();
         Assertions.assertEquals("tim", results.name());
@@ -328,9 +328,8 @@ class RecordDecoderTest {
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.id, from node: " +
-                "MapNode{mapNode={name=LeafNode{value='tim'}}}, with class: PersonOptional",
-            result.getErrors().get(0).description());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.id, " +
+                "with class: PersonOptional", result.getErrors().get(0).description());
 
         PersonOptional results = (PersonOptional) result.results();
         Assertions.assertEquals("tim", results.name().get());

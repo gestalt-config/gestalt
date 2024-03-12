@@ -88,7 +88,7 @@ class OptionalDecoderTest {
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Optional on path: db.port, from node: LeafNode{value='null'}",
+        Assertions.assertEquals("Missing Optional Value while decoding Optional on path: db.port",
             result.getErrors().get(0).description());
     }
 
@@ -129,8 +129,7 @@ class OptionalDecoderTest {
         Assertions.assertTrue(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.port, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.port, with class: DBInfoOptional",
             result.getErrors().get(0).description());
 
         Optional<DBInfoOptional> results = (Optional<DBInfoOptional>) result.results();
