@@ -143,8 +143,7 @@ class DataClassDecoderTest {
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.password, " +
-                "from node: MapNode{mapNode={port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfo",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, with class: DBInfo",
             result.errors[0].description()
         )
 
@@ -215,12 +214,40 @@ class DataClassDecoderTest {
         Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.password, from node: " +
-                "MapNode{mapNode={port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoNoDefaultOptional",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, with class: DBInfoNoDefaultOptional",
             result.errors[0].description()
         )
 
         val results: DBInfoNoDefaultOptional = result.results() as DBInfoNoDefaultOptional
+        Assertions.assertEquals(100, results.port)
+        Assertions.assertNull(results.password)
+        Assertions.assertEquals("mysql.com", results.uri)
+    }
+
+    @Test
+    fun `decode Missing Optional Member Nullable`() {
+        val decoder = DataClassDecoder()
+        val configs: MutableMap<String, ConfigNode> = HashMap()
+        configs["port"] = LeafNode("100")
+        configs["uri"] = LeafNode("mysql.com")
+
+        val result = decoder.decode(
+            "db.host", Tags.of(),
+            MapNode(configs),
+            kTypeCaptureOf<DBInfoNullable>(),
+            DecoderContext(decoderService, null)
+        )
+        Assertions.assertTrue(result.hasResults())
+        Assertions.assertTrue(result.hasErrors())
+
+        Assertions.assertEquals(1, result.errors.size)
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
+        Assertions.assertEquals(
+            "Missing Optional Value while decoding DataClass on path: db.host.password, with class: DBInfoNullable",
+            result.errors[0].description()
+        )
+
+        val results: DBInfoNullable = result.results() as DBInfoNullable
         Assertions.assertEquals(100, results.port)
         Assertions.assertNull(results.password)
         Assertions.assertEquals("mysql.com", results.uri)
@@ -383,8 +410,7 @@ class DataClassDecoderTest {
         Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.channel, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}}, with class: DBInfoAnnotation",
+            "Missing Optional Value while decoding DataClass on path: db.host.channel, with class: DBInfoAnnotation",
             result.errors[0].description()
         )
 

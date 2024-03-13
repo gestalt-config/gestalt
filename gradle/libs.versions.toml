@@ -4,7 +4,7 @@ javaLatest = "21"
 # @pin
 kotlin = "1.9.22"
 # @pin
-kotlinDokka = "1.9.10"
+kotlinDokka = "1.9.20"
 # Kotlin DI
 kodeinDI = "7.21.2"
 koinDI = "3.5.3"
@@ -17,27 +17,27 @@ weld = "3.1.0.Final"
 # @pin
 weldCore = "4.0.3.Final"
 #encoding/decoding
-jackson = "2.16.1"
+jackson = "2.17.0"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.24.12"
-gcpLibraries = "26.33.0"
+awsBom = "2.25.8"
+gcpLibraries = "26.34.0"
 # vault
 vault = "6.2.0"
 # Git support
-jgit = "6.8.0.202311291450-r"
+jgit = "6.9.0.202403050737-r"
 eddsa = "0.3.0"
 # testing
 junit5 = "5.10.2"
 assertJ = "3.25.3"
 mockito = "5.2.0"
-mockk = "1.13.9"
-koTestAssertions = "5.8.0"
+mockk = "1.13.10"
+koTestAssertions = "5.8.1"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.19.6"
+testcontainers = "1.19.7"
 # static code analysis
-errorprone = "2.25.0"
+errorprone = "2.26.1"
 gradleErrorProne = "3.1.0"
 detekt = "1.23.5"
 checkStyle = "10.10.0"
@@ -50,6 +50,7 @@ gestalt = "0.24.6"
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.4"
+com-fasterxml-jackson-datatype = "2.16.2"
 
 [libraries]
 # Kotlin
@@ -69,8 +70,8 @@ weld-core = { module = "org.jboss.weld:weld-core-impl", version.ref = "weldCore"
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
-jackson-java8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
-jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-java8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "com-fasterxml-jackson-datatype" }
+jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "com-fasterxml-jackson-datatype" }
 jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }

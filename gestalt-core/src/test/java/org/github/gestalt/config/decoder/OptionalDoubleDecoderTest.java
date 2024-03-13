@@ -89,8 +89,8 @@ class OptionalDoubleDecoderTest {
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding OptionalDouble on path: db.port, from node: " +
-            "LeafNode{value='null'}", result.getErrors().get(0).description());
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalDouble on path: db.port",
+            result.getErrors().get(0).description());
     }
 
     @Test

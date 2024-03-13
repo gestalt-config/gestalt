@@ -255,6 +255,10 @@ To retrieve a complex object, you need to pass in the class for Gestalt to retur
 
 There are two configuration options that allow you to control when errors are thrown when decoding complex objects.
 
+```java
+HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
+```
+
 ### `treatMissingValuesAsErrors`
 
 Treat missing field values in an object, proxy, record, or data object as errors. This will cause the API to either throw errors or return an empty optional.
@@ -270,9 +274,43 @@ Treat missing discretionary values (optional, fields with defaults, fields with 
 - If this is `true`, if a field is missing and would have had a default, it will fail and throw an exception.
 
 
+#### Examples of required and discretionary fields. 
+
+Here are some examples of required and discretionary fields and which setting can control if they are treated as errors or allowed.
 
 ```java
-HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
+public class DBInfo {
+  private Optional<Integer> port;                   // discretionary value controlled by treatMissingValuesAsErrors
+  private String uri = "my.sql.db";                 // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+  private String password;                          // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  private  @Config(defaultVal = "100") Integer connections; // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+}
+
+public interface DBInfoInterface {
+  Optional<int> getPort();                          // discretionary value controlled by treatMissingValuesAsErrors
+  default String getUri() {                         // discretionary value controlled by treatMissingValuesAsErrors
+     return  "https://my.sql.db";
+  }
+  String getPassword();                             // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  @Config(defaultVal = "100")
+  Integer getConnections();                         // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors  
+}
+
+public record DBInfoRecord(
+  int port,                                         // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  String uri,                                       // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  String password,                                  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  @Config(defaultVal = "100") Integer connections   // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+) {}
+```
+
+```kotlin
+data class DBInfoDataDefault(
+    var port: Int?,                                 // discretionary value controlled by treatMissingValuesAsErrors
+    var uri: String = "mysql:URI",                  // discretionary value controlled by treatMissingValuesAsErrors
+    var password: String,                           // required value controlled by treatMissingDiscretionaryValuesAsErrors
+    @Config(defaultVal = "100")  var connections: Integer, // required value controlled by treatMissingDiscretionaryValuesAsErrors
+)
 ```
 
 ### Retrieving Interfaces

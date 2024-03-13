@@ -20,6 +20,12 @@ data class DBInfoNoDefault(
     var password: String
 )
 
+data class DBInfoNullable(
+    var port: Int?,
+    var uri: String?,
+    var password: String?
+)
+
 data class DBInfoNoDefaultOptional(
     var port: Int = 0,
     var uri: String = "mysql:URI",

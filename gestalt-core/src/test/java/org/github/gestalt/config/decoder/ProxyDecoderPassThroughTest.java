@@ -102,12 +102,11 @@ class ProxyDecoderPassThroughTest {
         GestaltException exception = Assertions.assertThrows(GestaltException.class,
             () -> gestalt.getConfig("db", DBInfoInterfaceDefault.class));
 
-        Assertions.assertEquals("Failed getting config path: db, for class: " +
-                "org.github.gestalt.config.test.classes.DBInfoInterfaceDefault\n" +
-                " - level: ERROR, message: Unable to parse a number on Path: db.port, from node: " +
-                "LeafNode{value='aaaa'} attempting to decode Integer\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.port, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}}, " +
+        Assertions.assertEquals(
+            "Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceDefault\n" +
+                " - level: ERROR, message: Unable to parse a number on Path: db.port, from node: LeafNode{value='aaaa'} " +
+                "attempting to decode Integer\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.port, " +
                 "with class: DBInfoInterfaceDefault",
             exception.getMessage());
     }
@@ -483,8 +482,8 @@ class ProxyDecoderPassThroughTest {
 
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='test'}, port=LeafNode{value='3306'}}}, with class: DBInfoInterfaceOptional");
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
+                "with class: DBInfoInterfaceOptional");
 
     }
 
@@ -531,8 +530,8 @@ class ProxyDecoderPassThroughTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, from node: " +
-                "MapNode{mapNode={password=LeafNode{value='test'}, port=LeafNode{value='3306'}}}, with class: DBInfoInterfaceOptional");
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
+                "with class: DBInfoInterfaceOptional");
     }
 
     @Test

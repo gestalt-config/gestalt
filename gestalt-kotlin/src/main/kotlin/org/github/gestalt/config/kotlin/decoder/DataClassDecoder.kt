@@ -52,6 +52,7 @@ class DataClassDecoder : Decoder<Any> {
 
         return false
     }
+    data class ResultsAndValid(val results: Any?, var valid: Boolean)
 
     @Suppress("LongMethod")
     override fun decode(
@@ -95,6 +96,7 @@ class DataClassDecoder : Decoder<Any> {
                         val configNode = decoderService.getNextNode(nextPath, paramName, node)
                         errors.addAll(configNode.getErrorsNotLevel(ValidationLevel.MISSING_VALUE))
                         var results: Any? = null
+                        var resultValid = false;
                         when {
                             // if we have results for the config node.
                             configNode.hasResults() -> {
@@ -105,6 +107,7 @@ class DataClassDecoder : Decoder<Any> {
                                 errors.addAll(parameter.errors)
 
                                 if (parameter.hasResults()) {
+                                    resultValid = true
                                     results = parameter.results()
                                 } else {
                                     missingMembers.add(it.name ?: "null")
@@ -126,11 +129,18 @@ class DataClassDecoder : Decoder<Any> {
                                 }
 
                                 if (defaultGResultOf.hasResults()) {
+                                    resultValid = true
                                     results = defaultGResultOf.results()
                                     errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }
+                            }
+
+                            // if the type is nullable, it is an optional value.
+                            it.type.isMarkedNullable -> {
+                                resultValid = true
+                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
                             }
 
                             // if we dont have results for the config node, and the value is not optional
@@ -144,9 +154,10 @@ class DataClassDecoder : Decoder<Any> {
                             }
 
                         }
-                        results
+                        ResultsAndValid(results, resultValid)
                     }
-                    .filterValues { it != null }
+                    .filterValues { it.valid }
+                    .mapValues { it.value.results }
 
                 return when {
                     missingMembers.isNotEmpty() -> {

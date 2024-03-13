@@ -1,9 +1,12 @@
 package org.github.gestalt.config.model;
 
+import org.github.gestalt.config.annotations.Config;
+
 public class DBInfo {
     private int port;
     private String uri;
     private String password;
+    private Integer connections;
 
     public int getPort() {
         return port;
@@ -27,5 +30,13 @@ public class DBInfo {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getConnections() {
+        return connections;
+    }
+
+    public void setConnections(Integer connections) {
+        this.connections = connections;
     }
 }
