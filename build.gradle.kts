@@ -1,7 +1,7 @@
 plugins {
     base
 
-    id("gestalt.dependancy-update-conventions")
+    id("gestalt.dependency-update-conventions")
     id("gestalt.git-version-conventions")
     idea
 }

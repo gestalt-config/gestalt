@@ -3,12 +3,9 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.model.DBInfoInterface2;
-import org.github.gestalt.config.model.DBInfoInterfaceOptional;
-import org.github.gestalt.config.model.DBInfoOptional;
+import org.github.gestalt.config.model.*;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
-import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,6 +29,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -55,6 +53,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -79,6 +78,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -102,6 +102,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -125,6 +126,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -147,6 +149,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -170,6 +173,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -192,6 +196,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -229,6 +234,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword().get());
             Assertions.assertEquals(3306, dbInfo.getPort().get());
             Assertions.assertTrue(dbInfo.getUri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -253,7 +259,8 @@ class MissingValuesConsistencyTest {
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptional\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, " +
-                "with class: DBInfoOptional");
+                "with class: DBInfoOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.connections");
 
     }
 
@@ -276,6 +283,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword().get());
             Assertions.assertEquals(3306, dbInfo.getPort().get());
             Assertions.assertTrue(dbInfo.getUri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -299,7 +307,8 @@ class MissingValuesConsistencyTest {
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptional\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, " +
-                "with class: DBInfoOptional");
+                "with class: DBInfoOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.connections");
     }
 
     @Test
@@ -307,6 +316,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -321,6 +331,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword());
             Assertions.assertEquals(3306, dbInfo.getPort());
             Assertions.assertNull(dbInfo.getUri());
+            Assertions.assertEquals(100, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -331,6 +342,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -343,7 +355,7 @@ class MissingValuesConsistencyTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfo.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfo\n" +
                 " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, during object decoding");
 
     }
@@ -353,6 +365,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -365,7 +378,7 @@ class MissingValuesConsistencyTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfo.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfo\n" +
                 " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, during object decoding");
     }
 
@@ -374,6 +387,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -388,6 +402,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword());
             Assertions.assertEquals(3306, dbInfo.getPort());
             Assertions.assertNull(dbInfo.getUri());
+            Assertions.assertEquals(100, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -413,6 +428,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword().get());
             Assertions.assertEquals(3306, dbInfo.getPort().get());
             Assertions.assertTrue(dbInfo.getUri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -438,6 +454,8 @@ class MissingValuesConsistencyTest {
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
+                "with class: DBInfoInterfaceOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
                 "with class: DBInfoInterfaceOptional");
 
     }
@@ -462,6 +480,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword().get());
             Assertions.assertEquals(3306, dbInfo.getPort().get());
             Assertions.assertTrue(dbInfo.getUri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -486,6 +505,8 @@ class MissingValuesConsistencyTest {
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
+                "with class: DBInfoInterfaceOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
                 "with class: DBInfoInterfaceOptional");
     }
 
@@ -494,6 +515,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -509,6 +531,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword());
             Assertions.assertEquals(3306, dbInfo.getPort());
             Assertions.assertNull(dbInfo.getUri());
+            Assertions.assertEquals(100, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -519,6 +542,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -543,6 +567,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -566,6 +591,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -581,6 +607,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword());
             Assertions.assertEquals(3306, dbInfo.getPort());
             Assertions.assertNull(dbInfo.getUri());
+            Assertions.assertEquals(100, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -606,6 +633,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword().get());
             Assertions.assertEquals(3306, dbInfo.getPort().get());
             Assertions.assertTrue(dbInfo.getUri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -631,6 +659,8 @@ class MissingValuesConsistencyTest {
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
+                "with class: DBInfoInterfaceOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
                 "with class: DBInfoInterfaceOptional");
 
     }
@@ -655,6 +685,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword().get());
             Assertions.assertEquals(3306, dbInfo.getPort().get());
             Assertions.assertTrue(dbInfo.getUri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -679,6 +710,8 @@ class MissingValuesConsistencyTest {
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
+                "with class: DBInfoInterfaceOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
                 "with class: DBInfoInterfaceOptional");
     }
 
@@ -687,6 +720,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -702,6 +736,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword());
             Assertions.assertEquals(3306, dbInfo.getPort());
             Assertions.assertNull(dbInfo.getUri());
+            Assertions.assertEquals(100, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -712,6 +747,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -736,6 +772,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -759,6 +796,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -774,6 +812,7 @@ class MissingValuesConsistencyTest {
             Assertions.assertEquals("test", dbInfo.getPassword());
             Assertions.assertEquals(3306, dbInfo.getPort());
             Assertions.assertNull(dbInfo.getUri());
+            Assertions.assertEquals(100, dbInfo.getConnections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -798,10 +837,11 @@ class MissingValuesConsistencyTest {
         gestalt.loadConfigs();
 
         try {
-            ValidMissingValuesTest.DBInfoOptionalRecord dbInfo = gestalt.getConfig("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+            DBInfoOptionalRecord dbInfo = gestalt.getConfig("db", DBInfoOptionalRecord.class);
             Assertions.assertEquals("test", dbInfo.password().get());
             Assertions.assertEquals(3306, dbInfo.port().get());
             Assertions.assertTrue(dbInfo.uri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.connections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -812,8 +852,6 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
-        configs.put("admin[0]", "John");
-        configs.put("admin[1]", "Steve");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -824,11 +862,13 @@ class MissingValuesConsistencyTest {
 
         gestalt.loadConfigs();
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", ValidMissingValuesTest.DBInfoOptionalRecord.class));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoOptionalRecord.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.ValidMissingValuesTest$DBInfoOptionalRecord\n" +
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptionalRecord\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.uri, " +
+                "with class: DBInfoOptionalRecord\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.connections, " +
                 "with class: DBInfoOptionalRecord");
 
     }
@@ -851,10 +891,11 @@ class MissingValuesConsistencyTest {
         gestalt.loadConfigs();
 
         try {
-            ValidMissingValuesTest.DBInfoOptionalRecord dbInfo = gestalt.getConfig("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+            DBInfoOptionalRecord dbInfo = gestalt.getConfig("db", DBInfoOptionalRecord.class);
             Assertions.assertEquals("test", dbInfo.password().get());
             Assertions.assertEquals(3306, dbInfo.port().get());
             Assertions.assertTrue(dbInfo.uri().isEmpty());
+            Assertions.assertEquals(200, dbInfo.connections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -865,8 +906,6 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
-        configs.put("admin[0]", "John");
-        configs.put("admin[1]", "Steve");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -877,10 +916,12 @@ class MissingValuesConsistencyTest {
 
         gestalt.loadConfigs();
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", ValidMissingValuesTest.DBInfoOptionalRecord.class));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoOptionalRecord.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.ValidMissingValuesTest$DBInfoOptionalRecord\n" +
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptionalRecord\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.uri, " +
+                "with class: DBInfoOptionalRecord\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.connections, " +
                 "with class: DBInfoOptionalRecord");
     }
 
@@ -889,8 +930,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
-        configs.put("admin[0]", "John");
-        configs.put("admin[1]", "Steve");
+        configs.put("db.connections", "100");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -902,10 +942,11 @@ class MissingValuesConsistencyTest {
         gestalt.loadConfigs();
 
         try {
-            ValidMissingValuesTest.DBInfoRecord dbInfo = gestalt.getConfig("db", ValidMissingValuesTest.DBInfoRecord.class);
+            DBInfoRecord dbInfo = gestalt.getConfig("db", DBInfoRecord.class);
             Assertions.assertEquals("test", dbInfo.password());
             Assertions.assertEquals(3306, dbInfo.port());
             Assertions.assertNull(dbInfo.uri());
+            Assertions.assertEquals(100, dbInfo.connections());
         } catch (GestaltException e) {
             Assertions.fail("Should not reach here");
         }
@@ -916,8 +957,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
-        configs.put("admin[0]", "John");
-        configs.put("admin[1]", "Steve");
+        configs.put("db.connections", "100");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -928,10 +968,10 @@ class MissingValuesConsistencyTest {
 
         gestalt.loadConfigs();
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", ValidMissingValuesTest.DBInfoRecord.class));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoRecord.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.ValidMissingValuesTest$DBInfoRecord\n" +
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoRecord\n" +
                 " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfoRecord, " +
                 "during record decoding");
 
@@ -942,8 +982,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
-        configs.put("admin[0]", "John");
-        configs.put("admin[1]", "Steve");
+        configs.put("db.connections", "100");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -954,10 +993,10 @@ class MissingValuesConsistencyTest {
 
         gestalt.loadConfigs();
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", ValidMissingValuesTest.DBInfoRecord.class));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoRecord.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.ValidMissingValuesTest$DBInfoRecord\n" +
+            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoRecord\n" +
                 " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfoRecord, " +
                 "during record decoding");
     }
@@ -967,8 +1006,6 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
-        configs.put("admin[0]", "John");
-        configs.put("admin[1]", "Steve");
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
@@ -980,7 +1017,7 @@ class MissingValuesConsistencyTest {
         gestalt.loadConfigs();
 
         try {
-            ValidMissingValuesTest.DBInfoRecord dbInfo = gestalt.getConfig("db", ValidMissingValuesTest.DBInfoRecord.class);
+            DBInfoRecord dbInfo = gestalt.getConfig("db", DBInfoRecord.class);
             Assertions.assertEquals("test", dbInfo.password());
             Assertions.assertEquals(3306, dbInfo.port());
             Assertions.assertNull(dbInfo.uri());
@@ -1004,25 +1041,25 @@ class MissingValuesConsistencyTest {
 
         gestalt.loadConfigs();
 
-            Optional<DBInfoInterface2> dbInfo = gestalt.getConfigOptional("db", DBInfoInterface2.class);
+        Optional<DBInfoInterface2> dbInfo = gestalt.getConfigOptional("db", DBInfoInterface2.class);
 
-            Assertions.assertEquals("test", dbInfo.get().getPassword());
-            Assertions.assertEquals(3306, dbInfo.get().getPort());
-            Assertions.assertNull(dbInfo.get().getUri());
+        Assertions.assertEquals("test", dbInfo.get().getPassword());
+        Assertions.assertEquals(3306, dbInfo.get().getPort());
+        Assertions.assertNull(dbInfo.get().getUri());
 
-            Assertions.assertTrue(dbInfo.isPresent());
+        Assertions.assertTrue(dbInfo.isPresent());
 
-            Optional<DBInfoOptional> dbInfo2 = gestalt.getConfigOptional("db", DBInfoOptional.class);
-            Assertions.assertTrue(dbInfo2.isPresent());
+        Optional<DBInfoOptional> dbInfo2 = gestalt.getConfigOptional("db", DBInfoOptional.class);
+        Assertions.assertTrue(dbInfo2.isPresent());
 
-            Optional<DBInfo> dbInfo3 = gestalt.getConfigOptional("db", DBInfo.class);
-            Assertions.assertTrue(dbInfo3.isPresent());
+        Optional<DBInfo> dbInfo3 = gestalt.getConfigOptional("db", DBInfo.class);
+        Assertions.assertTrue(dbInfo3.isPresent());
 
-            Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
-            Assertions.assertTrue(dbInfo4.isPresent());
+        Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
+        Assertions.assertTrue(dbInfo4.isPresent());
 
-            Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
-            Assertions.assertTrue(dbInfo5.isPresent());
+        Optional<DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", DBInfoOptionalRecord.class);
+        Assertions.assertTrue(dbInfo5.isPresent());
     }
 
     @Test
@@ -1052,7 +1089,7 @@ class MissingValuesConsistencyTest {
         Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
         Assertions.assertFalse(dbInfo4.isPresent());
 
-        Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+        Optional<DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", DBInfoOptionalRecord.class);
         Assertions.assertFalse(dbInfo5.isPresent());
 
     }
@@ -1084,7 +1121,7 @@ class MissingValuesConsistencyTest {
         Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
         Assertions.assertTrue(dbInfo4.isPresent());
 
-        Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+        Optional<DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", DBInfoOptionalRecord.class);
         Assertions.assertTrue(dbInfo5.isPresent());
     }
 
@@ -1093,6 +1130,7 @@ class MissingValuesConsistencyTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "3306");
+        configs.put("db.connections", "100");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -1120,7 +1158,7 @@ class MissingValuesConsistencyTest {
         Optional<DBInfoInterfaceOptional> dbInfo4 = gestalt.getConfigOptional("db", DBInfoInterfaceOptional.class);
         Assertions.assertFalse(dbInfo4.isPresent());
 
-        Optional<ValidMissingValuesTest.DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", ValidMissingValuesTest.DBInfoOptionalRecord.class);
+        Optional<DBInfoOptionalRecord> dbInfo5 = gestalt.getConfigOptional("db", DBInfoOptionalRecord.class);
         Assertions.assertFalse(dbInfo5.isPresent());
     }
 }

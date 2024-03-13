@@ -1,6 +1,7 @@
 package org.github.gestalt.config.kotlin
 
 import io.kotest.matchers.shouldBe
+import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.decoder.ProxyDecoderMode
 import org.github.gestalt.config.exceptions.GestaltException
@@ -13,19 +14,22 @@ import java.util.*
 data class DBInfoData(
     var port: Int,
     var uri: String,
-    var password: String
+    var password: String,
+    var connections: Int
 )
 
 data class DBInfoDataDefault(
     var port: Int = 0,
     var uri: String = "mysql:URI",
-    var password: String = "password"
+    var password: String = "password",
+    @Config(defaultVal = "200") var connections: Int
 )
 
 data class DBInfoDataNullable(
     var port: Int?,
     var uri: String?,
-    var password: String?
+    var password: String?,
+    var connections: Int?
 )
 
 class MissingValuesConsistencyKtTest {
@@ -36,6 +40,7 @@ class MissingValuesConsistencyKtTest {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.password"] = "test"
         configs["db.port"] = "3306"
+        configs["db.connections"] = "100"
 
         val builder = GestaltBuilder()
         val gestalt = builder
@@ -59,6 +64,7 @@ class MissingValuesConsistencyKtTest {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.password"] = "test"
         configs["db.port"] = "3306"
+        configs["db.connections"] = "100"
 
         val builder = GestaltBuilder()
         val gestalt = builder
@@ -82,6 +88,7 @@ class MissingValuesConsistencyKtTest {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.password"] = "test"
         configs["db.port"] = "3306"
+        configs["db.connections"] = "100"
 
         val builder = GestaltBuilder()
         val gestalt = builder
@@ -104,6 +111,7 @@ class MissingValuesConsistencyKtTest {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.password"] = "test"
         configs["db.port"] = "3306"
+        configs["db.connections"] = "100"
 
         val builder = GestaltBuilder()
         val gestalt = builder
@@ -141,7 +149,7 @@ class MissingValuesConsistencyKtTest {
         dbInfo.uri shouldBe "mysql:URI"
         dbInfo.password shouldBe "test"
         dbInfo.port shouldBe 3306
-
+        dbInfo.connections shouldBe 200
     }
 
 
@@ -165,6 +173,8 @@ class MissingValuesConsistencyKtTest {
 
         ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataDefault\n" +
             " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
+            "with class: DBInfoDataDefault\n" +
+            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.connections, " +
             "with class: DBInfoDataDefault"
 
     }
@@ -190,6 +200,7 @@ class MissingValuesConsistencyKtTest {
         dbInfo.uri shouldBe "mysql:URI"
         dbInfo.password shouldBe "test"
         dbInfo.port shouldBe 3306
+        dbInfo.connections shouldBe 200
     }
 
     @Test
@@ -212,6 +223,8 @@ class MissingValuesConsistencyKtTest {
 
         ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataDefault\n" +
             " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
+            "with class: DBInfoDataDefault\n" +
+            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.connections, " +
             "with class: DBInfoDataDefault"
     }
 
@@ -237,6 +250,7 @@ class MissingValuesConsistencyKtTest {
         dbInfo.uri shouldBe null
         dbInfo.password shouldBe "test"
         dbInfo.port shouldBe 3306
+        dbInfo.connections shouldBe null
     }
 
 
@@ -260,7 +274,10 @@ class MissingValuesConsistencyKtTest {
 
         ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataNullable\n" +
             " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
+            "with class: DBInfoDataNullable\n" +
+            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.connections, " +
             "with class: DBInfoDataNullable"
+
 
     }
 
@@ -285,6 +302,7 @@ class MissingValuesConsistencyKtTest {
         dbInfo.uri shouldBe null
         dbInfo.password shouldBe "test"
         dbInfo.port shouldBe 3306
+        dbInfo.connections shouldBe null
     }
 
     @Test
@@ -293,6 +311,7 @@ class MissingValuesConsistencyKtTest {
         val configs: MutableMap<String, String> = HashMap()
         configs["db.password"] = "test"
         configs["db.port"] = "3306"
+        configs["db.connections"] = "100"
 
         val builder = GestaltBuilder()
         val gestalt = builder
@@ -335,6 +354,7 @@ class MissingValuesConsistencyKtTest {
         dbInfo2!!.uri shouldBe "mysql:URI"
         dbInfo2.password shouldBe "test"
         dbInfo2.port shouldBe 3306
+        dbInfo2.connections shouldBe 200
 
         val dbInfo3: DBInfoDataNullable? = gestalt.getConfig("db")
         Assertions.assertNotNull(dbInfo3)

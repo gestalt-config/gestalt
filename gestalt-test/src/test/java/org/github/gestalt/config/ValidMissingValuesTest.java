@@ -4,7 +4,6 @@ import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
-import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,13 +16,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ValidMissingValuesTest {
 
-    public record MandatoryValue(String someValue, String mandatory) {}
-    public record ContainsMandatoryMap(String someValue, Map<String, MandatoryValue> mandatoryMap){}
-    public record OptionalValue(String someValue, Optional<String> optional){}
-    public record WithDefault(String someValue, @Config(defaultVal = "myDefault") String withDefault){}
+    public record MandatoryValue(String someValue, String mandatory) {
+    }
 
-    public record DBInfoRecord(int port, String uri, String password) {}
-    public record DBInfoOptionalRecord(Optional<Integer> port, Optional<String> uri, Optional<String> password) {}
+    public record ContainsMandatoryMap(String someValue, Map<String, MandatoryValue> mandatoryMap) {
+    }
+
+    public record OptionalValue(String someValue, Optional<String> optional) {
+    }
+
+    public record WithDefault(String someValue, @Config(defaultVal = "myDefault") String withDefault) {
+    }
 
     private Gestalt gestalt;
 
