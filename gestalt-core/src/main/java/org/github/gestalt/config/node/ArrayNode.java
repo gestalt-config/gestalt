@@ -1,9 +1,13 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.utils.PathUtil;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Array config node that holds a list of configs.
@@ -80,8 +84,15 @@ public final class ArrayNode implements ConfigNode {
 
     @Override
     public String toString() {
+        return printer("");
+    }
+
+    public String printer(String path) {
         return "ArrayNode{" +
-            "values=" + values +
-            '}';
+            "values=[" +
+            IntStream.range(0, values.size())
+                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(path, n)))
+                .collect(Collectors.joining(", ")) +
+            "]}";
     }
 }

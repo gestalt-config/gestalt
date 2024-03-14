@@ -64,8 +64,12 @@ public final class LeafNode implements ConfigNode {
 
     @Override
     public String toString() {
+        return printer("");
+    }
+
+    public String printer(String path) {
         return "LeafNode{" +
             "value='" + value + '\'' +
-            '}';
+            "}";
     }
 }

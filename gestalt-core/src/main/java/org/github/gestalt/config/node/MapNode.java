@@ -1,9 +1,12 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.utils.PathUtil;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Map node holds a map of config nodes we can get by key.
@@ -80,8 +83,15 @@ public final class MapNode implements ConfigNode {
 
     @Override
     public String toString() {
+        return printer("");
+    }
+
+    public String printer(String path) {
         return "MapNode{" +
-            "mapNode=" + nodes +
-            '}';
+            "mapNode={" +
+            nodes.entrySet().stream()
+                .map((it) -> it.getKey() + "=" + it.getValue().printer(PathUtil.pathForKey(path, it.getKey())))
+                .collect(Collectors.joining(", ")) +
+            "}}";
     }
 }

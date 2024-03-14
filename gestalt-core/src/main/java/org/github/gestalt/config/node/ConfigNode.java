@@ -45,4 +45,6 @@ public interface ConfigNode {
      * @return side of the node
      */
     int size();
+
+    String printer(String path);
 }

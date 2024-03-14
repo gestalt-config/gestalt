@@ -148,5 +148,34 @@ class ConfigNodeTest {
             objectNode.toString());
         Assertions.assertEquals("LeafNode{value='leaf'}", leaf.toString());
     }
+
+    @Test
+    void printerTest() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("test", new LeafNode("leaf"));
+        mapNode.put("test2", new LeafNode("leaf2"));
+        MapNode objectNode = new MapNode(mapNode);
+        LeafNode leaf = new LeafNode("leaf");
+
+        Assertions.assertEquals("ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}",
+            arrayNode.printer(""));
+        Assertions.assertEquals("MapNode{mapNode={test2=LeafNode{value='leaf2'}, test=LeafNode{value='leaf'}}}",
+            objectNode.printer(""));
+        Assertions.assertEquals("LeafNode{value='leaf'}", leaf.printer(""));
+    }
+
+    @Test
+    void printerComplexTest() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("test", new LeafNode("leaf"));
+        mapNode.put("test2", arrayNode);
+        MapNode objectNode = new MapNode(mapNode);
+
+        Assertions.assertEquals("MapNode{mapNode={test2=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}, " +
+                "test=LeafNode{value='leaf'}}}",
+            objectNode.printer(""));
+    }
 }
 
