@@ -608,7 +608,7 @@ public class GestaltBuilder {
      * @param treatNullValuesInClassAsErrors treat null values in classes after decoding as errors
      * @return GestaltBuilder builder
      * @deprecated This value is no longer used, Please use {@link #setTreatMissingDiscretionaryValuesAsErrors(boolean)}
-     * and {@link #setTreatMissingValuesAsErrors(Boolean)}
+     *     and {@link #setTreatMissingValuesAsErrors(Boolean)}
      */
     @Deprecated(since = "0.25.0", forRemoval = true)
     public GestaltBuilder setTreatNullValuesInClassAsErrors(Boolean treatNullValuesInClassAsErrors) {

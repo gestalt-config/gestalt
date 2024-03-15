@@ -228,9 +228,10 @@ public final class ProxyDecoder implements Decoder<Object> {
                         //noinspection DataFlowIssue assigning null for ease of reading here
                         gestaltResult = null;
                     }
-                } else
+                } else {
                     throw new GestaltException("Failed to get pass through object from proxy config while calling method: " + methodName +
                         " with type: " + returnType + " in path: " + path + ".");
+                }
             }
 
             return gestaltResult;
@@ -301,7 +302,8 @@ public final class ProxyDecoder implements Decoder<Object> {
         private final Map<String, Object> methodResults;
 
 
-        private ProxyCacheInvocationHandler(String path, Tags tags, DecoderContext decoderContext, GestaltConfig config, Map<String, Object> methodResults) {
+        private ProxyCacheInvocationHandler(String path, Tags tags, DecoderContext decoderContext, GestaltConfig config,
+                                            Map<String, Object> methodResults) {
             super(path, tags, decoderContext, config);
             this.methodResults = methodResults;
         }
