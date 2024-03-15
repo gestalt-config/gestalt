@@ -423,6 +423,9 @@ public abstract class ValidationError {
         public String description() {
             StringBuilder description = new StringBuilder(62);
             description.append("Missing Optional Value while decoding ").append(decoder).append(" on path: ").append(path);
+            if (node != null) {
+                description.append(", from node: ").append(node.printer(path));
+            }
             if (className != null) {
                 description.append(", with class: ").append(className);
             }
@@ -618,7 +621,8 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Unable to decode a number on path: " + path + ", from node: " + node + " attempting to decode " + nodeType;
+            return "Unable to decode a number on path: " + path + ", from node: " + node.printer(path) +
+                " attempting to decode " + nodeType;
         }
     }
 
@@ -637,7 +641,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Expected a char on path: " + path + ", decoding node: " + node + " received the wrong size";
+            return "Expected a char on path: " + path + ", decoding node: " + node.printer(path) + " received the wrong size";
         }
     }
 
@@ -656,7 +660,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Expected a Byte on path: " + path + ", decoding node: " + node + " received the wrong size";
+            return "Expected a Byte on path: " + path + ", decoding node: " + node.printer(path) + " received the wrong size";
         }
     }
 
@@ -679,7 +683,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " + node +
+            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " + node.printer(path) +
                 ", with reason: " + reason;
         }
     }
@@ -1284,7 +1288,7 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Exceeded maximum nested substitution depth of " + depth + " on path " + path + " for node: " + node.toString();
+            return "Exceeded maximum nested substitution depth of " + depth + " on path " + path + " for node: " + node.printer(path);
         }
     }
 

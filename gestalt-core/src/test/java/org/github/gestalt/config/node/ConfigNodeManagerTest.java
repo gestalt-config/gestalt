@@ -2108,6 +2108,11 @@ class ConfigNodeManagerTest {
         public int size() {
             return 0;
         }
+
+        @Override
+        public String printer(String path) {
+            return null;
+        }
     }
 
     public static class TestPostProcessor implements PostProcessor {
