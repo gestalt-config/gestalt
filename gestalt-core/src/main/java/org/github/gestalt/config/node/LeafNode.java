@@ -67,6 +67,7 @@ public final class LeafNode implements ConfigNode {
         return printer("");
     }
 
+    @Override
     public String printer(String path) {
         return "LeafNode{" +
             "value='" + value + '\'' +

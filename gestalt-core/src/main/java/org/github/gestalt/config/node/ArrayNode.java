@@ -87,6 +87,7 @@ public final class ArrayNode implements ConfigNode {
         return printer("");
     }
 
+    @Override
     public String printer(String path) {
         return "ArrayNode{" +
             "values=[" +
