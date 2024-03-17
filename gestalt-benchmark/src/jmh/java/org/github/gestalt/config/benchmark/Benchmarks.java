@@ -3,8 +3,8 @@ package org.github.gestalt.config.benchmark;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ClassPathConfigSourceBuilder;
-import org.github.gestalt.config.source.MapConfigSourceBuilder;
+import org.github.gestalt.config.source.ClassPathConfigSource;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.HashMap;
@@ -22,6 +22,7 @@ import static java.util.logging.Level.*;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 
+@SuppressWarnings("deprecation")
 public abstract class Benchmarks {
 
     @Benchmark
@@ -58,9 +59,9 @@ public abstract class Benchmarks {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
-            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(new ClassPathConfigSource("/default.properties"))
+            .addSource(new ClassPathConfigSource("/dev.properties"))
+            .addSource(new MapConfigSource(configs))
             .build();
 
         // Load the configurations, this will throw exceptions if there are any errors.
@@ -97,9 +98,9 @@ public abstract class Benchmarks {
             // The later ones layer on and over write any values in the previous
             GestaltBuilder builder = new GestaltBuilder();
             gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+                .addSource(new ClassPathConfigSource("/default.properties"))
+                .addSource(new ClassPathConfigSource("/dev.properties"))
+                .addSource(new MapConfigSource(configs))
                 .build();
 
             // Load the configurations, this will throw exceptions if there are any errors.
@@ -107,9 +108,9 @@ public abstract class Benchmarks {
 
             GestaltBuilder builderNoCache = new GestaltBuilder();
             gestaltNoCache = builderNoCache
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+                .addSource(new ClassPathConfigSource("/default.properties"))
+                .addSource(new ClassPathConfigSource("/dev.properties"))
+                .addSource(new MapConfigSource(configs))
                 .useCacheDecorator(false)
                 .build();
 
