@@ -280,36 +280,47 @@ Here are some examples of required and discretionary fields and which setting ca
 
 ```java
 public class DBInfo {
-  private Optional<Integer> port;                   // discretionary value controlled by treatMissingValuesAsErrors
-  private String uri = "my.sql.db";                 // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
-  private String password;                          // required value controlled by treatMissingDiscretionaryValuesAsErrors
-  private  @Config(defaultVal = "100") Integer connections; // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+  // discretionary value controlled by treatMissingValuesAsErrors
+  private Optional<Integer> port;                   // default value Optional.empty()
+  private String uri = "my.sql.db";                 // default value "my.sql.db"
+  private  @Config(defaultVal = "100") Integer connections; // default value 100
+
+  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  private String password;                         // default value null
 }
 
 public interface DBInfoInterface {
-  Optional<int> getPort();                          // discretionary value controlled by treatMissingValuesAsErrors
-  default String getUri() {                         // discretionary value controlled by treatMissingValuesAsErrors
-     return  "https://my.sql.db";
+  Optional<Integer> getPort();                      // default value Optional.empty()
+  default String getUri() {                         // default value "my.sql.db"
+     return  "my.sql.db";
   }
-  String getPassword();                             // required value controlled by treatMissingDiscretionaryValuesAsErrors
   @Config(defaultVal = "100")
-  Integer getConnections();                         // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors  
+  Integer getConnections();                         // default value 100
+
+  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  String getPassword();                            // default value null
 }
 
 public record DBInfoRecord(
-  int port,                                         // required value controlled by treatMissingDiscretionaryValuesAsErrors
-  String uri,                                       // required value controlled by treatMissingDiscretionaryValuesAsErrors
-  String password,                                  // required value controlled by treatMissingDiscretionaryValuesAsErrors
-  @Config(defaultVal = "100") Integer connections   // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+  // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+  @Config(defaultVal = "100") Integer connections,  // default value 100
+  Optional<Integer> port,                           // default value Optional.empty()
+  
+  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  String uri,                                      // default value null
+  String password                                  // default value null
 ) {}
 ```
 
 ```kotlin
 data class DBInfoDataDefault(
-    var port: Int?,                                 // discretionary value controlled by treatMissingValuesAsErrors
-    var uri: String = "mysql:URI",                  // discretionary value controlled by treatMissingValuesAsErrors
-    var password: String,                           // required value controlled by treatMissingDiscretionaryValuesAsErrors
-    @Config(defaultVal = "100")  var connections: Integer, // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  // discretionary value controlled by treatMissingValuesAsErrors
+    var port: Int?,                                 // default value null
+    var uri: String = "my.sql.db",                  // default value "my.sql.db"
+    @Config(defaultVal = "100")  var connections: Integer, // default value 100
+
+    // required value cam not disable treatMissingDiscretionaryValuesAsErrors and allow nulls. 
+    var password: String,                           // required, can not be null.   
 )
 ```
 
