@@ -1749,6 +1749,31 @@ class GestaltTest {
     }
 
     @Test
+    public void testSecretMaskingDefault() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "abcdef");
+        configs.put("db.uri", "my.sql.com");
+        configs.put("db.salt", "pepper");
+        configs.put("db.secret.user", "12345");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        String rootNode = gestalt.debugPrint(Tags.of());
+
+        Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='*****'}, salt=LeafNode{value='*****'}, " +
+            "port=LeafNode{value='abcdef'}, secret=MapNode{user=LeafNode{value='*****'}}, uri=LeafNode{value='my.sql.com'}}}", rootNode);
+    }
+
+    @Test
     public void testDebugPrint() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
