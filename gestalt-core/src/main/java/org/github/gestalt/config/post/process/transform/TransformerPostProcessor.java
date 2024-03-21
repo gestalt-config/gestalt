@@ -7,6 +7,7 @@ import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.substitution.SubstitutionNode;
 import org.github.gestalt.config.post.process.transform.substitution.SubstitutionTreeBuilder;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.*;
@@ -40,6 +41,7 @@ public final class TransformerPostProcessor implements PostProcessor {
     private Pattern pattern;
     private int maxRecursionDepth = 5;
     private SubstitutionTreeBuilder substitutionTreeBuilder;
+    private SecretConcealer secretConcealer;
 
     /**
      * By default, use the service loader to load all Transformer classes.
@@ -84,6 +86,7 @@ public final class TransformerPostProcessor implements PostProcessor {
 
         this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
         this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
+        this.secretConcealer = config.getSecretConcealer();
     }
 
     @Override
@@ -108,7 +111,8 @@ public final class TransformerPostProcessor implements PostProcessor {
 
     private GResultOf<String> buildSubstitutedStringList(String path, ConfigNode originalNode, List<SubstitutionNode> nodes, int depth) {
         if (depth > maxRecursionDepth) {
-            return GResultOf.errors(new ValidationError.ExceededMaximumNestedSubstitutionDepth(path, depth, originalNode));
+            return GResultOf.errors(
+                new ValidationError.ExceededMaximumNestedSubstitutionDepth(path, depth, originalNode, secretConcealer));
         }
 
         StringBuilder result = new StringBuilder();

@@ -67,7 +67,7 @@ class ByteDecoderTest {
         ByteDecoder decoder = new ByteDecoder();
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
-            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals("a".getBytes(Charset.defaultCharset())[0], result.results());
@@ -79,7 +79,7 @@ class ByteDecoderTest {
         ByteDecoder decoder = new ByteDecoder();
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
-            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -94,7 +94,7 @@ class ByteDecoderTest {
         ByteDecoder decoder = new ByteDecoder();
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
-            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

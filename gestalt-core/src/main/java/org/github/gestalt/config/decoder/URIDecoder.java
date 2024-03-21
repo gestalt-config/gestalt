@@ -32,12 +32,14 @@ public final class URIDecoder extends LeafDecoder<URI> {
     }
 
     @Override
-    protected GResultOf<URI> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<URI> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         var value = node.getValue().orElse("");
         try {
             return GResultOf.result(new URI(value));
         } catch (URISyntaxException e) {
-            return GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage()));
+            return GResultOf.errors(
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage(),
+                    decoderContext.getSecretConcealer()));
         }
     }
 }

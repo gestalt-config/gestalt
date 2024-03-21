@@ -44,7 +44,7 @@ class GCPSecretTransformerTest {
     void process() {
 
         GestaltConfig config = new GestaltConfig();
-        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null, null);
 
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
@@ -72,7 +72,7 @@ class GCPSecretTransformerTest {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(new GoogleModuleConfig());
-        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null, null);
 
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
@@ -106,7 +106,7 @@ class GCPSecretTransformerTest {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(googleModuleConfig);
-        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null, null);
 
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
@@ -136,7 +136,7 @@ class GCPSecretTransformerTest {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(new GoogleModuleConfig());
-        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null);
+        PostProcessorConfig postProcessorConfig = new PostProcessorConfig(config, null, null, null);
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
             secretClient.when(SecretManagerServiceClient::create).thenReturn(secretManagerServiceClient);

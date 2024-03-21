@@ -23,6 +23,7 @@ import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
@@ -72,6 +73,13 @@ public class GestaltBuilder {
     private List<PostProcessor> postProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
     private boolean useCacheDecorator = true;
+    private Set<String> securityRules = new HashSet<>(
+        List.of("bearer", "cookie", "credential", "id",
+            "key", "keystore", "passphrase", "password",
+            "salt", "secret", "secure", "ssl",
+            "token", "truststore"));
+    private String secretMask = "*****";
+    private SecretConcealer secretConcealer;
 
     private Boolean treatWarningsAsErrors = null;
     private Boolean treatMissingArrayIndexAsError = null;
@@ -146,7 +154,7 @@ public class GestaltBuilder {
         List<PostProcessor> postProcessorsSet = new ArrayList<>();
         ServiceLoader<PostProcessor> loader = ServiceLoader.load(PostProcessor.class);
         loader.forEach(it -> {
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer);
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
             it.applyConfig(config);
             postProcessorsSet.add(it);
         });
@@ -421,6 +429,42 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set the mask to use when replacing a leaf value matching a security rule.
+     *
+     * @param mask mask to use when replacing a leaf value matching a security rule
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSecurityMask(String mask) {
+        secretMask = mask;
+        return this;
+    }
+
+    /**
+     * Add a regex that we find when printing the nodes, to mask any secrets.
+     * If the regex is found it will replace the node value with the mask.
+     *
+     * @param regex regex to find.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addSecurityMaskingRule(String regex) {
+        securityRules.add(regex);
+        return this;
+    }
+
+    /**
+     * Sets all the regex that we find when printing the nodes, to mask any secrets.
+     * If the regex is found it will replace the node value with the mask.
+     *
+     * @param regexs regex's to find.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSecurityMaskingRule(Set<String> regexs) {
+        securityRules = regexs;
+        return this;
+    }
+
+
+    /**
      * Set the sentence lexer that will be passed through to the DecoderRegistry.
      *
      * @param sentenceLexer for the DecoderRegistry
@@ -565,7 +609,7 @@ public class GestaltBuilder {
     /**
      * treat missing field values in an object, proxy, record or data object as errors.
      *
-     * <p> If this is true, any time a value that is not discretionary is missing, there will be an error.
+     * <p>If this is true, any time a value that is not discretionary is missing, there will be an error.
      * If this is false, a missing value will be returned as null or the default initialization. Null for objects and 0 for primitives.
      *
      * @param treatMissingValuesAsErrors the settings for treating missing values as errors.
@@ -580,7 +624,7 @@ public class GestaltBuilder {
      * Get treat missing discretionary values (optional, fields with defaults, fields with default annotations)
      * in an object, proxy, record or data object as errors.
      *
-     * <p> If this is false you will be able to get the configuration with default values or an empty Optional.
+     * <p>If this is false you will be able to get the configuration with default values or an empty Optional.
      * If this is true, if a field is missing and would have had a default it will fail and throw an exception.
      *
      * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
@@ -844,8 +888,11 @@ public class GestaltBuilder {
             throw new GestaltConfigurationException("No sources provided");
         }
 
+        secretConcealer = new SecretConcealer(securityRules, secretMask);
+
         gestaltConfig = rebuildConfig();
         gestaltConfig.registerModuleConfig(modules);
+
 
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
@@ -890,7 +937,7 @@ public class GestaltBuilder {
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
-            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, defaultTags);
+            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));

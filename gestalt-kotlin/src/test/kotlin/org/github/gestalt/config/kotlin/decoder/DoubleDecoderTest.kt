@@ -64,7 +64,7 @@ internal class DoubleDecoderTest {
             TypeCapture.of(
                 Double::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -80,7 +80,7 @@ internal class DoubleDecoderTest {
             "db.port", Tags.of(),
             LeafNode("124.5"),
             object : TypeCapture<Double?>() {},
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -98,7 +98,7 @@ internal class DoubleDecoderTest {
             TypeCapture.of(
                 Double::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -116,7 +116,7 @@ internal class DoubleDecoderTest {
             TypeCapture.of(
                 Double::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())

@@ -1,5 +1,7 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.secret.rules.SecretConcealer;
+
 import java.util.Optional;
 
 /**
@@ -46,5 +48,5 @@ public interface ConfigNode {
      */
     int size();
 
-    String printer(String path);
+    String printer(String path, SecretConcealer secretConcealer);
 }

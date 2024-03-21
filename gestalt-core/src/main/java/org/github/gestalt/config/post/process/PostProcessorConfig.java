@@ -3,6 +3,7 @@ package org.github.gestalt.config.post.process;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 /**
  * Holds the configuration that is provided to the post processors.
@@ -13,6 +14,7 @@ public final class PostProcessorConfig {
     private final GestaltConfig config;
     private final ConfigNodeService configNodeService;
     private final SentenceLexer lexer;
+    private final SecretConcealer secretConcealer;
 
     /**
      * Constructor for the post processor config.
@@ -20,11 +22,14 @@ public final class PostProcessorConfig {
      * @param config            Gestalt Config
      * @param configNodeService Config node service
      * @param lexer             Lexer to parse paths
+     * @param secretConcealer   utility to conceal secrets
      */
-    public PostProcessorConfig(GestaltConfig config, ConfigNodeService configNodeService, SentenceLexer lexer) {
+    public PostProcessorConfig(GestaltConfig config, ConfigNodeService configNodeService, SentenceLexer lexer,
+                               SecretConcealer secretConcealer) {
         this.config = config;
         this.configNodeService = configNodeService;
         this.lexer = lexer;
+        this.secretConcealer = secretConcealer;
     }
 
     /**
@@ -52,5 +57,14 @@ public final class PostProcessorConfig {
      */
     public SentenceLexer getLexer() {
         return lexer;
+    }
+
+    /**
+     * Get the secret concealer.
+     *
+     * @return the secret concealer
+     */
+    public SecretConcealer getSecretConcealer() {
+        return secretConcealer;
     }
 }

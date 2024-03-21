@@ -1,5 +1,7 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.secret.rules.SecretConcealer;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -64,13 +66,17 @@ public final class LeafNode implements ConfigNode {
 
     @Override
     public String toString() {
-        return printer("");
+        return printer("", null);
     }
 
     @Override
-    public String printer(String path) {
+    public String printer(String path, SecretConcealer secretConcealer) {
+        String nodeValue = value;
+        if (secretConcealer != null) {
+            nodeValue = secretConcealer.concealSecret(path, nodeValue);
+        }
         return "LeafNode{" +
-            "value='" + value + '\'' +
+            "value='" + nodeValue + '\'' +
             "}";
     }
 }

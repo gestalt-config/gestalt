@@ -30,7 +30,7 @@ public final class DoubleDecoder extends LeafDecoder<Double> {
     }
 
     @Override
-    protected GResultOf<Double> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Double> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Double> results;
 
         String value = node.getValue().orElse("");
@@ -39,7 +39,8 @@ public final class DoubleDecoder extends LeafDecoder<Double> {
                 Double longVal = Double.parseDouble(value);
                 results = GResultOf.result(longVal);
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

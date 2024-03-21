@@ -63,14 +63,15 @@ public final class LocalDateDecoder extends LeafDecoder<LocalDate> {
     }
 
     @Override
-    protected GResultOf<LocalDate> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<LocalDate> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<LocalDate> results;
 
         String value = node.getValue().orElse("");
         try {
             results = GResultOf.result(LocalDate.parse(value, formatter));
         } catch (DateTimeParseException e) {
-            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
+            results = GResultOf.errors(
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
         }
         return results;
     }

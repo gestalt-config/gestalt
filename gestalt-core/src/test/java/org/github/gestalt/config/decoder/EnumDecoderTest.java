@@ -65,7 +65,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("RED"),
-            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(Colours.RED, result.results());
@@ -78,7 +78,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
-            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -93,7 +93,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());

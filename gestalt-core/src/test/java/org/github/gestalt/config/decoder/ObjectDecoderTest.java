@@ -92,7 +92,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -114,7 +114,7 @@ class ObjectDecoderTest {
         configs.put("timeout", new LeafNode("10"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -137,7 +137,7 @@ class ObjectDecoderTest {
         configs.put("user", new LeafNode("Ted"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -166,7 +166,7 @@ class ObjectDecoderTest {
         configs.put("timeout", new LeafNode("10"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -189,7 +189,7 @@ class ObjectDecoderTest {
         configs.put("user", new LeafNode("Ted"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -202,8 +202,9 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.timeout, " +
-                "with class: DBInfoExtendedDefault",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.timeout, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}, " +
+                "user=LeafNode{value='Ted'}}, with class: DBInfoExtendedDefault",
             result.getErrors().get(0).description());
     }
 
@@ -217,7 +218,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoNoDefaultConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoDefaultConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -237,7 +238,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoPrivateConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoPrivateConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -256,14 +257,14 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, " +
-                "with class: DBInfoNoConstructor",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, with node: " +
+                "MapNode{port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoNoConstructor",
             result.getErrors().get(0).description());
 
         DBInfoNoConstructor results = (DBInfoNoConstructor) result.results();
@@ -282,7 +283,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoSetterChangeValue.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoSetterChangeValue.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -302,14 +303,15 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoIntegerPortNonNullGetter.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoIntegerPortNonNullGetter.class), new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, " +
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, " +
                 "with class: DBInfoIntegerPortNonNullGetter",
             result.getErrors().get(0).description());
 
@@ -331,14 +333,15 @@ class ObjectDecoderTest {
         //configs.put("enabled", new LeafNode("true")); missing
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBooleanEnabledNonNullGetter.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBooleanEnabledNonNullGetter.class), new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.enabled, " +
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.enabled, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}, " +
                 "with class: DBInfoBooleanEnabledNonNullGetter",
             result.getErrors().get(0).description());
 
@@ -360,7 +363,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -390,7 +393,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -401,7 +404,9 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
         Assertions.assertEquals(
-            "Missing Optional Value while decoding Object on path: db.host.port, with class: DBInfoNoConstructor",
+            "Missing Optional Value while decoding Object on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}, " +
+                "with class: DBInfoNoConstructor",
             result.getErrors().get(1).description());
 
         DBInfoNoConstructor results = (DBInfoNoConstructor) result.results();
@@ -420,7 +425,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoIntegerPort.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoIntegerPort.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -448,7 +453,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -468,7 +473,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -485,7 +490,7 @@ class ObjectDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -496,16 +501,18 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(3, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, with class: DBInfoOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, with node: " +
+                "MapNode{}, with class: DBInfoOptional",
             result.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, with class: DBInfoOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, with node: " +
+                "MapNode{}, with class: DBInfoOptional",
             result.getErrors().get(1).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(2).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, " +
-            "with class: DBInfoOptional", result.getErrors().get(2).description());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, with node: " +
+            "MapNode{}, with class: DBInfoOptional", result.getErrors().get(2).description());
     }
 
     @Test
@@ -516,7 +523,7 @@ class ObjectDecoderTest {
         configs.put("port", new LeafNode("100"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -527,12 +534,13 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(2, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, with class: DBInfoOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, with node: " +
+                "MapNode{port=LeafNode{value='100'}}, with class: DBInfoOptional",
             result.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, " +
-                "with class: DBInfoOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.password, with node: " +
+                "MapNode{port=LeafNode{value='100'}}, with class: DBInfoOptional",
             result.getErrors().get(1).description());
     }
 
@@ -546,7 +554,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -575,7 +583,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -595,7 +603,7 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(null), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            new MapNode(null), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -604,20 +612,24 @@ class ObjectDecoderTest {
         assertThat(result.getErrors().stream()
             .allMatch(it -> it.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE))).isTrue();
 
-        assertThat(result.getErrors()).anyMatch(it ->
-            ("Missing Optional Value while decoding Object on path: db.host.port, " +
-                "with class: DBInfoNoConstructor")
-                .equals(it.description()));
+        var error1 = result.getErrors().get(0).description();
+        var error2 = result.getErrors().get(1).description();
+        var error3 = result.getErrors().get(2).description();
 
         assertThat(result.getErrors()).anyMatch(it ->
-            ("Missing Optional Value while decoding Object on path: db.host.uri, " +
+            ("Missing Optional Value while decoding Object on path: db.host.port, with node: MapNode{}, " +
                 "with class: DBInfoNoConstructor")
-                .equals(it.description()));
+                .equals(error1));
 
         assertThat(result.getErrors()).anyMatch(it ->
-            ("Missing Optional Value while decoding Object on path: db.host.password, " +
+            ("Missing Optional Value while decoding Object on path: db.host.uri, with node: MapNode{}, " +
                 "with class: DBInfoNoConstructor")
-                .equals(it.description()));
+                .equals(error2));
+
+        assertThat(result.getErrors()).anyMatch(it ->
+            ("Missing Optional Value while decoding Object on path: db.host.password, with node: MapNode{}, " +
+                "with class: DBInfoNoConstructor")
+                .equals(error3));
 
         DBInfoNoConstructor results = (DBInfoNoConstructor) result.results();
         Assertions.assertEquals(100, results.getPort());
@@ -630,7 +642,7 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(null), TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null));
+            new MapNode(null), TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -649,7 +661,7 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            null, TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            null, TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -664,7 +676,7 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -686,13 +698,15 @@ class ObjectDecoderTest {
         configs.put("idletimeoutsec", new LeafNode("1000"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPool.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBPool.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.defaultWait, " +
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.defaultWait, with node: " +
+                "MapNode{maxperroute=LeafNode{value='10'}, keepalivetimeoutms=LeafNode{value='123'}, " +
+                "idletimeoutsec=LeafNode{value='1000'}, validateafterinactivity=LeafNode{value='60'}, maxtotal=LeafNode{value='100'}}, " +
                 "with class: DBPool",
             result.getErrors().get(0).description());
 
@@ -715,7 +729,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -735,7 +749,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoAnnotationsLong.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoAnnotationsLong.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -754,13 +768,14 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}",
             result.getErrors().get(0).description());
 
         DBInfoAnnotations results = (DBInfoAnnotations) result.results();
@@ -779,13 +794,14 @@ class ObjectDecoderTest {
 
         GResultOf<Object> result =
             decoder.decode("db.host", Tags.of(), new MapNode(configs),
-                TypeCapture.of(DBInfoAnnotationsDefault.class), new DecoderContext(decoderService, null));
+                TypeCapture.of(DBInfoAnnotationsDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}",
             result.getErrors().get(0).description());
 
         DBInfoAnnotationsDefault results = (DBInfoAnnotationsDefault) result.results();
@@ -803,7 +819,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoBadAnnotations.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoBadAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -831,7 +847,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBadAnnotationsWithClassDefault.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBadAnnotationsWithClassDefault.class), new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
@@ -842,7 +858,8 @@ class ObjectDecoderTest {
             "attempting to decode Integer", result.getErrors().get(0).description());
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, " +
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, " +
                 "with class: DBInfoBadAnnotationsWithClassDefault",
             result.getErrors().get(1).description());
 
@@ -862,7 +879,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -882,7 +899,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsLong.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsLong.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -901,13 +918,14 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}",
             result.getErrors().get(0).description());
 
         DBInfoMethodAnnotations results = (DBInfoMethodAnnotations) result.results();
@@ -925,13 +943,14 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsDefault.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}",
             result.getErrors().get(0).description());
 
         DBInfoMethodAnnotationsDefault results = (DBInfoMethodAnnotationsDefault) result.results();
@@ -949,7 +968,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBadMethodAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBadMethodAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -979,7 +998,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -999,13 +1018,14 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel",
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.channel, " +
+                "with node: MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}",
             result.getErrors().get(0).description());
 
         DBInfoBothAnnotations results = (DBInfoBothAnnotations) result.results();
@@ -1024,7 +1044,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsWrapper.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsWrapper.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1055,7 +1075,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsPrimitive.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsPrimitive.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1085,7 +1105,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithWithoutDefaultsPrimitive.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithWithoutDefaultsPrimitive.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1115,7 +1135,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithoutDefaultsWrapper.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithoutDefaultsWrapper.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1146,7 +1166,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithZeroDefaultsWrapper.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithZeroDefaultsWrapper.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 

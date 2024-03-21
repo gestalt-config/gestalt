@@ -30,7 +30,7 @@ public final class LongDecoder extends LeafDecoder<Long> {
     }
 
     @Override
-    protected GResultOf<Long> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Long> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Long> results;
 
         String value = node.getValue().orElse("");
@@ -39,7 +39,8 @@ public final class LongDecoder extends LeafDecoder<Long> {
                 Long longVal = Long.parseLong(value);
                 results = GResultOf.result(longVal);
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

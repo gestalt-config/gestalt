@@ -75,7 +75,7 @@ class RecordDecoderTest {
         configs.put("id", new LeafNode("52"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));
+            new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -93,7 +93,7 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));
+            new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -111,7 +111,7 @@ class RecordDecoderTest {
         configs.put("id", new LeafNode("52"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person2.class),
-            new DecoderContext(registry, null));
+            new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -131,7 +131,7 @@ class RecordDecoderTest {
         configs.put("phone", new LeafNode("12345"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));
+            new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -151,7 +151,7 @@ class RecordDecoderTest {
         configs.put("phone", new LeafNode("12345"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));
+            new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -177,7 +177,7 @@ class RecordDecoderTest {
         configs.put("phone", new LeafNode("12345"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(Person.class),
-            new DecoderContext(registry, null));
+            new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -200,7 +200,7 @@ class RecordDecoderTest {
         RecordDecoder decoder = new RecordDecoder();
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new LeafNode("12345"),
-            TypeCapture.of(Person.class), new DecoderContext(registry, null));
+            TypeCapture.of(Person.class), new DecoderContext(registry, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -219,7 +219,7 @@ class RecordDecoderTest {
         configs.put("identity", new LeafNode("52"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(),
-                new MapNode(configs), TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null));
+                new MapNode(configs), TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -236,14 +236,14 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(),
-                new MapNode(configs), TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null));
+                new MapNode(configs), TypeCapture.of(PersonAnnotations.class), new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().getFirst().level());
-        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.identity, " +
-            "with class: PersonAnnotations", result.getErrors().getFirst().description());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.identity, with node: " +
+            "MapNode{name=LeafNode{value='tim'}}, with class: PersonAnnotations", result.getErrors().getFirst().description());
 
         PersonAnnotations results = (PersonAnnotations) result.results();
         Assertions.assertEquals("tim", results.name());
@@ -259,7 +259,7 @@ class RecordDecoderTest {
 
         GResultOf<Object> result =
             decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(PersonBadAnnotations.class),
-                new DecoderContext(registry, null));
+                new DecoderContext(registry, null, null));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
@@ -287,7 +287,7 @@ class RecordDecoderTest {
         configs.put("identity", new MapNode(Map.of("user", new LeafNode("52"))));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(),
-                new MapNode(configs), TypeCapture.of(PersonAnnotationsLong.class), new DecoderContext(registry, null));
+                new MapNode(configs), TypeCapture.of(PersonAnnotationsLong.class), new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -305,7 +305,7 @@ class RecordDecoderTest {
         configs.put("id", new LeafNode("52"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs),
-            TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null));
+            TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -322,14 +322,14 @@ class RecordDecoderTest {
         configs.put("name", new LeafNode("tim"));
 
         GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs),
-            TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null));
+            TypeCapture.of(PersonOptional.class), new DecoderContext(registry, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.id, " +
-                "with class: PersonOptional", result.getErrors().get(0).description());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.id, with node: " +
+            "MapNode{name=LeafNode{value='tim'}}, with class: PersonOptional", result.getErrors().get(0).description());
 
         PersonOptional results = (PersonOptional) result.results();
         Assertions.assertEquals("tim", results.name().get());

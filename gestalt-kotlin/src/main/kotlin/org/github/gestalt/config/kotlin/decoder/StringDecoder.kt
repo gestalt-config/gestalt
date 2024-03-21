@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.LeafDecoder
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
@@ -30,7 +31,11 @@ class StringDecoder : LeafDecoder<String>() {
         }
     }
 
-    override fun leafDecode(path: String, node: ConfigNode): GResultOf<String> {
+    override fun leafDecode(
+        path: String,
+        node: ConfigNode,
+        decoderContext: DecoderContext
+    ): GResultOf<String> {
         return GResultOf.result((node.value.orElse("")) as String)
     }
 }

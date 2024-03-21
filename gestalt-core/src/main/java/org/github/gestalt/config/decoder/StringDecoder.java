@@ -28,7 +28,7 @@ public final class StringDecoder extends LeafDecoder<String> {
     }
 
     @Override
-    protected GResultOf<String> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<String> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         return GResultOf.result(node.getValue().orElse(""));
     }
 }

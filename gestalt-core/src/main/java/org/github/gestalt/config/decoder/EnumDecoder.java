@@ -33,7 +33,7 @@ public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected GResultOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
+    protected GResultOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         String value = node.getValue().orElse("");
         try {
             Class<?> klass = type.getRawType();
@@ -55,7 +55,7 @@ public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
     }
 
     @Override
-    protected GResultOf<T> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<T> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         // not called.
         return null;
     }

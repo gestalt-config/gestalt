@@ -73,7 +73,7 @@ class DateDecoderTest {
 
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), new LeafNode(instant.toString()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -93,7 +93,7 @@ class DateDecoderTest {
 
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), new LeafNode(instant.toString()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -113,7 +113,7 @@ class DateDecoderTest {
         Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), new LeafNode(date),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -128,7 +128,7 @@ class DateDecoderTest {
         String now = "not a date";
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), new LeafNode(now),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -144,7 +144,7 @@ class DateDecoderTest {
         DateDecoder decoder = new DateDecoder();
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), new LeafNode(null),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -159,7 +159,7 @@ class DateDecoderTest {
         DateDecoder decoder = new DateDecoder();
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -174,7 +174,7 @@ class DateDecoderTest {
         DateDecoder decoder = new DateDecoder();
 
         GResultOf<Date> result = decoder.decode("db.user", Tags.of(), null,
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

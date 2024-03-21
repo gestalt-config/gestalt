@@ -70,7 +70,7 @@ class OptionalDoubleDecoderTest {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
         GResultOf<OptionalDouble> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalDouble>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -83,13 +83,14 @@ class OptionalDoubleDecoderTest {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
         GResultOf<OptionalDouble> result = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalDouble>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding OptionalDouble on path: db.port",
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalDouble on path: db.port, with node: " +
+                "LeafNode{value='null'}",
             result.getErrors().get(0).description());
     }
 
@@ -98,7 +99,7 @@ class OptionalDoubleDecoderTest {
         OptionalDoubleDecoder decoder = new OptionalDoubleDecoder();
 
         GResultOf<OptionalDouble> result = decoder.decode("db.port", Tags.of(), null,
-            TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -113,7 +114,7 @@ class OptionalDoubleDecoderTest {
         OptionalDoubleDecoder doubleDecoder = new OptionalDoubleDecoder();
 
         GResultOf<OptionalDouble> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(OptionalDouble.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertEquals(OptionalDouble.empty(), result.results());
 

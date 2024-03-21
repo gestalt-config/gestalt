@@ -32,7 +32,7 @@ public final class DurationDecoder extends LeafDecoder<Duration> {
     }
 
     @Override
-    protected GResultOf<Duration> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Duration> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Duration> results;
 
         String value = node.getValue().orElse("");
@@ -41,13 +41,15 @@ public final class DurationDecoder extends LeafDecoder<Duration> {
                 long longVal = Long.parseLong(value);
                 results = GResultOf.result(Duration.ofMillis(longVal));
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
+                results = GResultOf.errors(
+                    new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
             }
         } else {
             try {
                 results = GResultOf.result(Duration.parse(value));
             } catch (Exception e) {
-                results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
+                results = GResultOf.errors(
+                    new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
             }
         }
         return results;

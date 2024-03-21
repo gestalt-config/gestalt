@@ -63,7 +63,7 @@ class InstantDecoderTest {
         String now = Instant.now().toString();
 
         GResultOf<Instant> result = decoder.decode("db.user", Tags.of(), new LeafNode(now),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -78,7 +78,7 @@ class InstantDecoderTest {
         String now = "not a date";
 
         GResultOf<Instant> result = decoder.decode("db.user", Tags.of(), new LeafNode(now),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -94,7 +94,7 @@ class InstantDecoderTest {
         InstantDecoder decoder = new InstantDecoder();
 
         GResultOf<Instant> result = decoder.decode("db.user", Tags.of(), new LeafNode(null),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -109,7 +109,7 @@ class InstantDecoderTest {
         InstantDecoder decoder = new InstantDecoder();
 
         GResultOf<Instant> result = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -124,7 +124,7 @@ class InstantDecoderTest {
         InstantDecoder decoder = new InstantDecoder();
 
         GResultOf<Instant> result = decoder.decode("db.user", Tags.of(), null,
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

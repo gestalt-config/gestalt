@@ -74,7 +74,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -93,7 +93,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             configs,
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -115,7 +115,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             TypeCapture.of(DBInfo::class.java),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -136,14 +136,15 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
 
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.password, with class: DBInfo",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, with node: " +
+                "MapNode{port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfo",
             result.errors[0].description()
         )
 
@@ -164,7 +165,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoRequired>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -183,7 +184,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -206,7 +207,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNoDefaultOptional>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -214,7 +215,8 @@ class DataClassDecoderTest {
         Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.password, with class: DBInfoNoDefaultOptional",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, with node: " +
+                "MapNode{port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoNoDefaultOptional",
             result.errors[0].description()
         )
 
@@ -235,7 +237,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNullable>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -243,7 +245,8 @@ class DataClassDecoderTest {
         Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.password, with class: DBInfoNullable",
+            "Missing Optional Value while decoding DataClass on path: db.host.password, with node: " +
+                "MapNode{port=LeafNode{value='100'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoNullable",
             result.errors[0].description()
         )
 
@@ -264,7 +267,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNoDefault>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -289,7 +292,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -320,7 +323,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoRequired>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -350,7 +353,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -381,7 +384,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotation>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -403,14 +406,15 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotation>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
         Assertions.assertEquals(1, result.errors.size)
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.errors[0].level())
         Assertions.assertEquals(
-            "Missing Optional Value while decoding DataClass on path: db.host.channel, with class: DBInfoAnnotation",
+            "Missing Optional Value while decoding DataClass on path: db.host.channel, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoAnnotation",
             result.errors[0].description()
         )
 
@@ -432,7 +436,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotationLong>(),
-            DecoderContext(decoderService, null)
+            DecoderContext(decoderService, null, null)
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())

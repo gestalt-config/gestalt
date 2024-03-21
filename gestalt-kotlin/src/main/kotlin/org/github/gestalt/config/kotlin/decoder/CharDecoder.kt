@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.LeafDecoder
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.entity.ValidationError
@@ -31,7 +32,11 @@ class CharDecoder : LeafDecoder<Char>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Char> {
+    override fun leafDecode(
+        path: String?,
+        node: ConfigNode,
+        decoderContext: DecoderContext
+    ): GResultOf<Char> {
         var results: Char? = null
         val error: MutableList<ValidationError> = ArrayList()
         val value = node.value.orElse("")
@@ -39,7 +44,7 @@ class CharDecoder : LeafDecoder<Char>() {
             results = value[0]
         }
         if (value.length != 1) {
-            error.add(ValidationError.DecodingCharWrongSize(path, node))
+            error.add(ValidationError.DecodingCharWrongSize(path, node, decoderContext.secretConcealer))
         }
         return GResultOf.resultOf(results, error)
     }

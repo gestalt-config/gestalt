@@ -30,7 +30,7 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
         GResultOf<T> results;
         if (node instanceof LeafNode) {
             if (node.getValue().isPresent()) {
-                results = leafDecode(path, node, type);
+                results = leafDecode(path, node, type, decoderContext);
             } else {
                 results = GResultOf.errors(new ValidationError.DecodingLeafMissingValue(path, name()));
             }
@@ -43,21 +43,23 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     /**
      * Decode a leaf value.
      *
-     * @param path the current path.
-     * @param node the current node we are decoding.
-     * @param type the type of object we are decoding.
+     * @param path           the current path.
+     * @param node           the current node we are decoding.
+     * @param type           the type of object we are decoding.
+     * @param decoderContext the decoder contest for this decode
      * @return GResultOf the current node with details of either success or failures.
      */
-    protected GResultOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type) {
-        return leafDecode(path, node);
+    protected GResultOf<T> leafDecode(String path, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+        return leafDecode(path, node, decoderContext);
     }
 
     /**
      * Decode a leaf value.
      *
-     * @param path the current path.
-     * @param node the current node we are decoding.
+     * @param path           the current path.
+     * @param node           the current node we are decoding.
+     * @param decoderContext the decoder contest for this decode
      * @return GResultOf the current node with details of either success or failures.
      */
-    protected abstract GResultOf<T> leafDecode(String path, ConfigNode node);
+    protected abstract GResultOf<T> leafDecode(String path, ConfigNode node, DecoderContext decoderContext);
 }

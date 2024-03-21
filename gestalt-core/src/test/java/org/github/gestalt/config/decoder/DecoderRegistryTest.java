@@ -188,7 +188,7 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("value");
 
         GResultOf<String> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(String.class),
-            new DecoderContext(decoderRegistry, null));
+            new DecoderContext(decoderRegistry, null, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -203,7 +203,7 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("100");
 
         GResultOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
-            new DecoderContext(decoderRegistry, null));
+            new DecoderContext(decoderRegistry, null, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -219,7 +219,7 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("100");
 
         GResultOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
-            new DecoderContext(decoderRegistry, null));
+            new DecoderContext(decoderRegistry, null, null));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -427,7 +427,7 @@ class DecoderRegistryTest {
 
 
         @Override
-        protected GResultOf<Long> leafDecode(String path, ConfigNode node) {
+        protected GResultOf<Long> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
             return GResultOf.result(10L);
         }
     }
@@ -451,7 +451,7 @@ class DecoderRegistryTest {
 
 
         @Override
-        protected GResultOf<Long> leafDecode(String path, ConfigNode node) {
+        protected GResultOf<Long> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
             return GResultOf.result(1000L);
         }
     }

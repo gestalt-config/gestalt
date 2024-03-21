@@ -1,5 +1,6 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.Collections;
@@ -83,16 +84,23 @@ public final class MapNode implements ConfigNode {
 
     @Override
     public String toString() {
-        return printer("");
+        return printer("", null);
     }
 
     @Override
-    public String printer(String path) {
+    public String printer(String path, SecretConcealer secretConcealer) {
         return "MapNode{" +
-            "mapNode={" +
             nodes.entrySet().stream()
-                .map((it) -> it.getKey() + "=" + it.getValue().printer(PathUtil.pathForKey(path, it.getKey())))
+                .map((it) -> {
+                    var printedNode = new StringBuilder().append(it.getKey()).append('=');
+                    if (it.getValue() != null) {
+                        printedNode.append(it.getValue().printer(PathUtil.pathForKey(path, it.getKey()), secretConcealer));
+                    } else {
+                        printedNode.append("'null'");
+                    }
+                    return printedNode.toString();
+                })
                 .collect(Collectors.joining(", ")) +
-            "}}";
+            "}";
     }
 }

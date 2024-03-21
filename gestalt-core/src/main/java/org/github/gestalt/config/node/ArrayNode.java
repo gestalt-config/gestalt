@@ -1,5 +1,6 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.Collections;
@@ -84,15 +85,15 @@ public final class ArrayNode implements ConfigNode {
 
     @Override
     public String toString() {
-        return printer("");
+        return printer("", null);
     }
 
     @Override
-    public String printer(String path) {
+    public String printer(String path, SecretConcealer secretConcealer) {
         return "ArrayNode{" +
             "values=[" +
             IntStream.range(0, values.size())
-                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(path, n)))
+                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(path, n), secretConcealer))
                 .collect(Collectors.joining(", ")) +
             "]}";
     }

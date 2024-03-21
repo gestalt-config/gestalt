@@ -28,7 +28,7 @@ public final class BooleanDecoder extends LeafDecoder<Boolean> {
     }
 
     @Override
-    protected GResultOf<Boolean> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Boolean> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         String value = node.getValue().orElse("");
         return GResultOf.result(Boolean.parseBoolean(value));
     }

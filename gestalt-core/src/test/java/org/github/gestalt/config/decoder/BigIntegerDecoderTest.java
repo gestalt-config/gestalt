@@ -71,7 +71,7 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         GResultOf<BigInteger> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigInteger.valueOf(124), result.results());
@@ -83,7 +83,7 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         GResultOf<BigInteger> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<Double>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigInteger.valueOf(124), result.results());
@@ -95,7 +95,7 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         GResultOf<BigInteger> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigInteger.valueOf(124), result.results());
@@ -107,7 +107,7 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         GResultOf<BigInteger> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -123,7 +123,7 @@ class BigIntegerDecoderTest {
         BigIntegerDecoder doubleDecoder = new BigIntegerDecoder();
 
         GResultOf<BigInteger> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.2"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

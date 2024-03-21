@@ -32,7 +32,7 @@ public final class InstantDecoder extends LeafDecoder<Instant> {
     }
 
     @Override
-    protected GResultOf<Instant> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Instant> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Instant> results;
 
         String value = node.getValue().orElse("");
@@ -40,7 +40,8 @@ public final class InstantDecoder extends LeafDecoder<Instant> {
             Instant instant = Instant.parse(value);
             results = GResultOf.result(instant);
         } catch (DateTimeParseException e) {
-            results = GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
+            results = GResultOf.errors(
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
         }
         return results;
     }

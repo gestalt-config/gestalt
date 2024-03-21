@@ -64,7 +64,7 @@ internal class FloatDecoderTest {
             TypeCapture.of(
                 Float::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -82,7 +82,7 @@ internal class FloatDecoderTest {
             TypeCapture.of(
                 Float::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -100,7 +100,7 @@ internal class FloatDecoderTest {
             TypeCapture.of(
                 Float::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())

@@ -31,7 +31,7 @@ public final class PathDecoder extends LeafDecoder<Path> {
     }
 
     @Override
-    protected GResultOf<Path> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Path> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         Path file = Paths.get(node.getValue().orElse(""));
         return GResultOf.result(file);
     }

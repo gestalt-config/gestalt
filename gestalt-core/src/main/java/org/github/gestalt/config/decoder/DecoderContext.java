@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 import java.util.Objects;
 
@@ -13,9 +14,12 @@ public class DecoderContext {
     private final DecoderService decoderService;
     private final Gestalt gestalt;
 
-    public DecoderContext(DecoderService decoderService, Gestalt gestalt) {
+    private final SecretConcealer secretConcealer;
+
+    public DecoderContext(DecoderService decoderService, Gestalt gestalt, SecretConcealer secretConcealer) {
         this.decoderService = decoderService;
         this.gestalt = gestalt;
+        this.secretConcealer = secretConcealer;
     }
 
     public DecoderService getDecoderService() {
@@ -24,6 +28,10 @@ public class DecoderContext {
 
     public Gestalt getGestalt() {
         return gestalt;
+    }
+
+    public SecretConcealer getSecretConcealer() {
+        return secretConcealer;
     }
 
     @Override
@@ -35,11 +43,13 @@ public class DecoderContext {
             return false;
         }
         DecoderContext that = (DecoderContext) o;
-        return Objects.equals(decoderService, that.decoderService) && Objects.equals(gestalt, that.gestalt);
+        return Objects.equals(decoderService, that.decoderService) &&
+            Objects.equals(gestalt, that.gestalt) &&
+            Objects.equals(secretConcealer, that.secretConcealer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(decoderService, gestalt);
+        return Objects.hash(decoderService, gestalt, secretConcealer);
     }
 }

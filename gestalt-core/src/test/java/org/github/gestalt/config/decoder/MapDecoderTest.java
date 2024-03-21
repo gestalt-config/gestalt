@@ -76,7 +76,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<String, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -99,7 +99,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<Integer, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -126,7 +126,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<String, User>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -156,7 +156,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<String, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -187,7 +187,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<String, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -210,7 +210,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
             new MapNode(configs), new TypeCapture<Map<String, String>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -237,7 +237,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
             new MapNode(configs), new TypeCapture<Map<String, String>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -262,7 +262,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
             new MapNode(configs), new TypeCapture<Map<String, String>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -284,7 +284,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(),
             new LeafNode("mysql.com"), new TypeCapture<Map<String, String>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -305,7 +305,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<List<String>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -327,7 +327,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Integer>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -342,7 +342,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(null),
             new TypeCapture<List<String>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -356,7 +356,7 @@ class MapDecoderTest {
     void decodeNullNode() {
         MapDecoder decoder = new MapDecoder();
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), null, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -377,7 +377,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<Integer, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -409,7 +409,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
             new TypeCapture<Map<Integer, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -441,7 +441,7 @@ class MapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode(null, Tags.of(), new MapNode(configs),
             new TypeCapture<Map<Integer, Integer>>() {
-            }, new DecoderContext(decoderService, null));
+            }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 

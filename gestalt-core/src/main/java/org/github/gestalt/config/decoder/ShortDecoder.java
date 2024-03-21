@@ -30,7 +30,7 @@ public final class ShortDecoder extends LeafDecoder<Short> {
     }
 
     @Override
-    protected GResultOf<Short> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Short> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Short> results;
 
         String value = node.getValue().orElse("");
@@ -39,7 +39,8 @@ public final class ShortDecoder extends LeafDecoder<Short> {
                 Short intVal = Short.parseShort(value);
                 results = GResultOf.result(intVal);
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

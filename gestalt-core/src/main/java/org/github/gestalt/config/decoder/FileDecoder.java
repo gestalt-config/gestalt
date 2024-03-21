@@ -32,7 +32,7 @@ public final class FileDecoder extends LeafDecoder<File> {
     }
 
     @Override
-    protected GResultOf<File> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<File> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         Path file = Paths.get(node.getValue().orElse(""));
         return GResultOf.result(file.toFile());
     }

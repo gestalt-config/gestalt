@@ -64,7 +64,7 @@ class FloatDecoderTest {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         GResultOf<Float> result = floatDecoder.decode("db.timeout", Tags.of(), new LeafNode("124.5"),
-            TypeCapture.of(Float.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Float.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(124.5f, result.results());
@@ -76,7 +76,7 @@ class FloatDecoderTest {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         GResultOf<Float> result = floatDecoder.decode("db.timeout", Tags.of(), new LeafNode("124"),
-            TypeCapture.of(Float.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Float.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(124, result.results());
@@ -88,7 +88,7 @@ class FloatDecoderTest {
         FloatDecoder floatDecoder = new FloatDecoder();
 
         GResultOf<Float> result = floatDecoder.decode("db.timeout", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(Float.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Float.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

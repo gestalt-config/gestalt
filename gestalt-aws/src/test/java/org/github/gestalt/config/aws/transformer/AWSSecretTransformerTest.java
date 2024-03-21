@@ -46,7 +46,7 @@ class AWSSecretTransformerTest {
             AWSSecretTransformer transform = new AWSSecretTransformer();
             GestaltConfig gestaltConfig = new GestaltConfig();
             gestaltConfig.registerModuleConfig(new AWSModuleConfig("eu-west-3"));
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
             transform.applyConfig(config);
 
             GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
@@ -78,7 +78,7 @@ class AWSSecretTransformerTest {
         AWSSecretTransformer transform = new AWSSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(awsModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
@@ -113,7 +113,7 @@ class AWSSecretTransformerTest {
             AWSSecretTransformer transform = new AWSSecretTransformer();
             GestaltConfig gestaltConfig = new GestaltConfig();
             gestaltConfig.registerModuleConfig(new AWSModuleConfig("eu-west-3"));
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
             transform.applyConfig(config);
 
             GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
@@ -149,7 +149,7 @@ class AWSSecretTransformerTest {
             AWSSecretTransformer transform = new AWSSecretTransformer();
             GestaltConfig gestaltConfig = new GestaltConfig();
             gestaltConfig.registerModuleConfig(new AWSModuleConfig("eu-west-3"));
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
             transform.applyConfig(config);
 
             GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
@@ -178,7 +178,7 @@ class AWSSecretTransformerTest {
 
         AWSSecretTransformer transform = new AWSSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret:myKey", "awsSecret:secret:myKey");
@@ -207,7 +207,7 @@ class AWSSecretTransformerTest {
             AWSSecretTransformer transform = new AWSSecretTransformer();
             GestaltConfig gestaltConfig = new GestaltConfig();
             gestaltConfig.registerModuleConfig(new AWSModuleConfig("eu-west-3"));
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
             transform.applyConfig(config);
 
             GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()

@@ -24,7 +24,6 @@ import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Provider;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.GestaltCore;
-import org.github.gestalt.config.decoder.DecoderContext;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
@@ -112,7 +111,7 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
                     return optionalValue.orElseGet(
                         () -> (T) ((GestaltCore) gestalt).getDecoderService()
                             .decodeNode(key, Tags.of(), defaultValue, TypeCapture.of(annotatedTypeClass),
-                                new DecoderContext(((GestaltCore) gestalt).getDecoderService(), gestalt))
+                                ((GestaltCore) gestalt).getDecoderContext())
                     );
                 }
             }

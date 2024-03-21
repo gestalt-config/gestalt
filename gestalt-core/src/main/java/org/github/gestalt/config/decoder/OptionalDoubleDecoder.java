@@ -44,7 +44,8 @@ public final class OptionalDoubleDecoder implements Decoder<OptionalDouble> {
                 return GResultOf.resultOf(OptionalDouble.empty(), optionalValue.getErrors());
             }
         } else {
-            return GResultOf.resultOf(OptionalDouble.empty(), new ValidationError.OptionalMissingValueDecoding(path, node, name()));
+            return GResultOf.resultOf(OptionalDouble.empty(),
+                new ValidationError.OptionalMissingValueDecoding(path, node, name(), decoderContext.getSecretConcealer()));
         }
     }
 }

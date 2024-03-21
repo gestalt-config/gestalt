@@ -30,7 +30,7 @@ public final class PatternDecoder extends LeafDecoder<Pattern> {
     }
 
     @Override
-    protected GResultOf<Pattern> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Pattern> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         Pattern pattern = Pattern.compile(node.getValue().orElse(""), Pattern.CASE_INSENSITIVE);
         return GResultOf.result(pattern);
     }

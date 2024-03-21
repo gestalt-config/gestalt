@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.LeafDecoder
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.entity.ValidationError
@@ -32,7 +33,11 @@ class FloatDecoder : LeafDecoder<Float>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Float> {
+    override fun leafDecode(
+        path: String?,
+        node: ConfigNode,
+        decoderContext: DecoderContext
+    ): GResultOf<Float> {
         val results: GResultOf<Float>
         val value = node.value.orElse("")
         results = if (StringUtils.isReal(value)) {
@@ -40,7 +45,7 @@ class FloatDecoder : LeafDecoder<Float>() {
                 val floatVal = value.toFloat()
                 GResultOf.result(floatVal)
             } catch (e: NumberFormatException) {
-                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name()))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.secretConcealer))
             }
         } else {
             GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))

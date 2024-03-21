@@ -31,13 +31,14 @@ public final class UUIDDecoder extends LeafDecoder<UUID> {
     }
 
     @Override
-    protected GResultOf<UUID> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<UUID> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         String value = node.getValue().orElse("");
 
         try {
             return GResultOf.result(UUID.fromString(value));
         } catch (IllegalArgumentException e) {
-            return GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage()));
+            return GResultOf.errors(
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
         }
     }
 }

@@ -32,12 +32,14 @@ public final class URLDecoder extends LeafDecoder<URL> {
     }
 
     @Override
-    protected GResultOf<URL> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<URL> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         var value = node.getValue().orElse("");
         try {
             return GResultOf.result(new URL(value));
         } catch (MalformedURLException e) {
-            return GResultOf.errors(new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage()));
+            return GResultOf.errors(
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage(),
+                    decoderContext.getSecretConcealer()));
         }
     }
 }

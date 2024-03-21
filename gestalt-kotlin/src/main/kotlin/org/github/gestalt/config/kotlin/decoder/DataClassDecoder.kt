@@ -67,6 +67,7 @@ class DataClassDecoder : Decoder<Any> {
         }
 
         val decoderService = decoderContext.decoderService
+        val secretConceal = decoderContext.secretConcealer
 
         if (type is KTypeCapture<*>) {
             val classifier = type.kType.classifier
@@ -131,7 +132,7 @@ class DataClassDecoder : Decoder<Any> {
                                 if (defaultGResultOf.hasResults()) {
                                     resultValid = true
                                     results = defaultGResultOf.results()
-                                    errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
+                                    errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, secretConceal))
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }
@@ -140,7 +141,7 @@ class DataClassDecoder : Decoder<Any> {
                             // if the type is nullable, it is an optional value.
                             it.type.isMarkedNullable -> {
                                 resultValid = true
-                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
+                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, secretConceal))
                             }
 
                             // if we dont have results for the config node, and the value is not optional
@@ -150,7 +151,7 @@ class DataClassDecoder : Decoder<Any> {
 
                             // if we dont have results for the config node, and the value is optional
                             it.isOptional -> {
-                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName))
+                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, secretConceal))
                             }
 
                         }

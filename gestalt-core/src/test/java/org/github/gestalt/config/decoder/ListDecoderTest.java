@@ -78,7 +78,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -100,7 +100,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -123,7 +123,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -142,7 +142,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"), new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -157,7 +157,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"), new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -173,7 +173,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null), new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -188,7 +188,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), null, new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -204,7 +204,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -217,7 +217,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -230,7 +230,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -251,7 +251,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -281,7 +281,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -302,7 +302,7 @@ class ListDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), new MapNode(new HashMap<>()), new TypeCapture<List<Double>>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());

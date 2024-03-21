@@ -30,7 +30,7 @@ public final class IntegerDecoder extends LeafDecoder<Integer> {
     }
 
     @Override
-    protected GResultOf<Integer> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Integer> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Integer> results;
 
         String value = node.getValue().orElse("");
@@ -39,7 +39,8 @@ public final class IntegerDecoder extends LeafDecoder<Integer> {
                 Integer intVal = Integer.parseInt(value);
                 results = GResultOf.result(intVal);
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

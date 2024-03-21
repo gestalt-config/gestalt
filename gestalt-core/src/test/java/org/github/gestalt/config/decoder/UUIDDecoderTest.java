@@ -67,7 +67,7 @@ class UUIDDecoderTest {
 
         UUID uuid = UUID.randomUUID();
         GResultOf<UUID> result = decoder.decode("db.port", Tags.of(), new LeafNode(uuid.toString()),
-            TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(uuid, result.results());
@@ -80,7 +80,7 @@ class UUIDDecoderTest {
 
 
         GResultOf<UUID> result = decoder.decode("db.port", Tags.of(), new LeafNode("asdfasdfsdf"),
-            TypeCapture.of(Long.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

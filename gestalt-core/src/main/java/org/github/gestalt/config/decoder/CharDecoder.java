@@ -32,7 +32,7 @@ public final class CharDecoder extends LeafDecoder<Character> {
     }
 
     @Override
-    protected GResultOf<Character> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Character> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         Character results = null;
         List<ValidationError> error = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public final class CharDecoder extends LeafDecoder<Character> {
         }
 
         if (value.length() != 1) {
-            error.add(new ValidationError.DecodingCharWrongSize(path, node));
+            error.add(new ValidationError.DecodingCharWrongSize(path, node, decoderContext.getSecretConcealer()));
         }
 
 

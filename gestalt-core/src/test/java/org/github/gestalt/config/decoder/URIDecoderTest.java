@@ -69,7 +69,7 @@ class URIDecoderTest {
 
         String uri = "http://www.google.com";
         GResultOf<URI> result = decoder.decode("db.port", Tags.of(), new LeafNode(uri),
-            TypeCapture.of(URI.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(URI.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(uri, result.results().toString());
@@ -82,7 +82,7 @@ class URIDecoderTest {
 
         String uri = "http://www.google.com[]";
         GResultOf<URI> result = decoder.decode("db.port", Tags.of(), new LeafNode(uri),
-            TypeCapture.of(URI.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(URI.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

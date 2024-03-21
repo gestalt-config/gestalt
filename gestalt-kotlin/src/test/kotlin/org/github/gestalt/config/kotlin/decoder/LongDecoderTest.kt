@@ -64,7 +64,7 @@ internal class LongDecoderTest {
             TypeCapture.of(
                 Long::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -82,7 +82,7 @@ internal class LongDecoderTest {
             TypeCapture.of(
                 Long::class.java
             ),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -104,7 +104,7 @@ internal class LongDecoderTest {
             "db.port", Tags.of(),
             LeafNode("12345678901234567890123456789012345678901234567890123456"),
             TypeCapture.of(Long::class.java),
-            DecoderContext(decoderService, null),
+            DecoderContext(decoderService, null, null),
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())

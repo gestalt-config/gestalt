@@ -65,7 +65,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret/hello:value", "vault:secret/hello:value");
@@ -85,7 +85,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret/hello&value", "vault:secret/hello&value");
@@ -107,7 +107,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret:value", "vault:secret/hello&value");
@@ -129,7 +129,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret/hello:text", "vault:secret/hello&value");
@@ -151,7 +151,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", null, "vault:");
@@ -194,7 +194,7 @@ class VaultSecretTransformerTest {
 
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
 
         transform.applyConfig(config);
     }
@@ -207,7 +207,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
 
         transform.applyConfig(config);
     }
@@ -226,7 +226,7 @@ class VaultSecretTransformerTest {
         VaultSecretTransformer transform = new VaultSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(vaultModuleConfig);
-        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null);
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret:value", "vault:secret/hello&value");

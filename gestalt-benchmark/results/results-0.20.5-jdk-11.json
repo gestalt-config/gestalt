@@ -1,0 +1,614 @@
+[
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Object",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 33391.32174751686,
+            "scoreError" : 382.76447567603856,
+            "scoreConfidence" : [
+                33008.557271840815,
+                33774.0862231929
+            ],
+            "scorePercentiles" : {
+                "0.0" : 33075.05565525214,
+                "50.0" : 33402.49037907922,
+                "90.0" : 33656.7567762234,
+                "95.0" : 33657.7501133731,
+                "99.0" : 33657.7501133731,
+                "99.9" : 33657.7501133731,
+                "99.99" : 33657.7501133731,
+                "99.999" : 33657.7501133731,
+                "99.9999" : 33657.7501133731,
+                "100.0" : 33657.7501133731
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    33647.81674187615,
+                    33634.496924229,
+                    33600.28522196491,
+                    33657.7501133731,
+                    33603.1802066201
+                ],
+                [
+                    33142.77811522519,
+                    33195.59831045286,
+                    33151.56064998158,
+                    33204.69553619354,
+                    33075.05565525214
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Object_No_Cache",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 57.09719990275772,
+            "scoreError" : 0.9925676685458001,
+            "scoreConfidence" : [
+                56.10463223421192,
+                58.089767571303526
+            ],
+            "scorePercentiles" : {
+                "0.0" : 56.32376236732927,
+                "50.0" : 57.03028763525795,
+                "90.0" : 57.971456625155575,
+                "95.0" : 57.98690442783244,
+                "99.0" : 57.98690442783244,
+                "99.9" : 57.98690442783244,
+                "99.99" : 57.98690442783244,
+                "99.999" : 57.98690442783244,
+                "99.9999" : 57.98690442783244,
+                "100.0" : 57.98690442783244
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    56.32376236732927,
+                    56.51927331072917,
+                    56.58120195226155,
+                    56.5523634985157,
+                    56.48157086151857
+                ],
+                [
+                    57.98690442783244,
+                    57.66122684971184,
+                    57.83242640106376,
+                    57.55389604036059,
+                    57.47937331825434
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_Setup",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1779.123673886595,
+            "scoreError" : 32.01679364398322,
+            "scoreConfidence" : [
+                1747.1068802426119,
+                1811.1404675305782
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1755.5079910362724,
+                "50.0" : 1781.125980293948,
+                "90.0" : 1804.0381968535155,
+                "95.0" : 1804.1360963193417,
+                "99.0" : 1804.1360963193417,
+                "99.9" : 1804.1360963193417,
+                "99.99" : 1804.1360963193417,
+                "99.999" : 1804.1360963193417,
+                "99.9999" : 1804.1360963193417,
+                "100.0" : 1804.1360963193417
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1791.697303650598,
+                    1795.4000205780985,
+                    1798.363161784629,
+                    1804.1360963193417,
+                    1803.1571016610803
+                ],
+                [
+                    1756.404973515451,
+                    1758.64041551157,
+                    1755.5079910362724,
+                    1770.5546569372982,
+                    1757.3750178716105
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_String",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 33385.15195500104,
+            "scoreError" : 143.55760376912406,
+            "scoreConfidence" : [
+                33241.59435123192,
+                33528.70955877016
+            ],
+            "scorePercentiles" : {
+                "0.0" : 33259.98401205941,
+                "50.0" : 33372.137982242144,
+                "90.0" : 33516.83641075926,
+                "95.0" : 33517.652786514765,
+                "99.0" : 33517.652786514765,
+                "99.9" : 33517.652786514765,
+                "99.99" : 33517.652786514765,
+                "99.999" : 33517.652786514765,
+                "99.9999" : 33517.652786514765,
+                "100.0" : 33517.652786514765
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    33292.06659913117,
+                    33311.187157775144,
+                    33307.01429969369,
+                    33347.58479250023,
+                    33259.98401205941
+                ],
+                [
+                    33509.48902895968,
+                    33476.62550550336,
+                    33433.22419588885,
+                    33517.652786514765,
+                    33396.69117198406
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Thrpt.GestaltConfig_String_No_Cache",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 741.2854314462347,
+            "scoreError" : 4.364492645271818,
+            "scoreConfidence" : [
+                736.9209388009629,
+                745.6499240915066
+            ],
+            "scorePercentiles" : {
+                "0.0" : 738.1775440260831,
+                "50.0" : 740.7737288730343,
+                "90.0" : 744.6429499034327,
+                "95.0" : 744.6869328558903,
+                "99.0" : 744.6869328558903,
+                "99.9" : 744.6869328558903,
+                "99.99" : 744.6869328558903,
+                "99.999" : 744.6869328558903,
+                "99.9999" : 744.6869328558903,
+                "100.0" : 744.6869328558903
+            },
+            "scoreUnit" : "ops/ms",
+            "rawData" : [
+                [
+                    744.2471033313149,
+                    744.6869328558903,
+                    742.5069982338805,
+                    744.2075034656816,
+                    744.1559007309256
+                ],
+                [
+                    738.9819780543994,
+                    738.3173499473436,
+                    739.040459512188,
+                    738.53254430464,
+                    738.1775440260831
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Object",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 30.447163804502942,
+            "scoreError" : 0.05159024851528389,
+            "scoreConfidence" : [
+                30.39557355598766,
+                30.498754053018224
+            ],
+            "scorePercentiles" : {
+                "0.0" : 30.403771313435744,
+                "50.0" : 30.436105402726938,
+                "90.0" : 30.497649680032914,
+                "95.0" : 30.498229040358154,
+                "99.0" : 30.498229040358154,
+                "99.9" : 30.498229040358154,
+                "99.99" : 30.498229040358154,
+                "99.999" : 30.498229040358154,
+                "99.9999" : 30.498229040358154,
+                "100.0" : 30.498229040358154
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    30.403771313435744,
+                    30.46146515741842,
+                    30.430723022797824,
+                    30.425710898884365,
+                    30.482075807827307
+                ],
+                [
+                    30.422193563763688,
+                    30.441487782656054,
+                    30.413546020782125,
+                    30.498229040358154,
+                    30.492435437105737
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Object_No_Cache",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 17344.88075254397,
+            "scoreError" : 174.2333023201537,
+            "scoreConfidence" : [
+                17170.647450223816,
+                17519.114054864123
+            ],
+            "scorePercentiles" : {
+                "0.0" : 17127.54952801107,
+                "50.0" : 17376.4391539289,
+                "90.0" : 17487.837997597995,
+                "95.0" : 17493.836623322593,
+                "99.0" : 17493.836623322593,
+                "99.9" : 17493.836623322593,
+                "99.99" : 17493.836623322593,
+                "99.999" : 17493.836623322593,
+                "99.9999" : 17493.836623322593,
+                "100.0" : 17493.836623322593
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    17402.106722999073,
+                    17329.04380146841,
+                    17350.77158485872,
+                    17418.60623262965,
+                    17433.85036607661
+                ],
+                [
+                    17493.836623322593,
+                    17420.928860975313,
+                    17127.54952801107,
+                    17279.248858897146,
+                    17192.864946201098
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_Setup",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5.965920101507643E-4,
+            "scoreError" : 4.856436261800523E-6,
+            "scoreConfidence" : [
+                5.917355738889638E-4,
+                6.014484464125648E-4
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5.928889902820574E-4,
+                "50.0" : 5.960418579731876E-4,
+                "90.0" : 6.036593672109379E-4,
+                "95.0" : 6.042697296971159E-4,
+                "99.0" : 6.042697296971159E-4,
+                "99.9" : 6.042697296971159E-4,
+                "99.99" : 6.042697296971159E-4,
+                "99.999" : 6.042697296971159E-4,
+                "99.9999" : 6.042697296971159E-4,
+                "100.0" : 6.042697296971159E-4
+            },
+            "scoreUnit" : "s/op",
+            "rawData" : [
+                [
+                    6.042697296971159E-4,
+                    5.969552838740458E-4,
+                    5.928889902820574E-4,
+                    5.939505427368172E-4,
+                    5.949704914136313E-4
+                ],
+                [
+                    5.979813303053845E-4,
+                    5.981661048353356E-4,
+                    5.951284320723293E-4,
+                    5.94647565609785E-4,
+                    5.969616306811404E-4
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_String",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 30.83625848895928,
+            "scoreError" : 0.29197715296972804,
+            "scoreConfidence" : [
+                30.544281335989552,
+                31.12823564192901
+            ],
+            "scorePercentiles" : {
+                "0.0" : 30.634217225183885,
+                "50.0" : 30.84873456898985,
+                "90.0" : 31.046556535167557,
+                "95.0" : 31.049177068977375,
+                "99.0" : 31.049177068977375,
+                "99.9" : 31.049177068977375,
+                "99.99" : 31.049177068977375,
+                "99.999" : 31.049177068977375,
+                "99.9999" : 31.049177068977375,
+                "100.0" : 31.049177068977375
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    31.01001511817151,
+                    31.049177068977375,
+                    31.002435625924647,
+                    31.022971730879178,
+                    31.007356067405308
+                ],
+                [
+                    30.695033512055055,
+                    30.635923180849975,
+                    30.660835170518553,
+                    30.634217225183885,
+                    30.644620189627364
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "org.github.gestalt.config.benchmark.Benchmarks.Avgt.GestaltConfig_String_No_Cache",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "C:\\Users\\Colin\\.jdks\\temurin-11.0.22\\bin\\java.exe",
+        "jvmArgs" : [
+            "-Xmx1G",
+            "-Xms1G",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "11.0.22",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "11.0.22+7",
+        "warmupIterations" : 2,
+        "warmupTime" : "5 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1385.619964313352,
+            "scoreError" : 13.291810342343416,
+            "scoreConfidence" : [
+                1372.3281539710085,
+                1398.9117746556956
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1368.6042234807799,
+                "50.0" : 1390.834463969777,
+                "90.0" : 1393.6440656173327,
+                "95.0" : 1393.7888958838407,
+                "99.0" : 1393.7888958838407,
+                "99.9" : 1393.7888958838407,
+                "99.99" : 1393.7888958838407,
+                "99.999" : 1393.7888958838407,
+                "99.9999" : 1393.7888958838407,
+                "100.0" : 1393.7888958838407
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    1375.8331983643268,
+                    1368.6042234807799,
+                    1378.86648781688,
+                    1392.3405932187593,
+                    1381.3033750711024
+                ],
+                [
+                    1391.4803830594017,
+                    1393.7888958838407,
+                    1391.6033277768431,
+                    1392.190613581434,
+                    1390.1885448801524
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

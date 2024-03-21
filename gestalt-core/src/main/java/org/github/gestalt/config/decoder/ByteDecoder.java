@@ -31,14 +31,14 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
     }
 
     @Override
-    protected GResultOf<Byte> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<Byte> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<Byte> results;
 
         String value = node.getValue().orElse("");
         if (value.length() == 1) {
             results = GResultOf.result(value.getBytes(Charset.defaultCharset())[0]);
         } else {
-            results = GResultOf.errors(new ValidationError.DecodingByteTooLong(path, node));
+            results = GResultOf.errors(new ValidationError.DecodingByteTooLong(path, node, decoderContext.getSecretConcealer()));
         }
 
         return results;

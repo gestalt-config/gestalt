@@ -3,6 +3,7 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
@@ -79,4 +80,13 @@ public interface ConfigNodeService {
      * @return GResultOf node or any errors.
      */
     GResultOf<ConfigNode> navigateToNextNode(String path, List<Token> tokens, ConfigNode currentNode);
+
+    /**
+     * prints a root node to a string.
+     *
+     * @param tags tags of the node to print
+     * @param secretConcealer utility to conceal secrets
+     * @return printout of the root node
+     */
+    String debugPrintRoot(Tags tags, SecretConcealer secretConcealer);
 }

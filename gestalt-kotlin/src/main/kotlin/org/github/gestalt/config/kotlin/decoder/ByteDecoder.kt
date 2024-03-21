@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.LeafDecoder
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.entity.ValidationError
@@ -32,7 +33,11 @@ class ByteDecoder : LeafDecoder<Byte>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Byte> {
+    override fun leafDecode(
+        path: String?,
+        node: ConfigNode,
+        decoderContext: DecoderContext
+    ): GResultOf<Byte> {
         val results: GResultOf<Byte>
         val value = node.value.orElse("")
         results = if (value.length == 1) {
@@ -41,7 +46,8 @@ class ByteDecoder : LeafDecoder<Byte>() {
             GResultOf.errors(
                 ValidationError.DecodingByteTooLong(
                     path,
-                    node
+                    node,
+                    decoderContext.secretConcealer
                 )
             )
         }

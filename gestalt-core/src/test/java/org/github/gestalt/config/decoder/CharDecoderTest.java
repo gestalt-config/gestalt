@@ -64,7 +64,7 @@ class CharDecoderTest {
         CharDecoder decoder = new CharDecoder();
 
         GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
-            TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals('a', result.results());
@@ -76,7 +76,7 @@ class CharDecoderTest {
         CharDecoder decoder = new CharDecoder();
 
         GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
-            TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -93,7 +93,7 @@ class CharDecoderTest {
         CharDecoder decoder = new CharDecoder();
 
         GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
-            TypeCapture.of(Character.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

@@ -4,6 +4,7 @@ import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
@@ -382,5 +383,10 @@ public final class ConfigNodeManager implements ConfigNodeService {
             }
             return resultOf(node, errors);
         }
+    }
+
+    @Override
+    public String debugPrintRoot(Tags tags, SecretConcealer secretConcealer) {
+        return roots.get(tags).printer("", secretConcealer);
     }
 }

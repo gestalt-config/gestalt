@@ -258,9 +258,10 @@ class MissingValuesConsistencyTest {
 
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, " +
-                "with class: DBInfoOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.connections");
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, with node: " +
+                "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.connections, " +
+                "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}");
 
     }
 
@@ -306,9 +307,10 @@ class MissingValuesConsistencyTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoOptional.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, " +
-                "with class: DBInfoOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.connections");
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.uri, with node: " +
+                "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoOptional\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Object on path: db.connections, " +
+                "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}");
     }
 
     @Test
@@ -452,11 +454,15 @@ class MissingValuesConsistencyTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
-                "with class: DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
-                "with class: DBInfoInterfaceOptional");
+            .hasMessageContaining(
+                "Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional")
+            .hasMessageContaining(
+                "- level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
+                    "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
+                    "with class: DBInfoInterfaceOptional")
+            .hasMessageContaining(
+                "- level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, with node: " +
+                    "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoInterfaceOptional");
 
     }
 
@@ -503,10 +509,13 @@ class MissingValuesConsistencyTest {
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
-                "with class: DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
+            .hasMessageContaining(
+                "Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional")
+            .hasMessageContaining("level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on " +
+                "path: db.connections, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
+                "with class: DBInfoInterfaceOptional")
+            .hasMessageContaining("level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on " +
+                "path: db.uri, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
                 "with class: DBInfoInterfaceOptional");
     }
 
@@ -657,10 +666,12 @@ class MissingValuesConsistencyTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
 
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
-                "with class: DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
+            .hasMessageContaining("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional")
+            .hasMessageContaining("- level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on " +
+                "path: db.connections, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
+                "with class: DBInfoInterfaceOptional")
+            .hasMessageContaining("- level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on " +
+                "path: db.uri, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
                 "with class: DBInfoInterfaceOptional");
 
     }
@@ -708,10 +719,13 @@ class MissingValuesConsistencyTest {
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
-            .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
-                "with class: DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.connections, " +
+            .hasMessageContaining(
+                "Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoInterfaceOptional")
+            .hasMessageContaining(" - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on " +
+                "path: db.connections, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
+                "with class: DBInfoInterfaceOptional")
+            .hasMessageContaining(" - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on " +
+                "path: db.uri, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
                 "with class: DBInfoInterfaceOptional");
     }
 
@@ -866,9 +880,10 @@ class MissingValuesConsistencyTest {
 
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptionalRecord\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.uri, " +
-                "with class: DBInfoOptionalRecord\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.uri, with node: " +
+                "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoOptionalRecord\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.connections, " +
+                "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
                 "with class: DBInfoOptionalRecord");
 
     }
@@ -919,9 +934,10 @@ class MissingValuesConsistencyTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoOptionalRecord.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.model.DBInfoOptionalRecord\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.uri, " +
-                "with class: DBInfoOptionalRecord\n" +
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.uri, with node: " +
+                "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoOptionalRecord\n" +
                 " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding Record on path: db.connections, " +
+                "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
                 "with class: DBInfoOptionalRecord");
     }
 

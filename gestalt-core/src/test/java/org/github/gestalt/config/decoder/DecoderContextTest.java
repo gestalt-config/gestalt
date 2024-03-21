@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,10 +14,12 @@ class DecoderContextTest {
         Gestalt gestalt2 = Mockito.mock();
         DecoderService  decoderService  = Mockito.mock();
         DecoderService  decoderService2  = Mockito.mock();
-        DecoderContext decoderContext = new DecoderContext(decoderService, gestalt);
-        DecoderContext decoderContext1 = new DecoderContext(decoderService, gestalt);
-        DecoderContext decoderContext3 = new DecoderContext(decoderService, gestalt2);
-        DecoderContext decoderContext4 = new DecoderContext(decoderService2, gestalt);
+        SecretConcealer secretConcealer = Mockito.mock();
+        SecretConcealer secretConcealer2 = Mockito.mock();
+        DecoderContext decoderContext = new DecoderContext(decoderService, gestalt, secretConcealer);
+        DecoderContext decoderContext1 = new DecoderContext(decoderService, gestalt, secretConcealer);
+        DecoderContext decoderContext3 = new DecoderContext(decoderService, gestalt2, secretConcealer2);
+        DecoderContext decoderContext4 = new DecoderContext(decoderService2, gestalt, secretConcealer2);
 
         Assertions.assertEquals(decoderContext, decoderContext);
         Assertions.assertEquals(decoderContext, decoderContext1);
@@ -29,7 +32,7 @@ class DecoderContextTest {
     void hashCodeTest() {
         Gestalt gestalt = Mockito.mock();
         DecoderService decoderService = Mockito.mock();
-        DecoderContext decoderContext = new DecoderContext(decoderService, gestalt);
+        DecoderContext decoderContext = new DecoderContext(decoderService, gestalt, null);
         Assertions.assertTrue(decoderContext.hashCode() != 0);
     }
 }

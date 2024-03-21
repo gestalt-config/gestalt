@@ -19,6 +19,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
@@ -50,6 +51,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private final CoreReloadListenersContainer coreReloadListenersContainer;
     private final List<PostProcessor> postProcessors;
 
+    private final SecretConcealer secretConcealer;
+
     private final List<ValidationError> loadErrors = new ArrayList<>();
 
     private final Tags defaultTags;
@@ -68,12 +71,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param configNodeService    configNodeService core functionality to manage nodes
      * @param reloadStrategy       reloadStrategy holds all reload listeners
      * @param postProcessor        postProcessor list of post processors
+     * @param secretConcealer      Utility for concealing secrets
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
                        ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
-                       List<PostProcessor> postProcessor, Tags defaultTags) {
+                       List<PostProcessor> postProcessor, SecretConcealer secretConcealer, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
         this.decoderService = decoderService;
@@ -82,8 +86,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.configNodeService = configNodeService;
         this.coreReloadListenersContainer = reloadStrategy;
         this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
+        this.secretConcealer = secretConcealer;
         this.defaultTags = defaultTags;
-        this.decoderContext = new DecoderContext(decoderService, this);
+        this.decoderContext = new DecoderContext(decoderService, this, secretConcealer);
     }
 
     List<ValidationError> getLoadErrors() {
@@ -92,6 +97,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     public DecoderService getDecoderService() {
         return decoderService;
+    }
+
+    public DecoderContext getDecoderContext() {
+        return decoderContext;
     }
 
     /**
@@ -434,5 +443,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         return error.level() == ValidationLevel.WARN || error.level() == ValidationLevel.DEBUG;
+    }
+
+    public String debugPrint(Tags tags) {
+        return configNodeService.debugPrintRoot(tags, secretConcealer);
     }
 }

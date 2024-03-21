@@ -44,7 +44,8 @@ public final class OptionalIntDecoder implements Decoder<OptionalInt> {
                 return GResultOf.resultOf(OptionalInt.empty(), optionalValue.getErrors());
             }
         } else {
-            return GResultOf.resultOf(OptionalInt.empty(), new ValidationError.OptionalMissingValueDecoding(path, node, name()));
+            return GResultOf.resultOf(OptionalInt.empty(),
+                new ValidationError.OptionalMissingValueDecoding(path, node, name(), decoderContext.getSecretConcealer()));
         }
     }
 }

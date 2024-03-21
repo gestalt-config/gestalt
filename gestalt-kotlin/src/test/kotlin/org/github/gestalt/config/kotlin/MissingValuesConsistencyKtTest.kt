@@ -1,6 +1,7 @@
 package org.github.gestalt.config.kotlin
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.decoder.ProxyDecoderMode
@@ -172,10 +173,10 @@ class MissingValuesConsistencyKtTest {
         val ex = Assertions.assertThrows(GestaltException::class.java) { gestalt.getConfig<DBInfoDataDefault>("db") }
 
         ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataDefault\n" +
-            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
-            "with class: DBInfoDataDefault\n" +
+            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, with node: " +
+            "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoDataDefault\n" +
             " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.connections, " +
-            "with class: DBInfoDataDefault"
+            "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoDataDefault"
 
     }
 
@@ -222,10 +223,10 @@ class MissingValuesConsistencyKtTest {
         val ex = Assertions.assertThrows(GestaltException::class.java) { gestalt.getConfig<DBInfoDataDefault>("db") }
 
         ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataDefault\n" +
-            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
-            "with class: DBInfoDataDefault\n" +
+            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, with node: " +
+            "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoDataDefault\n" +
             " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.connections, " +
-            "with class: DBInfoDataDefault"
+            "with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoDataDefault"
     }
 
 
@@ -272,10 +273,12 @@ class MissingValuesConsistencyKtTest {
 
         val ex = Assertions.assertThrows(GestaltException::class.java) { gestalt.getConfig<DBInfoDataNullable>("db") }
 
-        ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataNullable\n" +
-            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
-            "with class: DBInfoDataNullable\n" +
-            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.connections, " +
+        ex.message shouldContain "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataNullable"
+        ex.message shouldContain "level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on " +
+            "path: db.uri, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
+            "with class: DBInfoDataNullable"
+        ex.message shouldContain "level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on " +
+            "path: db.connections, with node: MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, " +
             "with class: DBInfoDataNullable"
 
 
@@ -325,7 +328,8 @@ class MissingValuesConsistencyKtTest {
         val ex = Assertions.assertThrows(GestaltException::class.java) { gestalt.getConfig<DBInfoDataNullable>("db") }
 
         ex.message shouldBe "Failed getting config path: db, for class: org.github.gestalt.config.kotlin.DBInfoDataNullable\n" +
-            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, " +
+            " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding DataClass on path: db.uri, with node: " +
+            "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}, connections=LeafNode{value='100'}}, " +
             "with class: DBInfoDataNullable"
     }
 

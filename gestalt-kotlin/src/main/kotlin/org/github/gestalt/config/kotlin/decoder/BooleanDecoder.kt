@@ -1,5 +1,6 @@
 package org.github.gestalt.config.kotlin.decoder
 
+import org.github.gestalt.config.decoder.DecoderContext
 import org.github.gestalt.config.decoder.LeafDecoder
 import org.github.gestalt.config.decoder.Priority
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
@@ -30,7 +31,11 @@ class BooleanDecoder : LeafDecoder<Boolean>() {
         }
     }
 
-    override fun leafDecode(path: String?, node: ConfigNode): GResultOf<Boolean> {
+    override fun leafDecode(
+        path: String?,
+        node: ConfigNode,
+        decoderContext: DecoderContext
+    ): GResultOf<Boolean> {
         val value = node.value.orElse("")
         return GResultOf.result(java.lang.Boolean.parseBoolean(value))
     }

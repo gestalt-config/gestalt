@@ -32,7 +32,7 @@ public final class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
     }
 
     @Override
-    protected GResultOf<BigDecimal> leafDecode(String path, ConfigNode node) {
+    protected GResultOf<BigDecimal> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
         GResultOf<BigDecimal> results;
 
         String value = node.getValue().orElse("");
@@ -42,7 +42,8 @@ public final class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
                 BigDecimal bigDecimal = BigDecimal.valueOf(doubleValue);
                 results = GResultOf.result(bigDecimal);
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(new ValidationError.DecodingNumberFormatException(path, node, name()));
+                results = GResultOf.errors(
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

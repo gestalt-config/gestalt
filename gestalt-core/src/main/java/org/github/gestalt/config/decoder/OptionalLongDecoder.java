@@ -44,7 +44,8 @@ public final class OptionalLongDecoder implements Decoder<OptionalLong> {
                 return GResultOf.resultOf(OptionalLong.empty(), optionalValue.getErrors());
             }
         } else {
-            return GResultOf.resultOf(OptionalLong.empty(), new ValidationError.OptionalMissingValueDecoding(path, node, name()));
+            return GResultOf.resultOf(OptionalLong.empty(),
+                new ValidationError.OptionalMissingValueDecoding(path, node, name(), decoderContext.getSecretConcealer()));
         }
     }
 }

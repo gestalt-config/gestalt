@@ -75,7 +75,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.5f), result.results());
@@ -87,7 +87,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"), new TypeCapture<Double>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.5f), result.results());
@@ -99,7 +99,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.0f), result.results());
@@ -111,7 +111,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

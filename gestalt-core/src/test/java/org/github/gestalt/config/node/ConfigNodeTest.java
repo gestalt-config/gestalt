@@ -1,5 +1,6 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -144,7 +145,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}",
             arrayNode.toString());
-        Assertions.assertEquals("MapNode{mapNode={test2=LeafNode{value='leaf2'}, test=LeafNode{value='leaf'}}}",
+        Assertions.assertEquals("MapNode{test2=LeafNode{value='leaf2'}, test=LeafNode{value='leaf'}}",
             objectNode.toString());
         Assertions.assertEquals("LeafNode{value='leaf'}", leaf.toString());
     }
@@ -159,10 +160,10 @@ class ConfigNodeTest {
         LeafNode leaf = new LeafNode("leaf");
 
         Assertions.assertEquals("ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}",
-            arrayNode.printer(""));
-        Assertions.assertEquals("MapNode{mapNode={test2=LeafNode{value='leaf2'}, test=LeafNode{value='leaf'}}}",
-            objectNode.printer(""));
-        Assertions.assertEquals("LeafNode{value='leaf'}", leaf.printer(""));
+            arrayNode.printer("", null));
+        Assertions.assertEquals("MapNode{test2=LeafNode{value='leaf2'}, test=LeafNode{value='leaf'}}",
+            objectNode.printer("", null));
+        Assertions.assertEquals("LeafNode{value='leaf'}", leaf.printer("", null));
     }
 
     @Test
@@ -173,9 +174,61 @@ class ConfigNodeTest {
         mapNode.put("test2", arrayNode);
         MapNode objectNode = new MapNode(mapNode);
 
-        Assertions.assertEquals("MapNode{mapNode={test2=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}, " +
-                "test=LeafNode{value='leaf'}}}",
-            objectNode.printer(""));
+        Assertions.assertEquals("MapNode{test2=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}, " +
+                "test=LeafNode{value='leaf'}}",
+            objectNode.printer("", null));
+    }
+
+    @Test
+    void printerSecretTest() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("abc", new LeafNode("leaf"));
+        mapNode.put("def", arrayNode);
+        MapNode objectNode = new MapNode(mapNode);
+
+        Assertions.assertEquals("MapNode{abc=LeafNode{value='*****'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
+                "LeafNode{value='b'}]}}",
+            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****")));
+    }
+
+    @Test
+    void printerNullSecretTest() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("abc", new LeafNode(null));
+        mapNode.put("def", arrayNode);
+        MapNode objectNode = new MapNode(mapNode);
+
+        Assertions.assertEquals("MapNode{abc=LeafNode{value='*****'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
+                "LeafNode{value='b'}]}}",
+            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****")));
+    }
+
+    @Test
+    void printerNullLeafSecretTest() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("abc", null);
+        mapNode.put("def", arrayNode);
+        MapNode objectNode = new MapNode(mapNode);
+
+        Assertions.assertEquals("MapNode{abc='null', def=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}}",
+            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****")));
+    }
+
+    @Test
+    void printerTestNullMap() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b"), new LeafNode(null)));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("abc", new LeafNode(null));
+        mapNode.put("def", arrayNode);
+        mapNode.put("hij", null);
+        MapNode objectNode = new MapNode(mapNode);
+
+        Assertions.assertEquals("MapNode{abc=LeafNode{value='null'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
+                "LeafNode{value='b'}, LeafNode{value='null'}]}, hij='null'}",
+            objectNode.printer("", new SecretConcealer(Set.of("aaa"), "*****")));
     }
 }
 

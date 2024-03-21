@@ -70,7 +70,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalLong>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -83,13 +83,14 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalLong>() {
-        }, new DecoderContext(decoderService, null));
+        }, new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding OptionalLong on path: db.port",
+        Assertions.assertEquals("Missing Optional Value while decoding OptionalLong on path: db.port, with node: " +
+                "LeafNode{value='null'}",
             result.getErrors().get(0).description());
     }
 
@@ -98,7 +99,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), null,
-            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -114,7 +115,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder longDecoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = longDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertEquals(OptionalLong.empty(), result.results());
 

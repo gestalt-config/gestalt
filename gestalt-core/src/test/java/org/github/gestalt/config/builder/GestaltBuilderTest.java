@@ -19,6 +19,7 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -94,7 +95,10 @@ class GestaltBuilderTest {
                 new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .addPathMapper(new StandardPathMapper())
             .addPathMapper(List.of(new DotNotationPathMapper()))
-            .setPathMappers(List.of(new StandardPathMapper()));
+            .setPathMappers(List.of(new StandardPathMapper()))
+            .setSecurityMaskingRule(new HashSet<>())
+            .addSecurityMaskingRule("secret")
+            .setSecurityMask("&&&&");
 
         Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());
         Assertions.assertEquals(true, builder.isTreatWarningsAsErrors());
@@ -297,12 +301,14 @@ class GestaltBuilderTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
 
+        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
 
         gestalt.loadConfigs();
 

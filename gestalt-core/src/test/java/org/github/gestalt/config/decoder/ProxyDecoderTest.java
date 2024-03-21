@@ -93,7 +93,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -116,14 +116,14 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, " +
-                "with class: DBInfoInterfaceDefault",
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoInterfaceDefault",
             result.getErrors().get(0).description());
 
         DBInfoInterfaceDefault results = (DBInfoInterfaceDefault) result.results();
@@ -146,7 +146,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -156,7 +156,8 @@ class ProxyDecoderTest {
                 "LeafNode{value='aaaa'} attempting to decode Integer",
             result.getErrors().get(0).description());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(1).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, " +
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, port=LeafNode{value='aaaa'}, uri=LeafNode{value='mysql.com'}}, " +
                 "with class: DBInfoInterfaceDefault",
             result.getErrors().get(1).description());
 
@@ -180,7 +181,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -223,13 +224,14 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, " +
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, port='null', uri=LeafNode{value='mysql.com'}}, " +
                 "with class: DBInfoInterfaceDefault",
             result.getErrors().get(0).description());
 
@@ -253,7 +255,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterface2.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterface2.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -291,7 +293,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterface.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -329,14 +331,14 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterfaceOptional.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceOptional.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, " +
-                "with class: DBInfoInterfaceOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoInterfaceOptional",
             result.getErrors().get(0).description());
 
         DBInfoInterfaceOptional results = (DBInfoInterfaceOptional) result.results();
@@ -359,14 +361,14 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoInterfaceOptional.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBInfoInterfaceOptional.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, " +
-                "with class: DBInfoInterfaceOptional",
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoInterfaceOptional",
             result.getErrors().get(0).description());
 
         DBInfoInterfaceOptional results = (DBInfoInterfaceOptional) result.results();
@@ -388,7 +390,7 @@ class ProxyDecoderTest {
         decoder.applyConfig(gestaltConfig);
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -407,7 +409,7 @@ class ProxyDecoderTest {
         decoder.applyConfig(gestaltConfig);
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), null,
-            TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null));
+            TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -434,7 +436,7 @@ class ProxyDecoderTest {
         configs.put("enabled", new LeafNode("true"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPoolInterface.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBPoolInterface.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -480,7 +482,7 @@ class ProxyDecoderTest {
         configs.put("enabled", new LeafNode("true"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPoolGenericInterface.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBPoolGenericInterface.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -526,7 +528,7 @@ class ProxyDecoderTest {
         configs.put("enabled", new LeafNode("true"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPoolInterfaceWrapper.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBPoolInterfaceWrapper.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -577,14 +579,16 @@ class ProxyDecoderTest {
         configs.put("enabled", new LeafNode("true"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPoolInterfaceDefault.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBPoolInterfaceDefault.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.defaultWait, " +
-                "with class: DBPoolInterfaceDefault",
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.defaultWait, with node: " +
+                "MapNode{maxperroute=LeafNode{value='10'}, keepalivetimeoutms=LeafNode{value='123'}, " +
+                "idletimeoutsec=LeafNode{value='1000'}, validateafterinactivity=LeafNode{value='60'}, maxtotal=LeafNode{value='100'}, " +
+                "enabled=LeafNode{value='true'}}, with class: DBPoolInterfaceDefault",
             result.getErrors().get(0).description());
 
         DBPoolInterfaceDefault results = (DBPoolInterfaceDefault) result.results();
@@ -615,14 +619,16 @@ class ProxyDecoderTest {
         configs.put("enabled", new LeafNode("true"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPoolInterfaceDefaultGeneric.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(DBPoolInterfaceDefaultGeneric.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.defaultWait, " +
-            "with class: DBPoolInterfaceDefaultGeneric", result.getErrors().get(0).description());
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.defaultWait, with node: " +
+            "MapNode{maxperroute=LeafNode{value='10'}, keepalivetimeoutms=LeafNode{value='123'}, " +
+            "idletimeoutsec=LeafNode{value='1000'}, validateafterinactivity=LeafNode{value='60'}, maxtotal=LeafNode{value='100'}, " +
+            "enabled=LeafNode{value='true'}}, with class: DBPoolInterfaceDefaultGeneric", result.getErrors().get(0).description());
 
         DBPoolInterfaceDefaultGeneric results = (DBPoolInterfaceDefaultGeneric) result.results();
         Assertions.assertEquals(100, results.getMaxTotal());
@@ -648,7 +654,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -671,14 +677,14 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(IDBInfoAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.channel, " +
-                "with class: IDBInfoAnnotations",
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.channel, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: IDBInfoAnnotations",
             result.getErrors().get(0).description());
 
         IDBInfoAnnotations results = (IDBInfoAnnotations) result.results();
@@ -701,7 +707,7 @@ class ProxyDecoderTest {
 
         GResultOf<Object> result =
             decoder.decode("db.host", Tags.of(), new MapNode(configs),
-                TypeCapture.of(IDBInfoBadAnnotations.class), new DecoderContext(decoderService, null));
+                TypeCapture.of(IDBInfoBadAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -743,7 +749,7 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(IDBInfoAnnotationsLong.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(IDBInfoAnnotationsLong.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -766,14 +772,14 @@ class ProxyDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(IDBInfoMethodAnnotations.class), new DecoderContext(decoderService, null));
+            new MapNode(configs), TypeCapture.of(IDBInfoMethodAnnotations.class), new DecoderContext(decoderService, null, null));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
-        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, " +
-                "with class: IDBInfoMethodAnnotations",
+        Assertions.assertEquals("Missing Optional Value while decoding proxy on path: db.host.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: IDBInfoMethodAnnotations",
             result.getErrors().get(0).description());
 
         IDBInfoMethodAnnotations results = (IDBInfoMethodAnnotations) result.results();
@@ -946,8 +952,8 @@ class ProxyDecoderTest {
 
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
-                "with class: DBInfoInterfaceOptional");
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, with node: " +
+                "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoInterfaceOptional");
 
     }
 
@@ -994,8 +1000,8 @@ class ProxyDecoderTest {
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoInterfaceOptional.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfoInterfaceOptional\n" +
-                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, " +
-                "with class: DBInfoInterfaceOptional");
+                " - level: MISSING_OPTIONAL_VALUE, message: Missing Optional Value while decoding proxy on path: db.uri, with node: " +
+                "MapNode{password=LeafNode{value='*****'}, port=LeafNode{value='3306'}}, with class: DBInfoInterfaceOptional");
     }
 
     @Test
