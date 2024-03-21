@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("resource")
 public class SourceBuilderTest {
@@ -81,7 +82,69 @@ public class SourceBuilderTest {
         sourceBuilder.addTag(tag);
         Tags tags = sourceBuilder.getTags();
         assertNotNull(tags);
-        assertTrue(tags.getInternalTags().contains(tag));
+        assertTrue(tags.getTags().contains(tag));
+    }
+
+    @Test
+    public void addTagShouldNotModify() {
+        Tag tag = Tag.of("env", "tag1");
+        sourceBuilder.addTag(tag);
+        Tags tags = sourceBuilder.getTags();
+        assertNotNull(tags);
+        assertTrue(tags.getTags().contains(tag));
+        assertEquals(0, Tags.of().getTags().size());
+    }
+
+    @Test
+    public void addTagShouldAddTags() throws GestaltException {
+        Tags tag = Tags.of("env", "tag1");
+        sourceBuilder.addTags(tag);
+        Tags tags = sourceBuilder.getTags();
+        assertNotNull(tags);
+        assertTrue(tags.getTags().containsAll(tag.getTags()));
+    }
+
+    @Test
+    public void addTagsShouldNotModify() throws GestaltException {
+        Tags tag = Tags.of("env", "tag1");
+        sourceBuilder.addTags(tag);
+        Tags tags = sourceBuilder.getTags();
+        assertNotNull(tags);
+        assertTrue(tags.getTags().containsAll(tag.getTags()));
+
+        assertEquals(0, Tags.of().getTags().size());
+    }
+
+    @Test
+    public void add2TagShouldAddTag() {
+        Tag tag = Tag.of("env", "tag1");
+        sourceBuilder.addTag(tag);
+        Tags tags = sourceBuilder.getTags();
+        assertNotNull(tags);
+        assertTrue(tags.getTags().contains(tag));
+
+        var sourceBuilder2 = new TestSourceBuilder();
+        Tag tag2 = Tag.of("env", "tag2");
+        sourceBuilder2.addTag(tag2);
+        Tags tags2 = sourceBuilder2.getTags();
+        assertNotNull(tags2);
+        assertTrue(tags2.getTags().contains(tag2));
+    }
+
+    @Test
+    public void add2TagShouldAddTags() throws GestaltException {
+        Tags tag = Tags.of("env", "tag1");
+        sourceBuilder.addTags(tag);
+        Tags tags = sourceBuilder.getTags();
+        assertNotNull(tags);
+        assertTrue(tags.getTags().containsAll(tags.getTags()));
+
+        var sourceBuilder2 = new TestSourceBuilder();
+        Tags tag2 = Tags.of("env", "tag2");
+        sourceBuilder2.addTags(tag2);
+        Tags tags2 = sourceBuilder2.getTags();
+        assertNotNull(tags2);
+        assertTrue(tags2.getTags().containsAll(tag2.getTags()));
     }
 
     @Test

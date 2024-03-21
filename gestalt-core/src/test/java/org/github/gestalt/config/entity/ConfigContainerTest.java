@@ -54,7 +54,7 @@ class ConfigContainerTest {
 
         var ex = Assertions.assertThrows(GestaltException.class, configContainer::orElseThrow);
         Assertions.assertEquals("No results for config path: my.path, tags: " +
-                "Tags{internalTags=[Tag{key='environment', value='dev'}]}, and " +
+                "Tags{[Tag{key='environment', value='dev'}]}, and " +
                 "class: org.github.gestalt.config.entity.ConfigContainer<java.lang.String>",
             ex.getMessage());
 
@@ -106,7 +106,7 @@ class ConfigContainerTest {
 
         var ex = Assertions.assertThrows(GestaltException.class, configContainer::orElseThrow);
         Assertions.assertEquals("No results for config path: my.path, tags: " +
-                "Tags{internalTags=[Tag{key='environment', value='dev'}]}, and " +
+                "Tags{[Tag{key='environment', value='dev'}]}, and " +
                 "class: org.github.gestalt.config.entity.ConfigContainer<java.lang.String>",
             ex.getMessage());
 

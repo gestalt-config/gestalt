@@ -1742,10 +1742,52 @@ class GestaltTest {
 
         gestalt.loadConfigs();
 
-        String rootNode = ((GestaltCore) gestalt).debugPrint(Tags.of());
+        String rootNode = gestalt.debugPrint(Tags.of());
 
         Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='test'}, " +
             "port=LeafNode{value='&&&&&'}, uri=LeafNode{value='my.sql.com'}}}", rootNode);
+    }
+
+    @Test
+    public void testDebugPrint() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "abcdef");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "hijklm");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).addTags(Tags.environment("dev")).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .setSecurityMaskingRule(new HashSet<>())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        String rootNode = gestalt.debugPrint(Tags.of());
+
+        Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='test'}, port=LeafNode{value='abcdef'}, " +
+            "uri=LeafNode{value='my.sql.com'}}}", rootNode);
+
+        String devNode = gestalt.debugPrint(Tags.environment("dev"));
+
+        Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='test2'}, port=LeafNode{value='hijklm'}, " +
+            "uri=LeafNode{value='my.postgresql.com'}}}", devNode);
+
+        String allNodes = gestalt.debugPrint();
+
+        Assertions.assertEquals("tags: Tags{[Tag{key='environment', value='dev'}]} = MapNode{db=MapNode{" +
+            "password=LeafNode{value='test2'}, port=LeafNode{value='hijklm'}, uri=LeafNode{value='my.postgresql.com'}}}\n" +
+            "tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='test'}, port=LeafNode{value='abcdef'}, " +
+            "uri=LeafNode{value='my.sql.com'}}}", allNodes);
     }
 
     public static class TestPostProcessor implements PostProcessor {

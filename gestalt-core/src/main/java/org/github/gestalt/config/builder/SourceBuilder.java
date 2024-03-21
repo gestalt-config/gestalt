@@ -51,9 +51,25 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     public SELF addTag(Tag tag) {
         Objects.requireNonNull(tag, "tag must not be null");
 
-        var existingTags = tags.getInternalTags();
-        existingTags.add(tag);
-        tags = Tags.of(existingTags);
+        var copyTags = Tags.of(tags.getTags());
+        copyTags.getTags().add(tag);
+        tags = copyTags;
+
+        return self();
+    }
+
+    /**
+     * Add a tag to the  builder.
+     *
+     * @param tagsParam tags to add to the builder
+     * @return the builder
+     */
+    public SELF addTags(Tags tagsParam) {
+        Objects.requireNonNull(tagsParam, "tag must not be null");
+
+        var copyTags = Tags.of(tags.getTags());
+        copyTags.getTags().addAll(tagsParam.getTags());
+        tags = copyTags;
 
         return self();
     }

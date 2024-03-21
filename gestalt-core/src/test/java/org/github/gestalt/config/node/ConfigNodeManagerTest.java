@@ -2077,6 +2077,62 @@ class ConfigNodeManagerTest {
             resultsOf.getErrors().get(1).description());
     }
 
+    @Test
+    public void testDebugNodePrint() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.environment("dev"))));
+        Assertions.assertFalse(results.hasErrors());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertNotNull(results.results());
+
+        ConfigNode[] arrayNode2 = new ConfigNode[2];
+        arrayNode2[0] = new LeafNode("Jill");
+        arrayNode2[1] = new LeafNode("Jane");
+
+        Map<String, ConfigNode> dbNode2 = new HashMap<>();
+        dbNode2.put("name", new LeafNode("abc"));
+        dbNode2.put("port", new LeafNode("1234"));
+
+        Map<String, ConfigNode> root1Node2 = new HashMap<>();
+        root1Node2.put("db", new MapNode(dbNode));
+        root1Node2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
+        ConfigNode root2 = new MapNode(root1Node2);
+
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.environment("stage"))));
+        Assertions.assertFalse(results2.hasErrors());
+        Assertions.assertTrue(results2.hasResults());
+        Assertions.assertNotNull(results2.results());
+
+        Assertions.assertEquals("tags: Tags{[Tag{key='environment', value='dev'}]} = " +
+                "MapNode{admin=ArrayNode{values=[LeafNode{value='John'}, LeafNode{value='Steve'}]}, " +
+                "db=MapNode{port=LeafNode{value='3306'}, name=LeafNode{value='test'}}}\n" +
+                "tags: Tags{[Tag{key='environment', value='stage'}]} = MapNode{admin=ArrayNode{" +
+                "values=[LeafNode{value='Jill'}, LeafNode{value='Jane'}]}, db=MapNode{port=LeafNode{value='3306'}, " +
+                "name=LeafNode{value='test'}}}",
+            configNodeManager.debugPrintRoot(new SecretConcealer(Set.of(), "***")));
+
+        Assertions.assertEquals("MapNode{admin=ArrayNode{values=[LeafNode{value='John'}, LeafNode{value='Steve'}]}, " +
+                "db=MapNode{port=LeafNode{value='3306'}, name=LeafNode{value='test'}}}",
+            configNodeManager.debugPrintRoot(Tags.environment("dev"), new SecretConcealer(Set.of(), "***")));
+
+        Assertions.assertEquals("MapNode{admin=ArrayNode{values=[LeafNode{value='Jill'}, LeafNode{value='Jane'}]}, " +
+                "db=MapNode{port=LeafNode{value='3306'}, name=LeafNode{value='test'}}}",
+            configNodeManager.debugPrintRoot(Tags.environment("stage"), new SecretConcealer(Set.of(), "***")));
+    }
+
     public static class TestToken extends Token {
 
         public TestToken() {

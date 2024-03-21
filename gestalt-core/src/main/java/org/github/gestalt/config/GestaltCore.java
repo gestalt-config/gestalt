@@ -445,7 +445,22 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return error.level() == ValidationLevel.WARN || error.level() == ValidationLevel.DEBUG;
     }
 
+    /**
+     * Prints out the contents of a config root for the tag.
+     *
+     * @param tags tags for the config root to print
+     * @return string results
+     */
     public String debugPrint(Tags tags) {
         return configNodeService.debugPrintRoot(tags, secretConcealer);
+    }
+
+    /**
+     * prints out the contents of all config roots.
+     *
+     * @return string results
+     */
+    public String debugPrint() {
+        return configNodeService.debugPrintRoot(secretConcealer);
     }
 }

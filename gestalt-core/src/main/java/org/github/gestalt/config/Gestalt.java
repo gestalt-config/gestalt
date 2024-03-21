@@ -175,4 +175,19 @@ public interface Gestalt {
      * @param listener to remove
      */
     void removeListener(CoreReloadListener listener);
+
+    /**
+     * Prints out the contents of a config root for the tag.
+     *
+     * @param tags tags for the config root to print
+     * @return string results
+     */
+     String debugPrint(Tags tags);
+
+    /**
+     * prints out the contents of all config roots.
+     *
+     * @return string results
+     */
+    String debugPrint();
 }

@@ -140,7 +140,7 @@ public final class Tags {
      *
      * @return tags
      */
-    public Set<Tag> getInternalTags() {
+    public Set<Tag> getTags() {
         return internalTags;
     }
 
@@ -163,8 +163,6 @@ public final class Tags {
 
     @Override
     public String toString() {
-        return "Tags{" +
-            "internalTags=" + internalTags +
-            '}';
+        return "Tags{" + internalTags + '}';
     }
 }

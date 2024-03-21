@@ -89,4 +89,12 @@ public interface ConfigNodeService {
      * @return printout of the root node
      */
     String debugPrintRoot(Tags tags, SecretConcealer secretConcealer);
+
+    /**
+     * prints a root node to a string.
+     *
+     * @param secretConcealer utility to conceal secrets
+     * @return printout of the root node
+     */
+    String debugPrintRoot(SecretConcealer secretConcealer);
 }

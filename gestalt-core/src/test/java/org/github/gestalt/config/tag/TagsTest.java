@@ -13,32 +13,32 @@ class TagsTest {
     void ofTag() {
         Tags tags = Tags.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"));
 
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "ball")));
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "bat")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "ball")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "bat")));
     }
 
     @Test
     void ofTagDuplicateVarg() {
         Tags tags = Tags.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"), Tag.of("toy", "ball"));
 
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "ball")));
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "bat")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "ball")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "bat")));
     }
 
     @Test
     void ofTagDuplicateList() {
         Tags tags = Tags.of(List.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"), Tag.of("toy", "ball")));
 
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "ball")));
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "bat")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "ball")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "bat")));
     }
 
     @Test
     void testOfVargString() throws GestaltException {
         Tags tags = Tags.of("toy", "ball", "toy", "bat");
 
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "ball")));
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "bat")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "ball")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "bat")));
     }
 
     @Test
@@ -51,8 +51,8 @@ class TagsTest {
         List<Tag> tagList = List.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"));
         Tags tags = Tags.of(tagList);
 
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "ball")));
-        Assertions.assertTrue(tags.getInternalTags().contains(Tag.of("toy", "bat")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "ball")));
+        Assertions.assertTrue(tags.getTags().contains(Tag.of("toy", "bat")));
     }
 
     @Test
@@ -87,6 +87,6 @@ class TagsTest {
         List<Tag> tagList = List.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"));
         Tags tags = Tags.of(tagList);
 
-        Assertions.assertEquals("Tags{internalTags=[Tag{key='toy', value='ball'}, Tag{key='toy', value='bat'}]}", tags.toString());
+        Assertions.assertEquals("Tags{[Tag{key='toy', value='ball'}, Tag{key='toy', value='bat'}]}", tags.toString());
     }
 }
