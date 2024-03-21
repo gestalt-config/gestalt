@@ -451,6 +451,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param tags tags for the config root to print
      * @return string results
      */
+    @Override
     public String debugPrint(Tags tags) {
         return configNodeService.debugPrintRoot(tags, secretConcealer);
     }
@@ -460,6 +461,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      *
      * @return string results
      */
+    @Override
     public String debugPrint() {
         return configNodeService.debugPrintRoot(secretConcealer);
     }

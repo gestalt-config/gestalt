@@ -182,7 +182,7 @@ public interface Gestalt {
      * @param tags tags for the config root to print
      * @return string results
      */
-     String debugPrint(Tags tags);
+    String debugPrint(Tags tags);
 
     /**
      * prints out the contents of all config roots.

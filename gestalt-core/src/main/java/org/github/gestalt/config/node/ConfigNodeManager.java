@@ -394,7 +394,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
     public String debugPrintRoot(SecretConcealer secretConcealer) {
         return roots.entrySet()
             .stream()
-            .map((it) -> "tags: " + it.getKey() + " = " + it.getValue().printer("", secretConcealer) )
+            .map((it) -> "tags: " + it.getKey() + " = " + it.getValue().printer("", secretConcealer))
             .collect(Collectors.joining("\n"));
     }
 }
