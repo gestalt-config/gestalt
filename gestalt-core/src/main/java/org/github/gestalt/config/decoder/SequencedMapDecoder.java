@@ -1,10 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.node.ArrayNode;
-import org.github.gestalt.config.node.ConfigNode;
-import org.github.gestalt.config.node.LeafNode;
-import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
@@ -48,14 +45,50 @@ public final class SequencedMapDecoder implements Decoder<Map<?, ?>> {
 
     @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
-        return sequencedMap != null && sequencedMap.isAssignableFrom(type.getRawType()) && type.hasParameter();
+        return sequencedMap != null && sequencedMap.isAssignableFrom(type.getRawType()) &&
+            type.hasParameter() && (node.getNodeType() == NodeType.MAP || node.getNodeType() == NodeType.LEAF);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public GResultOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         GResultOf<Map<?, ?>> results;
-        if (node instanceof MapNode) {
+        if (node instanceof LeafNode) {
+            // if this is a leaf node, try and convert a single string in the format k1=v1,k2=v2 into a map node
+            // once it has been converted to a map node recursively call this method to decode the new map node
+            if (node.getValue().isPresent()) {
+                List<ValidationError> errors = new ArrayList<>();
+                Map<String, ConfigNode> mapResult = new HashMap<>();
+
+                // convert the string in the format k1=v1,k2=v2 to a map
+                String value = node.getValue().get();
+                String[] mapKeyValue = value.split("(?<!\\\\),");
+                for (String entry : mapKeyValue) {
+                    if (entry.isBlank()) {
+                        continue;
+                    }
+
+                    String[] keyValuePair = entry.split("(?<!\\\\)=", 2);
+                    if (keyValuePair.length != 2) {
+                        errors.add(new ValidationError.MapEntryInvalid(path, entry, node, decoderContext.getSecretConcealer()));
+                        continue;
+                    }
+
+                    mapResult.put(keyValuePair[0].trim(), new LeafNode(keyValuePair[1].trim()));
+                }
+
+                // if there are no errors try and decode the new map.
+                // otherwise return the errors.
+                if (errors.isEmpty()) {
+                    results = decode(path, tags, new MapNode(mapResult), type, decoderContext);
+                } else {
+                    results = GResultOf.errors(errors);
+                }
+            } else {
+                results = GResultOf.errors(new ValidationError.DecodingLeafMissingValue(path, name()));
+            }
+
+        } else if (node instanceof MapNode) {
             MapNode mapNode = (MapNode) node;
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
 
@@ -83,10 +116,10 @@ public final class SequencedMapDecoder implements Decoder<Map<?, ?>> {
                     }
 
                     String nextPath = PathUtil.pathForKey(path, key);
-                    GResultOf<Object> keyValidate = decoderContext.getDecoderService()
-                        .decodeNode(nextPath, tags, new LeafNode(key), (TypeCapture<Object>) keyType, decoderContext);
-                    GResultOf<Object> valueValidate = decoderContext.getDecoderService()
-                        .decodeNode(nextPath, tags, it.getValue(), (TypeCapture<Object>) valueType, decoderContext);
+                    GResultOf<Object> keyValidate = decoderContext.getDecoderService().decodeNode(nextPath, tags, new LeafNode(key),
+                        (TypeCapture<Object>) keyType, decoderContext);
+                    GResultOf<Object> valueValidate = decoderContext.getDecoderService().decodeNode(nextPath, tags, it.getValue(),
+                        (TypeCapture<Object>) valueType, decoderContext);
 
                     errors.addAll(keyValidate.getErrors());
                     errors.addAll(valueValidate.getErrors());
@@ -102,8 +135,7 @@ public final class SequencedMapDecoder implements Decoder<Map<?, ?>> {
                         return new Pair<>(keyValidate.results(), valueValidate.results());
                     }
                     return null;
-                })
-                    .filter(Objects::nonNull)
+                }).filter(Objects::nonNull)
                     .collect(LinkedHashMap::new, (m, v) -> m.put(v.getFirst(), v.getSecond()), LinkedHashMap::putAll);
 
 

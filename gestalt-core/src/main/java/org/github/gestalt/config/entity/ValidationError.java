@@ -737,6 +737,31 @@ public abstract class ValidationError {
     }
 
     /**
+     * While decoding a maps value, it was null.
+     */
+    public static class MapEntryInvalid extends ValidationError {
+        private final String path;
+        private final String content;
+        private final ConfigNode node;
+        private final SecretConcealer secretConcealer;
+
+        public MapEntryInvalid(String path, String content, ConfigNode node, SecretConcealer secretConcealer) {
+            super(ValidationLevel.ERROR);
+
+            this.path = path;
+            this.content = content;
+            this.node = node;
+            this.secretConcealer = secretConcealer;
+        }
+
+        @Override
+        public String description() {
+            return "Map entry is not in the format '<KEY>=<VALUE> for entry" + content + ", on path " + path +
+                ", for node: " + node.printer(path, secretConcealer);
+        }
+    }
+
+    /**
      * No decoders found.
      */
     public static class NoDecodersFound extends ValidationError {

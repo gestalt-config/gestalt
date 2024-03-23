@@ -2111,7 +2111,8 @@ class ConfigNodeManagerTest {
         root1Node2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(root1Node2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.environment("stage"))));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2,
+            new TestSource(Tags.environment("stage"))));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());

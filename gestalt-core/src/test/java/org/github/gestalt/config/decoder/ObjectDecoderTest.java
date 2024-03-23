@@ -224,8 +224,8 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("No default Constructor for : org.github.gestalt.config.test.classes.DBInfoNoDefaultConstructor on " +
-            "Path: db.host", result.getErrors().get(0).description());
+        Assertions.assertEquals("No default Constructor for : org.github.gestalt.config.test.classes.DBInfoNoDefaultConstructor " +
+            "on Path: db.host", result.getErrors().get(0).description());
     }
 
     @Test
@@ -244,8 +244,8 @@ class ObjectDecoderTest {
 
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Constructor for: org.github.gestalt.config.test.classes.DBInfoPrivateConstructor is not public on " +
-            "Path: db.host", result.getErrors().get(0).description());
+        Assertions.assertEquals("Constructor for: org.github.gestalt.config.test.classes.DBInfoPrivateConstructor is not public " +
+            "on Path: db.host", result.getErrors().get(0).description());
     }
 
     @Test
@@ -847,7 +847,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBadAnnotationsWithClassDefault.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBadAnnotationsWithClassDefault.class),
+            new DecoderContext(decoderService, null, null));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());

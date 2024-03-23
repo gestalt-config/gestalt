@@ -76,8 +76,8 @@ public class GestaltBuilder {
     private Set<String> securityRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
             "key", "keystore", "passphrase", "password",
-            "salt", "secret", "secure", "ssl",
-            "token", "truststore"));
+            "private", "salt", "secret", "secure",
+            "ssl", "token", "truststore"));
     private String secretMask = "*****";
     private SecretConcealer secretConcealer;
 
