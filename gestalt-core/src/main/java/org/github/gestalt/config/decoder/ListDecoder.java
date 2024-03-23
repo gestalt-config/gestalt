@@ -7,8 +7,11 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
+
+import static java.lang.System.Logger.Level.TRACE;
 
 /**
  * Decode a list type.
@@ -16,6 +19,28 @@ import java.util.List;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class ListDecoder extends CollectionDecoder<List<?>> {
+    private static final System.Logger logger = System.getLogger(ListDecoder.class.getName());
+
+    Map<Class<?>, Supplier<List>> supplierMap = new HashMap<>();
+
+    Class<?> sequencedCollection;
+
+    public ListDecoder() {
+        supplierMap.put(List.class, ArrayList::new);
+        supplierMap.put(AbstractList.class, ArrayList::new);
+        supplierMap.put(CopyOnWriteArrayList.class, CopyOnWriteArrayList::new);
+        supplierMap.put(ArrayList.class, ArrayList::new);
+        supplierMap.put(LinkedList.class, LinkedList::new);
+        supplierMap.put(Stack.class, Stack::new);
+        supplierMap.put(Vector.class, Vector::new);
+        try {
+            sequencedCollection = Class.forName("java.util.SequencedCollection");
+            supplierMap.put(sequencedCollection, ArrayList::new);
+        } catch (ClassNotFoundException e) {
+            sequencedCollection = null;
+            logger.log(TRACE, "Unable to find class java.util.SequencedCollection, SequencedCollectionDecoder disabled");
+        }
+    }
 
     @Override
     public String name() {
@@ -24,14 +49,23 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
 
     @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
-        return List.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
+        return List.class.isAssignableFrom(type.getRawType()) && type.hasParameter() ||
+            (sequencedCollection != null && sequencedCollection.equals(type.getRawType())); // NOPMD
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected GResultOf<List<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass,
                                              DecoderContext decoderContext) {
         List<ValidationError> errors = new ArrayList<>();
-        List<Object> results = new ArrayList<>(node.size());
+        Supplier<List> mapSupplier = supplierMap.get(klass.getRawType());
+
+        if (mapSupplier == null) {
+            logger.log(TRACE, "Unable to find supplier for " + klass.getRawType() + ", defaulting to ArrayList");
+            mapSupplier = supplierMap.get(List.class);
+        }
+
+        List results = mapSupplier.get();
 
         for (int i = 0; i < node.size(); i++) {
             var valueOptional = node.getIndex(i);

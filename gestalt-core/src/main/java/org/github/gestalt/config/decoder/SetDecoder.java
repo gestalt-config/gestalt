@@ -7,10 +7,10 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
+
+import static java.lang.System.Logger.Level.TRACE;
 
 /**
  * Decode a Set type.
@@ -18,6 +18,24 @@ import java.util.Set;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class SetDecoder extends CollectionDecoder<Set<?>> {
+    private static final System.Logger logger = System.getLogger(SetDecoder.class.getName());
+
+    Map<Class<?>, Supplier<Set>> supplierMap = new HashMap<>();
+    Class<?> sequencedSet;
+
+    public SetDecoder() {
+        supplierMap.put(Set.class, HashSet::new);
+        supplierMap.put(HashSet.class, HashSet::new);
+        supplierMap.put(TreeSet.class, TreeSet::new);
+        supplierMap.put(LinkedHashSet.class, LinkedHashSet::new);
+        try {
+            sequencedSet = Class.forName("java.util.SequencedSet");
+            supplierMap.put(sequencedSet, LinkedHashSet::new);
+        } catch (ClassNotFoundException e) {
+            sequencedSet = null;
+            logger.log(TRACE, "Unable to find class java.util.SequencedSet, SequencedSetDecoder disabled");
+        }
+    }
 
     @Override
     public String name() {
@@ -29,11 +47,18 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
         return Set.class.isAssignableFrom(type.getRawType()) && type.hasParameter();
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected GResultOf<Set<?>> arrayDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> klass, DecoderContext decoderContext) {
         List<ValidationError> errors = new ArrayList<>();
-        Set<Object> results = new HashSet<>(node.size());
 
+        Supplier<Set> mapSupplier = supplierMap.get(klass.getRawType());
+        if (mapSupplier == null) {
+            logger.log(TRACE, "Unable to find supplier for " + klass.getRawType() + ", defaulting to HashSet");
+            mapSupplier = supplierMap.get(Set.class);
+        }
+
+        Set<Object> results = mapSupplier.get();
         for (int i = 0; i < node.size(); i++) {
             var valueOptional = node.getIndex(i);
             if (valueOptional.isPresent()) {

@@ -28,6 +28,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GestaltIntegrationTests {
 
@@ -739,7 +740,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb", hostsOpt.get(2).getUrl().get());
         Assertions.assertFalse(hostsOpt.get(2).getPort().isPresent());
 
-        List<HostOptionalInt> hostOptionalInt = gestalt.getConfig("db.hosts", Collections.emptyList(),
+        LinkedList<HostOptionalInt> hostOptionalInt = gestalt.getConfig("db.hosts", new LinkedList<>(),
             new TypeCapture<>() {
             });
         Assertions.assertEquals(3, hostOptionalInt.size());
@@ -757,7 +758,7 @@ public class GestaltIntegrationTests {
         Assertions.assertFalse(hostOptionalInt.get(2).getPort().isPresent());
 
 
-        List<Host> noHosts = gestalt.getConfig("db.not.hosts", Collections.emptyList(), new TypeCapture<>() {
+        ArrayList<Host> noHosts = gestalt.getConfig("db.not.hosts", new ArrayList<>(), new TypeCapture<>() {
         });
         Assertions.assertEquals(0, noHosts.size());
 
@@ -915,6 +916,175 @@ public class GestaltIntegrationTests {
         String message = gestalt.getConfig("message", TypeCapture.of(String.class));
 
         Assertions.assertEquals("hello ${place} it is sunny today", message);
+    }
+
+
+    @Test
+    public void testMapTypes() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "abcdef");
+        configs.put("db.uri", "my.sql.com");
+        configs.put("db.salt", "pepper");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Map<String, String> dbMap = gestalt.getConfig("db", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbMap)
+            .isInstanceOf(HashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper"));
+
+        HashMap<String, String> dbHashMap = gestalt.getConfig("db", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbHashMap)
+            .isInstanceOf(HashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper"));
+
+        TreeMap<String, String> dbTreeMap = gestalt.getConfig("db", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbTreeMap)
+            .isInstanceOf(TreeMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper"));
+
+        LinkedHashMap<String, String> dbLinkedHashMap = gestalt.getConfig("db", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbLinkedHashMap)
+            .isInstanceOf(LinkedHashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper"));
+    }
+
+    @Test
+    public void testSetTypes() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Set<String> dbSet = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbSet)
+            .isInstanceOf(HashSet.class)
+            .contains("John")
+            .contains("Steve");
+
+        HashSet<String> dbHashSet = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbHashSet)
+            .isInstanceOf(HashSet.class)
+            .contains("John")
+            .contains("Steve");
+
+        TreeSet<String> dbTreeSet = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbTreeSet)
+            .isInstanceOf(TreeSet.class)
+            .contains("John")
+            .contains("Steve");
+
+        LinkedHashSet<String> dbLinkedHashSet = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbLinkedHashSet)
+            .isInstanceOf(LinkedHashSet.class)
+            .contains("John")
+            .contains("Steve");
+    }
+
+    @Test
+    public void testListTypes() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        List<String> dbList = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbList)
+            .isInstanceOf(List.class)
+            .contains("John")
+            .contains("Steve");
+
+        AbstractList<String> dbAbstractList = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbAbstractList)
+            .isInstanceOf(AbstractList.class)
+            .contains("John")
+            .contains("Steve");
+
+        CopyOnWriteArrayList<String> dbCopyOnWriteArrayList = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbCopyOnWriteArrayList)
+            .isInstanceOf(CopyOnWriteArrayList.class)
+            .contains("John")
+            .contains("Steve");
+
+        ArrayList<String> dbArrayList = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbArrayList)
+            .isInstanceOf(ArrayList.class)
+            .contains("John")
+            .contains("Steve");
+
+        LinkedList<String> dbLinkedList = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbLinkedList)
+            .isInstanceOf(LinkedList.class)
+            .contains("John")
+            .contains("Steve");
+
+        Stack<String> dbStack = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbStack)
+            .isInstanceOf(Stack.class)
+            .contains("John")
+            .contains("Steve");
+
+        Vector<String> dbVector = gestalt.getConfig("admin", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbVector)
+            .isInstanceOf(Vector.class)
+            .contains("John")
+            .contains("Steve");
     }
 
 

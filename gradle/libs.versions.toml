@@ -20,7 +20,7 @@ weldCore = "4.0.3.Final"
 jackson = "2.17.0"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.8"
+awsBom = "2.25.15"
 gcpLibraries = "26.34.0"
 # vault
 vault = "6.2.0"
@@ -45,12 +45,12 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.25.0"
+gestalt = "0.25.1"
 # Gradle utility
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.4"
-com-fasterxml-jackson-datatype = "2.16.2"
+com-fasterxml-jackson-datatype = "2.17.0"
 
 [libraries]
 # Kotlin

@@ -12,10 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,6 +48,15 @@ class SetDecoderTest {
     @Test
     void canDecode() {
         SetDecoder decoder = new SetDecoder();
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Set<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<HashSet<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<TreeSet<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<LinkedHashSet<String>>() {
+        }));
+
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<String>() {
         }));
@@ -64,8 +70,6 @@ class SetDecoderTest {
         }));
 
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Set.class)));
-        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Set<String>>() {
-        }));
     }
 
     @Test
@@ -85,6 +89,122 @@ class SetDecoderTest {
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
+        Assertions.assertEquals(3, values.results().size());
+        Set<String> results = (Set<String>) values.results();
+
+        assertThat(results)
+            .contains("John")
+            .contains("Steve")
+            .contains("Matt");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void setDecodeHashSet() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        SetDecoder decoder = new SetDecoder();
+
+        GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<HashSet<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertInstanceOf(HashSet.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Set<String> results = (Set<String>) values.results();
+
+        assertThat(results)
+            .contains("John")
+            .contains("Steve")
+            .contains("Matt");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void setDecodeTreeSet() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        SetDecoder decoder = new SetDecoder();
+
+        GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<TreeSet<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertInstanceOf(TreeSet.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Set<String> results = (Set<String>) values.results();
+
+        assertThat(results)
+            .contains("John")
+            .contains("Steve")
+            .contains("Matt");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void setDecodeLinkedHashSet() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        SetDecoder decoder = new SetDecoder();
+
+        GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<LinkedHashSet<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertInstanceOf(LinkedHashSet.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Set<String> results = (Set<String>) values.results();
+
+        assertThat(results)
+            .contains("John")
+            .contains("Steve")
+            .contains("Matt");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void setDecodeUnknownSetDefaultToHashSet() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        SetDecoder decoder = new SetDecoder();
+
+        // this is bad mojo, but it is only a test.
+        // we need to test the defaulting behavior by passing in an unknown set.
+        // since I included all maps we pass in a List, this will not be found and will default to a
+        // hashSet. In the real case it will not get called as the canDecode will return false
+        GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<List<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+
+        Assertions.assertInstanceOf(HashSet.class, values.results());
         Assertions.assertEquals(3, values.results().size());
         Set<String> results = (Set<String>) values.results();
 
