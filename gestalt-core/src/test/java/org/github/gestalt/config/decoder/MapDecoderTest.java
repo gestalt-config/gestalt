@@ -10,6 +10,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,9 +52,15 @@ class MapDecoderTest {
         }));
         Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map<String, Long>>() {
         }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<HashMap<String, Long>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<TreeMap<String, Long>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<LinkedHashMap<String, Long>>() {
+        }));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new ArrayNode(List.of()), new TypeCapture<Map<String, Long>>() {
         }));
-        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Map>() {
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<>() {
         }));
 
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(DBInfo.class)));
@@ -85,6 +92,102 @@ class MapDecoderTest {
         Assertions.assertFalse(result.hasErrors());
 
         Map<String, Integer> results = (Map<String, Integer>) result.results();
+        Assertions.assertEquals(100, results.get("port"));
+        Assertions.assertEquals(300, results.get("uri"));
+        Assertions.assertEquals(6000, results.get("password"));
+    }
+
+    @Test
+    void decodeHashMap() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("300"));
+        configs.put("password", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<HashMap<String, Integer>>() {
+            }, new DecoderContext(decoderService, null, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
+        Assertions.assertInstanceOf(HashMap.class, results);
+        Assertions.assertEquals(100, results.get("port"));
+        Assertions.assertEquals(300, results.get("uri"));
+        Assertions.assertEquals(6000, results.get("password"));
+    }
+
+    @Test
+    void decodeTreeMap() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("300"));
+        configs.put("password", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<TreeMap<String, Integer>>() {
+            }, new DecoderContext(decoderService, null, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
+        Assertions.assertInstanceOf(TreeMap.class, results);
+        Assertions.assertEquals(100, results.get("port"));
+        Assertions.assertEquals(300, results.get("uri"));
+        Assertions.assertEquals(6000, results.get("password"));
+    }
+
+    @Test
+    void decodeLinkedHashMap() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("300"));
+        configs.put("password", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<LinkedHashMap<String, Integer>>() {
+            }, new DecoderContext(decoderService, null, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
+        Assertions.assertInstanceOf(LinkedHashMap.class, results);
+        Assertions.assertEquals(100, results.get("port"));
+        Assertions.assertEquals(300, results.get("uri"));
+        Assertions.assertEquals(6000, results.get("password"));
+    }
+
+    @Test
+    void decodeUnknownMapDefaultToHashMap() {
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        configs.put("uri", new LeafNode("300"));
+        configs.put("password", new LeafNode("6000"));
+
+        MapDecoder decoder = new MapDecoder();
+
+        // this is bad mojo, but it is only a test.
+        // we need to test the defaulting behavior by passing in an unknown map.
+        // since I included all maps we pass in a Pair, this will not be found and will default to a
+        // hashMap. In the real case it will not get called as the canDecode will return false
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            new TypeCapture<Pair<String, Integer>>() {
+            }, new DecoderContext(decoderService, null, null));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
+        Assertions.assertInstanceOf(HashMap.class, results);
         Assertions.assertEquals(100, results.get("port"));
         Assertions.assertEquals(300, results.get("uri"));
         Assertions.assertEquals(6000, results.get("password"));

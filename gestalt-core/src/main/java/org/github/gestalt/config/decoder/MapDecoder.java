@@ -10,7 +10,10 @@ import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static java.lang.System.Logger.Level.TRACE;
 
 /**
  * Decode a Map. Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int.
@@ -19,6 +22,27 @@ import java.util.stream.Stream;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class MapDecoder implements Decoder<Map<?, ?>> {
+
+    private static final System.Logger logger = System.getLogger(MapDecoder.class.getName());
+
+    Class<?> sequencedMap;
+
+    Map<Class<?>, Supplier<Map>> supplierMap = new HashMap<>();
+
+    public MapDecoder() {
+        supplierMap.put(Map.class, HashMap::new);
+        supplierMap.put(HashMap.class, HashMap::new);
+        supplierMap.put(TreeMap.class, TreeMap::new);
+        supplierMap.put(LinkedHashMap.class, LinkedHashMap::new);
+
+        try {
+            sequencedMap = Class.forName("java.util.SequencedMap");
+            supplierMap.put(sequencedMap, LinkedHashMap::new);
+        } catch (ClassNotFoundException e) {
+            sequencedMap = null;
+            logger.log(TRACE, "Unable to find class java.util.SequencedMap, SequencedMapDecoder disabled");
+        }
+    }
 
     @Override
     public Priority priority() {
@@ -36,7 +60,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
             (node.getNodeType() == NodeType.MAP || node.getNodeType() == NodeType.LEAF);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public GResultOf<Map<?, ?>> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         GResultOf<Map<?, ?>> results;
@@ -85,6 +109,12 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                 TypeCapture<?> keyType = genericInterfaces.get(0);
                 TypeCapture<?> valueType = genericInterfaces.get(1);
 
+                Supplier<Map> mapSupplier = supplierMap.get(type.getRawType());
+                if (mapSupplier == null) {
+                    logger.log(TRACE, "Unable to find supplier for " + type.getRawType() + ", defaulting to HashMap");
+                    mapSupplier = supplierMap.get(Map.class);
+                }
+
                 List<ValidationError> errors = new ArrayList<>();
 
                 var stream = mapNode.getMapNode().entrySet().stream();
@@ -124,7 +154,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                     return null;
                 })
                     .filter(Objects::nonNull)
-                    .collect(HashMap::new, (m, v) -> m.put(v.getFirst(), v.getSecond()), HashMap::putAll);
+                    .collect(mapSupplier, (m, v) -> m.put(v.getFirst(), v.getSecond()), Map::putAll);
 
 
                 return GResultOf.resultOf(map, errors);

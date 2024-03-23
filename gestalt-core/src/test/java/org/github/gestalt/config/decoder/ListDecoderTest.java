@@ -12,10 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class ListDecoderTest {
     final DoubleDecoder doubleDecoder = new DoubleDecoder();
@@ -49,6 +47,22 @@ class ListDecoderTest {
     @Test
     void canDecode() {
         ListDecoder decoder = new ListDecoder();
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<AbstractList<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<CopyOnWriteArrayList<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<ArrayList<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<LinkedList<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Stack<String>>() {
+        }));
+        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Vector<String>>() {
+        }));
+
+
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(String.class)));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<String>() {
         }));
@@ -58,8 +72,7 @@ class ListDecoderTest {
         }));
 
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(List.class)));
-        Assertions.assertTrue(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<String>>() {
-        }));
+
 
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Set.class)));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<Set<String>>() {
@@ -109,6 +122,167 @@ class ListDecoderTest {
         Assertions.assertEquals(0.1111, values.results().get(0));
         Assertions.assertEquals(0.222, values.results().get(1));
         Assertions.assertEquals(0.33, values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeArrayList() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<ArrayList<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(ArrayList.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeAbstractList() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<AbstractList<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(AbstractList.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeCopyOnWriteArrayList() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<CopyOnWriteArrayList<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(CopyOnWriteArrayList.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeLinkedList() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<LinkedList<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(LinkedList.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeStack() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Stack<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(Stack.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeVector() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Vector<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(Vector.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
+    }
+
+    @Test
+    void arrayDecodeUnknownListDefaultToArrayList() {
+
+        ConfigNode[] arrayNode = new ConfigNode[3];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+        arrayNode[2] = new LeafNode("Matt");
+
+        ConfigNode nodes = new ArrayNode(Arrays.asList(arrayNode));
+        ListDecoder decoder = new ListDecoder();
+
+        GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
+        }, new DecoderContext(decoderService, null, null));
+
+        Assertions.assertFalse(values.hasErrors());
+        Assertions.assertTrue(values.hasResults());
+        Assertions.assertInstanceOf(ArrayList.class, values.results());
+        Assertions.assertEquals(3, values.results().size());
+        Assertions.assertEquals("John", values.results().get(0));
+        Assertions.assertEquals("Steve", values.results().get(1));
+        Assertions.assertEquals("Matt", values.results().get(2));
     }
 
     @Test
