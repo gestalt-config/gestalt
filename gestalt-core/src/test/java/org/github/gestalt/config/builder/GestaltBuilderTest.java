@@ -3,6 +3,7 @@ package org.github.gestalt.config.builder;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.decoder.*;
+import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -17,6 +18,8 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
+import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.post.process.PostProcessorConfig;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -28,6 +31,7 @@ import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
+import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -96,7 +100,7 @@ class GestaltBuilderTest {
             .setPostProcessors(Collections.singletonList(
                 new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .addPathMapper(new StandardPathMapper())
-            .addPathMapper(List.of(new DotNotationPathMapper()))
+            .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
@@ -645,7 +649,7 @@ class GestaltBuilderTest {
         }
 
         try {
-            builder.addPathMapper((List<PathMapper>) null);
+            builder.addPathMappers((List<PathMapper>) null);
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PathMapper provided while adding", e.getMessage());
@@ -663,7 +667,7 @@ class GestaltBuilderTest {
         }
 
         try {
-            builder.addPathMapper(List.of());
+            builder.addPathMappers(List.of());
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PathMapper provided while adding", e.getMessage());
@@ -697,24 +701,115 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        var decoder1 = new testDecoder();
-        var decoder2 = new testDecoder();
-        var decoder3 = new testDecoder();
+        var decoder1 = new TestDecoder();
+        var decoder2 = new TestDecoder();
+        var decoder3 = new TestDecoder();
 
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDefaultDecoders()
             .addDecoder(decoder1)
             .addDecoders(List.of(decoder2, decoder3))
             .build();
+
+        gestalt.loadConfigs();
 
         Assertions.assertEquals(1, decoder1.configCount);
         Assertions.assertEquals(1, decoder2.configCount);
         Assertions.assertEquals(1, decoder3.configCount);
     }
 
-    private  static class testDecoder implements Decoder {
+    @Test
+    public void manuallyAddedConfigLoaderConfig() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        var loader1 = new TestConfigLoader();
+        var loader2 = new TestConfigLoader();
+        var loader3 = new TestConfigLoader();
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDefaultConfigLoaders()
+            .addConfigLoader(loader1)
+            .addConfigLoaders(List.of(loader2, loader3))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals(1, loader1.configCount);
+        Assertions.assertEquals(1, loader2.configCount);
+        Assertions.assertEquals(1, loader3.configCount);
+    }
+
+    @Test
+    public void manuallyAddedPostProcessorConfig() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        var processor1 = new TestPostProcessor();
+        var processor2 = new TestPostProcessor();
+        var processor3 = new TestPostProcessor();
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDefaultPostProcessors()
+            .addPostProcessor(processor1)
+            .addPostProcessors(List.of(processor2, processor3))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals(1, processor1.configCount);
+        Assertions.assertEquals(1, processor2.configCount);
+        Assertions.assertEquals(1, processor3.configCount);
+    }
+
+    @Test
+    public void manuallyAddedPathMapperConfig() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        var mapper1 = new TestPathMapper();
+        var mapper2 = new TestPathMapper();
+
+        var mapper3 = new TestPathMapper();
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDefaultPathMappers()
+            .addPathMapper(mapper1)
+            .addPathMappers(List.of(mapper2, mapper3))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals(1, mapper1.configCount);
+        Assertions.assertEquals(1, mapper2.configCount);
+        Assertions.assertEquals(1, mapper3.configCount);
+    }
+
+    private static class TestDecoder implements Decoder {
 
         public int configCount = 0;
 
@@ -741,6 +836,57 @@ class GestaltBuilderTest {
         @Override
         public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture type) {
             return false;
+        }
+    }
+
+    private static class TestConfigLoader implements ConfigLoader {
+
+        public int configCount = 0;
+
+        @Override
+        public String name() {
+            return "Loader" + new Random().nextInt();
+        }
+        @Override
+        public void applyConfig(GestaltConfig config) {
+            configCount++;
+        }
+
+        @Override
+        public boolean accepts(String format) {
+            return false;
+        }
+
+        @Override
+        public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+            return null;
+        }
+    }
+
+    private static class TestPostProcessor implements PostProcessor {
+
+        public int configCount = 0;
+        @Override
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            return GResultOf.result(currentNode);
+        }
+
+        @Override
+        public void applyConfig(PostProcessorConfig config) {
+            configCount++;
+        }
+    }
+
+    private static class TestPathMapper implements PathMapper {
+        public int configCount = 0;
+        @Override
+        public void applyConfig(GestaltConfig config) {
+            configCount++;
+        }
+
+        @Override
+        public GResultOf<List<Token>> map(String path, String sentence, SentenceLexer lexer) {
+            return null;
         }
     }
 

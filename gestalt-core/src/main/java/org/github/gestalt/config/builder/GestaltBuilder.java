@@ -419,8 +419,24 @@ public class GestaltBuilder {
      * @param pathMappers list of PathMapper to add.
      * @return GestaltBuilder builder
      * @throws GestaltConfigurationException no PathMapper provided
+     * @deprecated renamed to addPathMappers to be consistant with naming.
+     *     Please use {@link GestaltBuilder#addPathMappers(List)}
      */
+    @Deprecated(since = "0.25.3", forRemoval = true)
     public GestaltBuilder addPathMapper(List<PathMapper> pathMappers) throws GestaltConfigurationException {
+        addPathMappers(pathMappers);
+
+        return this;
+    }
+
+    /**
+     * List of PostProcessor to add to the builder.
+     *
+     * @param pathMappers list of PathMapper to add.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException no PathMapper provided
+     */
+    public GestaltBuilder addPathMappers(List<PathMapper> pathMappers) throws GestaltConfigurationException {
         if (pathMappers == null || pathMappers.isEmpty()) {
             throw new GestaltConfigurationException("No PathMapper provided while adding");
         }

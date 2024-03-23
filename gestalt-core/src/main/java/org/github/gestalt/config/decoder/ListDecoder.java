@@ -25,6 +25,7 @@ public final class ListDecoder extends CollectionDecoder<List<?>> {
 
     Class<?> sequencedCollection;
 
+    @SuppressWarnings("JdkObsolete")
     public ListDecoder() {
         supplierMap.put(List.class, ArrayList::new);
         supplierMap.put(AbstractList.class, ArrayList::new);

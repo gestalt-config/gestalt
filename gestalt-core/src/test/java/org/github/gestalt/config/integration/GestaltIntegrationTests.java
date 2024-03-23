@@ -555,6 +555,7 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    @SuppressWarnings("JdkObsolete")
     private void validateResults(Gestalt gestalt) throws GestaltException {
         HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 

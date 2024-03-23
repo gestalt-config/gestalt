@@ -2102,10 +2102,6 @@ class ConfigNodeManagerTest {
         arrayNode2[0] = new LeafNode("Jill");
         arrayNode2[1] = new LeafNode("Jane");
 
-        Map<String, ConfigNode> dbNode2 = new HashMap<>();
-        dbNode2.put("name", new LeafNode("abc"));
-        dbNode2.put("port", new LeafNode("1234"));
-
         Map<String, ConfigNode> root1Node2 = new HashMap<>();
         root1Node2.put("db", new MapNode(dbNode));
         root1Node2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));

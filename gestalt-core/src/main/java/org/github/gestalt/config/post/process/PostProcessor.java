@@ -11,7 +11,8 @@ import org.github.gestalt.config.utils.GResultOf;
 public interface PostProcessor {
 
     /**
-     * run the post process the current node.
+     * run the post process the current node. You need to return a node, so if your post processor does nothing to the node
+     * return the original node.
      *
      * @param path        current path
      * @param currentNode current node to post process.
