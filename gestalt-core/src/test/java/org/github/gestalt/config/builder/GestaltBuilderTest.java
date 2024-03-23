@@ -11,6 +11,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
+import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
@@ -18,6 +19,7 @@ import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
@@ -683,6 +685,63 @@ class GestaltBuilderTest {
     public void codeCoverage() {
         GestaltBuilder builder = new GestaltBuilder();
         builder.setTreatNullValuesInClassAsErrors(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void manuallyAddedDecoderConfig() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        var decoder1 = new testDecoder();
+        var decoder2 = new testDecoder();
+        var decoder3 = new testDecoder();
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDecoder(decoder1)
+            .addDecoders(List.of(decoder2, decoder3))
+            .build();
+
+        Assertions.assertEquals(1, decoder1.configCount);
+        Assertions.assertEquals(1, decoder2.configCount);
+        Assertions.assertEquals(1, decoder3.configCount);
+    }
+
+    private  static class testDecoder implements Decoder {
+
+        public int configCount = 0;
+
+        @Override
+        public Priority priority() {
+            return null;
+        }
+
+        @Override
+        public String name() {
+            return null;
+        }
+
+        @Override
+        public void applyConfig(GestaltConfig config) {
+            configCount++;
+        }
+
+        @Override
+        public GResultOf decode(String path, Tags tags, ConfigNode node, TypeCapture type, DecoderContext decoderContext) {
+            return null;
+        }
+
+        @Override
+        public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture type) {
+            return false;
+        }
     }
 
     private static class CoreReloadListener implements org.github.gestalt.config.reload.CoreReloadListener {

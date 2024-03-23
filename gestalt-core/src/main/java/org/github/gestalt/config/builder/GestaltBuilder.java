@@ -121,12 +121,13 @@ public class GestaltBuilder {
     public GestaltBuilder addDefaultDecoders() {
         List<Decoder<?>> decodersSet = new ArrayList<>();
         ServiceLoader<Decoder> loader = ServiceLoader.load(Decoder.class);
-        loader.forEach(it -> {
-            it.applyConfig(gestaltConfig);
-            decodersSet.add(it);
-        });
+        loader.forEach(decodersSet::add);
         this.decoders.addAll(decodersSet);
         return this;
+    }
+
+    private void configureDecoders() {
+        decoders.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
     /**
@@ -143,6 +144,10 @@ public class GestaltBuilder {
         });
         configLoaders.addAll(configLoaderSet);
         return this;
+    }
+
+    private void configureConfigLoaders() {
+        configLoaders.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
     /**
@@ -162,6 +167,13 @@ public class GestaltBuilder {
         return this;
     }
 
+    private void configurePostProcessors() {
+        postProcessors.forEach(it -> {
+            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
+            it.applyConfig(config);
+        });
+    }
+
     /**
      * Add default post processors to the builder. Uses the ServiceLoader to find all registered post processors and adds them
      *
@@ -170,12 +182,13 @@ public class GestaltBuilder {
     public GestaltBuilder addDefaultPathMappers() {
         List<PathMapper> pathMappersSet = new ArrayList<>();
         ServiceLoader<PathMapper> loader = ServiceLoader.load(PathMapper.class);
-        loader.forEach(it -> {
-            it.applyConfig(gestaltConfig);
-            pathMappersSet.add(it);
-        });
+        loader.forEach(pathMappersSet::add);
         pathMappers.addAll(pathMappersSet);
         return this;
+    }
+
+    private void configurePathMappers() {
+        pathMappers.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
     /**
@@ -933,6 +946,12 @@ public class GestaltBuilder {
         configLoaders.addAll(configLoaderService.getConfigLoaders());
         List<ConfigLoader> dedupedConfigs = dedupeConfigLoaders();
         configLoaderService.setLoaders(dedupedConfigs);
+
+        // configure all the various services
+        configureDecoders();
+        configureConfigLoaders();
+        configurePostProcessors();
+        configurePathMappers();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
