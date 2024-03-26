@@ -14,5 +14,8 @@ module org.github.gestalt.aws {
     exports org.github.gestalt.config.aws.errors;
     exports org.github.gestalt.config.aws.s3;
     exports org.github.gestalt.config.aws.transformer;
+
+    provides org.github.gestalt.config.post.process.transform.Transformer with
+        org.github.gestalt.config.aws.transformer.AWSSecretTransformer;
 }
 

@@ -67,12 +67,13 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
         if (node instanceof LeafNode) {
             // if this is a leaf node, try and convert a single string in the format k1=v1,k2=v2 into a map node
             // once it has been converted to a map node recursively call this method to decode the new map node
-            if (node.getValue().isPresent()) {
+            var optionalValue = node.getValue();
+            if (optionalValue.isPresent()) {
                 List<ValidationError> errors = new ArrayList<>();
                 Map<String, ConfigNode> mapResult = new HashMap<>();
 
                 // convert the string in the format k1=v1,k2=v2 to a map
-                String value = node.getValue().get();
+                String value = optionalValue.get();
                 String[] mapKeyValue = value.split("(?<!\\\\),");
                 for (String entry : mapKeyValue) {
                     if (entry.isBlank()) {
