@@ -167,14 +167,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltException("No sources provided, unable to reload any configs");
         }
 
-        if (sourcePackages.stream().noneMatch(it -> it.equals(reloadSourcePackage))) {
-            throw new GestaltException("Can not reload a source that was not registered.");
-        }
-
         var sourcePackageOpt = sourcePackages.stream().filter(it -> it.equals(reloadSourcePackage)).findFirst();
-
         if (sourcePackageOpt.isEmpty()) {
-            throw new GestaltException("Config Source not found in registered sources.");
+            throw new GestaltException("Can not reload a source that was not registered.");
         }
 
         var reloadSource = sourcePackageOpt.get().getConfigSource();

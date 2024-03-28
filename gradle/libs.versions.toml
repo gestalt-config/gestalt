@@ -2,7 +2,7 @@
 java = "11"
 javaLatest = "21"
 # @pin
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 # @pin
 kotlinDokka = "1.9.20"
 # Kotlin DI
@@ -20,7 +20,7 @@ weldCore = "4.0.3.Final"
 jackson = "2.17.0"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.15"
+awsBom = "2.25.19"
 gcpLibraries = "26.34.0"
 # vault
 vault = "6.2.0"
@@ -39,7 +39,7 @@ testcontainers = "1.19.7"
 # static code analysis
 errorprone = "2.26.1"
 gradleErrorProne = "3.1.0"
-detekt = "1.23.5"
+detekt = "1.23.6"
 checkStyle = "10.10.0"
 # benchmarking
 jmh = "1.37"

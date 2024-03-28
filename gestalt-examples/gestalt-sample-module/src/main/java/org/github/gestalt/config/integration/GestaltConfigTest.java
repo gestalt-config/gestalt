@@ -53,7 +53,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -78,7 +77,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
                 .useCacheDecorator(false)
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -104,7 +102,6 @@ public class GestaltConfigTest {
                     .build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
                 .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -166,7 +163,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
                 .addSource(EnvironmentConfigSourceBuilder.builder().build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -192,7 +188,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.json").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.json").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -212,7 +207,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.yml").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -232,7 +226,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.json").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -252,7 +245,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.conf").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -272,7 +264,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.conf").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.toml").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -302,7 +293,6 @@ public class GestaltConfigTest {
                 .addSource(source)
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -349,7 +339,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
                 .addSource(GCSConfigSourceBuilder.builder().setBucketName("gestalt-test").setObjectName("dev.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
@@ -413,7 +402,6 @@ public class GestaltConfigTest {
                     .setKeyName("dev.properties")
                     .build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
                 .build();
 
@@ -453,7 +441,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPVault.properties").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .addModuleConfig(vaultModuleConfig)
                 .build();
 
@@ -690,7 +677,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
                 .addDefaultPostProcessors()
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -730,7 +716,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
                 .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
@@ -760,7 +745,6 @@ public class GestaltConfigTest {
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPNode.properties").build())
                 .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
                 .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .setTreatNullValuesInClassAsErrors(false)
                 .build();
 
         gestalt.loadConfigs();
