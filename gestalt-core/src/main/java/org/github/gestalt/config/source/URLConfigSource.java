@@ -41,7 +41,9 @@ public final class URLConfigSource implements ConfigSource {
      * @param sourceURL source URL
      * @param tags      tags associated with the source
      * @throws GestaltException any exceptions
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public URLConfigSource(String sourceURL, Tags tags) throws GestaltException {
         this.sourceURL = sourceURL;
         if (this.sourceURL == null) {

@@ -82,6 +82,6 @@ public final class KubernetesSecretConfigSourceBuilder
 
     @Override
     public ConfigSourcePackage build() throws GestaltException {
-        return buildPackage(new KubernetesSecretConfigSource(path, tags));
+        return buildPackage(new KubernetesSecretConfigSource(path));
     }
 }

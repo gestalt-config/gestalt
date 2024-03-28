@@ -1,7 +1,7 @@
 package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -35,8 +35,11 @@ public final class TimedConfigReloadStrategy extends ConfigReloadStrategy {
      *
      * @param source      the config source to reload
      * @param reloadDelay how often to reload the config source
+     * @deprecated Do not add the source directly, but use the source builders then add the reload strategy to the builder
+     *      {@link org.github.gestalt.config.builder.SourceBuilder#addConfigReloadStrategy(ConfigReloadStrategy)}.
      */
-    public TimedConfigReloadStrategy(ConfigSource source, Duration reloadDelay) {
+    @Deprecated(since = "0.26.0", forRemoval = true)
+    public TimedConfigReloadStrategy(ConfigSourcePackage source, Duration reloadDelay) {
         super(source);
         Objects.requireNonNull(reloadDelay, "Reload Delay must be set for a TimedConfigReloadStrategy");
         this.reloadDelay = reloadDelay;
@@ -50,7 +53,8 @@ public final class TimedConfigReloadStrategy extends ConfigReloadStrategy {
                 try {
                     reload();
                 } catch (GestaltException e) {
-                    logger.log(System.Logger.Level.ERROR, "Exception reloading source " + source.name() + ", exception " + e, e);
+                    logger.log(System.Logger.Level.ERROR,
+                        "Exception reloading source " + source.getConfigSource().name() + ", exception " + e, e);
                 }
             }
         }, reloadDelay.toMillis(), reloadDelay.toMillis());

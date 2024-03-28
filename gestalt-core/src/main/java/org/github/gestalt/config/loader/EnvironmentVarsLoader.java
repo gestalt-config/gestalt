@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.parser.MapConfigParser;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.EnvironmentConfigSource;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
@@ -56,8 +56,9 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
     }
 
     @Override
-    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSourcePackage sourcePackage) throws GestaltException {
         List<Pair<String, String>> configs;
+        var source = sourcePackage.getConfigSource();
         if (source.hasList()) {
             configs = source.loadList();
         } else {
@@ -65,11 +66,11 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
         }
 
         if (configs.isEmpty()) {
-            return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
+            return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source, sourcePackage.getTags())));
         }
 
         GResultOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
 
-        return loadedNode.mapWithError((result) -> List.of(new ConfigNodeContainer(result, source)));
+        return loadedNode.mapWithError((result) -> List.of(new ConfigNodeContainer(result, source, sourcePackage.getTags())));
     }
 }

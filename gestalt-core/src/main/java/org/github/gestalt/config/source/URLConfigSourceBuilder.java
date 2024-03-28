@@ -52,6 +52,6 @@ public final class URLConfigSourceBuilder extends SourceBuilder<URLConfigSourceB
 
     @Override
     public ConfigSourcePackage build() throws GestaltException {
-        return buildPackage(new URLConfigSource(sourceURL, tags));
+        return buildPackage(new URLConfigSource(sourceURL));
     }
 }

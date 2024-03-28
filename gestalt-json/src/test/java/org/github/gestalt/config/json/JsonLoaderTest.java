@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
@@ -45,7 +46,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -80,7 +81,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -116,7 +117,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -151,7 +152,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader(new ObjectMapper());
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -180,7 +181,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -201,7 +202,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -223,7 +224,7 @@ class JsonLoaderTest {
 
         JsonLoader jsonLoader = new JsonLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -246,7 +247,7 @@ class JsonLoaderTest {
         JsonLoader jsonLoader = new JsonLoader();
 
         try {
-            jsonLoader.loadSource(source);
+            jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Exception loading source: String format: json", e.getMessage());
@@ -262,7 +263,7 @@ class JsonLoaderTest {
         JsonLoader jsonLoader = new JsonLoader();
 
         try {
-            jsonLoader.loadSource(source);
+            jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Config source: mapConfig does not have a stream to load.", e.getMessage());

@@ -77,7 +77,9 @@ public interface ConfigSource {
      * A source can have a set of tags that apply to all nodes in the source.
      *
      * @return tags assigned to the source
+     * @deprecated tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     Tags getTags();
 
     /**

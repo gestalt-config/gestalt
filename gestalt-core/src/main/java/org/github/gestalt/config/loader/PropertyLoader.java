@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.parser.MapConfigParser;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.SystemPropertiesConfigSource;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
@@ -64,13 +64,14 @@ public final class PropertyLoader implements ConfigLoader {
      * Then convert them to a list of pairs with the path and value.
      * Pass these into the ConfigCompiler to build a config node tree.
      *
-     * @param source source we want to load with this config loader.
+     * @param sourcePackage source we want to load with this config loader.
      * @return GResultOf config node or errors.
      * @throws GestaltException any errors.
      */
     @Override
-    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSourcePackage sourcePackage) throws GestaltException {
         Properties properties = new Properties();
+        var source = sourcePackage.getConfigSource();
         if (source.hasStream()) {
             try (InputStream is = source.loadStream()) {
                 properties.load(is);
@@ -82,7 +83,7 @@ public final class PropertyLoader implements ConfigLoader {
         }
 
         if (properties.isEmpty()) {
-            return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source)));
+            return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source, sourcePackage.getTags())));
         }
 
         List<Pair<String, String>> configs = properties.entrySet()
@@ -92,6 +93,6 @@ public final class PropertyLoader implements ConfigLoader {
 
         GResultOf<ConfigNode> loadedNode = ConfigCompiler.analyze(source.failOnErrors(), lexer, parser, configs);
 
-        return loadedNode.mapWithError((result) -> List.of(new ConfigNodeContainer(result, source)));
+        return loadedNode.mapWithError((result) -> List.of(new ConfigNodeContainer(result, source, sourcePackage.getTags())));
     }
 }

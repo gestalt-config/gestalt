@@ -307,6 +307,6 @@ class GitConfigSourceTest {
             .setTags(Tags.of("toy", "ball"));
         ConfigSourcePackage source = builder.build();
 
-        Assertions.assertEquals(Tags.of("toy", "ball"), source.getConfigSource().getTags());
+        Assertions.assertEquals(Tags.of("toy", "ball"), source.getTags());
     }
 }

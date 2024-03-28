@@ -97,8 +97,27 @@ public final class EnvironmentConfigSource implements ConfigSource {
      * @param removePrefix       If you should remove the prefix from the output
      * @param failOnErrors       Do not fail on errors while loading Env Vars since they
      *                           are often uncontrolled and may not follow expected conventions of this library.
-     * @param tags               set of tags associated with this source.
      */
+    public EnvironmentConfigSource(String prefix, boolean ignoreCaseOnPrefix, boolean removePrefix, boolean failOnErrors) {
+        this.failOnErrors = failOnErrors;
+        this.prefix = prefix;
+        this.ignoreCaseOnPrefix = ignoreCaseOnPrefix;
+        this.removePrefix = removePrefix;
+        this.tags = Tags.of();
+    }
+
+    /**
+     * Specify if you want to only parse the Environment variables that have a prefix.
+     *
+     * @param prefix             only use the Environment variables that have a prefix.
+     * @param ignoreCaseOnPrefix Ignore the case on matching the prefix
+     * @param removePrefix       If you should remove the prefix from the output
+     * @param failOnErrors       Do not fail on errors while loading Env Vars since they
+     *                           are often uncontrolled and may not follow expected conventions of this library.
+     * @param tags               set of tags associated with this source.
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
+     */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public EnvironmentConfigSource(String prefix, boolean ignoreCaseOnPrefix, boolean removePrefix, boolean failOnErrors, Tags tags) {
         this.failOnErrors = failOnErrors;
         this.prefix = prefix;

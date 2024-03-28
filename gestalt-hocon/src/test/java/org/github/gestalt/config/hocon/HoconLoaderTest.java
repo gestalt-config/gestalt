@@ -2,12 +2,12 @@ package org.github.gestalt.config.hocon;
 
 import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigSyntax;
-import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
-import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +45,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -81,7 +81,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -116,7 +116,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader(ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON));
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -146,7 +146,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -163,7 +163,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -183,7 +183,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -203,7 +203,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -225,7 +225,7 @@ class HoconLoaderTest {
         HoconLoader hoconLoader = new HoconLoader();
 
         try {
-            hoconLoader.loadSource(source);
+            hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Exception loading source: String format: conf", e.getMessage());
@@ -241,7 +241,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -258,7 +258,7 @@ class HoconLoaderTest {
 
         HoconLoader hoconLoader = new HoconLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = hoconLoader.loadSource(source);
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
 
@@ -275,7 +275,7 @@ class HoconLoaderTest {
         HoconLoader hoconLoader = new HoconLoader();
 
         try {
-            hoconLoader.loadSource(source);
+            hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("HOCON Config source: mapConfig does not have a stream to load.", e.getMessage());

@@ -9,6 +9,7 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 
@@ -65,7 +66,9 @@ public final class GitConfigSource implements ConfigSource {
      *     The easiest way is to use the apache mina-sshd SshdSessionFactoryBuilder.
      * @param tags tags associated with the source
      * @throws GestaltException if there is a badly configured git repo
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public GitConfigSource(String repoURI, Path localRepoDirectory, String configFilePath, String branch, CredentialsProvider credentials,
                            SshSessionFactory sshSessionFactory, Tags tags) throws GestaltException {
         if (repoURI == null) {

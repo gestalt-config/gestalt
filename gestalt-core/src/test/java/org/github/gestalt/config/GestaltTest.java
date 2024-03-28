@@ -26,7 +26,9 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.test.classes.*;
+import org.github.gestalt.config.test.classes.DBInfo;
+import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
+import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -1272,8 +1274,8 @@ class GestaltTest {
         CoreListener coreListener = new CoreListener();
         coreReloadListenersContainer.registerListener(coreListener);
 
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(new ConfigSourcePackage(source, List.of())),
+        var sourcePackage  = new ConfigSourcePackage(source, List.of(), Tags.of());
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry, List.of(sourcePackage),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
@@ -1304,10 +1306,75 @@ class GestaltTest {
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
 
         configs.put("db.name", "test1");
-        gestalt.reload(source);
+        gestalt.reload(sourcePackage);
 
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    @SuppressWarnings("VariableDeclarationUsageDistance")
+    public void testReloadTags() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+        ConfigSource source = new MapConfigSource(configs);
+        var sourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test");
+        configs2.put("db.port", "3306");
+        configs2.put("admin[0]", "John");
+        configs2.put("admin[1]", "Steve");
+        ConfigSource source2 = new MapConfigSource(configs2);
+
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+
+        SentenceLexer lexer = new PathLexer(".");
+        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+
+        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
+        CoreListener coreListener = new CoreListener();
+        coreReloadListenersContainer.registerListener(coreListener);
+
+        var sourcePackage2 = new ConfigSourcePackage(source2, List.of(), Tags.of("toy", "ball"));
+        GestaltCore gestalt = new GestaltCore(configLoaderRegistry, List.of(sourcePackage, sourcePackage2),
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer, List.of(new StandardPathMapper())),
+            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
+            Tags.of());
+
+        gestalt.loadConfigs();
+        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class, Tags.of("toy", "ball")));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin[0]", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class, Tags.of("toy", "ball")));
+
+        configs2.put("db.name", "test1");
+        gestalt.reload(sourcePackage2);
+
+        Assertions.assertEquals(1, coreListener.count);
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
+        Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class), Tags.of("toy", "ball")));
     }
 
     @Test
@@ -1380,6 +1447,8 @@ class GestaltTest {
         configs.put("admin[1]", "Steve");
         ConfigSource source = new MapConfigSource(configs);
 
+        var sourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
+
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
@@ -1399,7 +1468,7 @@ class GestaltTest {
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
             Tags.of());
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(source));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(sourcePackage));
         assertThat(ex).hasMessage("No sources provided, unable to reload any configs");
 
 
@@ -1464,8 +1533,9 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
         ConfigSource source2 = new MapConfigSource(configs2);
+        var sourcePackage2 = new ConfigSourcePackage(source2, List.of(), Tags.of());
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(source2));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(sourcePackage2));
         assertThat(ex).hasMessage("Can not reload a source that was not registered.");
 
 
@@ -1484,6 +1554,8 @@ class GestaltTest {
 
         ConfigSource source = new MapConfigSource(configs);
 
+        var sourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
+
         ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
         configLoaderRegistry.addLoader(new MapConfigLoader());
 
@@ -1498,7 +1570,7 @@ class GestaltTest {
 
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(new ConfigSourcePackage(source, List.of())),
+            List.of(sourcePackage),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
@@ -1530,7 +1602,7 @@ class GestaltTest {
 
         configs.put("db.name[a]", "test1");
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(source));
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(sourcePackage));
 
         assertThat(ex).hasMessage("Failed to load configs from source: mapConfig\n" +
             " - level: ERROR, message: Unable to tokenize element name[a] for path: db.name[a]");
@@ -1594,14 +1666,14 @@ class GestaltTest {
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
 
         configs.put("db.name", "test1");
-        gestalt.reload(source.getConfigSource());
+        gestalt.reload(source);
 
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
 
         coreReloadListenersContainer.removeListener(coreListener);
         configs.put("db.name", "test2");
-        gestalt.reload(source.getConfigSource());
+        gestalt.reload(source);
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test2", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
 
@@ -1815,6 +1887,118 @@ class GestaltTest {
             "uri=LeafNode{value='my.sql.com'}}}", allNodes);
     }
 
+    @Test
+    public void testNoDefaultSource() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "1234");
+        configs.put("db.uri", "my.sql.com");
+
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).addTags(Tags.environment("dev")).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class).isEmpty());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.port", Integer.class).isEmpty());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.uri", String.class).isEmpty());
+
+        Assertions.assertEquals("test",
+            gestalt.getConfigOptional("db.password", String.class, Tags.environment("dev")).get());
+        Assertions.assertEquals(1234,
+            gestalt.getConfigOptional("db.port", Integer.class, Tags.environment("dev")).get());
+        Assertions.assertEquals("my.sql.com",
+            gestalt.getConfigOptional("db.uri", String.class, Tags.environment("dev")).get());
+    }
+
+    @Test
+    public void testTagsOnBuilder() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).addTags(Tags.environment("dev")).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
+        Assertions.assertEquals(456, gestalt.getConfig("db.port", Integer.class, Tags.environment("dev")));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class, Tags.environment("dev")));
+    }
+
+    @Test
+    public void testTagsOnBuilderAndSource() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).addTags(Tags.environment("dev")).build())
+            .addSource(new MapConfigSource(configs3, Tags.environment("dev")))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
+        Assertions.assertEquals(456, gestalt.getConfig("db.port", Integer.class, Tags.environment("dev")));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class, Tags.environment("dev")));
+    }
+
+    @Test
+    public void testTagsOnSource() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(new MapConfigSource(configs))
+            .addSource(new MapConfigSource(configs2, Tags.environment("dev")))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
+        Assertions.assertEquals(456, gestalt.getConfig("db.port", Integer.class, Tags.environment("dev")));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class, Tags.environment("dev")));
+    }
 
 
     public static class TestPostProcessor implements PostProcessor {

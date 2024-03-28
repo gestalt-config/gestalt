@@ -37,7 +37,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -69,7 +69,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         GResultOf<ConfigNode> results =
-            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -100,7 +100,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -118,7 +118,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -153,7 +153,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         GResultOf<ConfigNode> results =
-            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -172,7 +172,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         GResultOf<ConfigNode> results2 =
-            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -207,7 +207,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         GResultOf<ConfigNode> results =
-            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -226,7 +226,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         GResultOf<ConfigNode> results2 =
-            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "car"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of("toy", "car")));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -271,7 +271,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -297,7 +297,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -342,7 +342,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -372,7 +372,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -421,7 +421,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -453,7 +453,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -506,7 +506,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -524,7 +524,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -546,7 +546,7 @@ class ConfigNodeManagerTest {
         rootNode3.put("admin", new ArrayNode(Arrays.asList(arrayNode3)));
         ConfigNode root3 = new MapNode(rootNode3);
 
-        GResultOf<ConfigNode> results3 = configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource()));
+        GResultOf<ConfigNode> results3 = configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource(), Tags.of()));
         Assertions.assertFalse(results3.hasErrors());
         Assertions.assertTrue(results3.hasResults());
         Assertions.assertNotNull(results3.results());
@@ -581,7 +581,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         GResultOf<ConfigNode> results =
-            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -600,7 +600,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         GResultOf<ConfigNode> results2 =
-            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -623,7 +623,7 @@ class ConfigNodeManagerTest {
         ConfigNode root3 = new MapNode(rootNode3);
 
         GResultOf<ConfigNode> results3 =
-            configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource()));
+            configNodeManager.addNode(new ConfigNodeContainer(root3, new TestSource(), Tags.of()));
         Assertions.assertFalse(results3.hasErrors());
         Assertions.assertTrue(results3.hasResults());
         Assertions.assertNotNull(results3.results());
@@ -656,7 +656,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -670,7 +670,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new LeafNode("test"));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
 
@@ -704,7 +704,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -722,7 +722,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -758,7 +758,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -779,7 +779,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -818,7 +818,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -836,7 +836,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -874,7 +874,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -896,7 +896,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -935,7 +935,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -953,7 +953,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -991,7 +991,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1012,7 +1012,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -1048,7 +1048,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1069,7 +1069,7 @@ class ConfigNodeManagerTest {
         rootNode2.put("admin", new ArrayNode(Arrays.asList(arrayNode2)));
         ConfigNode root2 = new MapNode(rootNode2);
 
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource()));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
         Assertions.assertTrue(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -1107,7 +1107,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1151,7 +1151,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         GResultOf<ConfigNode> results =
-            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+            configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1171,7 +1171,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         GResultOf<ConfigNode> results2 =
-            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(Tags.of("toy", "ball"))));
+            configNodeManager.addNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of("toy", "ball")));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -1242,7 +1242,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1276,7 +1276,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1310,7 +1310,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1344,7 +1344,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1378,7 +1378,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1412,7 +1412,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1446,7 +1446,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> resultsOf = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1480,7 +1480,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1523,7 +1523,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertTrue(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1572,7 +1572,7 @@ class ConfigNodeManagerTest {
         TestSource source = new TestSource(UUID.randomUUID());
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, source));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, source, Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1594,7 +1594,7 @@ class ConfigNodeManagerTest {
         root2Node.put("db", new MapNode(dbNode2));
         root2Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root2 = new MapNode(root2Node);
-        results = configNodeManager.reloadNode(new ConfigNodeContainer(root2, new TestSource()));
+        results = configNodeManager.reloadNode(new ConfigNodeContainer(root2, new TestSource(), Tags.of()));
 
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
@@ -1626,7 +1626,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1645,7 +1645,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         ConfigSource s2 = new TestSource();
-        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, s2));
+        GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2, s2, Tags.of()));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -1675,7 +1675,7 @@ class ConfigNodeManagerTest {
         rootNode2Reload.put("admin", new ArrayNode(Arrays.asList(arrayNode2reload)));
         ConfigNode root2Reload = new MapNode(rootNode2Reload);
 
-        results = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
+        results = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2, Tags.of()));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1711,9 +1711,9 @@ class ConfigNodeManagerTest {
 
         // add source 1 to the configNodeManager with tags
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        ConfigSource s1 = new TestSource(Tags.of("toy", "ball"));
+        ConfigSource s1 = new TestSource();
         GResultOf<ConfigNode> results =
-            configNodeManager.addNode(new ConfigNodeContainer(root1, s1));
+            configNodeManager.addNode(new ConfigNodeContainer(root1, s1, Tags.of("toy", "ball")));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -1733,9 +1733,9 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(rootNode2);
 
         // add source 2 to the configNodeManager with tags
-        ConfigSource s2 = new TestSource(Tags.of("toy", "ball"));
+        ConfigSource s2 = new TestSource();
         GResultOf<ConfigNode> results2 =
-            configNodeManager.addNode(new ConfigNodeContainer(root2, s2));
+            configNodeManager.addNode(new ConfigNodeContainer(root2, s2, Tags.of("toy", "ball")));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -1759,7 +1759,7 @@ class ConfigNodeManagerTest {
         // add source 2 to the configNodeManager without tags
         ConfigSource s3 = new TestSource();
         GResultOf<ConfigNode> results3 =
-            configNodeManager.addNode(new ConfigNodeContainer(root3, s3));
+            configNodeManager.addNode(new ConfigNodeContainer(root3, s3, Tags.of()));
         Assertions.assertFalse(results3.hasErrors());
         Assertions.assertTrue(results3.hasResults());
         Assertions.assertNotNull(results3.results());
@@ -1792,7 +1792,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2Reload = new MapNode(rootNode2Reload);
 
         // reload source 2 with tags.
-        results2 = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2));
+        results2 = configNodeManager.reloadNode(new ConfigNodeContainer(root2Reload, s2, Tags.of("toy", "ball")));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());
@@ -1827,7 +1827,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"),
             new TestPostProcessor("def")));
@@ -1879,7 +1879,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Collections.emptyList());
         Assertions.assertFalse(resultsOf.hasErrors());
@@ -1921,7 +1921,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(),
             new TestPostProcessor("abc")));
@@ -1968,7 +1968,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(),
             new TestPostProcessor("abc")));
@@ -2000,7 +2000,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
         Assertions.assertTrue(resultsOf.hasErrors());
@@ -2046,7 +2046,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource()));
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
         Assertions.assertTrue(resultsOf.hasErrors());
@@ -2093,7 +2093,8 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GResultOf<ConfigNode> results = configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(Tags.environment("dev"))));
+        GResultOf<ConfigNode> results = configNodeManager.addNode(
+            new ConfigNodeContainer(root1, new TestSource(), Tags.environment("dev")));
         Assertions.assertFalse(results.hasErrors());
         Assertions.assertTrue(results.hasResults());
         Assertions.assertNotNull(results.results());
@@ -2108,7 +2109,7 @@ class ConfigNodeManagerTest {
         ConfigNode root2 = new MapNode(root1Node2);
 
         GResultOf<ConfigNode> results2 = configNodeManager.addNode(new ConfigNodeContainer(root2,
-            new TestSource(Tags.environment("stage"))));
+            new TestSource(), Tags.environment("stage")));
         Assertions.assertFalse(results2.hasErrors());
         Assertions.assertTrue(results2.hasResults());
         Assertions.assertNotNull(results2.results());

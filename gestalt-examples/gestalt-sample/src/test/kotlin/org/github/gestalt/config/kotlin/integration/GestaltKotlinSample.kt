@@ -1,6 +1,5 @@
 package org.github.gestalt.config.kotlin.integration
 
-import io.mockk.core.ValueClassSupport.boxedValue
 import org.github.gestalt.config.Gestalt
 import org.github.gestalt.config.annotations.Config
 import org.github.gestalt.config.builder.GestaltBuilder
@@ -10,13 +9,9 @@ import org.github.gestalt.config.kotlin.kodein.gestalt
 import org.github.gestalt.config.kotlin.koin.gestalt
 import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.reflect.TypeCapture
-import org.github.gestalt.config.source.ClassPathConfigSource
 import org.github.gestalt.config.source.ClassPathConfigSourceBuilder
-import org.github.gestalt.config.source.EnvironmentConfigSource
 import org.github.gestalt.config.source.EnvironmentConfigSourceBuilder
-import org.github.gestalt.config.source.FileConfigSource
 import org.github.gestalt.config.source.FileConfigSourceBuilder
-import org.github.gestalt.config.source.MapConfigSource
 import org.github.gestalt.config.source.MapConfigSourceBuilder
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll

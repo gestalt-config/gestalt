@@ -132,7 +132,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         for (ConfigSourcePackage sourcePackage : sourcePackages) {
             ConfigSource source = sourcePackage.getConfigSource();
             ConfigLoader configLoader = configLoaderService.getLoader(source.format());
-            GResultOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(source);
+
+            GResultOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(sourcePackage);
 
             validateLoadResultsForErrors(newNode, source);
             if (newNode.hasResults()) {
@@ -153,12 +154,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * Find the specific source that we wish to reload.
      * Then reload the config and update the configNodeService with the new config node tree.
      *
-     * @param reloadSource source to reload
+     * @param reloadSourcePackage source to reload
      * @throws GestaltException any exception
      */
     @Override
-    public void reload(ConfigSource reloadSource) throws GestaltException {
-        if (reloadSource == null) {
+    public void reload(ConfigSourcePackage reloadSourcePackage) throws GestaltException {
+        if (reloadSourcePackage == null) {
             throw new GestaltException("No sources provided, unable to reload any configs");
         }
 
@@ -166,12 +167,20 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             throw new GestaltException("No sources provided, unable to reload any configs");
         }
 
-        if (sourcePackages.stream().noneMatch(it -> it.getConfigSource().equals(reloadSource))) {
+        if (sourcePackages.stream().noneMatch(it -> it.equals(reloadSourcePackage))) {
             throw new GestaltException("Can not reload a source that was not registered.");
         }
 
-        ConfigLoader configLoader = configLoaderService.getLoader(reloadSource.format());
-        GResultOf<List<ConfigNodeContainer>> reloadNodes = configLoader.loadSource(reloadSource);
+        var sourcePackageOpt = sourcePackages.stream().filter(it -> it.equals(reloadSourcePackage)).findFirst();
+
+        if (sourcePackageOpt.isEmpty()) {
+            throw new GestaltException("Config Source not found in registered sources.");
+        }
+
+        var reloadSource = sourcePackageOpt.get().getConfigSource();
+
+        ConfigLoader configLoader = configLoaderService.getLoader(reloadSourcePackage.getConfigSource().format());
+        var reloadNodes = configLoader.loadSource(sourcePackageOpt.get());
         validateLoadResultsForErrors(reloadNodes, reloadSource);
 
         reloadNodes.throwIfNoResults(() -> new GestaltException("no results found reloading source " + reloadSource.name()));

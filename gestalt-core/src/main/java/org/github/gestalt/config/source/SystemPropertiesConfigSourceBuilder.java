@@ -53,6 +53,6 @@ public final class SystemPropertiesConfigSourceBuilder
 
     @Override
     public ConfigSourcePackage build() throws GestaltException {
-        return buildPackage(new SystemPropertiesConfigSource(failOnErrors, tags));
+        return buildPackage(new SystemPropertiesConfigSource(failOnErrors));
     }
 }

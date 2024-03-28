@@ -45,7 +45,9 @@ public final class MapConfigSource implements ConfigSource {
      *
      * @param customConfig map of configs.
      * @param tags         tags associated with the source
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public MapConfigSource(Map<String, String> customConfig, Tags tags) {
         Objects.requireNonNull(customConfig, "Custom map must not be null");
         this.customConfig = customConfig;

@@ -1,10 +1,10 @@
 package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 
 /**
- * Listener for when configs need to reloads.
+ * Listener for when configs need to reloads. This is for use internally, end users most likely should not use this.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
@@ -15,5 +15,5 @@ public interface ConfigReloadListener {
      * @param source the source we should reload.
      * @throws GestaltException any exceptions
      */
-    void reload(ConfigSource source) throws GestaltException;
+    void reload(ConfigSourcePackage source) throws GestaltException;
 }

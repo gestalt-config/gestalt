@@ -1,7 +1,7 @@
 package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 
 /**
  * Reloads a source when called.
@@ -20,8 +20,11 @@ public final class ManualConfigReloadStrategy extends ConfigReloadStrategy {
      * Constructor for ManualConfigReloadStrategy.
      *
      * @param source the config source to reload
+     * @deprecated Do not add the source directly, but use the source builders then add the reload strategy to the builder
+     *      {@link org.github.gestalt.config.builder.SourceBuilder#addConfigReloadStrategy(ConfigReloadStrategy)}
      */
-    public ManualConfigReloadStrategy(ConfigSource source) {
+    @Deprecated(since = "0.26.0", forRemoval = true)
+    public ManualConfigReloadStrategy(ConfigSourcePackage source) {
         super(source);
     }
 

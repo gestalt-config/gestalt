@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
@@ -69,7 +70,7 @@ class PropertyLoaderTest {
         PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -123,13 +124,12 @@ class PropertyLoaderTest {
         // mock the source so we return our test data stream.
         Mockito.when(source.hasStream()).thenReturn(true);
         Mockito.when(source.loadStream()).thenReturn(inputStream);
-        Mockito.when(source.getTags()).thenReturn(Tags.of("toy", "ball"));
 
         // create our class to be tested
         PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(source);
+        var results = propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of("toy", "ball")));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -192,7 +192,7 @@ class PropertyLoaderTest {
         PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue("empty path provided".equals(results.getErrors().get(0).description()) ||
             "Unable to tokenize element name for path: db.name".equals(results.getErrors().get(0).description()));
         Assertions.assertTrue("empty path provided".equals(results.getErrors().get(1).description()) ||
@@ -233,7 +233,7 @@ class PropertyLoaderTest {
         PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> results = propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
 
@@ -279,7 +279,7 @@ class PropertyLoaderTest {
 
         // run the code under test.
         try {
-            propsLoader.loadSource(source);
+            propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Config source: mock does not have a stream to load.", e.getMessage());
@@ -309,7 +309,7 @@ class PropertyLoaderTest {
 
         // run the code under test.
         try {
-            propsLoader.loadSource(source);
+            propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("bad stream", e.getMessage());
@@ -338,7 +338,7 @@ class PropertyLoaderTest {
 
         // run the code under test.
         try {
-            propsLoader.loadSource(source);
+            propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Exception loading source: mock", e.getMessage());
@@ -362,7 +362,7 @@ class PropertyLoaderTest {
         PropertyLoader propsLoader = new PropertyLoader(lexer, parser);
 
         try {
-            propsLoader.loadSource(source);
+            propsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Config source: mapConfig does not have a stream to load.", e.getMessage());
@@ -376,7 +376,7 @@ class PropertyLoaderTest {
 
         PropertyLoader propertyLoader = new PropertyLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = propertyLoader.loadSource(source);
+        var resultContainer = propertyLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());

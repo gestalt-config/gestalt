@@ -7,9 +7,7 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Base class for all source builders.
@@ -105,12 +103,20 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
 
     protected ConfigSourcePackage buildPackage(ConfigSource source) throws GestaltException {
 
-        List<ConfigReloadStrategy> reloadStrategies = new ArrayList<>(configReloadStrategies.size());
-        for (var reloadStrategy : configReloadStrategies) {
-            reloadStrategy.setSource(source);
-            reloadStrategies.add(reloadStrategy);
+        // for now to maintain backwards compatibility add all config source tags to the builder tags
+        Set<Tag> combinedTags = new HashSet<>();
+        if(source.getTags() != null) {
+            combinedTags.addAll(source.getTags().getTags());
         }
-        return new ConfigSourcePackage(source, reloadStrategies);
+        combinedTags.addAll(tags.getTags());
+
+        var configSourcePackage = new ConfigSourcePackage(source, configReloadStrategies, Tags.of(combinedTags));
+
+        for (var reloadStrategy : configReloadStrategies) {
+            reloadStrategy.setSource(configSourcePackage);
+        }
+
+        return configSourcePackage;
     }
 
     @SuppressWarnings("unchecked")

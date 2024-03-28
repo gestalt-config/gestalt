@@ -2,7 +2,7 @@ package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,11 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
 
     /**
      * The source we are listening for a reload.
+     *
+     * note: i dont love that the ConfigReloadStrategy needs the ConfigSourcePackage since it is a circular reference.
+     *     As the ConfigSourcePackage holds a list of ConfigReloadStrategy. Use the Source builders to manage this.
      */
-    protected ConfigSource source;
+    protected ConfigSourcePackage source;
 
     /**
      * Protected constructor for the ConfigReloadStrategy. So end users cant create this class, only inherit it.
@@ -40,26 +43,30 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
      *
      * @param source source we are listening for a reload
      */
-    protected ConfigReloadStrategy(ConfigSource source) {
+    protected ConfigReloadStrategy(ConfigSourcePackage source) {
         this.source = source;
     }
 
     /**
      * Get the source this reload strategy should apply to.
      *
+     *
      * @return the source this reload strategy should apply to.
      */
-    public ConfigSource getSource() {
+    public ConfigSourcePackage getSource() {
         return source;
     }
 
     /**
      * set the source this reload strategy should apply to.
      *
+     * note: i dont love that the ConfigReloadStrategy needs the ConfigSourcePackage since it is a circular reference.
+     *     As the ConfigSourcePackage holds a list of ConfigReloadStrategy. Use the Source builders to manage this.
+     *
      * @param source the source this reload strategy should apply to.
-     * @throws GestaltConfigurationException if there is an exception setting the source
+     * @throws GestaltConfigurationException if there are any errors applying the source
      */
-    public void setSource(ConfigSource source) throws GestaltConfigurationException {
+    public void setSource(ConfigSourcePackage source) throws GestaltConfigurationException {
         this.source = source;
     }
 
