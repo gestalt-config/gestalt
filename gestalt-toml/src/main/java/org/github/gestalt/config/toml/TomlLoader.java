@@ -11,7 +11,7 @@ import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.GResultOf;
 
@@ -60,13 +60,14 @@ public final class TomlLoader implements ConfigLoader {
      * Then convert them to a list of pairs with the path and value.
      * Pass these into the ConfigCompiler to build a config node tree.
      *
-     * @param source source we want to load with this config loader.
+     * @param sourcePackage source we want to load with this config loader.
      * @return GResultOf config node or errors.
      * @throws GestaltException any errors.
      */
     @Override
-    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+    public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSourcePackage sourcePackage) throws GestaltException {
 
+        var source = sourcePackage.getConfigSource();
         if (source.hasStream()) {
             try (InputStream is = source.loadStream()) {
                 JsonNode jsonNode = objectMapper.readTree(is);
@@ -76,7 +77,7 @@ public final class TomlLoader implements ConfigLoader {
 
                 GResultOf<ConfigNode> node = buildConfigTree("", jsonNode);
 
-                return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source)));
+                return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source, sourcePackage.getTags())));
             } catch (IOException | NullPointerException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }

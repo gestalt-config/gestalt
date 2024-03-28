@@ -201,7 +201,7 @@ public class GestaltBuilder {
     @Deprecated(since = "0.23.4")
     public GestaltBuilder addSource(ConfigSource source) {
         Objects.requireNonNull(source, "Source should not be null");
-        this.configSourcePackages.add(new ConfigSourcePackage(source, List.of()));
+        this.configSourcePackages.add(new ConfigSourcePackage(source, List.of(), source.getTags()));
         return this;
     }
 

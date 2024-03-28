@@ -22,7 +22,6 @@ public class MainOverride {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
             .addSource(SystemPropertiesConfigSourceBuilder.builder().build())
-            .setTreatNullValuesInClassAsErrors(false)
             .build();
 
         // Load the configurations, this will throw exceptions if there are any errors.

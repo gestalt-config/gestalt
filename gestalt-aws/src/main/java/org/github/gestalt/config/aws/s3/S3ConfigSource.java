@@ -3,6 +3,7 @@ package org.github.gestalt.config.aws.s3;
 
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
 import software.amazon.awssdk.core.ResponseBytes;
@@ -50,7 +51,9 @@ public final class S3ConfigSource implements ConfigSource {
      * @param keyName name of the S3 key
      * @param tags tags associated with the source
      * @throws GestaltException any exceptions thrown
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public S3ConfigSource(S3Client s3, String bucketName, String keyName, Tags tags) throws GestaltException {
         if (s3 == null) {
             throw new GestaltException("S3 client can not be null");

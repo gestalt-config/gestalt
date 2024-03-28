@@ -9,6 +9,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
@@ -64,7 +65,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -119,13 +120,12 @@ class MapConfigLoaderTest {
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
         Mockito.when(source.loadList()).thenReturn(data);
-        Mockito.when(source.getTags()).thenReturn(Tags.of("toy", "ball"));
 
         // create our class to be tested
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(source);
+        var results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of("toy", "ball")));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -189,7 +189,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
 
@@ -233,7 +233,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
 
@@ -278,7 +278,7 @@ class MapConfigLoaderTest {
 
         // run the code under test.
         try {
-            mapConfigLoader.loadSource(source);
+            mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("Config source: mock does not have a list to load.", e.getMessage());
@@ -308,7 +308,7 @@ class MapConfigLoaderTest {
 
         // run the code under test.
         try {
-            mapConfigLoader.loadSource(source);
+            mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not hit this");
         } catch (GestaltException e) {
             Assertions.assertEquals("bad stream", e.getMessage());
@@ -330,8 +330,9 @@ class MapConfigLoaderTest {
         // create our class to be tested
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
+        var source = new MapConfigSource(data);
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
     }
@@ -345,7 +346,7 @@ class MapConfigLoaderTest {
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
         try {
-            mapConfigLoader.loadSource(source);
+            mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
@@ -359,7 +360,7 @@ class MapConfigLoaderTest {
 
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = mapConfigLoader.loadSource(source);
+        var resultContainer = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());

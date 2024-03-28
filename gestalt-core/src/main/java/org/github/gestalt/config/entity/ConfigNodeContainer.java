@@ -14,16 +14,19 @@ import java.util.Objects;
 public final class ConfigNodeContainer {
     private final ConfigNode configNode;
     private final ConfigSource source;
+    private final Tags tags;
 
     /**
      * Constructor to hold a ConfigNode and a id.
      *
      * @param configNode node to hold
      * @param source     the source of the configs
+     * @param tags       tags associated with the source.
      */
-    public ConfigNodeContainer(ConfigNode configNode, ConfigSource source) {
+    public ConfigNodeContainer(ConfigNode configNode, ConfigSource source, Tags tags) {
         this.configNode = configNode;
         this.source = source;
+        this.tags = tags;
     }
 
     /**
@@ -50,7 +53,7 @@ public final class ConfigNodeContainer {
      * @return Tags
      */
     public Tags getTags() {
-        return source.getTags();
+        return tags;
     }
 
     /**
@@ -60,7 +63,7 @@ public final class ConfigNodeContainer {
      * @return true if the tags for the Config Node match the input
      */
     public boolean matchesTags(Tags match) {
-        return source.getTags().equals(match);
+        return tags.equals(match);
     }
 
     @Override
@@ -72,11 +75,11 @@ public final class ConfigNodeContainer {
             return false;
         }
         ConfigNodeContainer that = (ConfigNodeContainer) o;
-        return Objects.equals(configNode, that.configNode) && Objects.equals(source, that.source);
+        return Objects.equals(configNode, that.configNode) && Objects.equals(source, that.source) && Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(configNode, source);
+        return Objects.hash(configNode, source, tags);
     }
 }

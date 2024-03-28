@@ -858,7 +858,7 @@ class GestaltBuilderTest {
         }
 
         @Override
-        public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSource source) throws GestaltException {
+        public GResultOf<List<ConfigNodeContainer>> loadSource(ConfigSourcePackage source) throws GestaltException {
             return null;
         }
     }

@@ -33,7 +33,7 @@ class ConfigNodeContainerTest {
         root1Node.put("admin", new ArrayNode(List.of(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource());
+        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(), Tags.of());
 
         Assertions.assertEquals(root1, cfgNode.getConfigNode());
     }
@@ -55,13 +55,13 @@ class ConfigNodeContainerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         UUID id = UUID.randomUUID();
-        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(id));
+        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(id), Tags.of());
 
         Assertions.assertEquals(id, cfgNode.getSource().id());
     }
 
     @Test
-    void testEquals() {
+    void testEquals() throws GestaltException {
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
         arrayNode[1] = new LeafNode("Steve");
@@ -91,13 +91,15 @@ class ConfigNodeContainerTest {
         UUID id2 = UUID.randomUUID();
 
         ConfigNode root1 = new MapNode(root1Node);
-        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(id));
-        ConfigNodeContainer cfgNode2 = new ConfigNodeContainer(root2, new TestSource(id2));
-        ConfigNodeContainer cfgNode3 = new ConfigNodeContainer(root1, new TestSource(id));
+        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(id), Tags.of());
+        ConfigNodeContainer cfgNode2 = new ConfigNodeContainer(root2, new TestSource(id2), Tags.of());
+        ConfigNodeContainer cfgNode3 = new ConfigNodeContainer(root1, new TestSource(id), Tags.of());
+        ConfigNodeContainer cfgNode4 = new ConfigNodeContainer(root1, new TestSource(id), Tags.of("test", "data"));
 
         Assertions.assertEquals(cfgNode, cfgNode);
         Assertions.assertEquals(cfgNode, cfgNode3);
         Assertions.assertNotEquals(cfgNode, cfgNode2);
+        Assertions.assertNotEquals(cfgNode3, cfgNode4);
         Assertions.assertNotEquals(cfgNode, null);
         Assertions.assertNotEquals(cfgNode, 3);
     }
@@ -120,7 +122,7 @@ class ConfigNodeContainerTest {
 
         UUID id = UUID.fromString("9d4e9197-5898-45e6-9056-a4a29d2c2a64");
 
-        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(id, Tags.of("toy", "ball")));
-        Assertions.assertEquals(-692160029, cfgNode.hashCode());
+        ConfigNodeContainer cfgNode = new ConfigNodeContainer(root1, new TestSource(id), Tags.of("toy", "ball"));
+        Assertions.assertEquals(-179624288, cfgNode.hashCode());
     }
 }

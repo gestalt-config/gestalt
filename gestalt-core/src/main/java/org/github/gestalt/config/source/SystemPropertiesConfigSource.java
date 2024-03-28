@@ -54,7 +54,9 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
      * constructor for SystemPropertiesConfigSource.
      *
      * @param tags tags associated with the source
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public SystemPropertiesConfigSource(Tags tags) {
         this(false, tags);
     }
@@ -65,7 +67,9 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
      * @param failOnErrors treat Errors while loading as warnings since System Properties
      *                     are often uncontrolled and may not follow expected conventions of this library.
      * @param tags         tags associated with the source
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public SystemPropertiesConfigSource(boolean failOnErrors, Tags tags) {
         this.failOnErrors = failOnErrors;
         this.tags = tags;

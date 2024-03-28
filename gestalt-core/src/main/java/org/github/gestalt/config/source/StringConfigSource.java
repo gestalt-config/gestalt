@@ -55,7 +55,9 @@ public final class StringConfigSource implements ConfigSource {
      * @param format format for the string.
      * @param tags   tags associated with this source
      * @throws GestaltException any exception
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public StringConfigSource(String config, String format, Tags tags) throws GestaltException {
         this.config = config;
         if (config == null) {

@@ -4,8 +4,10 @@ import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.parser.MapConfigParser;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.TestMapConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,8 +29,9 @@ class CompilerConfigTest {
         // create our class to be tested
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
+        var source = new MapConfigSource(data);
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -53,8 +56,9 @@ class CompilerConfigTest {
         MapConfigLoader mapConfigLoader
             = new MapConfigLoader(new PathLexer(".", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
+        var source = new MapConfigSource(data);
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
@@ -77,8 +81,9 @@ class CompilerConfigTest {
         MapConfigLoader mapConfigLoader
             = new MapConfigLoader(new PathLexer(".", "^((?<name>\\w+)(?<array>\\[(?<index>\\d*)])?)$"), new MapConfigParser());
 
+        var source = new MapConfigSourceWarn(data, false);
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSourceWarn(data, false));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertTrue(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
@@ -106,8 +111,9 @@ class CompilerConfigTest {
         // create our class to be tested
         MapConfigLoader mapConfigLoader = new MapConfigLoader();
 
+        var source = new MapConfigSource(data);
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new MapConfigSource(data));
+        GResultOf<List<ConfigNodeContainer>> results = mapConfigLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(results.hasResults());
         Assertions.assertTrue(results.hasErrors());

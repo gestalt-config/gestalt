@@ -1,9 +1,13 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
+import org.github.gestalt.config.tag.Tag;
+import org.github.gestalt.config.tag.Tags;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Container that holds the Config Source as well as the configReloadStrategies.
@@ -14,15 +18,19 @@ public class ConfigSourcePackage {
     private final ConfigSource configSource;
     private final List<ConfigReloadStrategy> configReloadStrategies;
 
+    private final Tags tags;
+
     /**
      * Constructor for the ConfigSourcePackage that requires the config source and the configReloadStrategies.
      *
      * @param configSource           the config source
      * @param configReloadStrategies the configReloadStrategies
+     * @param tags                   the tags associated with the config source package
      */
-    public ConfigSourcePackage(ConfigSource configSource, List<ConfigReloadStrategy> configReloadStrategies) {
+    public ConfigSourcePackage(ConfigSource configSource, List<ConfigReloadStrategy> configReloadStrategies, Tags tags) {
         this.configSource = configSource;
         this.configReloadStrategies = configReloadStrategies;
+        this.tags = tags;
     }
 
     /**
@@ -41,6 +49,22 @@ public class ConfigSourcePackage {
      */
     public List<ConfigReloadStrategy> getConfigReloadStrategies() {
         return configReloadStrategies;
+    }
+
+    /**
+     * Get the tags associated with the config source.
+     *
+     * @return  the tags associated with the config source
+     */
+    public Tags getTags() {
+
+        // remove this once we remove the tags from the config source.
+        Set<Tag> combinedTags = new HashSet<>();
+        if(configSource.getTags() != null) {
+            combinedTags.addAll(configSource.getTags().getTags());
+        }
+        combinedTags.addAll(tags.getTags());
+        return Tags.of(combinedTags);
     }
 
     @Override

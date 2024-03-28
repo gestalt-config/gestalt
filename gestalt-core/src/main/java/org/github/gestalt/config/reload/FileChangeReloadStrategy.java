@@ -2,7 +2,7 @@ package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.FileConfigSource;
 
 import java.io.IOException;
@@ -52,8 +52,11 @@ public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
      *
      * @param source the source to watch for reload
      * @throws GestaltConfigurationException if this is not a file source or other errors.
+     * @deprecated Do not add the source directly, but use the source builders then add the reload strategy to the builder
+     *     {@link org.github.gestalt.config.builder.SourceBuilder#addConfigReloadStrategy(ConfigReloadStrategy)}
      */
-    public FileChangeReloadStrategy(ConfigSource source) throws GestaltConfigurationException {
+    @Deprecated(since = "0.26.0", forRemoval = true)
+    public FileChangeReloadStrategy(ConfigSourcePackage source) throws GestaltConfigurationException {
         this(source, Executors.newSingleThreadExecutor());
     }
 
@@ -64,19 +67,22 @@ public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
      * @param source   the source to watch for reload
      * @param executor ExecutorService to get thread from.
      * @throws GestaltConfigurationException if this is not a file source or other errors.
+     * @deprecated Do not add the source directly, but use the source builders then add the reload strategy to the builder
+     *      {@link org.github.gestalt.config.builder.SourceBuilder#addConfigReloadStrategy(ConfigReloadStrategy)}
      */
-    public FileChangeReloadStrategy(ConfigSource source, ExecutorService executor) throws GestaltConfigurationException {
+    @Deprecated(since = "0.26.0", forRemoval = true)
+    public FileChangeReloadStrategy(ConfigSourcePackage source, ExecutorService executor) throws GestaltConfigurationException {
         super(source);
         this.executor = executor;
-        if (source != null && !(source instanceof FileConfigSource)) {
+        if (source != null && !(source.getConfigSource() instanceof FileConfigSource)) {
             throw new GestaltConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
         }
         setupWatcherTask();
     }
 
     @Override
-    public void setSource(ConfigSource source) throws GestaltConfigurationException {
-        if (!(source instanceof FileConfigSource)) {
+    public void setSource(ConfigSourcePackage source) throws GestaltConfigurationException {
+        if (!(source.getConfigSource() instanceof FileConfigSource)) {
             throw new GestaltConfigurationException("Unable to add a File Change reload strategy to a non file source " + source);
         }
         this.source = source;
@@ -85,7 +91,7 @@ public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
 
     private void setupWatcherTask() throws GestaltConfigurationException {
         if (source != null) {
-            path = ((FileConfigSource) source).getPath();
+            path = ((FileConfigSource) source.getConfigSource()).getPath();
             try {
                 if (watcher != null) {
                     watcher.close();

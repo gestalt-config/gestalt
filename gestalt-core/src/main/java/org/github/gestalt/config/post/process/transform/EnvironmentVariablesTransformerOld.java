@@ -14,6 +14,8 @@ import org.github.gestalt.config.utils.GResultOf;
 @ConfigPriority(100)
 @Deprecated(since = "0.20.1", forRemoval = true)
 public final class EnvironmentVariablesTransformerOld implements Transformer {
+    private static final System.Logger logger = System.getLogger(EnvironmentVariablesTransformerOld.class.getName());
+
     @Override
     public String name() {
         return "envVar";
@@ -26,6 +28,10 @@ public final class EnvironmentVariablesTransformerOld implements Transformer {
         } else if (System.getenv(key) == null) {
             return GResultOf.errors(new ValidationError.NoEnvironmentVariableFoundPostProcess(path, key));
         } else {
+            // this class has been depricated a while, however since it is not directly exposed, no one would know that.
+            // start logging warnings, so we can comfortably delete it later.
+            logger.log(System.Logger.Level.WARNING,
+                "String substitutions using \"envVar\" is deprecated for removal, please use \"env\"");
             return GResultOf.result(System.getenv(key));
         }
     }

@@ -35,7 +35,9 @@ public final class ClassPathConfigSource implements ConfigSource {
      * @param resource name of the resource to load from the class path.
      * @param tags     tags associated with the source
      * @throws GestaltException any exceptions
+     * @deprecated tags should be
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public ClassPathConfigSource(String resource, Tags tags) throws GestaltException {
         this.resource = resource;
         if (resource == null) {

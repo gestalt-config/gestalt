@@ -10,6 +10,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
@@ -61,12 +62,13 @@ class EnvironmentLoaderTest {
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
         Mockito.when(source.loadList()).thenReturn(data);
+        Mockito.when(source.getTags()).thenReturn(Tags.of());
 
         // create our class to be tested
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+        var results = environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -121,13 +123,13 @@ class EnvironmentLoaderTest {
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
         Mockito.when(source.loadList()).thenReturn(data);
-        Mockito.when(source.getTags()).thenReturn(Tags.of("toy", "ball"));
+        Mockito.when(source.getTags()).thenReturn(Tags.of());
 
         // create our class to be tested
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+        var results = environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of("toy", "ball")));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
 
@@ -192,7 +194,7 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+        var results = environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
@@ -238,13 +240,14 @@ class EnvironmentLoaderTest {
         Mockito.when(source.loadList()).thenReturn(data);
         Mockito.when(source.name()).thenReturn("mock");
         Mockito.when(source.failOnErrors()).thenReturn(false);
+        Mockito.when(source.getTags()).thenReturn(Tags.of());
 
         // create our class to be tested
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
         try {
-            GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+            var results = environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
             Assertions.assertTrue(results.hasResults());
             Assertions.assertTrue(results.hasErrors());
@@ -295,12 +298,13 @@ class EnvironmentLoaderTest {
         // mock the source so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
         Mockito.when(source.loadList()).thenReturn(data);
+        Mockito.when(source.getTags()).thenReturn(Tags.of());
 
         // create our class to be tested
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+        var results = environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertTrue(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
 
@@ -344,7 +348,8 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> environmentVarsLoader.loadSource(source));
+        GestaltException e = Assertions.assertThrows(GestaltException.class,
+            () -> environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of())));
         Assertions.assertEquals("Config source: mock does not have a list to load.", e.getMessage());
 
 
@@ -372,7 +377,8 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> environmentVarsLoader.loadSource(source));
+        GestaltException e = Assertions.assertThrows(GestaltException.class,
+            () -> environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of())));
         Assertions.assertEquals("bad stream", e.getMessage());
 
         // verify we get the correct number of calls and capture the parsers arguments.
@@ -392,7 +398,8 @@ class EnvironmentLoaderTest {
         StringConfigSource source = new StringConfigSource(
             "path : ${DB_IDLETIMEOUT}", "conf");
 
-        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> environmentVarsLoader.loadSource(source));
+        GestaltException e = Assertions.assertThrows(GestaltException.class,
+            () -> environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of())));
         Assertions.assertEquals("Config source: String format: conf does not have a list to load.", e.getMessage());
     }
 
@@ -415,7 +422,7 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader environmentVarsLoader = new EnvironmentVarsLoader(lexer, parser);
 
         // run the code under test.
-        GResultOf<List<ConfigNodeContainer>> results = environmentVarsLoader.loadSource(source);
+        var results = environmentVarsLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());

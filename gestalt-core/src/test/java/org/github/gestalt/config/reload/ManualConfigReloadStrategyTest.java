@@ -1,10 +1,13 @@
 package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.StringConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -16,7 +19,7 @@ class ManualConfigReloadStrategyTest {
         StringConfigSource source = new StringConfigSource("abc=def", "properties");
         ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy();
 
-        reloadStrategy.setSource(source);
+        reloadStrategy.setSource(new ConfigSourcePackage(source, List.of(reloadStrategy), Tags.of()));
 
         ConfigReloadListener reloadListener = (it) -> reloadCount.getAndAdd(1);
 
@@ -31,7 +34,7 @@ class ManualConfigReloadStrategyTest {
     public void testManualStrategyWithConstructor() throws GestaltException {
         AtomicInteger reloadCount = new AtomicInteger(0);
         StringConfigSource source = new StringConfigSource("abc=def", "properties");
-        ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy(source);
+        ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         ConfigReloadListener reloadListener = (it) -> reloadCount.getAndAdd(1);
 

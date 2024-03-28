@@ -2,9 +2,10 @@ package org.github.gestalt.config.reload;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.FileConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 class FileChangeReloadStrategyTest {
@@ -25,12 +27,12 @@ class FileChangeReloadStrategyTest {
 
         FileConfigSource source = new FileConfigSource(path);
         ConfigReloadStrategy strategy = new FileChangeReloadStrategy();
-        strategy.setSource(source);
+        strategy.setSource(new ConfigSourcePackage(source, List.of(strategy), Tags.of()));
 
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
 
-        Assertions.assertEquals(source, strategy.getSource());
+        Assertions.assertEquals(source, strategy.getSource().getConfigSource());
 
         Files.writeString(path, "user=userB");
 
@@ -64,7 +66,8 @@ class FileChangeReloadStrategyTest {
         Files.writeString(path, "user=userA");
 
         FileConfigSource source = new FileConfigSource(path);
-        ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
+        ConfigReloadStrategy strategy = new FileChangeReloadStrategy();
+        strategy.setSource(new ConfigSourcePackage(source, List.of(strategy), Tags.of()));
 
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
@@ -115,7 +118,8 @@ class FileChangeReloadStrategyTest {
             folder.relativize(dataLn).resolve("reloadedfile.properties"));
 
         FileConfigSource source = new FileConfigSource(configFileLn);
-        ConfigReloadStrategy strategy = new FileChangeReloadStrategy(source);
+        ConfigReloadStrategy strategy = new FileChangeReloadStrategy();
+        strategy.setSource(new ConfigSourcePackage(source, List.of(strategy), Tags.of()));
 
         ConfigListener listener = new ConfigListener();
         strategy.registerListener(listener);
@@ -146,17 +150,35 @@ class FileChangeReloadStrategyTest {
     @Test
     public void wrongSourceConstructor() {
         GestaltConfigurationException ex = Assertions.assertThrows(GestaltConfigurationException.class,
-            () -> new FileChangeReloadStrategy(new StringConfigSource("abc=def", "properties")));
+            () -> new FileChangeReloadStrategy(new ConfigSourcePackage(
+                new StringConfigSource("abc=def", "properties"), List.of(), Tags.of())
+            ));
 
         Assertions.assertTrue(ex.getMessage().startsWith("Unable to add a File Change reload strategy to a non file source"));
     }
 
     @Test
-    public void wrongSourceSet() throws GestaltConfigurationException {
+    public void wrongSourceOnSetSet() {
+        GestaltConfigurationException ex = Assertions.assertThrows(GestaltConfigurationException.class,
+            () -> {
+                var reloadStrategy = new FileChangeReloadStrategy();
+                var sourcePackage = new ConfigSourcePackage(
+                    new StringConfigSource("abc=def", "properties"), List.of(reloadStrategy), Tags.of()
+                );
+                reloadStrategy.setSource(sourcePackage);
+            });
+
+        Assertions.assertTrue(ex.getMessage().startsWith("Unable to add a File Change reload strategy to a non file source"));
+    }
+
+    @Test
+    public void wrongSourceSet() throws GestaltException {
         ConfigReloadStrategy strategy = new FileChangeReloadStrategy(Executors.newSingleThreadExecutor());
 
+        var source = new StringConfigSource("abc=def", "properties");
+
         GestaltConfigurationException ex = Assertions.assertThrows(GestaltConfigurationException.class,
-            () -> strategy.setSource(new StringConfigSource("abc=def", "properties")));
+            () -> strategy.setSource(new ConfigSourcePackage(source, List.of(strategy), Tags.of())));
 
         Assertions.assertTrue(ex.getMessage().startsWith("Unable to add a File Change reload strategy to a non file source"));
     }
@@ -166,7 +188,7 @@ class FileChangeReloadStrategyTest {
         public int count = 0;
 
         @Override
-        public void reload(ConfigSource source) {
+        public void reload(ConfigSourcePackage source) {
             count++;
         }
     }

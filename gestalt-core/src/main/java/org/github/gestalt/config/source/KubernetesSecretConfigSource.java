@@ -46,7 +46,9 @@ public final class KubernetesSecretConfigSource implements ConfigSource {
      * @param file where to load the directory with the configuration
      * @param tags tags associated with the source
      * @throws GestaltException any exceptions.
+     * @deprecated Tags should be added via the builder. Storage of the tags have been moved to {@link ConfigSourcePackage#getTags()}.
      */
+    @Deprecated(since = "0.26.0", forRemoval = true)
     public KubernetesSecretConfigSource(File file, Tags tags) throws GestaltException {
         this(Objects.requireNonNull(file, "Kubernetes Secret file can not be null").toPath(), tags);
     }

@@ -71,6 +71,6 @@ public final class MapConfigSourceBuilder extends SourceBuilder<MapConfigSourceB
 
     @Override
     public ConfigSourcePackage build() throws GestaltException {
-        return buildPackage(new MapConfigSource(customConfig, tags));
+        return buildPackage(new MapConfigSource(customConfig));
     }
 }

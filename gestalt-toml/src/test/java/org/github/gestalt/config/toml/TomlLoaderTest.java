@@ -5,8 +5,10 @@ import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -90,7 +92,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -130,7 +132,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader(new ObjectMapper(new TomlFactory()));
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -159,7 +161,7 @@ class TomlLoaderTest {
         TomlLoader tomlLoader = new TomlLoader();
 
         try {
-            tomlLoader.loadSource(source);
+            tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here, should throw exception");
         } catch (GestaltException e) {
             Assertions.assertEquals("Exception loading source: String format: toml", e.getMessage());
@@ -173,7 +175,7 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
-        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(source);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
         Assertions.assertTrue(resultContainer.hasResults());
@@ -191,7 +193,7 @@ class TomlLoaderTest {
         TomlLoader tomlLoader = new TomlLoader();
 
         try {
-            tomlLoader.loadSource(source);
+            tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Exception loading source: String format: toml", e.getMessage());
@@ -207,7 +209,7 @@ class TomlLoaderTest {
         TomlLoader tomlLoader = new TomlLoader();
 
         try {
-            tomlLoader.loadSource(source);
+            tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
             Assertions.fail("should not reach here");
         } catch (Exception e) {
             Assertions.assertEquals("Config source: mapConfig does not have a stream to load.", e.getMessage());

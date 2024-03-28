@@ -38,8 +38,8 @@ public class SourceBuilderTest {
 
     @Test
     public void testBuilderConfigSourcePackageCreation() throws GestaltException, IOException {
-        var source = new StringConfigSource("abc=def", "properties", Tags.environment("dev"));
-        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of());
+        var source = new StringConfigSource("abc=def", "properties");
+        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of(), Tags.environment("dev"));
 
         var built = sourceBuilder.setSource("abc=def")
             .setTags(Tags.environment("dev"))
@@ -47,12 +47,42 @@ public class SourceBuilderTest {
         assertEquals(new String(configSourcePackage.getConfigSource().loadStream().readAllBytes(), Charset.defaultCharset()),
             new String(built.getConfigSource().loadStream().readAllBytes(), Charset.defaultCharset()));
         assertEquals(configSourcePackage.getConfigReloadStrategies(), built.getConfigReloadStrategies());
+        assertEquals(configSourcePackage.getTags(), built.getTags());
+    }
+
+    @Test
+    public void testBuilderConfigSourceTagsOnSource() throws GestaltException, IOException {
+        var source = new StringConfigSource("abc=def", "properties", Tags.environment("dev"));
+        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
+
+        var built = sourceBuilder.setSource("abc=def")
+            .setTags(Tags.environment("dev"))
+            .build();
+        assertEquals(new String(configSourcePackage.getConfigSource().loadStream().readAllBytes(), Charset.defaultCharset()),
+            new String(built.getConfigSource().loadStream().readAllBytes(), Charset.defaultCharset()));
+        assertEquals(configSourcePackage.getConfigReloadStrategies(), built.getConfigReloadStrategies());
+        assertEquals(configSourcePackage.getTags(), built.getTags());
+    }
+
+    @Test
+    public void testBuilderConfigSourceTagsOnBoth() throws GestaltException, IOException {
+        var source = new StringConfigSource("abc=def", "properties", Tags.environment("dev"));
+        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of(), Tags.profile("test"));
+
+        var built = sourceBuilder.setSource("abc=def")
+            .setTags(Tags.environment("dev"))
+            .addTags(Tags.profile("test"))
+            .build();
+        assertEquals(new String(configSourcePackage.getConfigSource().loadStream().readAllBytes(), Charset.defaultCharset()),
+            new String(built.getConfigSource().loadStream().readAllBytes(), Charset.defaultCharset()));
+        assertEquals(configSourcePackage.getConfigReloadStrategies(), built.getConfigReloadStrategies());
+        assertEquals(configSourcePackage.getTags(), built.getTags());
     }
 
     @Test
     public void testConfigSourcePackageCreation() throws GestaltException {
         var source = new StringConfigSource("abc=def", "properties");
-        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of());
+        ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
         assertEquals(source, configSourcePackage.getConfigSource());
         assertEquals(0, configSourcePackage.getConfigReloadStrategies().size());
     }
@@ -189,7 +219,7 @@ public class SourceBuilderTest {
 
         @Override
         public ConfigSourcePackage build() throws GestaltException {
-            return buildPackage(new StringConfigSource(text, "properties", tags));
+            return buildPackage(new StringConfigSource(text, "properties"));
         }
     }
 }
