@@ -1,13 +1,15 @@
 /*
  * Module info definition for gestalt yaml integration
  */
-module org.github.gestalt.toml {
+@SuppressWarnings({ "requires-transitive-automatic" })
+module org.github.gestalt.metrics {
     requires org.github.gestalt.core;
-    requires transitive com.fasterxml.jackson.databind;
-    requires transitive com.fasterxml.jackson.dataformat.toml;
+    requires transitive micrometer.core;
 
-    exports org.github.gestalt.config.toml;
+    exports org.github.gestalt.config.micrometer.config;
+    exports org.github.gestalt.config.micrometer.builder;
+    exports org.github.gestalt.config.micrometer.metrics;
 
-    provides org.github.gestalt.config.loader.ConfigLoader with
-        org.github.gestalt.config.toml.TomlLoader;
+    provides org.github.gestalt.config.metrics.MetricsRecorder with
+        org.github.gestalt.config.micrometer.metrics.MicrometerMetricRecorder;
 }

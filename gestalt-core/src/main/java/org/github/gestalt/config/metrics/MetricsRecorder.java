@@ -1,5 +1,6 @@
 package org.github.gestalt.config.metrics;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 
@@ -16,6 +17,13 @@ public interface MetricsRecorder {
      * @return Unique ID
      */
     String recorderId();
+
+    /**
+     * Apply the GestaltConfig to the MetricsRecorder. Needed when building via the ServiceLoader
+     *
+     * @param config GestaltConfig to update the MetricsRecorder
+     */
+    default void applyConfig(GestaltConfig config) {};
 
     /**
      * Called when we start getting a configuration.
