@@ -15,6 +15,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.ConfigLoaderService;
+import org.github.gestalt.config.metrics.MetricsManager;
+import org.github.gestalt.config.metrics.MetricsRecorder;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.path.mapper.PathMapper;
@@ -34,7 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.System.Logger.Level.DEBUG;
+import static java.lang.System.Logger.Level.TRACE;
 import static java.lang.System.Logger.Level.WARNING;
 import static org.github.gestalt.config.decoder.ProxyDecoderMode.CACHE;
 
@@ -66,12 +68,14 @@ public class GestaltBuilder {
     private DecoderService decoderService;
     private SentenceLexer sentenceLexer = new PathLexer();
     private GestaltConfig gestaltConfig = new GestaltConfig();
+    private MetricsManager metricsManager;
     private ConfigNodeService configNodeService = new ConfigNodeManager();
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<PostProcessor> postProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
+    private List<MetricsRecorder> metricsRecorders = new ArrayList<>();
     private boolean useCacheDecorator = true;
     private Set<String> securityRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
@@ -111,6 +115,8 @@ public class GestaltBuilder {
 
     // Default set of tags to apply to all calls to get a configuration where tags are not provided.
     private Tags defaultTags = Tags.of();
+
+    private Boolean metricsEnabled = null;
 
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
@@ -164,6 +170,20 @@ public class GestaltBuilder {
             postProcessorsSet.add(it);
         });
         postProcessors.addAll(postProcessorsSet);
+        return this;
+    }
+
+    /**
+     * Add default metric recorders to the builder. Uses the ServiceLoader to find all registered MetricsRecorder and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultMetricsRecorder() {
+        List<MetricsRecorder> metricsRecordersSet = new ArrayList<>();
+        ServiceLoader<MetricsRecorder> loader = ServiceLoader.load(MetricsRecorder.class);
+        loader.forEach(metricsRecordersSet::add);
+
+        metricsRecorders.addAll(metricsRecordersSet);
         return this;
     }
 
@@ -419,13 +439,25 @@ public class GestaltBuilder {
      * @param pathMappers list of PathMapper to add.
      * @return GestaltBuilder builder
      * @throws GestaltConfigurationException no PathMapper provided
-     * @deprecated renamed to addPathMappers to be consistant with naming.
+     * @deprecated renamed to addPathMappers to be consistent with naming.
      *     Please use {@link GestaltBuilder#addPathMappers(List)}
      */
     @Deprecated(since = "0.25.3", forRemoval = true)
     public GestaltBuilder addPathMapper(List<PathMapper> pathMappers) throws GestaltConfigurationException {
         addPathMappers(pathMappers);
 
+        return this;
+    }
+
+    /**
+     * Add a single PathMapper to the builder.
+     *
+     * @param pathMapper add a single PathMapper
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addPathMapper(PathMapper pathMapper) {
+        Objects.requireNonNull(pathMapper, "PathMapper should not be null");
+        this.pathMappers.add(pathMapper);
         return this;
     }
 
@@ -446,14 +478,45 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a single PathMapper to the builder.
+     * Sets the list of MetricsRecorder. Replaces any MetricsRecorder already set.
      *
-     * @param pathMapper add a single PathMapper
+     * @param metricsRecorders list of metricsRecorders to record metrics to.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException exception if there are no MetricsRecorder
+     */
+    public GestaltBuilder setMetricsRecorders(List<MetricsRecorder> metricsRecorders) throws GestaltConfigurationException {
+        if (metricsRecorders == null || metricsRecorders.isEmpty()) {
+            throw new GestaltConfigurationException("No MetricsRecorder provided while setting");
+        }
+        this.metricsRecorders = metricsRecorders;
+
+        return this;
+    }
+
+    /**
+     * List of MetricsRecorder to add to the builder.
+     *
+     * @param metricsRecordersSet list of MetricsRecorder to add.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException no MetricsRecorder provided
+     */
+    public GestaltBuilder addMetricsRecorders(List<MetricsRecorder> metricsRecordersSet) throws GestaltConfigurationException {
+        Objects.requireNonNull(metricsRecordersSet, "MetricsRecorders should not be null");
+
+        metricsRecorders.addAll(metricsRecordersSet);
+
+        return this;
+    }
+
+    /**
+     * Add a single MetricsRecorder to the builder.
+     *
+     * @param metricsRecorder add a single MetricsRecorder
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder addPathMapper(PathMapper pathMapper) {
-        Objects.requireNonNull(pathMapper, "PathMapper should not be null");
-        this.pathMappers.add(pathMapper);
+    public GestaltBuilder addMetricsRecorder(MetricsRecorder metricsRecorder) {
+        Objects.requireNonNull(metricsRecorder, "PathMapper should not be null");
+        this.metricsRecorders.add(metricsRecorder);
         return this;
     }
 
@@ -526,6 +589,21 @@ public class GestaltBuilder {
     public GestaltBuilder setConfigNodeService(ConfigNodeService configNodeService) {
         Objects.requireNonNull(configNodeService, "ConfigNodeManager should not be null");
         this.configNodeService = configNodeService;
+        return this;
+    }
+
+    /**
+     * Sets the MetricsManager if you want to provide your own. Otherwise, a default is provided.
+     * <p>If there are any MetricRecorders, it will not add the default metric recorders.
+     * So you will need to add the defaults manually if needed.
+     *
+     * @param metricsManager Metrics Manager
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setMetricsManager(MetricsManager metricsManager) {
+        Objects.requireNonNull(metricsManager, "MetricsManager should not be null");
+        this.metricsManager = metricsManager;
+        metricsManager.addMetricsRecorders(metricsRecorders);
         return this;
     }
 
@@ -697,6 +775,17 @@ public class GestaltBuilder {
      */
     public GestaltBuilder useCacheDecorator(boolean useCacheDecorator) {
         this.useCacheDecorator = useCacheDecorator;
+        return this;
+    }
+
+    /**
+     * If we are to enable metrics.
+     *
+     * @param metricsEnabled If we are to enable metrics
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setMetricsEnabled(Boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
         return this;
     }
 
@@ -925,14 +1014,29 @@ public class GestaltBuilder {
 
         // setup the decoders, if there are none, add the default ones.
         if (decoders.isEmpty()) {
-            logger.log(DEBUG, "No decoders provided, using defaults");
+            logger.log(TRACE, "No decoders provided, using defaults");
             addDefaultDecoders();
         }
 
         // setup the default path mappers, if there are none, add the default ones.
         if (pathMappers.isEmpty()) {
-            logger.log(DEBUG, "No path mapper provided, using defaults");
+            logger.log(TRACE, "No path mapper provided, using defaults");
             addDefaultPathMappers();
+        }
+
+        // setup the default metricsRecorders, if there are none add the default ones.
+        if (metricsRecorders.isEmpty()) {
+            logger.log(TRACE, "No metric recorders provided, using defaults");
+            addDefaultMetricsRecorder();
+        }
+
+
+        // if the metricsManager does not exist, create it.
+        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
+        if (metricsManager == null) {
+            metricsManager = new MetricsManager(metricsRecorders);
+        } else {
+            metricsManager.addMetricsRecorders(metricsRecorders);
         }
 
         // if the decoderService does not exist, create it.
@@ -948,12 +1052,12 @@ public class GestaltBuilder {
 
         // Setup the config loaders.
         if (configLoaders.isEmpty()) {
-            logger.log(DEBUG, "No decoders provided, using defaults");
+            logger.log(TRACE, "No decoders provided, using defaults");
             addDefaultConfigLoaders();
         }
 
         if (postProcessors.isEmpty()) {
-            logger.log(DEBUG, "No post processors provided, using defaults");
+            logger.log(TRACE, "No post processors provided, using defaults");
             addDefaultPostProcessors();
         }
 
@@ -972,7 +1076,7 @@ public class GestaltBuilder {
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
-            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, defaultTags);
+            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, metricsManager, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
@@ -994,7 +1098,6 @@ public class GestaltBuilder {
         } else {
             return gestaltCore;
         }
-
     }
 
     private GestaltConfig rebuildConfig() {
@@ -1039,6 +1142,9 @@ public class GestaltBuilder {
 
         newConfig.setProxyDecoderMode(Objects.requireNonNullElseGet(proxyDecoderMode,
             () -> gestaltConfig.getProxyDecoderMode()));
+
+        newConfig.setMetricsEnabled(Objects.requireNonNullElseGet(metricsEnabled,
+            () -> gestaltConfig.isMetricsEnabled()));
 
         return newConfig;
     }

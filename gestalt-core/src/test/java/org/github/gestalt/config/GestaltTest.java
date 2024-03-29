@@ -69,7 +69,7 @@ class GestaltTest {
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -136,7 +136,7 @@ class GestaltTest {
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -211,7 +211,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("toys", "ball")).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -269,7 +269,7 @@ class GestaltTest {
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -325,7 +325,7 @@ class GestaltTest {
             new DecoderRegistry(
                 List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -395,7 +395,7 @@ class GestaltTest {
                 MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -451,7 +451,7 @@ class GestaltTest {
                 MapConfigSourceBuilder.builder().setCustomConfig(configs3).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -500,7 +500,7 @@ class GestaltTest {
                 MapConfigSourceBuilder.builder().setCustomConfig(configs3).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -546,7 +546,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -582,7 +582,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
 
@@ -613,7 +613,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
@@ -648,7 +648,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
@@ -681,7 +681,7 @@ class GestaltTest {
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
             List.of(new TestPostProcessorSwapNodes("path1", "path2"),
-                new TestPostProcessorSwapNodes("prop1", "prop2")), secretConcealer, Tags.of());
+                new TestPostProcessorSwapNodes("prop1", "prop2")), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -717,7 +717,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -776,7 +776,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -806,7 +806,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -853,7 +853,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -895,7 +895,7 @@ class GestaltTest {
                 MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
                 new ListDecoder()), configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -955,7 +955,7 @@ class GestaltTest {
             List.of(),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.loadConfigs());
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -983,7 +983,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1019,7 +1019,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1055,7 +1055,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         var ex = Assertions.assertThrows(GestaltException.class, gestalt::loadConfigs);
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -1089,7 +1089,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1133,7 +1133,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, gestalt::loadConfigs);
         Assertions.assertEquals("No results found for node", e.getMessage());
@@ -1164,7 +1164,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
 
@@ -1202,7 +1202,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
 
@@ -1234,7 +1234,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             new PathLexer("."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(),
-            secretConcealer, Tags.of());
+            secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
 
@@ -1279,7 +1279,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1349,7 +1349,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1403,7 +1403,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1466,7 +1466,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(sourcePackage));
         assertThat(ex).hasMessage("No sources provided, unable to reload any configs");
@@ -1501,7 +1501,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1574,7 +1574,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1639,7 +1639,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1703,7 +1703,7 @@ class GestaltTest {
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer,
-            Tags.of("env", "dev"));
+            null, Tags.of("env", "dev"));
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1780,7 +1780,7 @@ class GestaltTest {
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of("env", "dev"));
+            null, Tags.of("env", "dev"));
 
         gestalt.loadConfigs();
 

@@ -16,6 +16,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.exceptions;
     exports org.github.gestalt.config.lexer;
     exports org.github.gestalt.config.loader;
+    exports org.github.gestalt.config.metrics;
     exports org.github.gestalt.config.node;
     exports org.github.gestalt.config.parser;
     exports org.github.gestalt.config.path.mapper;
@@ -24,6 +25,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.post.process.transform.substitution;
     exports org.github.gestalt.config.reflect;
     exports org.github.gestalt.config.reload;
+    exports org.github.gestalt.config.secret.rules;
     exports org.github.gestalt.config.source;
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;

@@ -12,6 +12,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
+import org.github.gestalt.config.metrics.MetricsManager;
+import org.github.gestalt.config.metrics.TestMetricsRecorder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
@@ -102,12 +104,23 @@ class GestaltBuilderTest {
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
+            .setMetricsEnabled(true)
+            .addMetricsRecorder(new TestMetricsRecorder(0))
+            .addMetricsRecorders(List.of(new TestMetricsRecorder(1)))
+            .setMetricsRecorders(List.of(new TestMetricsRecorder(0), new TestMetricsRecorder(1)))
+            .setMetricsManager(new MetricsManager(List.of()))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
-            .setSecurityMask("&&&&");
+            .setSecurityMask("&&&&")
+            .setTreatWarningsAsErrors(true)
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE);
 
         Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());
         Assertions.assertEquals(true, builder.isTreatWarningsAsErrors());
+        Assertions.assertEquals(true, builder.getTreatMissingValuesAsErrors());
+        Assertions.assertEquals(true, builder.getTreatMissingDiscretionaryValuesAsErrors());
         Assertions.assertEquals("", builder.getSubstitutionRegex());
         Assertions.assertEquals(ProxyDecoderMode.CACHE, builder.getProxyDecoderMode());
         Assertions.assertEquals(System.Logger.Level.DEBUG, builder.getLogLevelForMissingValuesWhenDefaultOrOptional());
@@ -314,7 +327,7 @@ class GestaltBuilderTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
 
@@ -898,4 +911,5 @@ class GestaltBuilderTest {
         }
     }
 }
+
 

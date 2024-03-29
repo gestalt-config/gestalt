@@ -54,13 +54,13 @@ public class ConfigSourcePackage {
     /**
      * Get the tags associated with the config source.
      *
-     * @return  the tags associated with the config source
+     * @return the tags associated with the config source
      */
     public Tags getTags() {
 
         // remove this once we remove the tags from the config source.
         Set<Tag> combinedTags = new HashSet<>();
-        if(configSource.getTags() != null) {
+        if (configSource.getTags() != null) {
             combinedTags.addAll(configSource.getTags().getTags());
         }
         combinedTags.addAll(tags.getTags());

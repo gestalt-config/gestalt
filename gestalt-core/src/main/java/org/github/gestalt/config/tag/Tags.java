@@ -58,6 +58,12 @@ public final class Tags {
         return new Tags(Arrays.stream(tag).collect(Collectors.toSet()));
     }
 
+    public static Tags of(Tags... tags) {         //NOPMD
+        return new Tags(Arrays.stream(tags)
+            .flatMap(it -> it.getTags().stream())
+            .collect(Collectors.toSet()));
+    }
+
     /**
      * Create a tags from a varg of strings. Must have pairs of key and values where it is key1, value1, key2, value2...
      *

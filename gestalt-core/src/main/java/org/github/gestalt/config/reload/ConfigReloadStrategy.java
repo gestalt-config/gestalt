@@ -26,7 +26,7 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
     /**
      * The source we are listening for a reload.
      *
-     * note: i dont love that the ConfigReloadStrategy needs the ConfigSourcePackage since it is a circular reference.
+     * <p>note: i dont love that the ConfigReloadStrategy needs the ConfigSourcePackage since it is a circular reference.
      *     As the ConfigSourcePackage holds a list of ConfigReloadStrategy. Use the Source builders to manage this.
      */
     protected ConfigSourcePackage source;
@@ -60,7 +60,7 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
     /**
      * set the source this reload strategy should apply to.
      *
-     * note: i dont love that the ConfigReloadStrategy needs the ConfigSourcePackage since it is a circular reference.
+     * <p>note: i dont love that the ConfigReloadStrategy needs the ConfigSourcePackage since it is a circular reference.
      *     As the ConfigSourcePackage holds a list of ConfigReloadStrategy. Use the Source builders to manage this.
      *
      * @param source the source this reload strategy should apply to.

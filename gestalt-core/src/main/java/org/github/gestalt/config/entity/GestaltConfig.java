@@ -44,6 +44,10 @@ public class GestaltConfig {
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = TransformerPostProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
+
+    // if metrics should be enabled
+    private boolean metricsEnabled = false;
+
     /**
      * Treat all warnings as errors.
      *
@@ -311,15 +315,50 @@ public class GestaltConfig {
         this.substitutionRegex = substitutionRegex;
     }
 
+    /**
+     * Get if the metrics are enabled.
+     *
+     * @return if the metrics are enabled
+     */
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
+    }
+
+    /**
+     * set if the metrics are enabled.
+     *
+     * @param metricsEnabled if the metrics are enabled
+     */
+    public void setMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
+    }
+
+    /**
+     * Register an external module configuration.
+     *
+     * @param module configuration
+     */
     public void registerModuleConfig(GestaltModuleConfig module) {
         modulesConfig.put(module.getClass(), module);
     }
 
+    /**
+     * Register external module configurations.
+     *
+     * @param module configuration
+     */
     @SuppressWarnings("rawtypes")
     public void registerModuleConfig(Map<Class, GestaltModuleConfig> module) {
         modulesConfig.putAll(module);
     }
 
+    /**
+     * Get an external module configuration.
+     *
+     * @param klass type of configuration to get
+     * @param <T> type of the class
+     * @return the module config for a class
+     */
     @SuppressWarnings("unchecked")
     public <T extends GestaltModuleConfig> T getModuleConfig(Class<T> klass) {
         return (T) modulesConfig.get(klass);

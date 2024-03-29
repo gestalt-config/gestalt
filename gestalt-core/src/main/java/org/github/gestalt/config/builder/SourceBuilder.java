@@ -105,7 +105,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
 
         // for now to maintain backwards compatibility add all config source tags to the builder tags
         Set<Tag> combinedTags = new HashSet<>();
-        if(source.getTags() != null) {
+        if (source.getTags() != null) {
             combinedTags.addAll(source.getTags().getTags());
         }
         combinedTags.addAll(tags.getTags());
