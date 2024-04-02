@@ -12,10 +12,21 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
 public final class MicrometerModuleConfig implements GestaltModuleConfig {
 
     private final MeterRegistry meterRegistry;
+    private final boolean includePath;
+    private final boolean includeClass;
+    private final boolean includeOptional;
+    private final boolean includeTags;
+    private final String prefix;
 
-
-    MicrometerModuleConfig(MeterRegistry meterRegistry) {
+    public MicrometerModuleConfig(MeterRegistry meterRegistry, Boolean includePath,
+                                  Boolean includeClass, Boolean includeOptional, boolean includeTags,
+                                  String prefix) {
         this.meterRegistry = meterRegistry;
+        this.includePath = includePath;
+        this.includeClass = includeClass;
+        this.includeOptional = includeOptional;
+        this.includeTags = includeTags;
+        this.prefix = prefix;
     }
 
     @Override
@@ -26,4 +37,25 @@ public final class MicrometerModuleConfig implements GestaltModuleConfig {
     public MeterRegistry getMeterRegistry() {
         return meterRegistry;
     }
+
+    public boolean isIncludePath() {
+        return includePath;
+    }
+
+    public boolean isIncludeClass() {
+        return includeClass;
+    }
+
+    public boolean isIncludeOptional() {
+        return includeOptional;
+    }
+
+    public boolean isIncludeTags() {
+        return includeTags;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
 }

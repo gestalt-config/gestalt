@@ -85,6 +85,33 @@ public final class Tags {
         return new Tags(tags);
     }
 
+    public Tags and(Tag... tags) {
+        if (blankVarargs(tags)) {
+            return this;
+        } else {
+            Set<Tag> newTags = new HashSet<>(internalTags.size() + tags.length);
+            newTags.addAll(internalTags);
+            newTags.addAll(new HashSet<>(Arrays.asList(tags)));
+            return new Tags(newTags);
+        }
+    }
+
+    public Tags and(Tags tags) {
+        if (tags == null || tags.getTags() == null || tags.getTags().isEmpty()) {
+            return this;
+        } else {
+            Set<Tag> newTags = new HashSet<>(internalTags.size() + tags.getTags().size());
+            newTags.addAll(internalTags);
+            newTags.addAll(tags.getTags());
+            return new Tags(newTags);
+        }
+    }
+
+    private static boolean blankVarargs(Tag[] tags) {
+        return tags == null || tags.length == 0 || tags.length == 1 && tags[0] == null;
+    }
+
+
     /**
      * Create and return a new tag of type profile with value.
      *

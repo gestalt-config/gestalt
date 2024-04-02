@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class TestMetricsRecorder implements MetricsRecorder {
-    public final int recoderId;
+    public final double recoderId;
 
     public Map<String, TestMetricsRecord> metrics = new HashMap<>();
 
-    public TestMetricsRecorder(int recoderId) {
+    public TestMetricsRecorder(double recoderId) {
         this.recoderId = recoderId;
     }
 
@@ -26,15 +26,6 @@ public class TestMetricsRecorder implements MetricsRecorder {
     @Override
     public <T> MetricsRecord startGetConfig(String path, TypeCapture<T> klass, Tags tags, boolean isOptional) {
         return new TestMetricsRecord(path, recoderId, isOptional, tags);
-    }
-
-    @Override
-    public void finalizeGetConfig(MetricsRecord marker, Tags tags) {
-        ((TestMetricsRecord) marker).data = ((TestMetricsRecord) marker).data + 10;
-        Set<Tag> copyTags = new HashSet<>(tags.getTags());
-        copyTags.addAll(((TestMetricsRecord) marker).tags.getTags());
-
-        ((TestMetricsRecord) marker).tags = Tags.of(copyTags);  //NOPMD
     }
 
     @Override
@@ -52,7 +43,7 @@ public class TestMetricsRecorder implements MetricsRecorder {
     }
 
     @Override
-    public void recordMetric(String metric, int count, Tags tags) {
+    public void recordMetric(String metric, double count, Tags tags) {
         metrics.computeIfAbsent(metric, (it) -> new TestMetricsRecord(it, count + recoderId, false, tags));
     }
 }

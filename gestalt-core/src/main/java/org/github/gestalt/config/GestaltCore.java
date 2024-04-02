@@ -483,19 +483,21 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private <T> void getConfigMetrics(GResultOf<T> results) throws GestaltException {
         if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
             int missing = results.getErrors(ValidationLevel.MISSING_VALUE).size();
-            int missingOptional = results.getErrors(ValidationLevel.MISSING_OPTIONAL_VALUE).size();
-            int errors = results.getErrors(ValidationLevel.ERROR).size();
-            int warnings = results.getErrors(ValidationLevel.WARN).size();
-
             if (missing != 0) {
                 metricsManager.recordMetric("get.config.missing", missing, Tags.of("optional", "false"));
             }
+
+            int missingOptional = results.getErrors(ValidationLevel.MISSING_OPTIONAL_VALUE).size();
             if (missingOptional != 0) {
                 metricsManager.recordMetric("get.config.missing", missingOptional, Tags.of("optional", "true"));
             }
+
+            int errors = results.getErrors(ValidationLevel.ERROR).size();
             if (errors != 0) {
                 metricsManager.recordMetric("get.config.error", errors, Tags.of());
             }
+
+            int warnings = results.getErrors(ValidationLevel.WARN).size();
             if (warnings != 0) {
                 metricsManager.recordMetric("get.config.warning", warnings, Tags.of());
             }

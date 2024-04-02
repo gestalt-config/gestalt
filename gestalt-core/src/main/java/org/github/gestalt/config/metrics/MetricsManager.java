@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class MetricsManager {
+public final class MetricsManager {
 
     private final Map<String, MetricsRecorder> metricsRecorders;
 
@@ -41,7 +41,7 @@ public class MetricsManager {
     }
 
     public void finalizeGetConfig(MetricsMarker markers, Tags tags) {
-        metricsRecorders.forEach((key, value) -> value.finalizeGetConfig(markers.getMetricsRecord(key), tags));
+        metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
     }
 
     public <T> MetricsMarker startMetric(String metric, Tags tags) {
@@ -63,7 +63,7 @@ public class MetricsManager {
      * @param count the count to add to the metric
      * @param tags tags associated with the metrics
      */
-    public void recordMetric(String metric, int count, Tags tags) {
+    public void recordMetric(String metric, double count, Tags tags) {
         metricsRecorders.forEach((key, value) -> value.recordMetric(metric, count, tags));
     }
 }

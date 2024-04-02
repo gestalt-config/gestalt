@@ -7,4 +7,10 @@ package org.github.gestalt.config.metrics;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public interface MetricsRecord {
+    /**
+     * Get the name of the current metric.
+     *
+     * @return the name of the current metric.
+     */
+    String metric();
 }

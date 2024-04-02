@@ -23,7 +23,7 @@ public interface MetricsRecorder {
      *
      * @param config GestaltConfig to update the MetricsRecorder
      */
-    default void applyConfig(GestaltConfig config) {};
+    default void applyConfig(GestaltConfig config) {}
 
     /**
      * Called when we start getting a configuration.
@@ -37,13 +37,6 @@ public interface MetricsRecorder {
      */
     <T> MetricsRecord startGetConfig(String path, TypeCapture<T> klass, Tags tags, boolean isOptional);
 
-    /**
-     * Called after the get config to record the get metrics call.
-     *
-     * @param marker the payload with metrics specific details.
-     * @param tags any additional tags to add when finalizing such as errors
-     */
-    void finalizeGetConfig(MetricsRecord marker, Tags tags);
 
     /**
      * Called when we start a generic metrics.
@@ -70,5 +63,5 @@ public interface MetricsRecorder {
      * @param count number to increment the metric
      * @param tags tags associated with the metrics
      */
-    void recordMetric(String metric, int count, Tags tags);
+    void recordMetric(String metric, double count, Tags tags);
 }

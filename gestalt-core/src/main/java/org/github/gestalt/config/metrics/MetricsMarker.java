@@ -7,7 +7,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class MetricsMarker {
+public final class MetricsMarker {
     private final Map<String, MetricsRecord> metricsRecords;
 
     /**

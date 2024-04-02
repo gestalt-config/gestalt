@@ -49,9 +49,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     public SELF addTag(Tag tag) {
         Objects.requireNonNull(tag, "tag must not be null");
 
-        var copyTags = Tags.of(tags.getTags());
-        copyTags.getTags().add(tag);
-        tags = copyTags;
+        tags = tags.and(tag);
 
         return self();
     }
@@ -65,9 +63,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     public SELF addTags(Tags tagsParam) {
         Objects.requireNonNull(tagsParam, "tag must not be null");
 
-        var copyTags = Tags.of(tags.getTags());
-        copyTags.getTags().addAll(tagsParam.getTags());
-        tags = copyTags;
+        tags = tags.and(tagsParam);
 
         return self();
     }
@@ -104,11 +100,7 @@ public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T exten
     protected ConfigSourcePackage buildPackage(ConfigSource source) throws GestaltException {
 
         // for now to maintain backwards compatibility add all config source tags to the builder tags
-        Set<Tag> combinedTags = new HashSet<>();
-        if (source.getTags() != null) {
-            combinedTags.addAll(source.getTags().getTags());
-        }
-        combinedTags.addAll(tags.getTags());
+        var combinedTags = tags.and(source.getTags());
 
         var configSourcePackage = new ConfigSourcePackage(source, configReloadStrategies, Tags.of(combinedTags));
 

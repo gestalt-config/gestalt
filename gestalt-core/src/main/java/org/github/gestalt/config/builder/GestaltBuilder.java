@@ -594,6 +594,7 @@ public class GestaltBuilder {
 
     /**
      * Sets the MetricsManager if you want to provide your own. Otherwise, a default is provided.
+     *
      * <p>If there are any MetricRecorders, it will not add the default metric recorders.
      * So you will need to add the defaults manually if needed.
      *

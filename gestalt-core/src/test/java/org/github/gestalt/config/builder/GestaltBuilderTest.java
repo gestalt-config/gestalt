@@ -860,6 +860,7 @@ class GestaltBuilderTest {
         public String name() {
             return "Loader" + new Random().nextInt();
         }
+
         @Override
         public void applyConfig(GestaltConfig config) {
             configCount++;
@@ -879,6 +880,7 @@ class GestaltBuilderTest {
     private static class TestPostProcessor implements PostProcessor {
 
         public int configCount = 0;
+
         @Override
         public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             return GResultOf.result(currentNode);
@@ -892,6 +894,7 @@ class GestaltBuilderTest {
 
     private static class TestPathMapper implements PathMapper {
         public int configCount = 0;
+
         @Override
         public void applyConfig(GestaltConfig config) {
             configCount++;
