@@ -56,6 +56,58 @@ class TagsTest {
     }
 
     @Test
+    void tagsAnTags() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+        var t2 = Tags.of("toy", "bat");
+
+        Assertions.assertEquals(Tags.of("toy", "ball", "toy", "bat"), t1.and(t2));
+    }
+
+    @Test
+    void tagsAndTagsEmpty() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+        var t2 = Tags.of();
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), t1.and(t2));
+    }
+
+    @Test
+    void tagsAndTagsNull() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), t1.and((Tags) null));
+    }
+
+    @Test
+    void tagsAnTagsArray() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+        var t2 = Tag.of("toy", "bat");
+
+        Assertions.assertEquals(Tags.of("toy", "ball", "toy", "bat"), t1.and(t2));
+    }
+
+    @Test
+    void tagsAndTagsArrayEmpty() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), t1.and());
+    }
+
+    @Test
+    void tagsAndTagsArrayEmptyArray() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), t1.and(new Tag[]{null}));
+    }
+
+    @Test
+    void tagsAndTagsArrayNull() throws GestaltException {
+        var t1 = Tags.of("toy", "ball");
+
+        Assertions.assertEquals(Tags.of("toy", "ball"), t1.and((Tag) null));
+    }
+
+    @Test
     void testEquals() {
         List<Tag> tagList = List.of(Tag.of("toy", "ball"), Tag.of("toy", "bat"));
         Tags tags = Tags.of(tagList);
