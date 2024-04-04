@@ -35,15 +35,23 @@ public class TestMetricsRecorder implements MetricsRecorder {
 
     @Override
     public void finalizeMetric(MetricsRecord marker, Tags tags) {
-        ((TestMetricsRecord) marker).data = ((TestMetricsRecord) marker).data + 10;
-        Set<Tag> copyTags = new HashSet<>(tags.getTags());
-        copyTags.addAll(((TestMetricsRecord) marker).tags.getTags());
+        var record = (TestMetricsRecord) marker;
 
-        ((TestMetricsRecord) marker).tags = Tags.of(copyTags);   //NOPMD
+        record.data = record.data + 10;
+        Set<Tag> copyTags = new HashSet<>(tags.getTags());
+        copyTags.addAll(record.tags.getTags());
+
+        record.tags = Tags.of(copyTags);   //NOPMD
+        metrics.put(record.metric(), record);
     }
 
     @Override
     public void recordMetric(String metric, double count, Tags tags) {
-        metrics.computeIfAbsent(metric, (it) -> new TestMetricsRecord(it, count + recoderId, false, tags));
+        var metricRecord = metrics.get(metric);
+        if (metricRecord != null) {
+            metricRecord.data = metricRecord.data + count;
+        } else {
+            metrics.put(metric, new TestMetricsRecord(metric, count + recoderId, false, tags));
+        }
     }
 }

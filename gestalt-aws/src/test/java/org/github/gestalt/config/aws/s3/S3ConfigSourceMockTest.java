@@ -96,6 +96,7 @@ class S3ConfigSourceMockTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, UPLOAD_FILE_NAME, Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), source.getTags());

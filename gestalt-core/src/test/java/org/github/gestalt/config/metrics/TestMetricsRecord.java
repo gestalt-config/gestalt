@@ -6,7 +6,7 @@ public class TestMetricsRecord implements MetricsRecord {
     public double data;
     public boolean isOptional;
     public Tags tags;
-    String path;
+    public String path;
 
     public TestMetricsRecord(String path, double data, boolean isOptional, Tags tags) {
         this.path = path;
@@ -17,6 +17,6 @@ public class TestMetricsRecord implements MetricsRecord {
 
     @Override
     public String metric() {
-        return "test";
+        return path;
     }
 }

@@ -42,9 +42,17 @@ class ByteDecoder : LeafDecoder<Byte>() {
         val value = node.value.orElse("")
         results = if (value.length == 1) {
             GResultOf.result(value.toByteArray(Charset.defaultCharset())[0])
+        } else if (value.length > 1){
+            GResultOf.resultOf(value.toByteArray(Charset.defaultCharset())[0],
+                ValidationError.DecodingByteTooLong(
+                    path,
+                    node,
+                    decoderContext.secretConcealer
+                )
+            )
         } else {
             GResultOf.errors(
-                ValidationError.DecodingByteTooLong(
+                ValidationError.DecodingEmptyByte(
                     path,
                     node,
                     decoderContext.secretConcealer

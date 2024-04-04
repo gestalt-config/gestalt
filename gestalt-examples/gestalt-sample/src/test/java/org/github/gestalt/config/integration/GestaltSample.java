@@ -47,11 +47,13 @@ import software.amazon.awssdk.utils.AttributeMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.LogManager;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
@@ -130,7 +132,11 @@ public class GestaltSample {
 
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+        try (InputStream is = GestaltSample.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

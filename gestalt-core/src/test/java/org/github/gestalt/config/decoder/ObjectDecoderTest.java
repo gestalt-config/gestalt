@@ -15,10 +15,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +33,11 @@ class ObjectDecoderTest {
 
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+        try (InputStream is = ObjectDecoderTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            // dont care
+        }
     }
 
     @BeforeEach

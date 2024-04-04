@@ -69,6 +69,7 @@ public class TestSource implements ConfigSource {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public Tags getTags() {
         return tags;
     }

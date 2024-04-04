@@ -1,7 +1,9 @@
 package org.github.gestalt.config;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,7 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
+import java.util.logging.LogManager;
 
 class GestaltCacheTest {
 
@@ -17,7 +22,11 @@ class GestaltCacheTest {
 
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+        try (InputStream is = GestaltCacheTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            // dont care
+        }
     }
 
     @BeforeEach
@@ -27,7 +36,7 @@ class GestaltCacheTest {
 
     @Test
     void loadConfigs() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
 
         cache.loadConfigs();
 
@@ -36,7 +45,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfig() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", Integer.class);
@@ -54,7 +63,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfig2() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(100);
 
         Integer port = cache.getConfig("db.port", TypeCapture.of(Integer.class));
@@ -72,7 +81,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigTags() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Tags tags = Tags.of("toys", "ball");
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), tags)).thenReturn(100);
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(500);
@@ -100,7 +109,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigDefault() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(100));
 
         Integer port = cache.getConfig("db.port", 200, Integer.class);
@@ -118,7 +127,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfig2Default() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(100));
 
         Integer port = cache.getConfig("db.port", 200, TypeCapture.of(Integer.class));
@@ -137,7 +146,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigDefaultTags() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Tags tags = Tags.of("toys", "ball");
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), tags)).thenReturn(Optional.of(100));
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(500));
@@ -165,7 +174,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigDefaultMissing() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
             .thenReturn(Optional.empty());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of()))
@@ -188,7 +197,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigOptional() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(100));
 
         Optional<Integer> port = cache.getConfigOptional("db.port", Integer.class);
@@ -206,7 +215,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfig2Optional() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
             .thenReturn(Optional.of(100));
 
@@ -225,7 +234,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigOptionalEmpty() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of()))
             .thenReturn(Optional.empty());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of()))
@@ -249,7 +258,7 @@ class GestaltCacheTest {
 
     @Test
     void getConfigOptionalTags() throws GestaltException {
-        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of());
+        GestaltCache cache = new GestaltCache(mockGestalt, Tags.of(), null, new GestaltConfig());
         Tags tags = Tags.of("toys", "ball");
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), tags)).thenReturn(Optional.of(100));
         Mockito.when(mockGestalt.getConfigOptional("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(Optional.of(500));
@@ -276,7 +285,7 @@ class GestaltCacheTest {
     @Test
     void getConfigDefaultTags2() throws GestaltException {
         Tags defaultTags = Tags.of("env", "dev");
-        GestaltCache cache = new GestaltCache(mockGestalt, defaultTags);
+        GestaltCache cache = new GestaltCache(mockGestalt, defaultTags, null, new GestaltConfig());
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), defaultTags)).thenReturn(100);
         Mockito.when(mockGestalt.getConfig("db.port", TypeCapture.of(Integer.class), Tags.of())).thenReturn(200);
 
@@ -294,6 +303,33 @@ class GestaltCacheTest {
 
         Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class), defaultTags);
         Mockito.verify(mockGestalt, Mockito.times(1)).getConfig("db.port", TypeCapture.of(Integer.class), Tags.of());
+    }
+
+    @Test
+    void getListeners() throws GestaltException {
+        Tags defaultTags = Tags.of("env", "dev");
+        GestaltCache cache = new GestaltCache(mockGestalt, defaultTags, null, new GestaltConfig());
+
+        CoreReloadListener listener = () -> {
+
+        };
+        cache.registerListener(listener);
+        cache.removeListener(listener);
+
+        Mockito.verify(mockGestalt, Mockito.times(1)).registerListener(listener);
+        Mockito.verify(mockGestalt, Mockito.times(1)).removeListener(listener);
+    }
+
+    @Test
+    void debugPrint() throws GestaltException {
+        Tags defaultTags = Tags.of("env", "dev");
+        GestaltCache cache = new GestaltCache(mockGestalt, defaultTags, null, new GestaltConfig());
+
+        Mockito.when(mockGestalt.debugPrint()).thenReturn("test");
+        Mockito.when(mockGestalt.debugPrint(Tags.environment("dev"))).thenReturn("dev");
+
+        Assertions.assertEquals("test", cache.debugPrint());
+        Assertions.assertEquals("dev", cache.debugPrint(Tags.environment("dev")));
     }
 }
 

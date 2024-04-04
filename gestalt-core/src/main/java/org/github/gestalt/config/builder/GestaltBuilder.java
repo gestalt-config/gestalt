@@ -1090,7 +1090,7 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
-            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags);
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, metricsManager, gestaltConfig);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.

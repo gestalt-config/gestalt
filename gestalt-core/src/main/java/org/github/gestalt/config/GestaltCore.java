@@ -399,6 +399,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                                 ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
                             logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
                         }
+                        if (gestaltConfig.isMetricsEnabled()) {
+                            metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
+                        }
 
                         return defaultVal;
                     }

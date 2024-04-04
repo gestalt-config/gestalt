@@ -84,6 +84,7 @@ class MapConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         MapConfigSource mapConfigSource = new MapConfigSource(configs, Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), mapConfigSource.getTags());

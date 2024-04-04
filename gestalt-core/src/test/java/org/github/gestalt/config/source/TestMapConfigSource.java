@@ -96,6 +96,7 @@ public class TestMapConfigSource implements ConfigSource {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public Tags getTags() {
         return tags;
     }

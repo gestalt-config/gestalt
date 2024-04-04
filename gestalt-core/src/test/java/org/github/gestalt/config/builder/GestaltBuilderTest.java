@@ -40,9 +40,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +54,11 @@ class GestaltBuilderTest {
 
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+        try (InputStream is = GestaltBuilderTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            // dont care
+        }
     }
 
     @Test

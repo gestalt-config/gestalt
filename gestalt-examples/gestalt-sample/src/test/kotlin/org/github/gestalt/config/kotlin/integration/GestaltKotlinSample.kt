@@ -24,9 +24,13 @@ import kotlin.reflect.typeOf
 class GestaltKotlinSample {
 
     companion object {
+        @JvmStatic
         @BeforeAll
-        fun beforeAll() {
-            System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").path)
+        fun beforeAll(): Unit {
+            System.setProperty(
+                "java.util.logging.config.file",
+                ClassLoader.getSystemResource("logging.properties").path
+            )
         }
     }
 

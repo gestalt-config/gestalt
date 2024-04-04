@@ -20,8 +20,8 @@ weldCore = "4.0.3.Final"
 jackson = "2.17.0"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.19"
-gcpLibraries = "26.34.0"
+awsBom = "2.25.23"
+gcpLibraries = "26.35.0"
 # vault
 vault = "6.2.0"
 # Git support
@@ -92,7 +92,7 @@ jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 # metrics
-micrometer = { module = "io.micrometer:micrometer-core", version.ref = "micrometer"  }
+micrometer = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
 # Testing
 junitAPI = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }

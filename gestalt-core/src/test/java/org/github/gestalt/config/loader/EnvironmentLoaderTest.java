@@ -28,6 +28,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 
+@SuppressWarnings("removal")
 class EnvironmentLoaderTest {
 
     @Test
@@ -274,6 +275,7 @@ class EnvironmentLoaderTest {
     }
 
     @Test
+
     void loadSourceMockDependenciesValidationWarn() throws GestaltException {
         // setup the input data, instead of loading from a file.
         List<Pair<String, String>> data = new ArrayList<>();

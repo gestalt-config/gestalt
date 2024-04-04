@@ -159,6 +159,7 @@ class EnvironmentConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         EnvironmentConfigSource envConfig = new EnvironmentConfigSource("", true, false, false, Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), envConfig.getTags());

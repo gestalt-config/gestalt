@@ -44,7 +44,7 @@ public final class MetricsManager {
         metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
     }
 
-    public <T> MetricsMarker startMetric(String metric, Tags tags) {
+    public MetricsMarker startMetric(String metric, Tags tags) {
         var records = metricsRecorders.entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, it -> it.getValue().startMetric(metric, tags)));

@@ -94,6 +94,7 @@ class ClassPathConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         ClassPathConfigSource classPathConfigSource = new ClassPathConfigSource("/test.properties", Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), classPathConfigSource.getTags());

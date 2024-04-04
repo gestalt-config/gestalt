@@ -5,6 +5,7 @@ import org.github.gestalt.config.utils.ErrorsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Exception from Gestalt.
@@ -63,5 +64,16 @@ public class GestaltException extends Exception {
      */
     public GestaltException(List<GestaltException> exceptions) {
         this.exceptions.addAll(exceptions);
+    }
+
+    @Override
+    public String getMessage() {
+        if (!exceptions.isEmpty()) {
+            return exceptions.stream()
+                .map(GestaltException::getMessage)
+                .collect(Collectors.joining(", "));
+        } else {
+            return super.getMessage();
+        }
     }
 }
