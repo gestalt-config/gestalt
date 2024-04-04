@@ -29,7 +29,7 @@ public class TestMetricsRecorder implements MetricsRecorder {
     }
 
     @Override
-    public <T> MetricsRecord startMetric(String metric, Tags tags) {
+    public MetricsRecord startMetric(String metric, Tags tags) {
         return new TestMetricsRecord(metric, recoderId, false, tags);
     }
 

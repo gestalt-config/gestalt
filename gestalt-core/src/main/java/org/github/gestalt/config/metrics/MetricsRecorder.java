@@ -45,9 +45,8 @@ public interface MetricsRecorder {
      * @param metric Name of the metric to record
      * @param tags tags associated with the metrics
      * @return MetricsRecord payload with specifics for the metrics recorder
-     * @param <T> class type we are getting.
      */
-    <T> MetricsRecord startMetric(String metric, Tags tags);
+    MetricsRecord startMetric(String metric, Tags tags);
 
     /**
      * Called to record the generic metrics call.

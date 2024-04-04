@@ -75,7 +75,7 @@ public final class MicrometerMetricRecorder implements MetricsRecorder {
     }
 
     @Override
-    public <T> MetricsRecord startMetric(String metric, Tags tags) {
+    public MetricsRecord startMetric(String metric, Tags tags) {
         io.micrometer.core.instrument.Tags metricTags = io.micrometer.core.instrument.Tags.empty();
 
         if (micrometerModuleConfig.isIncludeTags()) {

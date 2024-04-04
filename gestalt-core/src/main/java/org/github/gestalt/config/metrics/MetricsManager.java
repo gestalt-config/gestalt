@@ -29,7 +29,7 @@ public final class MetricsManager {
 
     public void addMetricsRecorders(List<MetricsRecorder> recorder) {
         Objects.requireNonNull(recorder, "MetricsRecorder should not be null");
-        recorder.forEach(it ->  this.metricsRecorders.put(it.recorderId(), it));
+        recorder.forEach(it -> this.metricsRecorders.put(it.recorderId(), it));
     }
 
     public <T> MetricsMarker startGetConfig(String path, TypeCapture<T> klass, Tags tags, boolean isOptional) {
@@ -41,7 +41,7 @@ public final class MetricsManager {
     }
 
     public void finalizeGetConfig(MetricsMarker markers, Tags tags) {
-        if(markers != null) {
+        if (markers != null) {
             metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
         }
     }
@@ -55,7 +55,7 @@ public final class MetricsManager {
     }
 
     public void finalizeMetric(MetricsMarker markers, Tags tags) {
-        if(markers != null) {
+        if (markers != null) {
             metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
         }
     }
@@ -64,8 +64,8 @@ public final class MetricsManager {
      * Record a generic metric.
      *
      * @param metric Name of the metric to record
-     * @param count the count to add to the metric
-     * @param tags tags associated with the metrics
+     * @param count  the count to add to the metric
+     * @param tags   tags associated with the metrics
      */
     public void recordMetric(String metric, double count, Tags tags) {
         metricsRecorders.forEach((key, value) -> value.recordMetric(metric, count, tags));
