@@ -80,9 +80,9 @@ class ByteDecoderTest {
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
             TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
-        Assertions.assertFalse(result.hasResults());
+        Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
-        Assertions.assertNull(result.results());
+        Assertions.assertEquals((byte) 97, result.results());
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.WARN, result.getErrors().get(0).level());
         Assertions.assertEquals("Expected a Byte on path: db.port, decoding node: LeafNode{value='aaa'} received the wrong size",
@@ -99,8 +99,8 @@ class ByteDecoderTest {
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
         Assertions.assertNotNull(result.getErrors());
-        Assertions.assertEquals(ValidationLevel.WARN, result.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a Byte on path: db.port, decoding node: LeafNode{value=''} received the wrong size",
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals("Expected a Byte on path: db.port, decoding node: LeafNode{value=''} received an empty node",
             result.getErrors().get(0).description());
     }
 }

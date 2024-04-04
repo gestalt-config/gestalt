@@ -91,6 +91,7 @@ class SystemPropertiesConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         SystemPropertiesConfigSource configSource = new SystemPropertiesConfigSource(Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), configSource.getTags());

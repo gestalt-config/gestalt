@@ -247,6 +247,7 @@ class MapDecoderTest {
         Assertions.assertEquals(300, results.get("uri"));
         Assertions.assertEquals(6000, results.get("password"));
     }
+
     @Test
     void decodeLeafBlankEntry() {
         MapDecoder decoder = new MapDecoder();

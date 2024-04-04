@@ -677,6 +677,28 @@ public abstract class ValidationError {
     }
 
     /**
+     * While deciding a byte, expected a single value but received more.
+     */
+    public static class DecodingEmptyByte extends ValidationError {
+        private final String path;
+        private final ConfigNode node;
+        private final SecretConcealer secretConcealer;
+
+        public DecodingEmptyByte(String path, ConfigNode node, SecretConcealer secretConcealer) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.node = node;
+            this.secretConcealer = secretConcealer;
+        }
+
+        @Override
+        public String description() {
+            return "Expected a Byte on path: " + path + ", decoding node: " + node.printer(path, secretConcealer) +
+                " received an empty node";
+        }
+    }
+
+    /**
      * While decoding a value received an exception.
      */
     public static class ErrorDecodingException extends ValidationError {

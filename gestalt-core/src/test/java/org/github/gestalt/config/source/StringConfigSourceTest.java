@@ -78,6 +78,7 @@ class StringConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         StringConfigSource source = new StringConfigSource("test", "properties", Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), source.getTags());

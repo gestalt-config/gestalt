@@ -129,6 +129,7 @@ class KubernetesSecretConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void getTagsWithTagsFile() throws GestaltException {
         KubernetesSecretConfigSource source = new KubernetesSecretConfigSource(kubernetesPath.toFile(), Tags.of("env", "dev"));
         Assertions.assertEquals(Tags.of("env", "dev"), source.getTags());

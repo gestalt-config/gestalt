@@ -6,6 +6,11 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Contains all the rules on how to conceal a secret, then apply them to a value.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ */
 public class SecretConcealer {
     private final Map<String, Pattern> secretRegex;
     private final String mask;
@@ -23,6 +28,13 @@ public class SecretConcealer {
         secretRegex.put(rule, Pattern.compile(rule));
     }
 
+    /**
+     * returns the value that is concealed if it is a secret. Otherwise, returns the value.
+     *
+     * @param path path of the value
+     * @param value value we are checking if we need to conceal.
+     * @return the value that is concealed if it is a secret.
+     */
     public String concealSecret(String path, String value) {
         if (secretRegex.values().stream().anyMatch(rule -> rule.matcher(path).find())) {
             return mask;

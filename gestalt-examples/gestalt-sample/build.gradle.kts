@@ -38,10 +38,12 @@ testing {
                 implementation(project(":gestalt-google-cloud"))
                 implementation(project(":gestalt-hocon"))
                 implementation(project(":gestalt-kotlin"))
+                implementation(project(":gestalt-micrometer"))
                 implementation(project(":gestalt-json"))
                 implementation(project(":gestalt-toml"))
                 implementation(project(":gestalt-vault"))
                 implementation(project(":gestalt-yaml"))
+
 
                 implementation(project(":gestalt-kodein-di"))
 
@@ -49,9 +51,9 @@ testing {
 
                 implementation(libs.aws.mock)
 
-
                 implementation(project(":gestalt-guice"))
                 implementation(libs.testcontainers.junit5)
+                implementation(libs.micrometer)
             }
         }
     }

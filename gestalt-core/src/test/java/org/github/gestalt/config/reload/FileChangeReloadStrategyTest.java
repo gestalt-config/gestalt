@@ -148,6 +148,7 @@ class FileChangeReloadStrategyTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void wrongSourceConstructor() {
         GestaltConfigurationException ex = Assertions.assertThrows(GestaltConfigurationException.class,
             () -> new FileChangeReloadStrategy(new ConfigSourcePackage(

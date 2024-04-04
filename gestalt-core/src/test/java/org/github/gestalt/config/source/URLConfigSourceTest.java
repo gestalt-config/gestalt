@@ -85,6 +85,7 @@ class URLConfigSourceTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void tags() throws GestaltException {
         URLConfigSource fileConfigSource = new URLConfigSource(testURL, Tags.of("toy", "ball"));
         Assertions.assertEquals(Tags.of("toy", "ball"), fileConfigSource.getTags());

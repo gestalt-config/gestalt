@@ -1,13 +1,10 @@
 package org.github.gestalt.config.source;
 
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
-import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Container that holds the Config Source as well as the configReloadStrategies.
@@ -54,17 +51,12 @@ public class ConfigSourcePackage {
     /**
      * Get the tags associated with the config source.
      *
-     * @return  the tags associated with the config source
+     * @return the tags associated with the config source
      */
     public Tags getTags() {
 
         // remove this once we remove the tags from the config source.
-        Set<Tag> combinedTags = new HashSet<>();
-        if(configSource.getTags() != null) {
-            combinedTags.addAll(configSource.getTags().getTags());
-        }
-        combinedTags.addAll(tags.getTags());
-        return Tags.of(combinedTags);
+        return tags.and(configSource.getTags());
     }
 
     @Override

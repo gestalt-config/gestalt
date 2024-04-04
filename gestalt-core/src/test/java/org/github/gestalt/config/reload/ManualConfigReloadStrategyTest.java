@@ -31,6 +31,7 @@ class ManualConfigReloadStrategyTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void testManualStrategyWithConstructor() throws GestaltException {
         AtomicInteger reloadCount = new AtomicInteger(0);
         StringConfigSource source = new StringConfigSource("abc=def", "properties");
@@ -46,6 +47,7 @@ class ManualConfigReloadStrategyTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void testManualStrategyWiNoSource() throws GestaltException {
         AtomicInteger reloadCount = new AtomicInteger(0);
         ManualConfigReloadStrategy reloadStrategy = new ManualConfigReloadStrategy(null);

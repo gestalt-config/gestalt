@@ -36,11 +36,13 @@ public abstract class Benchmarks {
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.SECONDS)
     public String GestaltConfig_String_No_Cache(BenchmarkState state) throws GestaltException {
         return state.gestaltNoCache.getConfig("http.pool.maxTotal", String.class);
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.SECONDS)
     public HttpPool GestaltConfig_Object_No_Cache(BenchmarkState state) throws GestaltException {
         return state.gestaltNoCache.getConfig("http.pool", HttpPool.class);
     }

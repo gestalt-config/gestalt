@@ -1,6 +1,8 @@
 package org.github.gestalt.config;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.metrics.MetricsManager;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
@@ -21,6 +23,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
     private final Tags defaultTags;
+    private final MetricsManager metricsManager;
+    private final GestaltConfig gestaltConfig;
 
     /**
      * Constructor for the GestaltCache that accepts a delegate.
@@ -28,9 +32,11 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
      * @param delegate    real Gestalt to call for configs to cache.
      * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
-    public GestaltCache(Gestalt delegate, Tags defaultTags) {
+    public GestaltCache(Gestalt delegate, Tags defaultTags, MetricsManager metricsManager, GestaltConfig gestaltConfig) {
         this.delegate = delegate;
         this.defaultTags = defaultTags;
+        this.metricsManager = metricsManager;
+        this.gestaltConfig = gestaltConfig;
     }
 
     @Override
@@ -61,6 +67,9 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     public <T> T getConfig(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
         if (cache.get(key) != null) {
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                metricsManager.recordMetric("cache.hit", 1, Tags.of());
+            }
             return (T) cache.get(key);
         } else {
             T result = delegate.getConfig(path, klass, tags);
@@ -96,6 +105,10 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
             T result = (T) cache.get(key);
             if (result == null) {
                 result = defaultVal;
+            }
+
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                metricsManager.recordMetric("cache.hit", 1, Tags.of());
             }
 
             return result;
@@ -134,6 +147,10 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     public <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags) {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, tags);
         if (cache.containsKey(key)) {
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                metricsManager.recordMetric("cache.hit", 1, Tags.of());
+            }
+
             T result = (T) cache.get(key);
             return Optional.ofNullable(result);
         } else {

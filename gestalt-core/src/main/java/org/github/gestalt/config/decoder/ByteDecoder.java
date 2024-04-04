@@ -37,8 +37,11 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
         String value = node.getValue().orElse("");
         if (value.length() == 1) {
             results = GResultOf.result(value.getBytes(Charset.defaultCharset())[0]);
-        } else {
-            results = GResultOf.errors(new ValidationError.DecodingByteTooLong(path, node, decoderContext.getSecretConcealer()));
+        } else if (value.length() > 1) {
+            results = GResultOf.resultOf(value.getBytes(Charset.defaultCharset())[0],
+                new ValidationError.DecodingByteTooLong(path, node, decoderContext.getSecretConcealer()));
+        } else  {
+            results = GResultOf.errors(new ValidationError.DecodingEmptyByte(path, node, decoderContext.getSecretConcealer()));
         }
 
         return results;

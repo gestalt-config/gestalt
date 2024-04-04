@@ -12,6 +12,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
+import org.github.gestalt.config.metrics.MetricsManager;
+import org.github.gestalt.config.metrics.TestMetricsRecorder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
@@ -38,9 +40,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +54,11 @@ class GestaltBuilderTest {
 
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+        try (InputStream is = GestaltBuilderTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            // dont care
+        }
     }
 
     @Test
@@ -102,12 +111,23 @@ class GestaltBuilderTest {
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
+            .setMetricsEnabled(true)
+            .addMetricsRecorder(new TestMetricsRecorder(0))
+            .addMetricsRecorders(List.of(new TestMetricsRecorder(1)))
+            .setMetricsRecorders(List.of(new TestMetricsRecorder(0), new TestMetricsRecorder(1)))
+            .setMetricsManager(new MetricsManager(List.of()))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
-            .setSecurityMask("&&&&");
+            .setSecurityMask("&&&&")
+            .setTreatWarningsAsErrors(true)
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE);
 
         Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());
         Assertions.assertEquals(true, builder.isTreatWarningsAsErrors());
+        Assertions.assertEquals(true, builder.getTreatMissingValuesAsErrors());
+        Assertions.assertEquals(true, builder.getTreatMissingDiscretionaryValuesAsErrors());
         Assertions.assertEquals("", builder.getSubstitutionRegex());
         Assertions.assertEquals(ProxyDecoderMode.CACHE, builder.getProxyDecoderMode());
         Assertions.assertEquals(System.Logger.Level.DEBUG, builder.getLogLevelForMissingValuesWhenDefaultOrOptional());
@@ -314,7 +334,7 @@ class GestaltBuilderTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
 
@@ -847,6 +867,7 @@ class GestaltBuilderTest {
         public String name() {
             return "Loader" + new Random().nextInt();
         }
+
         @Override
         public void applyConfig(GestaltConfig config) {
             configCount++;
@@ -866,6 +887,7 @@ class GestaltBuilderTest {
     private static class TestPostProcessor implements PostProcessor {
 
         public int configCount = 0;
+
         @Override
         public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             return GResultOf.result(currentNode);
@@ -879,6 +901,7 @@ class GestaltBuilderTest {
 
     private static class TestPathMapper implements PathMapper {
         public int configCount = 0;
+
         @Override
         public void applyConfig(GestaltConfig config) {
             configCount++;
@@ -898,4 +921,5 @@ class GestaltBuilderTest {
         }
     }
 }
+
 

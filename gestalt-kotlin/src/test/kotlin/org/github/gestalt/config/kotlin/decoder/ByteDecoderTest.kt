@@ -85,9 +85,9 @@ internal class ByteDecoderTest {
             ),
             DecoderContext(decoderService, null, null),
         )
-        Assertions.assertFalse(result.hasResults())
+        Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
-        Assertions.assertNull(result.results())
+        Assertions.assertEquals(97, result.results())
         Assertions.assertNotNull(result.errors)
         Assertions.assertEquals(ValidationLevel.WARN, result.errors[0].level())
         Assertions.assertEquals(
@@ -112,9 +112,9 @@ internal class ByteDecoderTest {
         Assertions.assertTrue(result.hasErrors())
         Assertions.assertNull(result.results())
         Assertions.assertNotNull(result.errors)
-        Assertions.assertEquals(ValidationLevel.WARN, result.errors[0].level())
+        Assertions.assertEquals(ValidationLevel.ERROR, result.errors[0].level())
         Assertions.assertEquals(
-            "Expected a Byte on path: db.port, decoding node: LeafNode{value=''} received the wrong size",
+            "Expected a Byte on path: db.port, decoding node: LeafNode{value=''} received an empty node",
             result.errors[0].description()
         )
     }

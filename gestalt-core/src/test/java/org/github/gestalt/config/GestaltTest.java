@@ -20,6 +20,7 @@ import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
+import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
@@ -35,7 +36,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,7 +47,11 @@ class GestaltTest {
 
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
+        try (InputStream is = GestaltMetricsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            // dont care
+        }
     }
 
     @Test
@@ -55,25 +63,18 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(
-                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
-                    new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderContext());
+        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderService());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
@@ -123,23 +124,14 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(
-                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
@@ -199,22 +191,14 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("toys", "ball")).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("toys", "ball")).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class, Tags.of("toys", "ball")));
@@ -256,23 +240,14 @@ class GestaltTest {
         configs.put("uri", "somedatabase");
         configs.put("port", "3306");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer();
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(
-                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         DBInfo dbInfo = gestalt.getConfig("", DBInfo.class);
@@ -312,23 +287,14 @@ class GestaltTest {
         configs.put("user.db.uri", "anotherDB");
         configs.put("user.db.port", "1234");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer();
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(
-                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new ObjectDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         DBInfoPathAnnotation dbInfo = gestalt.getConfig("", DBInfoPathAnnotation.class);
@@ -382,23 +348,15 @@ class GestaltTest {
         configs2.put("admin.user[1]", "Matt");
         configs2.put("admin.user[2]", "Paul");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("New Name", gestalt.getConfig("db.name", String.class));
@@ -437,24 +395,16 @@ class GestaltTest {
         configs3.put("db.timeout", "5000");
         configs3.put("admin.user[0]", "Scott");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build(),
-                MapConfigSourceBuilder.builder().setCustomConfig(configs3).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs3).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("New Name", gestalt.getConfig("db.name", String.class));
@@ -486,24 +436,16 @@ class GestaltTest {
         configs3.put("db.name", "users");
         configs3.put("db.timeout", "5000");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build(),
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.of("toy", "ball")).build(),
-                MapConfigSourceBuilder.builder().setCustomConfig(configs3).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.of("toy", "ball")).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs3).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("users", gestalt.getConfigOptional("db.name", String.class).get());
@@ -533,23 +475,15 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .addPostProcessor(new TestPostProcessor("aaa"))
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test aaa", gestalt.getConfig("db.name", String.class));
@@ -582,7 +516,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
 
@@ -613,7 +547,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
@@ -648,7 +582,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, Tags.of());
+            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
@@ -667,24 +601,16 @@ class GestaltTest {
         configs.put("path2.conf2.prop2", "value5");
         configs.put("path2.conf2.prop3", "value6");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null,
-            List.of(new TestPostProcessorSwapNodes("path1", "path2"),
-                new TestPostProcessorSwapNodes("prop1", "prop2")), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .addPostProcessor(new TestPostProcessorSwapNodes("path1", "path2"))
+            .addPostProcessor(new TestPostProcessorSwapNodes("prop1", "prop2"))
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("value4", gestalt.getConfig("path1.conf2.prop2", String.class));
@@ -705,22 +631,14 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", "aaa", String.class));
@@ -765,22 +683,12 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("Scott", gestalt.getConfig("admin[3a]", "Scott", String.class));
     }
@@ -794,23 +702,12 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals(Optional.of("test"), gestalt.getConfigOptional("db.name", String.class));
         Assertions.assertEquals(Optional.of("3306"), gestalt.getConfigOptional("db.port", String.class));
@@ -842,22 +739,12 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals(Optional.empty(), gestalt.getConfigOptional("admin[3a]", String.class));
     }
@@ -895,7 +782,7 @@ class GestaltTest {
                 MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(),
                 new ListDecoder()), configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -955,12 +842,31 @@ class GestaltTest {
             List.of(),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.loadConfigs());
         assertThat(ex).isInstanceOf(GestaltException.class)
             .hasMessage("No sources provided, unable to load any configs");
+    }
 
+    @Test
+    public void testNullSources() throws GestaltException {
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        SentenceLexer lexer = new PathLexer(".");
+        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+
+        Gestalt gestalt = new GestaltCore(configLoaderRegistry,
+            null,
+            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
+                configNodeManager, lexer, List.of(new StandardPathMapper())),
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.loadConfigs());
+        assertThat(ex).isInstanceOf(GestaltException.class)
+            .hasMessage("No sources provided, unable to load any configs");
     }
 
     @Test
@@ -983,11 +889,9 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
@@ -1019,11 +923,9 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
@@ -1055,7 +957,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         var ex = Assertions.assertThrows(GestaltException.class, gestalt::loadConfigs);
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -1073,27 +975,15 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        GestaltConfig config = new GestaltConfig();
-        config.setTreatWarningsAsErrors(true);
-        config.setTreatMissingArrayIndexAsError(false);
-        config.setTreatMissingValuesAsErrors(false);
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .setTreatWarningsAsErrors(true)
+            .setTreatMissingArrayIndexAsError(false)
+            .setTreatMissingValuesAsErrors(false)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("no.exist.name", String.class));
 
@@ -1133,7 +1023,7 @@ class GestaltTest {
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
 
         GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, gestalt::loadConfigs);
         Assertions.assertEquals("No results found for node", e.getMessage());
@@ -1148,23 +1038,13 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        GestaltConfig config = new GestaltConfig();
-        config.setTreatWarningsAsErrors(false);
-        config.setTreatMissingArrayIndexAsError(false);
-        config.setTreatMissingValuesAsErrors(true);
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .setTreatWarningsAsErrors(false)
+            .setTreatMissingArrayIndexAsError(false)
+            .setTreatMissingValuesAsErrors(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -1186,25 +1066,16 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        GestaltConfig config = new GestaltConfig();
-        config.setTreatWarningsAsErrors(false);
-        config.setTreatMissingArrayIndexAsError(false);
-        config.setTreatMissingValuesAsErrors(true);
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .setTreatWarningsAsErrors(false)
+            .setTreatMissingArrayIndexAsError(false)
+            .setTreatMissingValuesAsErrors(true)
+            .build();
 
         gestalt.loadConfigs();
+
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("admin[3]", String.class));
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -1222,19 +1093,11 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        Gestalt gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            new PathLexer("."), new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(),
-            secretConcealer, Tags.of());
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -1260,30 +1123,16 @@ class GestaltTest {
         configs.put("db.port", "3306");
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
-        ConfigSource source = new MapConfigSource(configs);
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadListenersContainer.registerListener(coreListener);
-
-        var sourcePackage  = new ConfigSourcePackage(source, List.of(), Tags.of());
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry, List.of(sourcePackage),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
+        GestaltCore gestalt = (GestaltCore) new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).addConfigReloadStrategy(reload).build())
+            .useCacheDecorator(false)
+            .addCoreReloadListener(coreListener)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
@@ -1306,7 +1155,7 @@ class GestaltTest {
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", TypeCapture.of(String.class)));
 
         configs.put("db.name", "test1");
-        gestalt.reload(sourcePackage);
+        reload.reload();
 
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test1", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
@@ -1321,39 +1170,24 @@ class GestaltTest {
         configs.put("db.port", "3306");
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
-        ConfigSource source = new MapConfigSource(configs);
-        var sourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
 
         Map<String, String> configs2 = new HashMap<>();
         configs2.put("db.name", "test");
         configs2.put("db.port", "3306");
         configs2.put("admin[0]", "John");
         configs2.put("admin[1]", "Steve");
-        ConfigSource source2 = new MapConfigSource(configs2);
 
-
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
-        coreReloadListenersContainer.registerListener(coreListener);
-
-        var sourcePackage2 = new ConfigSourcePackage(source2, List.of(), Tags.of("toy", "ball"));
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry, List.of(sourcePackage, sourcePackage2),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+        ManualConfigReloadStrategy reload = new ManualConfigReloadStrategy();
+        GestaltCore gestalt = (GestaltCore) new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.of("toy", "ball"))
+                .addConfigReloadStrategy(reload).build())
+            .useCacheDecorator(false)
+            .addCoreReloadListener(coreListener)
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
@@ -1370,7 +1204,7 @@ class GestaltTest {
         Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class, Tags.of("toy", "ball")));
 
         configs2.put("db.name", "test1");
-        gestalt.reload(sourcePackage2);
+        reload.reload();
 
         Assertions.assertEquals(1, coreListener.count);
         Assertions.assertEquals("test", gestalt.getConfig("db.name", TypeCapture.of(String.class)));
@@ -1403,7 +1237,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1466,7 +1300,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(sourcePackage));
         assertThat(ex).hasMessage("No sources provided, unable to reload any configs");
@@ -1501,7 +1335,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1574,7 +1408,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1639,7 +1473,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of());
+            null, Tags.of());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1688,26 +1522,13 @@ class GestaltTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-
-        SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("env", "dev")).build()),
-            new DecoderRegistry(
-                List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder(), new OptionalDecoder(),
-                    new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer,
-            Tags.of("env", "dev"));
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).setTags(Tags.of("toy", "ball")).build())
+            .useCacheDecorator(false)
+            .setDefaultTags(Tags.of("toy", "ball"))
+            .build();
 
         gestalt.loadConfigs();
-        List<ValidationError> errors = gestalt.getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
@@ -1780,7 +1601,7 @@ class GestaltTest {
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            Tags.of("env", "dev"));
+            null, Tags.of("env", "dev"));
 
         gestalt.loadConfigs();
 
@@ -1942,6 +1763,7 @@ class GestaltTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void testTagsOnBuilderAndSource() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
@@ -1973,6 +1795,7 @@ class GestaltTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void testTagsOnSource() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
@@ -1998,6 +1821,88 @@ class GestaltTest {
         Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
         Assertions.assertEquals(456, gestalt.getConfig("db.port", Integer.class, Tags.environment("dev")));
         Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class, Tags.environment("dev")));
+    }
+
+    @Test
+    public void testMetricsGetError() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class,
+            () -> gestalt.getConfig("db.password", Integer.class, Tags.environment("dev")));
+
+        Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Integer\n" +
+            " - level: ERROR, message: Unable to parse a number on Path: db.password, from node: LeafNode{value='test2'} " +
+            "attempting to decode Integer", ex.getMessage());
+    }
+
+    @Test
+    public void testGetWarning() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setTreatWarningsAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals((byte) 't', gestalt.getConfig("db.password", Byte.class, Tags.environment("dev")));
+    }
+
+    @Test
+    public void testGetWarningAsErrors() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setTreatWarningsAsErrors(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class,
+            () -> gestalt.getConfig("db.password", Byte.class, Tags.environment("dev")));
+
+        Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Byte\n" +
+            " - level: WARN, message: Expected a Byte on path: db.password, decoding node: LeafNode{value='*****'} received the wrong size",
+            ex.getMessage());
     }
 
 
@@ -2079,5 +1984,4 @@ class GestaltTest {
             return GResultOf.errors(new ValidationError.ArrayInvalidIndex(1, "should not happen"));
         }
     }
-
 }

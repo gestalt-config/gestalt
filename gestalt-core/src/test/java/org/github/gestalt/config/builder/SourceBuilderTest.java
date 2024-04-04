@@ -51,6 +51,7 @@ public class SourceBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void testBuilderConfigSourceTagsOnSource() throws GestaltException, IOException {
         var source = new StringConfigSource("abc=def", "properties", Tags.environment("dev"));
         ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of(), Tags.of());
@@ -65,6 +66,7 @@ public class SourceBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
     public void testBuilderConfigSourceTagsOnBoth() throws GestaltException, IOException {
         var source = new StringConfigSource("abc=def", "properties", Tags.environment("dev"));
         ConfigSourcePackage configSourcePackage = new ConfigSourcePackage(source, List.of(), Tags.profile("test"));

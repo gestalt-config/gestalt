@@ -12,6 +12,8 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderService;
+import org.github.gestalt.config.metrics.MetricsManager;
+import org.github.gestalt.config.metrics.MetricsMarker;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.post.process.PostProcessor;
@@ -57,6 +59,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final Tags defaultTags;
 
+    private final MetricsManager metricsManager;
+
     private final DecoderContext decoderContext;
 
     /**
@@ -72,12 +76,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param reloadStrategy       reloadStrategy holds all reload listeners
      * @param postProcessor        postProcessor list of post processors
      * @param secretConcealer      Utility for concealing secrets
+     * @param metricsManager       Manages reporting of metrics
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
                        ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
-                       List<PostProcessor> postProcessor, SecretConcealer secretConcealer, Tags defaultTags) {
+                       List<PostProcessor> postProcessor, SecretConcealer secretConcealer,
+                       MetricsManager metricsManager, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
         this.decoderService = decoderService;
@@ -87,6 +93,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.coreReloadListenersContainer = reloadStrategy;
         this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
         this.secretConcealer = secretConcealer;
+        this.metricsManager = metricsManager;
         this.defaultTags = defaultTags;
         this.decoderContext = new DecoderContext(decoderService, this, secretConcealer);
     }
@@ -159,37 +166,54 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      */
     @Override
     public void reload(ConfigSourcePackage reloadSourcePackage) throws GestaltException {
-        if (reloadSourcePackage == null) {
-            throw new GestaltException("No sources provided, unable to reload any configs");
+
+        MetricsMarker reloadMarker = null;
+        try {
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                reloadMarker = metricsManager.startMetric("reload",
+                    Tags.of(Tags.of("source", reloadSourcePackage.getConfigSource().name()), reloadSourcePackage.getTags()));
+            }
+
+            if (reloadSourcePackage == null) {
+                throw new GestaltException("No sources provided, unable to reload any configs");
+            }
+
+            if (sourcePackages == null || sourcePackages.isEmpty()) {
+                throw new GestaltException("No sources provided, unable to reload any configs");
+            }
+
+            var sourcePackageOpt = sourcePackages.stream().filter(it -> it.equals(reloadSourcePackage)).findFirst();
+            if (sourcePackageOpt.isEmpty()) {
+                throw new GestaltException("Can not reload a source that was not registered.");
+            }
+
+            var reloadSource = sourcePackageOpt.get().getConfigSource();
+
+            ConfigLoader configLoader = configLoaderService.getLoader(reloadSourcePackage.getConfigSource().format());
+            var reloadNodes = configLoader.loadSource(sourcePackageOpt.get());
+            validateLoadResultsForErrors(reloadNodes, reloadSource);
+
+            reloadNodes.throwIfNoResults(() -> new GestaltException("no results found reloading source " + reloadSource.name()));
+
+            for (ConfigNodeContainer reloadNode : reloadNodes.results()) {
+                GResultOf<ConfigNode> mergedNode = configNodeService.reloadNode(reloadNode);
+                validateLoadResultsForErrors(mergedNode, reloadSource);
+
+                mergedNode.throwIfNoResults(() -> new GestaltException("no results found merging source " + reloadSource.name()));
+
+                postProcessConfigs();
+            }
+
+            coreReloadListenersContainer.reload();
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                metricsManager.finalizeMetric(reloadMarker, Tags.of());
+            }
+        } catch (Exception ex) {
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                metricsManager.finalizeMetric(reloadMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
+            }
+            throw ex;
         }
-
-        if (sourcePackages == null || sourcePackages.isEmpty()) {
-            throw new GestaltException("No sources provided, unable to reload any configs");
-        }
-
-        var sourcePackageOpt = sourcePackages.stream().filter(it -> it.equals(reloadSourcePackage)).findFirst();
-        if (sourcePackageOpt.isEmpty()) {
-            throw new GestaltException("Can not reload a source that was not registered.");
-        }
-
-        var reloadSource = sourcePackageOpt.get().getConfigSource();
-
-        ConfigLoader configLoader = configLoaderService.getLoader(reloadSourcePackage.getConfigSource().format());
-        var reloadNodes = configLoader.loadSource(sourcePackageOpt.get());
-        validateLoadResultsForErrors(reloadNodes, reloadSource);
-
-        reloadNodes.throwIfNoResults(() -> new GestaltException("no results found reloading source " + reloadSource.name()));
-
-        for (ConfigNodeContainer reloadNode : reloadNodes.results()) {
-            GResultOf<ConfigNode> mergedNode = configNodeService.reloadNode(reloadNode);
-            validateLoadResultsForErrors(mergedNode, reloadSource);
-
-            mergedNode.throwIfNoResults(() -> new GestaltException("no results found merging source " + reloadSource.name()));
-
-            postProcessConfigs();
-        }
-
-        coreReloadListenersContainer.reload();
     }
 
     void postProcessConfigs() throws GestaltException {
@@ -350,49 +374,74 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
+        MetricsMarker getConfigMarker = null;
+        try {
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                getConfigMarker = metricsManager.startGetConfig(path, klass, tags, failOnErrors);
+            }
 
-        String combinedPath = buildPathWithConfigPrefix(klass, path);
-        GResultOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
-        if (tokens.hasErrors()) {
-            throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
-        } else {
-            GResultOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
+            String combinedPath = buildPathWithConfigPrefix(klass, path);
+            GResultOf<List<Token>> tokens = sentenceLexer.scan(combinedPath);
+            if (tokens.hasErrors()) {
+                throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
+            } else {
+                GResultOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
 
-            if (checkErrorsShouldFail(results)) {
-                if (failOnErrors) {
-                    throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
-                        results.getErrors());
-                } else {
-                    if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
-                        String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + combinedPath +
-                            ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
-                        logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
+                getConfigMetrics(results);
+
+                if (checkErrorsShouldFail(results)) {
+                    if (failOnErrors) {
+                        throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
+                            results.getErrors());
+                    } else {
+                        if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
+                            String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + combinedPath +
+                                ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
+                            logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
+                        }
+                        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                            metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
+                        }
+
+                        return defaultVal;
                     }
 
-                    return defaultVal;
+                } else if (results.hasErrors() && logger.isLoggable(DEBUG)) {
+                    String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + combinedPath +
+                        ", for class: " + klass.getName(), results.getErrors());
+                    logger.log(DEBUG, errorMsg);
                 }
 
-            } else if (results.hasErrors() && logger.isLoggable(DEBUG)) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + combinedPath +
-                    ", for class: " + klass.getName(), results.getErrors());
-                logger.log(DEBUG, errorMsg);
+                if (results.hasResults()) {
+                    if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                        metricsManager.finalizeMetric(getConfigMarker, Tags.of());
+                    }
+
+                    return results.results();
+                }
             }
 
-            if (results.hasResults()) {
-                return results.results();
+            if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
+                String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
+                    ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
+                logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
             }
-        }
 
-        if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
-            String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
-                ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
-            logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
-        }
+            if (failOnErrors) {
+                throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
+            } else {
+                if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                    metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
+                }
 
-        if (failOnErrors) {
-            throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
-        } else {
-            return defaultVal;
+                return defaultVal;
+            }
+        } catch (Exception ex) {
+            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+                metricsManager.finalizeMetric(getConfigMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
+            }
+
+            throw ex;
         }
     }
 
@@ -431,6 +480,30 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             return !results.getErrors().stream().allMatch(this::ignoreError) || !results.hasResults();
         } else {
             return false;
+        }
+    }
+
+    private <T> void getConfigMetrics(GResultOf<T> results) throws GestaltException {
+        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+            int missing = results.getErrors(ValidationLevel.MISSING_VALUE).size();
+            if (missing != 0) {
+                metricsManager.recordMetric("get.config.missing", missing, Tags.of("optional", "false"));
+            }
+
+            int missingOptional = results.getErrors(ValidationLevel.MISSING_OPTIONAL_VALUE).size();
+            if (missingOptional != 0) {
+                metricsManager.recordMetric("get.config.missing", missingOptional, Tags.of("optional", "true"));
+            }
+
+            int errors = results.getErrors(ValidationLevel.ERROR).size();
+            if (errors != 0) {
+                metricsManager.recordMetric("get.config.error", errors, Tags.of());
+            }
+
+            int warnings = results.getErrors(ValidationLevel.WARN).size();
+            if (warnings != 0) {
+                metricsManager.recordMetric("get.config.warning", warnings, Tags.of());
+            }
         }
     }
 
