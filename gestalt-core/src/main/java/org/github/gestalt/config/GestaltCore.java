@@ -399,7 +399,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                                 ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
                             logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
                         }
-                        if (gestaltConfig.isMetricsEnabled()) {
+                        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
                             metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
                         }
 
@@ -430,7 +430,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             if (failOnErrors) {
                 throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
             } else {
-                if (gestaltConfig.isMetricsEnabled()) {
+                if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
                     metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
                 }
 
