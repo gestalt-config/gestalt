@@ -14,6 +14,11 @@ import org.github.gestalt.config.tag.Tags;
 
 import java.util.stream.Collectors;
 
+/**
+ * Micrometer implementation of the MetricsRecorder. Allows you to submit metrics to your meterRegistry.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ */
 public final class MicrometerMetricRecorder implements MetricsRecorder {
     private static final System.Logger logger = System.getLogger(MicrometerMetricRecorder.class.getName());
 

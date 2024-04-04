@@ -32,7 +32,8 @@ public interface MetricsRecorder {
      * @param klass klass we are getting
      * @param tags tags associated with the request
      * @param isOptional if the request is optional
-     * @return MetricsRecord payload with specifics for the metrics recorder
+     * @return MetricsRecord payload with specifics for the metrics recorder.
+     *     This is passed back to the {@link MetricsRecorder#finalizeMetric(MetricsRecord, Tags)} to record the metric
      * @param <T> class type we are getting.
      */
     <T> MetricsRecord startGetConfig(String path, TypeCapture<T> klass, Tags tags, boolean isOptional);
