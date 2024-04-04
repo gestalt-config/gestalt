@@ -41,7 +41,9 @@ public final class MetricsManager {
     }
 
     public void finalizeGetConfig(MetricsMarker markers, Tags tags) {
-        metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
+        if(markers != null) {
+            metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
+        }
     }
 
     public MetricsMarker startMetric(String metric, Tags tags) {
@@ -53,7 +55,9 @@ public final class MetricsManager {
     }
 
     public void finalizeMetric(MetricsMarker markers, Tags tags) {
-        metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
+        if(markers != null) {
+            metricsRecorders.forEach((key, value) -> value.finalizeMetric(markers.getMetricsRecord(key), tags));
+        }
     }
 
     /**

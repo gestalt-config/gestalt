@@ -211,6 +211,10 @@ public class GestaltBuilder {
         pathMappers.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
+    private void configureMetricsRecorders() {
+        metricsRecorders.forEach(it -> it.applyConfig(gestaltConfig));
+    }
+
     /**
      * Add a single source to the builder.
      *
@@ -1073,6 +1077,7 @@ public class GestaltBuilder {
         configureConfigLoaders();
         configurePostProcessors();
         configurePathMappers();
+        configureMetricsRecorders();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
