@@ -30,6 +30,8 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
+import org.github.gestalt.config.validation.ConfigValidator;
+import org.github.gestalt.config.validation.ValidationManager;
 
 import java.lang.System.Logger.Level;
 import java.time.format.DateTimeFormatter;
@@ -69,6 +71,7 @@ public class GestaltBuilder {
     private SentenceLexer sentenceLexer = new PathLexer();
     private GestaltConfig gestaltConfig = new GestaltConfig();
     private MetricsManager metricsManager;
+    private ValidationManager validationManager;
     private ConfigNodeService configNodeService = new ConfigNodeManager();
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
@@ -76,6 +79,7 @@ public class GestaltBuilder {
     private List<PostProcessor> postProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
     private List<MetricsRecorder> metricsRecorders = new ArrayList<>();
+    private List<ConfigValidator> configValidators = new ArrayList<>();
     private boolean useCacheDecorator = true;
     private Set<String> securityRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
@@ -116,7 +120,11 @@ public class GestaltBuilder {
     // Default set of tags to apply to all calls to get a configuration where tags are not provided.
     private Tags defaultTags = Tags.of();
 
+    // If we should enable metrics
     private Boolean metricsEnabled = null;
+
+    // If we should enable Validation
+    private Boolean validationEnabled = null;
 
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
@@ -187,6 +195,20 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Add default Validator to the builder. Uses the ServiceLoader to find all registered Validator and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultValidators() {
+        List<ConfigValidator> validatorsSet = new ArrayList<>();
+        ServiceLoader<ConfigValidator> loader = ServiceLoader.load(ConfigValidator.class);
+        loader.forEach(validatorsSet::add);
+
+        configValidators.addAll(validatorsSet);
+        return this;
+    }
+
     private void configurePostProcessors() {
         postProcessors.forEach(it -> {
             PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
@@ -213,6 +235,10 @@ public class GestaltBuilder {
 
     private void configureMetricsRecorders() {
         metricsRecorders.forEach(it -> it.applyConfig(gestaltConfig));
+    }
+
+    private void configureValidators() {
+        configValidators.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
     /**
@@ -519,8 +545,51 @@ public class GestaltBuilder {
      * @return GestaltBuilder builder
      */
     public GestaltBuilder addMetricsRecorder(MetricsRecorder metricsRecorder) {
-        Objects.requireNonNull(metricsRecorder, "PathMapper should not be null");
+        Objects.requireNonNull(metricsRecorder, "MetricsRecorder should not be null");
         this.metricsRecorders.add(metricsRecorder);
+        return this;
+    }
+
+    /**
+     * Sets the list of Validator. Replaces any Validator already set.
+     *
+     * @param configValidators list of Validator to validate objects.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException exception if there are no Validator
+     */
+    public GestaltBuilder setValidators(List<ConfigValidator> configValidators) throws GestaltConfigurationException {
+        if (configValidators == null || configValidators.isEmpty()) {
+            throw new GestaltConfigurationException("No Validators provided while setting");
+        }
+        this.configValidators = configValidators;
+
+        return this;
+    }
+
+    /**
+     * List of Validator to add to the builder.
+     *
+     * @param validatorsSet list of Validator to add.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException no Validator provided
+     */
+    public GestaltBuilder addValidators(List<ConfigValidator> validatorsSet) throws GestaltConfigurationException {
+        Objects.requireNonNull(validatorsSet, "Validator should not be null");
+
+        configValidators.addAll(validatorsSet);
+
+        return this;
+    }
+
+    /**
+     * Add a single Validator to the builder.
+     *
+     * @param configValidator add a single Validator
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addValidator(ConfigValidator configValidator) {
+        Objects.requireNonNull(configValidator, "Validator should not be null");
+        this.configValidators.add(configValidator);
         return this;
     }
 
@@ -611,6 +680,24 @@ public class GestaltBuilder {
         metricsManager.addMetricsRecorders(metricsRecorders);
         return this;
     }
+
+    /**
+     * Sets the ValidationManager if you want to provide your own. Otherwise, a default is provided.
+     *
+     * <p>If there are any Validators, it will not add the default Validators.
+     * So you will need to add the defaults manually if needed.
+     *
+     * @param validationManager Validation Manager
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setValidationManager(ValidationManager validationManager) {
+        Objects.requireNonNull(validationManager, "ValidationManager should not be null");
+        this.validationManager = validationManager;
+        validationManager.addValidators(configValidators);
+        return this;
+    }
+
+
 
     /**
      * Set the decoder service if you want to provide your own. Otherwise a default is provided.
@@ -791,6 +878,17 @@ public class GestaltBuilder {
      */
     public GestaltBuilder setMetricsEnabled(Boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
+        return this;
+    }
+
+    /**
+     * If we are to enable validation.
+     *
+     * @param validationEnabled If we are to enable validation
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setValidationEnabled(Boolean validationEnabled) {
+        this.validationEnabled = validationEnabled;
         return this;
     }
 
@@ -1022,18 +1120,28 @@ public class GestaltBuilder {
             logger.log(TRACE, "No decoders provided, using defaults");
             addDefaultDecoders();
         }
+        decoders = decoders.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
         // setup the default path mappers, if there are none, add the default ones.
         if (pathMappers.isEmpty()) {
             logger.log(TRACE, "No path mapper provided, using defaults");
             addDefaultPathMappers();
         }
+        pathMappers = pathMappers.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
         // setup the default metricsRecorders, if there are none add the default ones.
         if (metricsRecorders.isEmpty()) {
             logger.log(TRACE, "No metric recorders provided, using defaults");
             addDefaultMetricsRecorder();
         }
+        metricsRecorders = metricsRecorders.stream().filter(Objects::nonNull).collect(Collectors.toList());
+
+        // setup the default validators, if there are none add the default ones.
+        if (configValidators.isEmpty()) {
+            logger.log(TRACE, "No validators recorders provided, using defaults");
+            addDefaultValidators();
+        }
+        configValidators = configValidators.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
 
         // if the metricsManager does not exist, create it.
@@ -1042,6 +1150,14 @@ public class GestaltBuilder {
             metricsManager = new MetricsManager(metricsRecorders);
         } else {
             metricsManager.addMetricsRecorders(metricsRecorders);
+        }
+
+        // if the metricsManager does not exist, create it.
+        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
+        if (validationManager == null) {
+            validationManager = new ValidationManager(configValidators);
+        } else {
+            validationManager.addValidators(configValidators);
         }
 
         // if the decoderService does not exist, create it.
@@ -1060,11 +1176,13 @@ public class GestaltBuilder {
             logger.log(TRACE, "No decoders provided, using defaults");
             addDefaultConfigLoaders();
         }
+        configLoaders = configLoaders.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
         if (postProcessors.isEmpty()) {
             logger.log(TRACE, "No post processors provided, using defaults");
             addDefaultPostProcessors();
         }
+        postProcessors = postProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
         // get all the config loaders from the configLoaderRegistry, combine them with the ones in the builder,
         // and update the configLoaderRegistry
@@ -1078,11 +1196,13 @@ public class GestaltBuilder {
         configurePostProcessors();
         configurePathMappers();
         configureMetricsRecorders();
+        configureValidators();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
-            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, metricsManager, defaultTags);
+            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, metricsManager,
+            validationManager, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
@@ -1151,6 +1271,9 @@ public class GestaltBuilder {
 
         newConfig.setMetricsEnabled(Objects.requireNonNullElseGet(metricsEnabled,
             () -> gestaltConfig.isMetricsEnabled()));
+
+        newConfig.setValidationEnabled(Objects.requireNonNullElseGet(validationEnabled,
+            () -> gestaltConfig.isValidationEnabled()));
 
         return newConfig;
     }

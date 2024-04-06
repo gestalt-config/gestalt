@@ -41,6 +41,7 @@ testing {
                 implementation(project(":gestalt-micrometer"))
                 implementation(project(":gestalt-json"))
                 implementation(project(":gestalt-toml"))
+                implementation(project(":gestalt-validator-hibernate"))
                 implementation(project(":gestalt-vault"))
                 implementation(project(":gestalt-yaml"))
 
@@ -54,6 +55,10 @@ testing {
                 implementation(project(":gestalt-guice"))
                 implementation(libs.testcontainers.junit5)
                 implementation(libs.micrometer)
+
+                implementation(libs.hibernate.validator)
+
+                implementation(libs.expressly)
             }
         }
     }

@@ -2,18 +2,21 @@ package org.github.gestalt.config;
 
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.metrics.MetricsRecorder;
 import org.github.gestalt.config.metrics.TestMetricsRecorder;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoOptional;
+import org.github.gestalt.config.validation.TestConfigValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +62,58 @@ public class GestaltMetricsTest {
         Assertions.assertEquals("db.password", metricsRecorder.metrics.get("db.password").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db.password").data);
         Assertions.assertEquals(Tags.environment("dev"), metricsRecorder.metrics.get("db.password").tags);
+    }
+
+    @Test
+    public void testMetricsGetOkNoMetricRecorder() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setMetricsEnabled(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
+    }
+
+    @Test
+    public void testMetricsGetOkNullMetricRecorder() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        var metricRecordersArray = new ArrayList<MetricsRecorder>();
+        metricRecordersArray.add(null);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setMetricsEnabled(true)
+            .addMetricsRecorders(metricRecordersArray)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
     }
 
     @Test
@@ -305,6 +360,84 @@ public class GestaltMetricsTest {
 
         Assertions.assertEquals(1, metricsRecorder.metrics.get("get.config.warning").data);
         Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("get.config.warning").tags);
+    }
+
+    @Test
+    public void testMetricsGetFailValidation() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        var metricsRecorder = new TestMetricsRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setMetricsRecorders(List.of(metricsRecorder))
+            .setMetricsEnabled(true)
+            .setValidationEnabled(true)
+            .addValidator(new TestConfigValidator(false))
+            .build();
+
+        gestalt.loadConfigs();
+
+        var ex = Assertions.assertThrows(GestaltException.class,
+            () -> gestalt.getConfig("db", DBInfo.class, Tags.environment("dev")));
+
+
+        Assertions.assertEquals("Validation failed for config path: db, and class: " +
+            "org.github.gestalt.config.test.classes.DBInfo\n" +
+            " - level: ERROR, message: something broke", ex.getMessage());
+        Assertions.assertEquals("db", metricsRecorder.metrics.get("db").path);
+        Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db").data);
+        Assertions.assertEquals(Tags.of("environment", "dev", "exception", "org.github.gestalt.config.exceptions.GestaltException"),
+            metricsRecorder.metrics.get("db").tags);
+
+        Assertions.assertEquals(1.0, metricsRecorder.metrics.get("get.config.validation.error").data);
+        Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("get.config.validation.error").tags);
+    }
+
+    @Test
+    public void testMetricsGetFailValidationOptional() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        var metricsRecorder = new TestMetricsRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setMetricsRecorders(List.of(metricsRecorder))
+            .setMetricsEnabled(true)
+            .setValidationEnabled(true)
+            .addValidator(new TestConfigValidator(false))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db", DBInfo.class, Tags.environment("dev")).isEmpty());
+
+        Assertions.assertEquals("db", metricsRecorder.metrics.get("db").path);
+        Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db").data);
+        Assertions.assertEquals(Tags.of("environment", "dev", "default", "true"), metricsRecorder.metrics.get("db").tags);
+
+        Assertions.assertEquals(1.0, metricsRecorder.metrics.get("get.config.validation.error").data);
+        Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("get.config.validation.error").tags);
     }
 
     @Test

@@ -7,7 +7,7 @@ kotlin = "1.9.23"
 kotlinDokka = "1.9.20"
 # Kotlin DI
 kodeinDI = "7.21.2"
-koinDI = "3.5.3"
+koinDI = "3.5.4"
 # Java DI
 guice = "7.0.0"
 # @pin
@@ -20,8 +20,8 @@ weldCore = "4.0.3.Final"
 jackson = "2.17.0"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.23"
-gcpLibraries = "26.35.0"
+awsBom = "2.25.26"
+gcpLibraries = "26.37.0"
 # vault
 vault = "6.2.0"
 # Git support
@@ -29,6 +29,9 @@ jgit = "6.9.0.202403050737-r"
 eddsa = "0.3.0"
 # metrics
 micrometer = "1.12.4"
+# validation
+hibernateValidator = "8.0.1.Final"
+expressly = "5.0.0"
 # testing
 junit5 = "5.10.2"
 assertJ = "3.25.3"
@@ -47,7 +50,7 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.25.3"
+gestalt = "0.27.0"
 # Gradle utility
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"
@@ -93,6 +96,9 @@ jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", ver
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 # metrics
 micrometer = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
+# configValidators
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernateValidator" }
+expressly = { module = "org.glassfish.expressly:expressly", version.ref = "expressly" }
 # Testing
 junitAPI = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
@@ -127,7 +133,9 @@ gestalt-json = { module = "com.github.gestalt-config:gestalt-json", version.ref 
 gestalt-kodein-di = { module = "com.github.gestalt-config:gestalt-kodein-di", version.ref = "gestalt" }
 gestalt-koin-di = { module = "com.github.gestalt-config:gestalt-koin-di", version.ref = "gestalt" }
 gestalt-kotlin = { module = "com.github.gestalt-config:gestalt-kotlin", version.ref = "gestalt" }
+gestalt-micrometer = { module = "com.github.gestalt-config:gestalt-micrometer", version.ref = "gestalt" }
 gestalt-toml = { module = "com.github.gestalt-config:gestalt-toml", version.ref = "gestalt" }
+gestalt-hibernate = { module = "com.github.gestalt-config:gestalt-validator-hibernate", version.ref = "gestalt" }
 gestalt-vault = { module = "com.github.gestalt-config:gestalt-vault", version.ref = "gestalt" }
 gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
 

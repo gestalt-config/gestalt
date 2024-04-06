@@ -26,6 +26,10 @@ public class MainClass {
         configTest.integrationTestPostProcessorSystem();
         configTest.integrationTestPostProcessorNode();
         configTest.integrationTestCamelCase();
+        configTest.testEscapedSubstitution();
+        configTest.testMetrics();
+        configTest.testValidationOk();
+        configTest.testValidationError();
 
         if( Boolean.parseBoolean(System.getenv("LOCAL_TEST"))) {
             configTest.integrationTestGoogleCloud();

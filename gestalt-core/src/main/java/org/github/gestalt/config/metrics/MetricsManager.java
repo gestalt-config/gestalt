@@ -19,7 +19,9 @@ public final class MetricsManager {
     private final Map<String, MetricsRecorder> metricsRecorders;
 
     public MetricsManager(List<MetricsRecorder> recorder) {
-        this.metricsRecorders = recorder.stream().collect(Collectors.toMap(MetricsRecorder::recorderId, Function.identity()));
+        this.metricsRecorders = recorder
+            .stream()
+            .collect(Collectors.toMap(MetricsRecorder::recorderId, Function.identity()));
     }
 
     public void addMetricsRecorder(MetricsRecorder recorder) {

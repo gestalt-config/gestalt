@@ -24,12 +24,14 @@ import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
+import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.validation.ValidationManager;
 
 import java.util.*;
 
@@ -61,6 +63,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final MetricsManager metricsManager;
 
+    private final ValidationManager validationManager;
+
     private final DecoderContext decoderContext;
 
     /**
@@ -77,13 +81,14 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param postProcessor        postProcessor list of post processors
      * @param secretConcealer      Utility for concealing secrets
      * @param metricsManager       Manages reporting of metrics
+     * @param validationManager    Validation Manager, for validating configuration objects
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
                        ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
                        List<PostProcessor> postProcessor, SecretConcealer secretConcealer,
-                       MetricsManager metricsManager, Tags defaultTags) {
+                       MetricsManager metricsManager, ValidationManager validationManager, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
         this.decoderService = decoderService;
@@ -94,6 +99,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
         this.secretConcealer = secretConcealer;
         this.metricsManager = metricsManager;
+        this.validationManager = validationManager;
         this.defaultTags = defaultTags;
         this.decoderContext = new DecoderContext(decoderService, this, secretConcealer);
     }
@@ -292,7 +298,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         // most likely an optional.empty()
         Pair<Boolean, T> isOptionalAndDefault = ClassUtils.isOptionalAndDefault(klass.getRawType());
 
-        return getConfigInternal(path, !isOptionalAndDefault.getFirst(), isOptionalAndDefault.getSecond(), klass, tags);
+        return getConfigurationInternal(path, !isOptionalAndDefault.getFirst(), isOptionalAndDefault.getSecond(), klass, tags);
     }
 
     @Override
@@ -323,7 +329,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(tags);
 
         try {
-            return getConfigInternal(path, false, defaultVal, klass, tags);
+            return getConfigurationInternal(path, false, defaultVal, klass, tags);
         } catch (GestaltException e) {
             logger.log(WARNING, e.getMessage());
         }
@@ -359,7 +365,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(tags);
 
         try {
-            var results = getConfigInternal(path, false, null, klass, tags);
+            var results = getConfigurationInternal(path, false, null, klass, tags);
             return Optional.ofNullable(results);
         } catch (GestaltException e) {
             logger.log(WARNING, e.getMessage());
@@ -368,13 +374,15 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return Optional.empty();
     }
 
-    private <T> T getConfigInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags)
+    private <T> T getConfigurationInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags)
         throws GestaltException {
 
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
         MetricsMarker getConfigMarker = null;
+        boolean defaultReturned = false;
+        Exception exceptionThrown = null;
         try {
             if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
                 getConfigMarker = metricsManager.startGetConfig(path, klass, tags, failOnErrors);
@@ -385,7 +393,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             if (tokens.hasErrors()) {
                 throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
             } else {
-                GResultOf<T> results = getConfigInternal(combinedPath, tokens.results(), klass, tags);
+                GResultOf<T> results = getAndDecodeConfig2(combinedPath, tokens.results(), klass, tags);
 
                 getConfigMetrics(results);
 
@@ -399,9 +407,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                                 ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
                             logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
                         }
-                        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                            metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
-                        }
+                        defaultReturned = true;
 
                         return defaultVal;
                     }
@@ -413,11 +419,35 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 }
 
                 if (results.hasResults()) {
-                    if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                        metricsManager.finalizeMetric(getConfigMarker, Tags.of());
+                    var resultConfig = results.results();
+
+                    // if we have a result, lets check if validation is enabled and if we should validate the object,
+                    // then validate the result.
+                    if (gestaltConfig.isValidationEnabled() && shouldValidate(klass)) {
+                        var validationResults = validationManager.validator(resultConfig, path, klass, tags);
+                        // if there are validation errors we can either fail with an exception or return the default value.
+                        if (validationResults.hasErrors()) {
+                            updateValidationMetrics(validationResults);
+
+                            if (failOnErrors) {
+                                throw new GestaltException("Validation failed for config path: " + combinedPath +
+                                    ", and class: " + klass.getName(), validationResults.getErrors());
+
+                            } else {
+                                if (logger.isLoggable(WARNING)) {
+                                    String errorMsg = ErrorsUtil.buildErrorMessage("Validation failed for config path: " +
+                                        combinedPath + ", and class: " + klass.getName() + " returning default value",
+                                        validationResults.getErrors());
+                                    logger.log(WARNING, errorMsg);
+                                }
+                                defaultReturned = true;
+
+                                return defaultVal;
+                            }
+                        }
                     }
 
-                    return results.results();
+                    return resultConfig;
                 }
             }
 
@@ -430,22 +460,33 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             if (failOnErrors) {
                 throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
             } else {
-                if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                    metricsManager.finalizeMetric(getConfigMarker, Tags.of("default", "true"));
-                }
+                defaultReturned = true;
 
                 return defaultVal;
             }
         } catch (Exception ex) {
-            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                metricsManager.finalizeMetric(getConfigMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
-            }
-
+            exceptionThrown = ex;
             throw ex;
+        } finally {
+            finalizeMetrics(getConfigMarker, defaultReturned, exceptionThrown);
         }
     }
 
-    private <T> GResultOf<T> getConfigInternal(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
+    private void finalizeMetrics(MetricsMarker getConfigMarker, boolean defaultReturned, Exception exceptionThrown) {
+        if (gestaltConfig.isMetricsEnabled() && metricsManager != null && getConfigMarker != null) {
+            Set<Tag> tagSet = new HashSet<>();
+            if (defaultReturned) {
+                tagSet.add(Tag.of("default", "true"));
+            }
+
+            if (exceptionThrown != null) {
+                tagSet.add(Tag.of("exception", exceptionThrown.getClass().getCanonicalName()));
+            }
+            metricsManager.finalizeMetric(getConfigMarker, Tags.of(tagSet));
+        }
+    }
+
+    private <T> GResultOf<T> getAndDecodeConfig2(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
         GResultOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
 
         if (!node.hasErrors() || node.hasErrors(ValidationLevel.MISSING_VALUE)) {
@@ -507,6 +548,15 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
+    private <T> void updateValidationMetrics(GResultOf<T> results) {
+        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+            int validationErrors = results.getErrors().size();
+            if (validationErrors != 0) {
+                metricsManager.recordMetric("get.config.validation.error", validationErrors, Tags.of());
+            }
+        }
+    }
+
     private boolean ignoreError(ValidationError error) {
         if (error.level().equals(ValidationLevel.WARN) && gestaltConfig.isTreatWarningsAsErrors()) {
             return false;
@@ -520,6 +570,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         return error.level() == ValidationLevel.WARN || error.level() == ValidationLevel.DEBUG;
+    }
+
+    private <T> boolean shouldValidate(TypeCapture<T> klass) {
+        return !klass.isAssignableFrom(String.class) && !ClassUtils.isPrimitiveOrWrapper(klass.getRawType());
     }
 
     /**

@@ -2,7 +2,7 @@
  * Module info definition for gestalt yaml integration
  */
 @SuppressWarnings({ "requires-transitive-automatic" })
-module org.github.gestalt.metrics {
+module org.github.gestalt.micrometer {
     requires org.github.gestalt.core;
     requires transitive micrometer.core;
 

@@ -48,6 +48,9 @@ public class GestaltConfig {
     // if metrics should be enabled
     private boolean metricsEnabled = false;
 
+    // if validation should be enabled.
+    private boolean validationEnabled = false;
+
     /**
      * Treat all warnings as errors.
      *
@@ -331,6 +334,24 @@ public class GestaltConfig {
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
+    }
+
+    /**
+     * Get if validation is enabled.
+     *
+     * @return if validation is enabled
+     */
+    public boolean isValidationEnabled() {
+        return validationEnabled;
+    }
+
+    /**
+     * Set if validation is enabled.
+     *
+     * @param validationEnabled if validation is enabled.
+     */
+    public void setValidationEnabled(boolean validationEnabled) {
+        this.validationEnabled = validationEnabled;
     }
 
     /**

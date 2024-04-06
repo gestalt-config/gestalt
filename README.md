@@ -994,7 +994,7 @@ By default, the builder has several rules predefined [here](https://github.com/g
 # Additional Modules
 
 ## Micrometer Metrics
-Gestalt exposes several metrics and provides a implementation for micrometer. 
+Gestalt exposes several metrics and provides a implementation for [micrometer](https://micrometer.io/). 
 
 To import the micrometer implementation add `gestalt-micrometer` to your build files. 
 
@@ -1013,13 +1013,10 @@ implementation("com.github.gestalt-config:gestalt-micrometer:${version}")
 
 Then when building gestalt, you need to register the module config `MicrometerModuleConfig` using the `MicrometerModuleConfigBuilder`. 
 
-An example of using the registering the `MicrometerModuleConfig` using the `MicrometerModuleConfigBuilder`.
-
 ```java
 SimpleMeterRegistry registry = new SimpleMeterRegistry();
 
-GestaltBuilder builder = new GestaltBuilder();
-Gestalt gestalt = builder
+Gestalt gestalt = new GestaltBuilder()
     .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
     .setMetricsEnabled(true)
     .addModuleConfig(MicrometerModuleConfigBuilder.builder()
@@ -1053,6 +1050,47 @@ The following metrics are exposed
 | get.config.warning | Incremented for warning error while getting a configuration, if decoding a class this can be more than one. | Counter  |                                                                                                               | 
 | cache.hit          | Incremented for each request served from the cache. A cache miss would be recorded in the metric config.get | Counter  |                                                                                                               |
 
+
+## Hibernate Validator
+Gestalt allows a validator to hook into and validate calls to get a configuration object.  Gestalt includes a [Hibernate Bean Validator](https://hibernate.org/validator/) implementation. 
+
+If the object decoded fails to validate, a `GestaltException` is thrown with the details of the failed validations. 
+For calls to `getConfig` with a default value it will log the failed validations then return the default value. 
+For calls to `getConfigOptional` it will log the failed validations then return an `Optional.empty()`.
+
+To import the Hibernate Validator implementation add `gestalt-validator-hibernate` to your build files.
+
+In Maven:
+```xml
+<dependency>
+  <groupId>com.github.gestalt-config</groupId>
+  <artifactId>gestalt-validator-hibernate</artifactId>
+  <version>${version}</version>
+</dependency>
+```
+Or in Gradle
+```kotlin
+implementation("com.github.gestalt-config:gestalt-validator-hibernate:${version}")
+```
+
+Then when building gestalt, you need to register the module config `HibernateModuleConfig` using the `HibernateModuleBuilder`.
+
+```java
+ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+Validator validator = factory.getValidator();
+
+Gestalt gestalt = new GestaltBuilder()
+  .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+  .setValidationEnabled(true)
+  .addModuleConfig(HibernateModuleBuilder.builder()
+    .setValidator(validator)
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+```
+
+For details on how to use the [Hibernate Validator](https://hibernate.org/validator/) see their documentation. 
 
 ## Guice dependency injection.
 Allow Gestalt to inject configuration directly into your classes using Guice using the `@InjectConfig` annotation on any class fields. This does not support constructor injection (due to Guice limitation)

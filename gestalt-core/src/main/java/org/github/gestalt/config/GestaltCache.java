@@ -31,6 +31,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
      *
      * @param delegate    real Gestalt to call for configs to cache.
      * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     * @param metricsManager Metrics manager for submitting metrics
+     * @param gestaltConfig Gestalt Configuration
      */
     public GestaltCache(Gestalt delegate, Tags defaultTags, MetricsManager metricsManager, GestaltConfig gestaltConfig) {
         this.delegate = delegate;
