@@ -26,21 +26,25 @@ import static java.util.logging.Level.*;
 public abstract class Benchmarks {
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     public String GestaltConfig_String(BenchmarkState state) throws GestaltException {
         return state.gestalt.getConfig("http.pool.maxTotal", String.class);
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     public HttpPool GestaltConfig_Object(BenchmarkState state) throws GestaltException {
         return state.gestalt.getConfig("http.pool", HttpPool.class);
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     public String GestaltConfig_String_No_Cache(BenchmarkState state) throws GestaltException {
         return state.gestaltNoCache.getConfig("http.pool.maxTotal", String.class);
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     public HttpPool GestaltConfig_Object_No_Cache(BenchmarkState state) throws GestaltException {
         return state.gestaltNoCache.getConfig("http.pool", HttpPool.class);
     }

@@ -54,7 +54,7 @@ jmh {
 
     // Benchmarks
     fork.set(2)
-    iterations.set(5)
+    iterations.set(10)
     timeOnIteration.set("10s")
 
 

@@ -35,7 +35,7 @@ public final class HibernateConfigValidator implements ConfigValidator {
     @Override
     public void applyConfig(GestaltConfig config) {
         HibernateModuleConfig moduleConfig = config.getModuleConfig(HibernateModuleConfig.class);
-        if (moduleConfig == null ) {
+        if (moduleConfig == null) {
             logger.log(System.Logger.Level.WARNING, "Hibernate Validator will be set to the defaults and use a " +
                 "Validation.buildDefaultValidatorFactory() to build a Validator, please register a HibernateModuleConfig with " +
                 "gestalt builder to customize the validation.");
