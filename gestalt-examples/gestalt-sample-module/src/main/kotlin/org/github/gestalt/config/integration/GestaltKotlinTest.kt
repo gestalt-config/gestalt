@@ -26,6 +26,7 @@ class GestaltKotlinTest {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)
@@ -43,6 +44,7 @@ class GestaltKotlinTest {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(EnvironmentConfigSourceBuilder.builder().build())
+            .setTreatMissingValuesAsErrors(false)
             .build()
         gestalt.loadConfigs()
         testValidation(gestalt)
@@ -67,6 +69,7 @@ class GestaltKotlinTest {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
             .build()
         gestalt.loadConfigs()
         val pool: HttpPool = gestalt.getConfig("http.pool", KTypeCapture.of<HttpPool>(typeOf<HttpPool>())) as HttpPool
@@ -206,7 +209,7 @@ class GestaltKotlinTest {
         var connectionTimeout = 0
         var idleTimeout: Int? = null
         var maxLifetime = 0f
-        var isEnabled: Boolean? = null
+        var isEnabled: Boolean? = null;
     }
 
     class User {

@@ -18,14 +18,25 @@ dependencies {
     implementation(libs.gestalt.guice)
     implementation(libs.gestalt.hocon)
     implementation(libs.gestalt.kotlin)
+    implementation(libs.gestalt.micrometer)
     implementation(libs.gestalt.json)
     implementation(libs.gestalt.toml)
+    implementation(libs.gestalt.hibernate)
     implementation(libs.gestalt.vault)
     implementation(libs.gestalt.yaml)
 
     implementation(libs.junitAPI)
+    implementation(libs.assertJ)
     implementation(libs.aws.mock)
     implementation(libs.guice)
+
+    implementation(libs.micrometer)
+
+    implementation(libs.hibernate.validator)
+    implementation(libs.expressly)
+
+    testImplementation(libs.junitAPI)
+    testImplementation(libs.assertJ)
 }
 
 java {

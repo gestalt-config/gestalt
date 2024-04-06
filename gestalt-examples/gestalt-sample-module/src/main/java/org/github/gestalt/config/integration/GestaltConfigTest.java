@@ -1,10 +1,19 @@
 package org.github.gestalt.config.integration;
 
+import com.github.gestalt.config.validation.hibernate.builder.HibernateModuleBuilder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import io.github.jopenlibs.vault.Vault;
 import io.github.jopenlibs.vault.VaultConfig;
 import io.github.jopenlibs.vault.VaultException;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
@@ -16,6 +25,7 @@ import org.github.gestalt.config.git.GitConfigSourceBuilder;
 import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
+import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
@@ -26,6 +36,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.vault.config.VaultBuilder;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -50,10 +61,10 @@ public class GestaltConfigTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
@@ -73,11 +84,11 @@ public class GestaltConfigTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .useCacheDecorator(false)
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
@@ -95,14 +106,14 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
-                .addSource(ClassPathConfigSourceBuilder.builder()
-                    .setResource("dev.properties")
-                    .setTags(Tags.of("toy", "ball"))
-                    .build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
-                .build();
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(fileURL).build())
+            .addSource(ClassPathConfigSourceBuilder.builder()
+                .setResource("dev.properties")
+                .setTags(Tags.of("toy", "ball"))
+                .build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig("db.idleTimeout=123").setFormat("properties").build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -159,11 +170,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(URLConfigSourceBuilder.builder().setSourceURL(urlFile).build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .addSource(EnvironmentConfigSourceBuilder.builder().build())
-                .build();
+            .addSource(URLConfigSourceBuilder.builder().setSourceURL(urlFile).build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(EnvironmentConfigSourceBuilder.builder().build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -185,10 +196,10 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.json").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.json").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.json").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.json").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -204,10 +215,10 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.yml").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.yml").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -223,10 +234,10 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.json").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.json").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -242,10 +253,10 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.conf").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.conf").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.yml").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -261,10 +272,10 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.conf").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.toml").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.conf").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.toml").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -283,17 +294,17 @@ public class GestaltConfigTest {
 
 
         GitConfigSourceBuilder gitBuilder = GitConfigSourceBuilder.builder()
-                .setRepoURI("https://github.com/gestalt-config/gestalt.git")
-                .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
-                .setLocalRepoDirectory(configDirectory);
+            .setRepoURI("https://github.com/gestalt-config/gestalt.git")
+            .setConfigFilePath("gestalt-examples/gestalt-sample/src/test/resources/default.properties")
+            .setLocalRepoDirectory(configDirectory);
         ConfigSourcePackage source = gitBuilder.build();
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(source)
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(source)
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -336,10 +347,10 @@ public class GestaltConfigTest {
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
-                .addSource(GCSConfigSourceBuilder.builder().setBucketName("gestalt-test").setObjectName("dev.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(GCSConfigSourceBuilder.builder().setBucketName("gestalt-test").setObjectName("dev.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
@@ -385,25 +396,25 @@ public class GestaltConfigTest {
         admin.overrideEnabled=true
          */
         S3Client s3Client = S3Client.builder()
-                .credentialsProvider(DefaultCredentialsProvider.create())
-                .region(Region.US_EAST_1)
-                .httpClient(UrlConnectionHttpClient.builder().build())
-                .build();
+            .credentialsProvider(DefaultCredentialsProvider.create())
+            .region(Region.US_EAST_1)
+            .httpClient(UrlConnectionHttpClient.builder().build())
+            .build();
 
 
         // using the builder to layer on the configuration files.
         // The later ones layer on and over write any values in the previous
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
-                .addSource(S3ConfigSourceBuilder.builder()
-                    .setS3(s3Client)
-                    .setBucketName("gestalt-test")
-                    .setKeyName("dev.properties")
-                    .build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(S3ConfigSourceBuilder.builder()
+                .setS3(s3Client)
+                .setBucketName("gestalt-test")
+                .setKeyName("dev.properties")
+                .build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addModuleConfig(AWSBuilder.builder().setRegion("us-east-1").build())
+            .build();
 
         // Load the configurations, this will thow exceptions if there are any errors.
         gestalt.loadConfigs();
@@ -423,9 +434,9 @@ public class GestaltConfigTest {
 
 
         final VaultConfig config = new VaultConfig()
-                .address("http://127.0.0.1:8080")
-                .token(VAULT_TOKEN)
-                .build();
+            .address("http://127.0.0.1:8080")
+            .token(VAULT_TOKEN)
+            .build();
 
         Vault vault = Vault.create(config);
 
@@ -438,11 +449,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPVault.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .addModuleConfig(vaultModuleConfig)
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPVault.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addModuleConfig(vaultModuleConfig)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -484,7 +495,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals(600, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
+        Assertions.assertTrue(db.isEnabled);
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
@@ -508,7 +519,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals(600, dbPrefix.connectionTimeout);
         Assertions.assertEquals(123, dbPrefix.idleTimeout);
         Assertions.assertEquals(60000.0F, dbPrefix.maxLifetime);
-        Assertions.assertNull(dbPrefix.isEnabled);
+        Assertions.assertTrue(dbPrefix.isEnabled);
 
         Assertions.assertEquals(3, dbPrefix.hosts.size());
         Assertions.assertEquals("credmond", dbPrefix.hosts.getFirst().getUser());
@@ -635,7 +646,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals(600, gestalt.getConfig("DB.connectionTimeout", Integer.class));
         Assertions.assertEquals(123, db.idleTimeout);
         Assertions.assertEquals(60000.0F, db.maxLifetime);
-        Assertions.assertNull(db.isEnabled);
+        Assertions.assertTrue(db.isEnabled);
         Assertions.assertTrue(gestalt.getConfig("db.isEnabled", true, Boolean.class));
 
         Assertions.assertEquals(3, db.hosts.size());
@@ -673,11 +684,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPEnv.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .addDefaultPostProcessors()
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPEnv.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDefaultPostProcessors()
+            .build();
 
         gestalt.loadConfigs();
 
@@ -712,11 +723,11 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .build();
 
         gestalt.loadConfigs();
 
@@ -729,7 +740,7 @@ public class GestaltConfigTest {
         Assertions.assertEquals("booking", booking.getService().getPath());
         Assertions.assertNotNull(gestalt.getConfig("appUUID", UUID.class));
         Assertions.assertTrue(gestalt.getConfig("appId", Integer.class) == 20 ||
-                gestalt.getConfig("appId", Integer.class) == 21);
+            gestalt.getConfig("appId", Integer.class) == 21);
     }
 
     public void integrationTestPostProcessorNode() throws GestaltException {
@@ -742,10 +753,10 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPNode.properties").build())
-                .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPNode.properties").build())
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -769,8 +780,8 @@ public class GestaltConfigTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-                .build();
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
 
         gestalt.loadConfigs();
 
@@ -778,6 +789,161 @@ public class GestaltConfigTest {
         Assertions.assertEquals("myHost", connection.getUri());
         Assertions.assertEquals(1234, connection.getDbPort());
         Assertions.assertEquals("usersTable", connection.getDbPath());
+    }
+
+
+    @Test
+    public void testSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "hello ${place} it is ${weather} today");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        Assertions.assertEquals("hello world it is sunny today", message);
+    }
+
+    @Test
+    public void testNestedSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("variable", "place");
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "hello ${${variable}} it is ${weather} today");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        Assertions.assertEquals("hello world it is sunny today", message);
+    }
+
+    @Test
+    public void testEscapedSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "hello \\${place} it is ${weather} today");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        Assertions.assertEquals("hello ${place} it is sunny today", message);
+    }
+
+    @Test
+    public void testMetrics() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        SimpleMeterRegistry registry = new SimpleMeterRegistry();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setMetricsEnabled(true)
+            .addModuleConfig(MicrometerModuleConfigBuilder.builder()
+                .setMeterRegistry(registry)
+                .setPrefix("myApp")
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+
+        org.assertj.core.api.Assertions.assertThat(registry.getMetersAsString())
+            .startsWith("myApp.config.get(TIMER)[]; count=1.0, total_time=");
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+
+        org.assertj.core.api.Assertions.assertThat(registry.getMetersAsString())
+            .contains("myApp.config.get(TIMER)[]; count=1.0, total_time=")
+            .contains("myApp.cache.hit(COUNTER)[]; count=1.0");
+    }
+
+    @Test
+    public void testValidationOk() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setValidationEnabled(true)
+            .addModuleConfig(HibernateModuleBuilder.builder()
+                .setValidator(validator)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).password);
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfo.class).port);
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfoValid.class).password);
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfoValid.class).port);
+    }
+
+    @Test
+    public void testValidationError() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "12345678901234567890");
+        configs.put("db.port", "0");
+        configs.put("db.uri", "my.sql.com");
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setValidationEnabled(true)
+            .addModuleConfig(HibernateModuleBuilder.builder()
+                .setValidator(validator)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("12345678901234567890", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("12345678901234567890", gestalt.getConfig("db", DBInfo.class).password);
+        Assertions.assertEquals(0, gestalt.getConfig("db", DBInfo.class).port);
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoValid.class));
+
+        org.assertj.core.api.Assertions.assertThat(ex.getMessage())
+            .startsWith("Validation failed for config path: db, and " +
+                "class: org.github.gestalt.config.integration.GestaltConfigTest$DBInfoValid")
+            .contains("- level: ERROR, message: Hibernate Validator, on path: db, error: size must be between 2 and 14")
+            .contains("- level: ERROR, message: Hibernate Validator, on path: db, error: port should not be less than 10");
     }
 
 
@@ -924,7 +1090,7 @@ public class GestaltConfigTest {
         public int connectionTimeout;
         public Integer idleTimeout;
         public float maxLifetime;
-        public Boolean isEnabled;
+        public Boolean isEnabled = true;
 
 
         public DataBase() {
@@ -937,7 +1103,7 @@ public class GestaltConfigTest {
         public int connectionTimeout;
         public Integer idleTimeout;
         public float maxLifetime;
-        public Boolean isEnabled;
+        public Boolean isEnabled = true;
 
         public DataBasePrefix() {
         }
@@ -1040,6 +1206,99 @@ public class GestaltConfigTest {
 
         public void setDataBase(DataBase dataBase) {
             this.dataBase = dataBase;
+        }
+    }
+
+
+    public static class DBInfo {
+        private Integer port;
+        private String uri;
+        private String password;
+        @Config(defaultVal = "200")
+        private Integer connections;
+
+        public DBInfo() {
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Integer getConnections() {
+            return connections;
+        }
+
+        public void setConnections(Integer connections) {
+            this.connections = connections;
+        }
+    }
+
+    public static class DBInfoValid {
+
+        @Min(value = 10, message = "port should not be less than 10")
+        @Max(value = 200, message = "port should not be greater than 200")
+        private Integer port;
+        private String uri;
+        @NotNull
+        @Size(min = 2, max = 14)
+        private String password;
+        @NotNull
+        @Config(defaultVal = "200")
+        private Integer connections;
+
+        public DBInfoValid() {
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Integer getConnections() {
+            return connections;
+        }
+
+        public void setConnections(Integer connections) {
+            this.connections = connections;
         }
     }
 }

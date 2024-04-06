@@ -7,6 +7,8 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.path.mapper.PathMapper;
     uses org.github.gestalt.config.post.process.PostProcessor;
     uses org.github.gestalt.config.post.process.transform.Transformer;
+    uses org.github.gestalt.config.validation.ConfigValidator;
+    uses org.github.gestalt.config.metrics.MetricsRecorder;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -30,6 +32,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;
     exports org.github.gestalt.config.utils;
+    exports org.github.gestalt.config.validation;
 
     provides org.github.gestalt.config.decoder.Decoder with
         org.github.gestalt.config.decoder.ArrayDecoder,

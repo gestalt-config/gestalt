@@ -2,6 +2,7 @@ package org.github.gestalt.config.integration;
 
 
 import com.adobe.testing.s3mock.testcontainers.S3MockContainer;
+import com.github.gestalt.config.validation.hibernate.builder.HibernateModuleBuilder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import io.github.jopenlibs.vault.Vault;
@@ -9,6 +10,13 @@ import io.github.jopenlibs.vault.VaultConfig;
 import io.github.jopenlibs.vault.VaultException;
 import io.github.jopenlibs.vault.response.LogicalResponse;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
@@ -1391,6 +1399,67 @@ public class GestaltSample {
             .contains("myApp.cache.hit(COUNTER)[]; count=1.0");
     }
 
+    @Test
+    public void testValidationOk() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setValidationEnabled(true)
+            .addModuleConfig(HibernateModuleBuilder.builder()
+                .setValidator(validator)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).password);
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfo.class).port);
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfoValid.class).password);
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfoValid.class).port);
+    }
+
+    @Test
+    public void testValidationError() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "12345678901234567890");
+        configs.put("db.port", "0");
+        configs.put("db.uri", "my.sql.com");
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setValidationEnabled(true)
+            .addModuleConfig(HibernateModuleBuilder.builder()
+                .setValidator(validator)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("12345678901234567890", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("12345678901234567890", gestalt.getConfig("db", DBInfo.class).password);
+        Assertions.assertEquals(0, gestalt.getConfig("db", DBInfo.class).port);
+
+        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfoValid.class));
+        org.assertj.core.api.Assertions.assertThat(ex.getMessage())
+            .startsWith("Validation failed for config path: db, and " +
+                "class: org.github.gestalt.config.integration.GestaltSample$DBInfoValid")
+            .contains("- level: ERROR, message: Hibernate Validator, on path: db, error: size must be between 2 and 14")
+            .contains("- level: ERROR, message: Hibernate Validator, on path: db, error: port should not be less than 10");
+
+    }
 
     public enum Role {
         LEVEL0, LEVEL1
@@ -1724,6 +1793,102 @@ public class GestaltSample {
 
         public void setMaxTotal(Integer port) {
             this.maxTotal = port;
+        }
+    }
+
+    public static class DBInfo {
+        private Integer port;
+        private String uri;
+        private String password;
+
+        public DBInfo() {
+        }
+
+        @Config(defaultVal = "200")
+        private Integer connections;
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Integer getConnections() {
+            return connections;
+        }
+
+        public void setConnections(Integer connections) {
+            this.connections = connections;
+        }
+    }
+
+    public static class DBInfoValid {
+
+        public DBInfoValid() {
+        }
+
+        @Min(value = 10, message = "port should not be less than 10")
+        @Max(value = 200, message = "port should not be greater than 200")
+        private Integer port;
+
+        private String uri;
+
+        @NotNull
+        @Size(min = 2, max = 14)
+        private String password;
+
+        @NotNull
+        @Config(defaultVal = "200")
+        private Integer connections;
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Integer getConnections() {
+            return connections;
+        }
+
+        public void setConnections(Integer connections) {
+            this.connections = connections;
         }
     }
 }

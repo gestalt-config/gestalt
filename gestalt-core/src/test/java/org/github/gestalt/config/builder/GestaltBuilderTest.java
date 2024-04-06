@@ -35,6 +35,8 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.validation.TestConfigValidator;
+import org.github.gestalt.config.validation.ValidationManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -116,6 +118,10 @@ class GestaltBuilderTest {
             .addMetricsRecorders(List.of(new TestMetricsRecorder(1)))
             .setMetricsRecorders(List.of(new TestMetricsRecorder(0), new TestMetricsRecorder(1)))
             .setMetricsManager(new MetricsManager(List.of()))
+            .addValidator(new TestConfigValidator(true))
+            .addValidators(List.of(new TestConfigValidator(true)))
+            .setValidators(List.of(new TestConfigValidator(true)))
+            .setValidationManager(new ValidationManager(new ArrayList<>()))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
@@ -334,7 +340,8 @@ class GestaltBuilderTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
                 new StringDecoder(), new ObjectDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer, null, Tags.of());
+            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer,
+            null, null, Tags.of());
 
         gestalt.loadConfigs();
 
