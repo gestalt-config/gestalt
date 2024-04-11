@@ -2,7 +2,9 @@ package org.github.gestalt.config.hocon;
 
 import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigSyntax;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -67,6 +69,103 @@ class HoconLoaderTest {
     }
 
     @Test
+    void loadSourceModuleConfig() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("{\n" +
+            "  \"name\":\"Steve\",\n" +
+            "  \"age\":42,\n" +
+            "  \"cars\": [\n" +
+            "    { \"name\":\"Ford\", \"models\":[ \"Fiesta\", \"Focus\", \"Mustang\" ] },\n" +
+            "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
+            "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
+            "  ]\n" +
+            " } ", "conf");
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        var configParser = ConfigParseOptions.defaults();
+        var lexer = new PathLexer();
+        var moduleConfig = HoconModuleConfigBuilder.builder()
+            .setConfigParseOptions(configParser)
+            .setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        hoconLoader.applyConfig(config);
+
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfigGestaltConfigLexer() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("{\n" +
+            "  \"name\":\"Steve\",\n" +
+            "  \"age\":42,\n" +
+            "  \"cars\": [\n" +
+            "    { \"name\":\"Ford\", \"models\":[ \"Fiesta\", \"Focus\", \"Mustang\" ] },\n" +
+            "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
+            "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
+            "  ]\n" +
+            " } ", "conf");
+
+        HoconLoader hoconLoader = new HoconLoader();
+
+        var configParser = ConfigParseOptions.defaults();
+        var lexer = new PathLexer();
+        var moduleConfig = HoconModuleConfigBuilder.builder()
+            .setConfigParseOptions(configParser)
+            //.setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+        config.setSentenceLexer(lexer);
+
+        hoconLoader.applyConfig(config);
+
+        var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @Test
     void loadSourceChangeCase() throws GestaltException {
 
         StringConfigSource source = new StringConfigSource("{\n" +
@@ -80,6 +179,11 @@ class HoconLoaderTest {
             " } ", "conf");
 
         HoconLoader hoconLoader = new HoconLoader();
+
+        GestaltConfig config = new GestaltConfig();
+        config.setSentenceLexer(new PathLexer());
+
+        hoconLoader.applyConfig(config);
 
         var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
@@ -114,7 +218,8 @@ class HoconLoaderTest {
             "  ]\n" +
             " } ", "conf");
 
-        HoconLoader hoconLoader = new HoconLoader(ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON));
+        HoconLoader hoconLoader = new HoconLoader(ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON),
+            new PathLexer());
 
         var resultContainer = hoconLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());

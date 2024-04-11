@@ -3,6 +3,7 @@ package org.github.gestalt.config.post.process.transform;
 import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.SystemWrapper;
 
 /**
  * Allows you to inject Environment Variables into leaf values that match ${env:key},
@@ -21,10 +22,10 @@ public final class EnvironmentVariablesTransformer implements Transformer {
     public GResultOf<String> process(String path, String key, String rawValue) {
         if (key == null) {
             return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
-        } else if (System.getenv(key) == null) {
+        } else if (SystemWrapper.getEnvVars(key) == null) {
             return GResultOf.errors(new ValidationError.NoEnvironmentVariableFoundPostProcess(path, key));
         } else {
-            return GResultOf.result(System.getenv(key));
+            return GResultOf.result(SystemWrapper.getEnvVars(key));
         }
     }
 }

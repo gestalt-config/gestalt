@@ -31,6 +31,7 @@ public final class PathLexer extends SentenceLexer {
     private final Pattern pathPattern;
     private final String delimiter;
     private final String delimiterRegex;
+    private final SentenceNormalizer sentenceNormalizer;
 
     /**
      * Build a path lexer to tokenize a path.
@@ -39,6 +40,7 @@ public final class PathLexer extends SentenceLexer {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
         this.delimiter = DELIMITER_DEFAULT;
         this.delimiterRegex = Pattern.quote(DELIMITER_DEFAULT);
+        this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
     }
 
     /**
@@ -50,6 +52,7 @@ public final class PathLexer extends SentenceLexer {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
         this.delimiter = delimiter;
         this.delimiterRegex = Pattern.quote(delimiter);
+        this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
     }
 
     /**
@@ -65,6 +68,24 @@ public final class PathLexer extends SentenceLexer {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
         this.delimiter = delimiter;
         this.delimiterRegex = Pattern.quote(delimiter);
+        this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
+    }
+
+    /**
+     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
+     *
+     * @param delimiter        the character to split the sentence
+     * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
+     *                         name = name of the element
+     *                         array = if this element is an array
+     *                         index = the index for the array
+     * @param sentenceNormalizer defines how to normalize a sentence.
+     */
+    public PathLexer(String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
+        this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
+        this.delimiter = delimiter;
+        this.delimiterRegex = Pattern.quote(delimiter);
+        this.sentenceNormalizer = sentenceNormalizer;
     }
 
     @Override
@@ -120,5 +141,10 @@ public final class PathLexer extends SentenceLexer {
         }
 
         return results;
+    }
+
+    @Override
+    public String normalizeSentence(String sentence) {
+        return sentenceNormalizer.normalizeSentence(sentence);
     }
 }

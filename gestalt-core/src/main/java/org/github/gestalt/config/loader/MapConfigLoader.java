@@ -1,6 +1,7 @@
 package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -15,6 +16,7 @@ import org.github.gestalt.config.utils.Pair;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Loads an in memory map from MapConfigSource.
@@ -24,13 +26,22 @@ import java.util.Map;
 public final class MapConfigLoader implements ConfigLoader {
 
     private final ConfigParser parser;
-    private final SentenceLexer lexer;
+    private SentenceLexer lexer;
+    private final boolean isDefault;
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the MapConfigLoader we will use the default gestalt sentence lexer.
+        if (isDefault) {
+            lexer = config.getSentenceLexer();
+        }
+    }
 
     /**
      * Construct a default Map Config loader using the default path lexer for "." separated paths.
      */
     public MapConfigLoader() {
-        this(new PathLexer("."), new MapConfigParser());
+        this(new PathLexer(), new MapConfigParser(), true);
     }
 
     /**
@@ -40,8 +51,16 @@ public final class MapConfigLoader implements ConfigLoader {
      * @param parser Parser for the Map Config files
      */
     public MapConfigLoader(SentenceLexer lexer, ConfigParser parser) {
+        this(lexer, parser, false);
+    }
+
+    private MapConfigLoader(SentenceLexer lexer, ConfigParser parser, boolean isDefault) {
+        Objects.requireNonNull(lexer, "MapConfigLoader SentenceLexer should not be null");
+        Objects.requireNonNull(parser, "MapConfigLoader ConfigParser should not be null");
+
         this.lexer = lexer;
         this.parser = parser;
+        this.isDefault = isDefault;
     }
 
     @Override

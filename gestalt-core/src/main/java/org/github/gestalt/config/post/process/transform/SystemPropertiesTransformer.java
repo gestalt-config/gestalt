@@ -3,6 +3,7 @@ package org.github.gestalt.config.post.process.transform;
 import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.SystemWrapper;
 
 /**
  * Allows you to inject System Properties into leaf values that match ${envVar:key},
@@ -21,10 +22,10 @@ public final class SystemPropertiesTransformer implements Transformer {
     public GResultOf<String> process(String path, String key, String rawValue) {
         if (key == null) {
             return GResultOf.errors(new ValidationError.InvalidStringSubstitutionPostProcess(path, rawValue, name()));
-        } else if (!System.getProperties().containsKey(key)) {
+        } else if (!SystemWrapper.getProperties().containsKey(key)) {
             return GResultOf.errors(new ValidationError.NoSystemPropertyFoundPostProcess(path, key));
         } else {
-            return GResultOf.result(System.getProperties().get(key).toString());
+            return GResultOf.result(SystemWrapper.getProperties().get(key).toString());
         }
     }
 }

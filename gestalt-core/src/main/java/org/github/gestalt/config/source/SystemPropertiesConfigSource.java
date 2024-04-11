@@ -3,6 +3,7 @@ package org.github.gestalt.config.source;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Pair;
+import org.github.gestalt.config.utils.SystemWrapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -87,7 +88,7 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
 
     @Override
     public InputStream loadStream() throws GestaltException {
-        Properties properties = System.getProperties();
+        Properties properties = SystemWrapper.getProperties();
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
@@ -110,7 +111,7 @@ public final class SystemPropertiesConfigSource implements ConfigSource {
      */
     @Override
     public List<Pair<String, String>> loadList() {
-        Properties properties = System.getProperties();
+        Properties properties = SystemWrapper.getProperties();
 
         return properties.entrySet()
             .stream()

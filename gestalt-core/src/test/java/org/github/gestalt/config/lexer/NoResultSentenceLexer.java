@@ -22,6 +22,11 @@ public class NoResultSentenceLexer extends SentenceLexer {
     }
 
     @Override
+    public String normalizeSentence(String sentence) {
+        return "";
+    }
+
+    @Override
     public GResultOf<List<Token>> scan(String sentence) {
         return GResultOf.result(null);
     }

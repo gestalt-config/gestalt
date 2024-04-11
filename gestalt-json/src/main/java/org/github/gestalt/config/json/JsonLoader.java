@@ -3,16 +3,19 @@ package org.github.gestalt.config.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
-import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.PathUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,22 +28,53 @@ import java.util.*;
  */
 public final class JsonLoader implements ConfigLoader {
 
-    private final ObjectMapper objectMapper;
-
-    /**
-     * Constructor for JsonLoader that accepts a ObjectMapper.
-     *
-     * @param objectMapper for loading json config
-     */
-    public JsonLoader(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private final boolean isDefault;
+    private ObjectMapper objectMapper;
+    private SentenceLexer lexer;
 
     /**
      * Default constructor for JsonLoader that creates a new ObjectMapper.
      */
     public JsonLoader() {
-        objectMapper = new ObjectMapper();
+        this(new ObjectMapper(), new PathLexer(), true);
+    }
+
+    /**
+     * Constructor for JsonLoader that accepts a ObjectMapper.
+     *
+     * @param objectMapper for loading json config
+     * @param lexer        the lexer to normalize paths.
+     */
+    public JsonLoader(ObjectMapper objectMapper, SentenceLexer lexer) {
+        this(objectMapper, lexer, false);
+    }
+
+
+    private JsonLoader(ObjectMapper objectMapper, SentenceLexer lexer, boolean isDefault) {
+        Objects.requireNonNull(lexer, "JsonLoader SentenceLexer should not be null");
+        Objects.requireNonNull(objectMapper, "JsonLoader ObjectMapper should not be null");
+
+        this.objectMapper = objectMapper;
+        this.lexer = lexer;
+        this.isDefault = isDefault;
+    }
+
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the Json ConfigLoader we will use the default gestalt sentence lexer.
+        var moduleConfig = config.getModuleConfig(JsonModuleConfig.class);
+        if (isDefault) {
+            if (moduleConfig != null && moduleConfig.getLexer() != null) {
+                lexer = moduleConfig.getLexer();
+            } else {
+                lexer = config.getSentenceLexer();
+            }
+        }
+
+        if (isDefault && moduleConfig != null && moduleConfig.getObjectMapper() != null) {
+            objectMapper = moduleConfig.getObjectMapper();
+        }
     }
 
     @Override
@@ -108,7 +142,7 @@ public final class JsonLoader implements ConfigLoader {
     }
 
     private String normalizeSentence(String sentence) {
-        return sentence.toLowerCase(Locale.getDefault());
+        return lexer.normalizeSentence(sentence);
     }
 
     private GResultOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {

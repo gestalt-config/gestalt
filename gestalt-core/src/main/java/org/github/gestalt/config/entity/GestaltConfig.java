@@ -1,6 +1,8 @@
 package org.github.gestalt.config.entity;
 
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
 
 import java.time.format.DateTimeFormatter;
@@ -44,12 +46,13 @@ public class GestaltConfig {
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = TransformerPostProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
-
     // if metrics should be enabled
     private boolean metricsEnabled = false;
 
     // if validation should be enabled.
     private boolean validationEnabled = false;
+    // The sentence lexer used for gestalt.
+    private SentenceLexer sentenceLexer = new PathLexer();
 
     /**
      * Treat all warnings as errors.
@@ -352,6 +355,26 @@ public class GestaltConfig {
      */
     public void setValidationEnabled(boolean validationEnabled) {
         this.validationEnabled = validationEnabled;
+    }
+
+    /**
+     * Get the sentence lexer that will be passed through to the DecoderRegistry.
+     * it is used to convert the path requested to tokens, so we can navigate the config tree using the tokens.
+     *
+     * @return SentenceLexer the lexer
+     */
+    public SentenceLexer getSentenceLexer() {
+        return sentenceLexer;
+    }
+
+    /**
+     * Set the sentence lexer that will be passed through to the DecoderRegistry.
+     * it is used to convert the path requested to tokens, so we can navigate the config tree using the tokens.
+     *
+     * @param sentenceLexer for the DecoderRegistry
+     */
+    public void setSentenceLexer(SentenceLexer sentenceLexer) {
+        this.sentenceLexer = sentenceLexer;
     }
 
     /**

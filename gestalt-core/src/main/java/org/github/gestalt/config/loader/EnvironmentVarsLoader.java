@@ -1,6 +1,7 @@
 package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -15,6 +16,7 @@ import org.github.gestalt.config.utils.Pair;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Loads Environment Variables from EnvironmentConfigSource.
@@ -23,14 +25,16 @@ import java.util.Map;
  */
 public final class EnvironmentVarsLoader implements ConfigLoader {
 
-    private final ConfigParser parser;
-    private final SentenceLexer lexer;
+    private final boolean isDefault;
+    private ConfigParser parser;
+    private SentenceLexer lexer;
+
 
     /**
      * Construct a default Environment Variables Loader using the default path lexer for "_" separated paths.
      */
     public EnvironmentVarsLoader() {
-        this(new PathLexer("_"), new MapConfigParser());
+        this(new PathLexer("_"), new MapConfigParser(), true);
     }
 
 
@@ -41,8 +45,32 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
      * @param parser parser for Environment Variables
      */
     public EnvironmentVarsLoader(SentenceLexer lexer, ConfigParser parser) {
+        this(lexer, parser, false);
+    }
+
+    private EnvironmentVarsLoader(SentenceLexer lexer, ConfigParser parser, boolean isDefault) {
+        Objects.requireNonNull(lexer, "EnvironmentVarsLoader SentenceLexer should not be null");
+        Objects.requireNonNull(parser, "EnvironmentVarsLoader ConfigParser should not be null");
+
         this.lexer = lexer;
         this.parser = parser;
+        this.isDefault = isDefault;
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the Environment Variables ConfigLoader we do not use the default gestalt config lexer,
+        // as Environment Variables tend to follow SCREAMING_SNAKE_CASE instead of dot notation.
+        var moduleConfig = config.getModuleConfig(EnvironmentVarsLoaderModuleConfig.class);
+        if (moduleConfig != null) {
+            if (isDefault && moduleConfig.getLexer() != null) {
+                lexer = moduleConfig.getLexer();
+            }
+
+            if (isDefault && moduleConfig.getConfigParse() != null) {
+                parser = moduleConfig.getConfigParse();
+            }
+        }
     }
 
     @Override

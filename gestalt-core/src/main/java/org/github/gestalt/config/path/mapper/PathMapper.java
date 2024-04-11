@@ -8,7 +8,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import java.util.List;
 
 /**
- * Interface to map a sentance to a list of tokens.
+ * Interface to map a sentence to a list of tokens.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
