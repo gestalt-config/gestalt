@@ -33,14 +33,6 @@ public final class PropertyLoader implements ConfigLoader {
     private SentenceLexer lexer;
     private final boolean isDefault;
 
-    @Override
-    public void applyConfig(GestaltConfig config) {
-        // for the PropertyLoader we will use the default gestalt sentence lexer.
-        if (isDefault) {
-            lexer = config.getSentenceLexer();
-        }
-    }
-
     /**
      * Construct a default property loader using the default path lexer for "." separated paths.
      */
@@ -65,6 +57,14 @@ public final class PropertyLoader implements ConfigLoader {
         this.lexer = lexer;
         this.parser = parser;
         this.isDefault = isDefault;
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the PropertyLoader we will use the default gestalt sentence lexer unless set in the constructor.
+        if (isDefault) {
+            lexer = config.getSentenceLexer();
+        }
     }
 
     @Override

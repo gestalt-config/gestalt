@@ -63,7 +63,10 @@ public final class YamlLoader implements ConfigLoader {
 
     @Override
     public void applyConfig(GestaltConfig config) {
-        // for the yaml ConfigLoader we will use the default gestalt sentence lexer.
+        // for the Yaml ConfigLoader we will use the lexer in the following priorities
+        // 1. the constructor
+        // 2. the module config
+        // 3. the Gestalt Configuration
         var moduleConfig = config.getModuleConfig(YamlModuleConfig.class);
         if (isDefault) {
             if (moduleConfig != null && moduleConfig.getLexer() != null) {

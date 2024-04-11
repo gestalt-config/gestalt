@@ -61,13 +61,14 @@ public final class EnvironmentVarsLoader implements ConfigLoader {
     public void applyConfig(GestaltConfig config) {
         // for the Environment Variables ConfigLoader we do not use the default gestalt config lexer,
         // as Environment Variables tend to follow SCREAMING_SNAKE_CASE instead of dot notation.
+        // So we use the constructor lexer and parser if set, otherwise the module config.
         var moduleConfig = config.getModuleConfig(EnvironmentVarsLoaderModuleConfig.class);
-        if (moduleConfig != null) {
-            if (isDefault && moduleConfig.getLexer() != null) {
+        if (moduleConfig != null && isDefault) {
+            if (moduleConfig.getLexer() != null) {
                 lexer = moduleConfig.getLexer();
             }
 
-            if (isDefault && moduleConfig.getConfigParse() != null) {
+            if (moduleConfig.getConfigParse() != null) {
                 parser = moduleConfig.getConfigParse();
             }
         }

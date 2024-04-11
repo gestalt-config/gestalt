@@ -29,14 +29,6 @@ public final class MapConfigLoader implements ConfigLoader {
     private SentenceLexer lexer;
     private final boolean isDefault;
 
-    @Override
-    public void applyConfig(GestaltConfig config) {
-        // for the MapConfigLoader we will use the default gestalt sentence lexer.
-        if (isDefault) {
-            lexer = config.getSentenceLexer();
-        }
-    }
-
     /**
      * Construct a default Map Config loader using the default path lexer for "." separated paths.
      */
@@ -61,6 +53,14 @@ public final class MapConfigLoader implements ConfigLoader {
         this.lexer = lexer;
         this.parser = parser;
         this.isDefault = isDefault;
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the MapConfigLoader we will use the default gestalt sentence lexer unless set in the constructor.
+        if (isDefault) {
+            lexer = config.getSentenceLexer();
+        }
     }
 
     @Override

@@ -595,10 +595,15 @@ public class GestaltBuilder {
 
 
     /**
+     * ***USE WITH CAUTION.***
      * Set the sentence lexer that will be used throughout Gestalt.
      * It is used in several locations, to convert the path requested to tokens, so we can navigate the config tree using the tokens.
      * It is used to normalize sentences when parsing configs. (except Environment Variables)
      * It is also used in the path mappers to try different ways to navigate the config tree during decoding.
+     *
+     * <p>If you set a new lexer that is for example case-sensitive, when you decode an object
+     * public record Person(String name, Integer id) if in the properties it is admin.Name = sarah
+     * it will not be able to decode as the name field is lower case and the property is upper case.
      *
      * @param sentenceLexer for the DecoderRegistry
      * @return GestaltBuilder builder

@@ -62,7 +62,10 @@ public final class JsonLoader implements ConfigLoader {
 
     @Override
     public void applyConfig(GestaltConfig config) {
-        // for the Json ConfigLoader we will use the default gestalt sentence lexer.
+        // for the Json ConfigLoader we will use the lexer in the following priorities
+        // 1. the constructor
+        // 2. the module config
+        // 3. the Gestalt Configuration
         var moduleConfig = config.getModuleConfig(JsonModuleConfig.class);
         if (isDefault) {
             if (moduleConfig != null && moduleConfig.getLexer() != null) {
