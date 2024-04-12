@@ -182,7 +182,7 @@ In the above example we first load a file defaults, then load a file devFile and
 The priority will be Env Vars > devFile > defaults.
 
 # Config Tree
-The config files are loaded and merged into a config tree. While loading into the config tree all node names and paths are converted to lower case. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have two leafs or both a node and a leaf at the same place. If this is detected Gestalt will throw an exception on loading with details on the path.    
+The config files are loaded and merged into a config tree. While loading into the config tree all node names and paths are converted to lower case and for environment variables we convert screaming snake case into dot notation. However, we do not convert other cases such as camel case into dot notation. So if your configs use a mix of dot notation and camel case, the nodes will not be merged. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have two leafs or both a node and a leaf at the same place. If this is detected Gestalt will throw an exception on loading with details on the path.    
 
 Valid:
 ```properties
@@ -207,7 +207,7 @@ http.pool.maxPerRoute=50
 HTTP.pool.maxPerRoute=75    #invalid duplicate nodes at the same path.
 ```
 
-All paths are converted to lower case as different sources have different naming conventions, Env Vars are typically Screaming Snake Case, properties are dot notation, json is camelCase. By normalizing them to lowercase it is easier to merge. 
+All paths are converted to lower case as different sources have different naming conventions, Env Vars are typically Screaming Snake Case, properties are dot notation, json is camelCase. By normalizing them to lowercase it is easier to merge. However, we do not convert other cases such as camel case into dot notation. It is best to use a consistent case for your configurations. 
 
 
 # Retrieving a configuration
@@ -236,6 +236,34 @@ If you want to use a different path style you can provide your own SentenceLexer
   String password = gestalt.getConfig("db.hosts[2].password", String.class);
 ```
 
+When decoding a path we do use path mappers to try different cases, but that only applies to the sub-tree starting at the path asked for. So if you call `gestalt.getConfig("http.pool", HttpPool.class)` it will try and map the cases for nodes under path `http.pool` but not the nodes in the path `http-pool`. 
+
+
+```java
+  // given the record. 
+  public record HttpPool(String poolSize, int timeout) {}
+```
+And the properties: 
+```properties
+booking.service.pool.size = 10
+booking-service.timeout = 10
+```
+
+When getting the config will fail, because `booking.service` will not match `booking-service` so it will not find the timeout.
+```java
+  HttpPool pool = gestalt.getConfig("booking.service", HttpPool.class);
+```
+
+But given the properties
+```properties
+booking.service.pool.size = 10
+booking.service.timeout = 10
+```
+
+These calls will succeed. When decoding `poolSize` it will first try a lowercase match of `poolsize`, but will not find the node, so it will try `pool.size` for a combined path of `booking.service.pool.size` which it will find. 
+```java
+  HttpPool pool = gestalt.getConfig("booking.service", HttpPool.class);
+```
 
 ### Retrieving Primitive and boxed types
 Getting primitive and boxed types involves calling Gestalt and providing the class of the type you are trying to retrieve. 
@@ -497,7 +525,7 @@ The default accepts a string type and will be decoded into the property type usi
 
 
 # Searching for path while Decoding Objects
-When decoding a class, we need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first check for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and converted to Kebab case, Snake case and Dot Notation, then used to search for the configuration.
+When decoding a class, we need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first find the path as defined in the call to `gestalt.getConfig("book.service", HttpPool.class)` where the path is `book.service`. We do not apply the path mappers to the path, only the config tree notes from the path. Once at the path we check class for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and converted to Kebab case, Snake case and Dot Notation, then used to search for the configuration.
 The order is descending based on the priority of the mapper.
 
 | Casing                   | Priority | Class Name            |
@@ -781,19 +809,20 @@ If you provide 2 tags in the source, when retrieving the configuration you must 
 
 
 ## Supported config sources
-| Config Source                | module                                                               | Details                                                                                                                                                                                                                                                                                                                                                             |
-|------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| ClassPathConfigSource        | gestalt-core                                                         | Load a file from the java class path. Uses getResourceAsStream to find and load the InputStream.                                                                                                                                                                                                                                                                    |
-| EnvironmentConfigSource      | gestalt-core                                                         | Loads all Environment Variables in the system. It expects Env Vars to be in screaming snake case, and will parse the "_" as a path delimiter.  will convert them to a list of key values from the Env Map for the config loader. You can provide a prefix to only load Environment Variables with the prefix. Then you can choose to keep the prefix or remove it.  |
-| FileConfigSource             | gestalt-core                                                         | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.                                                                                                                                   |
-| KubernetesSecretConfigSource | gestalt-core                                                         | Specify a path to search for [kubernetes secrets](https://kubernetes.io/docs/concepts/configuration/secret/) files. The directory is scanned and each file is added to the configuration. The name of the file is treated as the key for configuration and the content of the file is the value for the configuration.                                              |
-| GCSConfigSource              | [`gestalt-google`](https://search.maven.org/search?q=gestalt-google) | Load a config from Google Cloud Storage. Requires a bucketName and a objectName. A google Storage object is optional, otherwise it defaults to the default instance.                                                                                                                                                                                                |
-| GitConfigSource              | [`gestalt-git`](https://search.maven.org/search?q=gestalt-git)       | Syncs a remote repo locally then uses the files to build a configuration. This uses jgit and supports several forms of authentication. See GitConfigSourceTest.java for examples of use.                                                                                                                                                                            |
-| MapConfigSource              | gestalt-core                                                         | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader.                                                                                                                                                                                                                                                    |
-| StringConfigSource           | gestalt-core                                                         | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader.                                                                                                                                                                                                                                          |
-| SystemPropertiesConfigSource | gestalt-core                                                         | Loads the Java System Properties and convert them to a list of key values or the config loader.                                                                                                                                                                                                                                                                     |
-| S3ConfigSource               | [`gestalt-aws`](https://search.maven.org/search?q=gestalt-aws)       | Loads a config source from AWS S3, Must include package com.github.gestalt-config:gestalt-s3:version.                                                                                                                                                                                                                                                               |
-| URLConfigSource              | gestalt-core                                                         | Loads a config source from a URL.                                                                                                                                                                                                                                                                                                                                   |
+| Config Source                | module                                                               | Details                                                                                                                                                                                                                                                                                                                                                            |
+|------------------------------|----------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| ClassPathConfigSource        | gestalt-core                                                         | Load a file from the java class path. Uses getResourceAsStream to find and load the InputStream.                                                                                                                                                                                                                                                                   |
+| EnvironmentConfigSource      | gestalt-core                                                         | Loads all Environment Variables in the system. It expects Env Vars to be in screaming snake case, and will parse the "_" as a path delimiter.  will convert them to a list of key values from the Env Map for the config loader. You can provide a prefix to only load Environment Variables with the prefix. Then you can choose to keep the prefix or remove it. |
+| FileConfigSource             | gestalt-core                                                         | Loads a file from the local file system. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.                                                                                                                                  |
+| InputStreamConfigSource      | gestalt-core                                                         | Load a configuration from a InputStream. The format for the source will depend on the file extension of the file. For example if it is dev.properties, the format will be properties. Returns a InpuStream for the config loader.                                                                                                                                  |
+| KubernetesSecretConfigSource | gestalt-core                                                         | Specify a path to search for [kubernetes secrets](https://kubernetes.io/docs/concepts/configuration/secret/) files. The directory is scanned and each file is added to the configuration. The name of the file is treated as the key for configuration and the content of the file is the value for the configuration.                                             |
+| GCSConfigSource              | [`gestalt-google`](https://search.maven.org/search?q=gestalt-google) | Load a config from Google Cloud Storage. Requires a bucketName and a objectName. A google Storage object is optional, otherwise it defaults to the default instance.                                                                                                                                                                                               |
+| GitConfigSource              | [`gestalt-git`](https://search.maven.org/search?q=gestalt-git)       | Syncs a remote repo locally then uses the files to build a configuration. This uses jgit and supports several forms of authentication. See GitConfigSourceTest.java for examples of use.                                                                                                                                                                           |
+| MapConfigSource              | gestalt-core                                                         | Allows you to pass in your own map, it will convert the map into a list of path and value for the config loader.                                                                                                                                                                                                                                                   |
+| StringConfigSource           | gestalt-core                                                         | Takes any string and converts it into a InputStream. You must also provide the format type so we can match it to a loader.                                                                                                                                                                                                                                         |
+| SystemPropertiesConfigSource | gestalt-core                                                         | Loads the Java System Properties and convert them to a list of key values or the config loader.                                                                                                                                                                                                                                                                    |
+| S3ConfigSource               | [`gestalt-aws`](https://search.maven.org/search?q=gestalt-aws)       | Loads a config source from AWS S3, Must include package com.github.gestalt-config:gestalt-s3:version.                                                                                                                                                                                                                                                              |
+| URLConfigSource              | gestalt-core                                                         | Loads a config source from a URL.                                                                                                                                                                                                                                                                                                                                  |
 
 
 # Config Loader
@@ -811,6 +840,38 @@ Each config loader understands how to load a specific type of config. Often this
 
 If you didn't manually add any ConfigLoaders as part of the GestaltBuilder, it will add the defaults. The GestaltBuilder uses the service loader to create instances of the Config loaders. It will configure them by passing in the GestaltConfig to applyConfig.
 To register your own default ConfigLoaders add them to the builder, or add it to a file in META-INF\services\org.github.gestalt.config.loader.ConfigLoader and add the full path to your ConfigLoader
+
+By default, Gestalt expects Environment Variables to be screaming snake case, but you can configure it to have a different case.  
+
+By registering a `EnvironmentVarsLoaderModuleConfig` with the `GestaltBuilder` you can customize the Environment Loader. 
+
+In this example it will expect double `__` as delimiter.  
+```java
+ GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(EnvironmentConfigSourceBuilder.builder().build())
+  .addModuleConfig(EnvironmentVarsLoaderModuleConfigBuilder
+    .builder()
+    .setLexer(new PathLexer("__"))
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+```
+
+You can also customize many of the Loaders such as the `YamlLoader`, `TomlLoader`, `JsonLoader` and `HoconLoader` by registering the Module Configs with the builder.  
+
+```java
+ GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.yaml").build())
+  .addModuleConfig(YamlModuleConfigBuilder.builder()
+    .setObjectMapper(customObjectmapper)
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+```
 
 
 # Decoders

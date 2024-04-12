@@ -2,16 +2,16 @@ package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ConfigValue;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.parser.ConfigParser;
-import org.github.gestalt.config.source.ConfigSource;
-import org.github.gestalt.config.source.ConfigSourcePackage;
-import org.github.gestalt.config.source.MapConfigSource;
-import org.github.gestalt.config.source.StringConfigSource;
+import org.github.gestalt.config.parser.MapConfigParser;
+import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -23,10 +23,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.ArgumentMatchers.*;
@@ -383,5 +382,141 @@ class PropertyLoaderTest {
 
         ConfigNode result = resultContainer.results().get(0).getConfigNode();
         Assertions.assertEquals(0, result.size());
+    }
+
+
+    @Test
+    void loadSource() throws GestaltException, IOException {
+        Properties configMap = new Properties();
+
+        configMap.put("name", "Steve");
+        configMap.put("age", "42");
+        configMap.put("cars[0].name", "Ford");
+        configMap.put("cars[0].models", "Fiesta, Focus, Mustang");
+        configMap.put("cars[1].name", "BMW");
+        configMap.put("cars[1].models", "320, X3, X5");
+        configMap.put("cars[2].name", "Fiat");
+        configMap.put("cars[2].models", "500, Panda");
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        configMap.store(outputStream, "");
+
+        InputStreamConfigSource source = new InputStreamConfigSource(new ByteArrayInputStream(outputStream.toByteArray()), "properties");
+
+        PropertyLoader loader = new PropertyLoader();
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfig() throws GestaltException, IOException {
+        Properties configMap = new Properties();
+
+        configMap.put("name", "Steve");
+        configMap.put("age", "42");
+        configMap.put("cars[0].name", "Ford");
+        configMap.put("cars[0].models", "Fiesta, Focus, Mustang");
+        configMap.put("cars[1].name", "BMW");
+        configMap.put("cars[1].models", "320, X3, X5");
+        configMap.put("cars[2].name", "Fiat");
+        configMap.put("cars[2].models", "500, Panda");
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        configMap.store(outputStream, "");
+        InputStreamConfigSource source = new InputStreamConfigSource(new ByteArrayInputStream(outputStream.toByteArray()), "properties");
+
+        var configParser = new MapConfigParser();
+        var lexer = new PathLexer(".");
+        var moduleConfig = MapConfigLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            .setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        PropertyLoader loader = new PropertyLoader();
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfigDontFallbackToGestaltLexer() throws GestaltException, IOException {
+        Properties configMap = new Properties();
+
+        configMap.put("name", "Steve");
+        configMap.put("age", "42");
+        configMap.put("cars[0].name", "Ford");
+        configMap.put("cars[0].models", "Fiesta, Focus, Mustang");
+        configMap.put("cars[1].name", "BMW");
+        configMap.put("cars[1].models", "320, X3, X5");
+        configMap.put("cars[2].name", "Fiat");
+        configMap.put("cars[2].models", "500, Panda");
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        configMap.store(outputStream, "");
+
+        var configParser = new MapConfigParser();
+        var lexer = new PathLexer(".");
+        var moduleConfig = MapConfigLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            //.setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+        config.setSentenceLexer(lexer);
+
+        PropertyLoader loader = new PropertyLoader();
+        loader.applyConfig(config);
+
+        InputStreamConfigSource source = new InputStreamConfigSource(new ByteArrayInputStream(outputStream.toByteArray()), "properties");
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
     }
 }

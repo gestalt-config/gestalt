@@ -8,15 +8,15 @@ import org.github.gestalt.config.parser.ConfigParser;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class EnvironmentVarsModuleLoaderConfigBuilder {
+public final class EnvironmentVarsLoaderModuleConfigBuilder {
     private ConfigParser parser;
     private SentenceLexer lexer;
 
-    private EnvironmentVarsModuleLoaderConfigBuilder() {
+    private EnvironmentVarsLoaderModuleConfigBuilder() {
     }
 
-    public static EnvironmentVarsModuleLoaderConfigBuilder builder() {
-        return new EnvironmentVarsModuleLoaderConfigBuilder();
+    public static EnvironmentVarsLoaderModuleConfigBuilder builder() {
+        return new EnvironmentVarsLoaderModuleConfigBuilder();
     }
 
     /**
@@ -26,7 +26,7 @@ public final class EnvironmentVarsModuleLoaderConfigBuilder {
      * @param parser the Config Parse
      * @return Config Parse
      */
-    public EnvironmentVarsModuleLoaderConfigBuilder setConfigParser(ConfigParser parser) {
+    public EnvironmentVarsLoaderModuleConfigBuilder setConfigParser(ConfigParser parser) {
         this.parser = parser;
         return this;
     }
@@ -37,7 +37,7 @@ public final class EnvironmentVarsModuleLoaderConfigBuilder {
      * @param lexer SentenceLexer for the Environment Variable module.
      * @return the SentenceLexer
      */
-    public EnvironmentVarsModuleLoaderConfigBuilder setLexer(SentenceLexer lexer) {
+    public EnvironmentVarsLoaderModuleConfigBuilder setLexer(SentenceLexer lexer) {
         this.lexer = lexer;
         return this;
     }

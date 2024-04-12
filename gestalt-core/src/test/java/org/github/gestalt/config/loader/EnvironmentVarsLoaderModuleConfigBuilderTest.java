@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-class EnvironmentVarsModuleLoaderConfigBuilderTest {
+class EnvironmentVarsLoaderModuleConfigBuilderTest {
 
     @Test
     public void createModuleConfig() {
         var configParser = new MapConfigParser();
         var lexer = new PathLexer();
-        var builder = EnvironmentVarsModuleLoaderConfigBuilder.builder()
+        var builder = EnvironmentVarsLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
             .setLexer(lexer);
 

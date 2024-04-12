@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 public final class MapConfigLoader implements ConfigLoader {
 
-    private final ConfigParser parser;
+    private ConfigParser parser;
     private SentenceLexer lexer;
     private final boolean isDefault;
 
@@ -55,11 +55,24 @@ public final class MapConfigLoader implements ConfigLoader {
         this.isDefault = isDefault;
     }
 
+
     @Override
     public void applyConfig(GestaltConfig config) {
-        // for the MapConfigLoader we will use the default gestalt sentence lexer unless set in the constructor.
+        // for the Yaml ConfigLoader we will use the lexer in the following priorities
+        // 1. the constructor
+        // 2. the module config
+        // 3. the Gestalt Configuration
+        var moduleConfig = config.getModuleConfig(MapConfigLoaderModuleConfig.class);
         if (isDefault) {
-            lexer = config.getSentenceLexer();
+            if (moduleConfig != null && moduleConfig.getLexer() != null) {
+                lexer = moduleConfig.getLexer();
+            } else {
+                lexer = config.getSentenceLexer();
+            }
+        }
+
+        if (isDefault && moduleConfig != null && moduleConfig.getConfigParse() != null) {
+            parser = moduleConfig.getConfigParse();
         }
     }
 

@@ -440,7 +440,6 @@ class EnvironmentLoaderTest {
 
     @Test
     void loadSource() throws GestaltException {
-
         Map<String, String> configMap = new HashMap<>();
 
         configMap.put("NAME", "Steve");
@@ -476,7 +475,6 @@ class EnvironmentLoaderTest {
 
     @Test
     void loadSourceModuleConfig() throws GestaltException {
-
         Map<String, String> configMap = new HashMap<>();
 
         configMap.put("NAME", "Steve");
@@ -492,7 +490,7 @@ class EnvironmentLoaderTest {
 
         var configParser = new MapConfigParser();
         var lexer = new PathLexer("_");
-        var moduleConfig = EnvironmentVarsModuleLoaderConfigBuilder.builder()
+        var moduleConfig = EnvironmentVarsLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
             .setLexer(lexer)
             .build();
@@ -523,7 +521,6 @@ class EnvironmentLoaderTest {
 
     @Test
     void loadSourceModuleConfigDontFallbackToGestaltLexer() throws GestaltException {
-
         Map<String, String> configMap = new HashMap<>();
 
         configMap.put("NAME", "Steve");
@@ -535,10 +532,8 @@ class EnvironmentLoaderTest {
         configMap.put("CARS[2]_NAME", "Fiat");
         configMap.put("CARS[2]_MODELS", "500, Panda");
 
-        MapConfigSource source = new MapConfigSource(configMap);
-
         var configParser = new MapConfigParser();
-        var moduleConfig = EnvironmentVarsModuleLoaderConfigBuilder.builder()
+        var moduleConfig = EnvironmentVarsLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
             //.setLexer(lexer)
             .build();
@@ -550,6 +545,7 @@ class EnvironmentLoaderTest {
         EnvironmentVarsLoader loader = new EnvironmentVarsLoader();
         loader.applyConfig(config);
 
+        MapConfigSource source = new MapConfigSource(configMap);
         GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());

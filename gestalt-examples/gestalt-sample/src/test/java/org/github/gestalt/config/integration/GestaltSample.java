@@ -18,17 +18,21 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
+import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
 import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
 import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
@@ -38,9 +42,11 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.SystemWrapper;
 import org.github.gestalt.config.vault.config.VaultBuilder;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.vault.VaultContainer;
@@ -67,6 +73,8 @@ import java.util.logging.LogManager;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
+import static org.mockito.Mockito.mockStatic;
 import static software.amazon.awssdk.http.SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES;
 
 @Testcontainers
@@ -149,6 +157,10 @@ public class GestaltSample {
         }
     }
 
+    // This example shows a how to load multiple sources and how the priority of the configurations
+    // is dictated by the order they are added.
+    // So the default.properties has the lowest priority and if any other source provides
+    // a configuration on the same path it will be overwritten.
     @Test
     public void integrationTest() throws GestaltException {
         // Create a map of configurations we wish to inject.
@@ -171,12 +183,14 @@ public class GestaltSample {
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build();
 
-        // Load the configurations, this will thow exceptions if there are any errors.
+        // Load the configurations, this will throw exceptions if there are any errors.
         gestalt.loadConfigs();
 
         validateResults(gestalt);
     }
 
+    // This example shows a how to disable the gestalt configuration.
+    // So each call will get decode the value from the config tree.
     @Test
     public void integrationTestNoCache() throws GestaltException {
         // Create a map of configurations we wish to inject.
@@ -206,6 +220,8 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to provide a default configuration then tag source.
+    // Then how to get the configuration with the tag with a falllback to the default or if present the taged version.
     @Test
     public void integrationTestTags() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -259,6 +275,7 @@ public class GestaltSample {
         Assertions.assertEquals(33.0F, poolTags2.defaultWait);
     }
 
+    // This example shows a how to use tag source files and use a default tag to always get values using the tag.
     @Test
     public void integrationTestDefaultTags() throws GestaltException {
         // Create a map of configurations we wish to inject.
@@ -282,13 +299,14 @@ public class GestaltSample {
             .setDefaultTags(Tags.profile("test"))
             .build();
 
-        // Load the configurations, this will thow exceptions if there are any errors.
+        // Load the configurations, this will throw exceptions if there are any errors.
         gestalt.loadConfigs();
 
         validateResults(gestalt);
     }
 
 
+    // This example shows a how to configure gestalt to allow empty collections.
     @Test
     public void testDontTreatEmptyCollectionAsErrors() throws GestaltException {
 
@@ -313,6 +331,8 @@ public class GestaltSample {
         }
     }
 
+    // This example shows a how to get an interface that is provided with a proxy in pass thgrough mode.
+    // So each call to the proxy will go to gestalt to lookup the data.
     @Test
     public void integrationTestProxyPassThrough() throws GestaltException {
         // Create a map of configurations we wish to inject.
@@ -343,8 +363,8 @@ public class GestaltSample {
     }
 
 
+    // This example shows a how to use dynamic configurations and reload a config.
     @Test
-    @Disabled
     public void integrationTestReloadFile() throws GestaltException, IOException, InterruptedException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
@@ -495,6 +515,8 @@ public class GestaltSample {
         Assertions.assertEquals("jdbc:postgresql://dev.host.name3:5432/mydb2", hosts.get(2).url);
     }
 
+    // This example shows a how to load Environment Variables as a source and layer them over a properties file.
+    // the Env Vars will be parsed into a path where DB_IDLETIMEOUT becomes "db.idletimeout"
     @Test
     public void integrationTestEnvVars() throws GestaltException {
 
@@ -535,6 +557,7 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    // This example shows a how multiple string substitutions can work from diffrent loacations in the same config file.
     @Test
     public void integrationTestPostProcessorMulti() throws GestaltException {
 
@@ -579,6 +602,7 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    // This example shows a how to load a Json source.
     @Test
     public void integrationTestJson() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -605,6 +629,7 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a Yaml source.
     @Test
     public void integrationTestYaml() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -628,6 +653,8 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a json and Yaml source and
+    // layer them on top of each other in the same config tree.
     @Test
     public void integrationTestJsonAndYaml() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -648,6 +675,7 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a Hocon source.
     @Test
     public void integrationTestHocon() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -674,6 +702,7 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a TOML source.
     @Test
     public void integrationTestToml() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -700,6 +729,7 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a source from a git project.
     @Test
     public void integrationGitTest() throws GestaltException, IOException {
         Map<String, String> configs = new HashMap<>();
@@ -734,6 +764,7 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a source from an S3 bucket.
     @Test
     public void integrationS3Test() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -769,6 +800,7 @@ public class GestaltSample {
         validateResults(gestalt);
     }
 
+    // This example shows a how to load a source from a GCP storage.
     @Tag("cloud")
     @Test
     public void integrationTestGoogleCloud() throws GestaltException {
@@ -825,6 +857,7 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    // This example shows a how to load a source from an S3 bucket.
     @Tag("cloud")
     @Test
     public void integrationTestAws() throws GestaltException {
@@ -1148,6 +1181,12 @@ public class GestaltSample {
 
     }
 
+    // This example shows a how to use the string substitution with Environment variable substitutions.
+    //in the defaultPPEnv file it contains the properties
+    // db.idleTimeout=${env:DB_IDLETIMEOUT:=900}
+    //which maps to the Environment properties,
+    // DB_IDLETIMEOUT: 123
+    //so in the sample the result is 123, not if the Environment Variable was missing the default value would be 900.
     @Test
     public void integrationTestPostProcessorEnvironment() throws GestaltException {
 
@@ -1183,6 +1222,13 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    // This example shows a how to use the string substitution with System variable substitutions.
+    //in the defaultPPSys file it contains the properties
+    // db.idleTimeout=${DB_IDLETIMEOUT}
+    //which maps to the system properties, although it is also defined in an Env Var,
+    // it will pick the system property since the transform has a higher priority.
+    // System.getProperties().put("DB_IDLETIMEOUT", "123");
+    //so in the sample the result is 123
     @Test
     public void integrationTestPostProcessorSystem() throws GestaltException {
 
@@ -1214,6 +1260,8 @@ public class GestaltSample {
 
         gestalt.loadConfigs();
 
+        Assertions.assertEquals(123, gestalt.getConfig("db.idleTimeout", Integer.class));
+
         validateResults(gestalt);
 
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
@@ -1226,6 +1274,12 @@ public class GestaltSample {
             gestalt.getConfig("appId", Integer.class) == 21);
     }
 
+    // This example shows a how to use the string substitution with node substitutions.
+    //in the defaultPPNode file it contains the properties
+    //db.idleTimeout=${node:alternate.db.idleTimeout}
+    //which maps to the properties
+    //alternate.db.idleTimeout=123
+    //so in the sample the result is 123
     @Test
     public void integrationTestPostProcessorNode() throws GestaltException {
 
@@ -1244,6 +1298,8 @@ public class GestaltSample {
 
         gestalt.loadConfigs();
 
+        Assertions.assertEquals(123, gestalt.getConfig("db.idleTimeout", Integer.class));
+
         validateResults(gestalt);
 
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
@@ -1253,6 +1309,13 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    // This example shows a how to use the vault string substitution.
+    // in the defaultPPVault file it contains the properties
+    //subservice.booking.service.host=${vault:secret/path:bookingHost}
+    //subservice.booking.service.port=${vault:secret/path:bookingPort}
+    // that will be replaced by values in the vault. which has secret values setup in the test container
+    // secrets.put("bookingHost", "https://dev.booking.host.name");
+    // secrets.put("bookingPort", "443");
     @Test
     public void integrationTestPostProcessorVault() throws GestaltException {
 
@@ -1284,6 +1347,7 @@ public class GestaltSample {
 
     }
 
+    // This example shows a how-to camel case path mapper can be used to convert dbPath into a path of "db.path"
     @Test
     public void integrationTestCamelCase() throws GestaltException {
 
@@ -1307,7 +1371,7 @@ public class GestaltSample {
         Assertions.assertEquals("usersTable", connection.getDbPath());
     }
 
-
+    // This example shows a how to use string substitution to reference another node.
     @Test
     public void testSubstitution() throws GestaltException {
         Map<String, String> customMap = new HashMap<>();
@@ -1327,6 +1391,7 @@ public class GestaltSample {
         Assertions.assertEquals("hello world it is sunny today", message);
     }
 
+    // This example shows how to use nested string substitution.
     @Test
     public void testNestedSubstitution() throws GestaltException {
         Map<String, String> customMap = new HashMap<>();
@@ -1347,6 +1412,7 @@ public class GestaltSample {
         Assertions.assertEquals("hello world it is sunny today", message);
     }
 
+    // This show an example of how escape substitution can be used in a string substitution
     @Test
     public void testEscapedSubstitution() throws GestaltException {
         Map<String, String> customMap = new HashMap<>();
@@ -1366,6 +1432,7 @@ public class GestaltSample {
         Assertions.assertEquals("hello ${place} it is sunny today", message);
     }
 
+    // This shows an example of a metrics being exposed and how to configure them.
     @Test
     public void testMetrics() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -1399,6 +1466,7 @@ public class GestaltSample {
             .contains("myApp.cache.hit(COUNTER)[]; count=1.0");
     }
 
+    // This shows an example of a hibernate validator returning an ok and returning the object.
     @Test
     public void testValidationOk() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -1428,6 +1496,7 @@ public class GestaltSample {
         Assertions.assertEquals(123, gestalt.getConfig("db", DBInfoValid.class).port);
     }
 
+    // This shows an example of a hibernate validator returning an error.
     @Test
     public void testValidationError() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
@@ -1458,7 +1527,77 @@ public class GestaltSample {
                 "class: org.github.gestalt.config.integration.GestaltSample$DBInfoValid")
             .contains("- level: ERROR, message: Hibernate Validator, on path: db, error: size must be between 2 and 14")
             .contains("- level: ERROR, message: Hibernate Validator, on path: db, error: port should not be less than 10");
+    }
 
+    // This shows how to customise the sentence lexer used to generate paths so it is case sensative.
+    @Test
+    public void testCustomSentenceLexerCaseSensitive() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.uri", "test");
+        configs.put("db.port", "3306");
+        configs.put("db.URI", "TEST");
+        configs.put("db.PORT", "1234");
+        configs.put("db.password", "abc123");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            // do not normalize the sentence return it as is.
+            .setSentenceLexer(new PathLexer(".", DEFAULT_EVALUATOR, (it) -> it))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+        Assertions.assertEquals("TEST", gestalt.getConfig("db.URI", String.class));
+        Assertions.assertEquals("1234", gestalt.getConfig("db.PORT", String.class));
+
+        Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.Uri", String.class).isEmpty());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+    }
+
+    // This shows how to customise the Environment Variables format so instead of requiring
+    // a single "_" it requires a "__" to delineate the segments in the path.
+    @Test
+    public void integrationTestCustomEnvironmentVariablesStyle() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("DB__URI", "test");
+        configs.put("DB__PORT", "3306");
+        configs.put("DB__PASSWORD", "abc123");
+
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(configs);
+
+            GestaltBuilder builder = new GestaltBuilder();
+            Gestalt gestalt = builder
+                .addSource(EnvironmentConfigSourceBuilder.builder().build())
+                .addModuleConfig(EnvironmentVarsLoaderModuleConfigBuilder
+                    .builder()
+                    .setLexer(new PathLexer("__"))
+                    .build())
+                .build();
+
+            gestalt.loadConfigs();
+
+            Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+            Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+            Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+
+            Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+            Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+            Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+        }
     }
 
     public enum Role {
