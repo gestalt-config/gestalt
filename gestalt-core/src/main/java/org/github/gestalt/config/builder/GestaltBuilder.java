@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.Logger.Level.TRACE;
 import static java.lang.System.Logger.Level.WARNING;
-import static org.github.gestalt.config.decoder.ProxyDecoderMode.CACHE;
 
 /**
  * Builder to setup and create the Gestalt config class.
@@ -93,6 +92,10 @@ public class GestaltBuilder {
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatMissingDiscretionaryValuesAsErrors = null;
+    // If we should enable metrics
+    private Boolean metricsEnabled = null;
+    // If we should enable Validation
+    private Boolean validationEnabled = null;
 
     private Level logLevelForMissingValuesWhenDefaultOrOptional = null;
 
@@ -114,17 +117,13 @@ public class GestaltBuilder {
     private String substitutionRegex = null;
 
     // Defines how the proxy decoder works. See the enum for details.
-    private ProxyDecoderMode proxyDecoderMode = CACHE;
+    private ProxyDecoderMode proxyDecoderMode = null;
 
 
     // Default set of tags to apply to all calls to get a configuration where tags are not provided.
     private Tags defaultTags = Tags.of();
 
-    // If we should enable metrics
-    private Boolean metricsEnabled = null;
 
-    // If we should enable Validation
-    private Boolean validationEnabled = null;
 
     /**
      * Adds all default decoders to the builder. Uses the ServiceLoader to find all registered Decoders and adds them
@@ -140,10 +139,6 @@ public class GestaltBuilder {
         return this;
     }
 
-    private void configureDecoders() {
-        decoders.forEach(it -> it.applyConfig(gestaltConfig));
-    }
-
     /**
      * Add default config loaders to the builder. Uses the ServiceLoader to find all registered Config Loaders and adds them
      *
@@ -152,16 +147,9 @@ public class GestaltBuilder {
     public GestaltBuilder addDefaultConfigLoaders() {
         List<ConfigLoader> configLoaderSet = new ArrayList<>();
         ServiceLoader<ConfigLoader> loader = ServiceLoader.load(ConfigLoader.class);
-        loader.forEach(it -> {
-            it.applyConfig(gestaltConfig);
-            configLoaderSet.add(it);
-        });
+        loader.forEach(configLoaderSet::add);
         configLoaders.addAll(configLoaderSet);
         return this;
-    }
-
-    private void configureConfigLoaders() {
-        configLoaders.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
     /**
@@ -172,11 +160,7 @@ public class GestaltBuilder {
     public GestaltBuilder addDefaultPostProcessors() {
         List<PostProcessor> postProcessorsSet = new ArrayList<>();
         ServiceLoader<PostProcessor> loader = ServiceLoader.load(PostProcessor.class);
-        loader.forEach(it -> {
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
-            it.applyConfig(config);
-            postProcessorsSet.add(it);
-        });
+        loader.forEach(postProcessorsSet::add);
         postProcessors.addAll(postProcessorsSet);
         return this;
     }
@@ -209,13 +193,6 @@ public class GestaltBuilder {
         return this;
     }
 
-    private void configurePostProcessors() {
-        postProcessors.forEach(it -> {
-            PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
-            it.applyConfig(config);
-        });
-    }
-
     /**
      * Add default post processors to the builder. Uses the ServiceLoader to find all registered post processors and adds them
      *
@@ -227,18 +204,6 @@ public class GestaltBuilder {
         loader.forEach(pathMappersSet::add);
         pathMappers.addAll(pathMappersSet);
         return this;
-    }
-
-    private void configurePathMappers() {
-        pathMappers.forEach(it -> it.applyConfig(gestaltConfig));
-    }
-
-    private void configureMetricsRecorders() {
-        metricsRecorders.forEach(it -> it.applyConfig(gestaltConfig));
-    }
-
-    private void configureValidators() {
-        configValidators.forEach(it -> it.applyConfig(gestaltConfig));
     }
 
     /**
@@ -630,7 +595,15 @@ public class GestaltBuilder {
 
 
     /**
-     * Set the sentence lexer that will be passed through to the DecoderRegistry.
+     * ***USE WITH CAUTION.***
+     * Set the sentence lexer that will be used throughout Gestalt.
+     * It is used in several locations, to convert the path requested to tokens, so we can navigate the config tree using the tokens.
+     * It is used to normalize sentences when parsing configs. (except Environment Variables)
+     * It is also used in the path mappers to try different ways to navigate the config tree during decoding.
+     *
+     * <p>If you set a new lexer that is for example case-sensitive, when you decode an object
+     * public record Person(String name, Integer id) if in the properties it is admin.Name = sarah
+     * it will not be able to decode as the name field is lower case and the property is upper case.
      *
      * @param sentenceLexer for the DecoderRegistry
      * @return GestaltBuilder builder
@@ -696,7 +669,6 @@ public class GestaltBuilder {
         validationManager.addValidators(configValidators);
         return this;
     }
-
 
 
     /**
@@ -1114,89 +1086,12 @@ public class GestaltBuilder {
         gestaltConfig = rebuildConfig();
         gestaltConfig.registerModuleConfig(modules);
 
-
-        // setup the decoders, if there are none, add the default ones.
-        if (decoders.isEmpty()) {
-            logger.log(TRACE, "No decoders provided, using defaults");
-            addDefaultDecoders();
-        }
-        decoders = decoders.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-        // setup the default path mappers, if there are none, add the default ones.
-        if (pathMappers.isEmpty()) {
-            logger.log(TRACE, "No path mapper provided, using defaults");
-            addDefaultPathMappers();
-        }
-        pathMappers = pathMappers.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-        // setup the default metricsRecorders, if there are none add the default ones.
-        if (metricsRecorders.isEmpty()) {
-            logger.log(TRACE, "No metric recorders provided, using defaults");
-            addDefaultMetricsRecorder();
-        }
-        metricsRecorders = metricsRecorders.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-        // setup the default validators, if there are none add the default ones.
-        if (configValidators.isEmpty()) {
-            logger.log(TRACE, "No validators recorders provided, using defaults");
-            addDefaultValidators();
-        }
-        configValidators = configValidators.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-
-        // if the metricsManager does not exist, create it.
-        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
-        if (metricsManager == null) {
-            metricsManager = new MetricsManager(metricsRecorders);
-        } else {
-            metricsManager.addMetricsRecorders(metricsRecorders);
-        }
-
-        // if the metricsManager does not exist, create it.
-        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
-        if (validationManager == null) {
-            validationManager = new ValidationManager(configValidators);
-        } else {
-            validationManager.addValidators(configValidators);
-        }
-
-        // if the decoderService does not exist, create it.
-        // Otherwise get all the decoders from the decoderService, combine them with the ones in the builder,
-        // and update the decoderService
-        if (decoderService == null) {
-            decoderService = new DecoderRegistry(decoders, configNodeService, sentenceLexer, pathMappers);
-        } else {
-            decoders.addAll(decoderService.getDecoders());
-            List<Decoder<?>> dedupedDecoders = dedupeDecoders();
-            decoderService.setDecoders(dedupedDecoders);
-        }
-
-        // Setup the config loaders.
-        if (configLoaders.isEmpty()) {
-            logger.log(TRACE, "No decoders provided, using defaults");
-            addDefaultConfigLoaders();
-        }
-        configLoaders = configLoaders.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-        if (postProcessors.isEmpty()) {
-            logger.log(TRACE, "No post processors provided, using defaults");
-            addDefaultPostProcessors();
-        }
-        postProcessors = postProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-        // get all the config loaders from the configLoaderRegistry, combine them with the ones in the builder,
-        // and update the configLoaderRegistry
-        configLoaders.addAll(configLoaderService.getConfigLoaders());
-        List<ConfigLoader> dedupedConfigs = dedupeConfigLoaders();
-        configLoaderService.setLoaders(dedupedConfigs);
-
-        // configure all the various services
+        configurePathMappers();
         configureDecoders();
+        configureMetrics();
+        configureValidators();
         configureConfigLoaders();
         configurePostProcessors();
-        configurePathMappers();
-        configureMetricsRecorders();
-        configureValidators();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
@@ -1223,6 +1118,101 @@ public class GestaltBuilder {
             return gestaltCache;
         } else {
             return gestaltCore;
+        }
+    }
+
+    private void configurePostProcessors() {
+        if (postProcessors.isEmpty()) {
+            logger.log(TRACE, "No post processors provided, using defaults");
+            addDefaultPostProcessors();
+        }
+        postProcessors = postProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
+
+        PostProcessorConfig config = new PostProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
+        postProcessors.forEach(it -> it.applyConfig(config));
+    }
+
+    private void configureConfigLoaders() {
+        // Setup the config loaders.
+        if (configLoaders.isEmpty()) {
+            logger.log(TRACE, "No decoders provided, using defaults");
+            addDefaultConfigLoaders();
+        }
+        // get all the config loaders from the configLoaderRegistry, combine them with the ones in the builder,
+        // and update the configLoaderRegistry
+        configLoaders.addAll(configLoaderService.getConfigLoaders());
+        List<ConfigLoader> dedupedConfigs = dedupeConfigLoaders();
+
+        configLoaders = configLoaders.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        configLoaders.forEach(it -> it.applyConfig(gestaltConfig));
+
+        configLoaderService.setLoaders(dedupedConfigs);
+    }
+
+    private void configureValidators() {
+        // setup the default validators, if there are none add the default ones.
+        if (configValidators.isEmpty()) {
+            logger.log(TRACE, "No validators recorders provided, using defaults");
+            addDefaultValidators();
+        }
+        configValidators = configValidators.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        configValidators.forEach(it -> it.applyConfig(gestaltConfig));
+
+        // if the metricsManager does not exist, create it.
+        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
+        if (validationManager == null) {
+            validationManager = new ValidationManager(configValidators);
+        } else {
+            validationManager.addValidators(configValidators);
+        }
+    }
+
+    private void configureMetrics() {
+        // setup the default metricsRecorders, if there are none add the default ones.
+        if (metricsRecorders.isEmpty()) {
+            logger.log(TRACE, "No metric recorders provided, using defaults");
+            addDefaultMetricsRecorder();
+        }
+        metricsRecorders = metricsRecorders.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        metricsRecorders.forEach(it -> it.applyConfig(gestaltConfig));
+
+        // if the metricsManager does not exist, create it.
+        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
+        if (metricsManager == null) {
+            metricsManager = new MetricsManager(metricsRecorders);
+        } else {
+            metricsManager.addMetricsRecorders(metricsRecorders);
+        }
+    }
+
+    private void configurePathMappers() {
+        // setup the default path mappers, if there are none, add the default ones.
+        if (pathMappers.isEmpty()) {
+            logger.log(TRACE, "No path mapper provided, using defaults");
+            addDefaultPathMappers();
+        }
+        pathMappers = pathMappers.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        pathMappers.forEach(it -> it.applyConfig(gestaltConfig));
+    }
+
+    private void configureDecoders() throws GestaltConfigurationException {
+        // setup the decoders, if there are none, add the default ones.
+        if (decoders.isEmpty()) {
+            logger.log(TRACE, "No decoders provided, using defaults");
+            addDefaultDecoders();
+        }
+        decoders = decoders.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        decoders.forEach(it -> it.applyConfig(gestaltConfig));
+
+        // if the decoderService does not exist, create it.
+        // Otherwise get all the decoders from the decoderService, combine them with the ones in the builder,
+        // and update the decoderService
+        if (decoderService == null) {
+            decoderService = new DecoderRegistry(decoders, configNodeService, sentenceLexer, pathMappers);
+        } else {
+            decoders.addAll(decoderService.getDecoders());
+            List<Decoder<?>> dedupedDecoders = dedupeDecoders();
+            decoderService.setDecoders(dedupedDecoders);
         }
     }
 
@@ -1274,6 +1264,9 @@ public class GestaltBuilder {
 
         newConfig.setValidationEnabled(Objects.requireNonNullElseGet(validationEnabled,
             () -> gestaltConfig.isValidationEnabled()));
+
+        newConfig.setSentenceLexer(Objects.requireNonNullElseGet(sentenceLexer,
+            () -> gestaltConfig.getSentenceLexer()));
 
         return newConfig;
     }

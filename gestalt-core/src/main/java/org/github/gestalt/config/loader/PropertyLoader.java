@@ -1,6 +1,7 @@
 package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -27,15 +29,15 @@ import java.util.stream.Collectors;
  */
 public final class PropertyLoader implements ConfigLoader {
 
-    private final ConfigParser parser;
-    private final SentenceLexer lexer;
-
+    private ConfigParser parser;
+    private SentenceLexer lexer;
+    private final boolean isDefault;
 
     /**
      * Construct a default property loader using the default path lexer for "." separated paths.
      */
     public PropertyLoader() {
-        this(new PathLexer("."), new MapConfigParser());
+        this(new PathLexer(), new MapConfigParser(), true);
     }
 
     /**
@@ -45,8 +47,36 @@ public final class PropertyLoader implements ConfigLoader {
      * @param parser Parser for the property files
      */
     public PropertyLoader(SentenceLexer lexer, ConfigParser parser) {
+        this(lexer, parser, false);
+    }
+
+    private PropertyLoader(SentenceLexer lexer, ConfigParser parser, boolean isDefault) {
+        Objects.requireNonNull(lexer, "PropertyLoader SentenceLexer should not be null");
+        Objects.requireNonNull(parser, "PropertyLoader ConfigParser should not be null");
+
         this.lexer = lexer;
         this.parser = parser;
+        this.isDefault = isDefault;
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the Yaml ConfigLoader we will use the lexer in the following priorities
+        // 1. the constructor
+        // 2. the module config
+        // 3. the Gestalt Configuration
+        var moduleConfig = config.getModuleConfig(PropertyLoaderModuleConfig.class);
+        if (isDefault) {
+            if (moduleConfig != null && moduleConfig.getLexer() != null) {
+                lexer = moduleConfig.getLexer();
+            } else {
+                lexer = config.getSentenceLexer();
+            }
+        }
+
+        if (isDefault && moduleConfig != null && moduleConfig.getConfigParse() != null) {
+            parser = moduleConfig.getConfigParse();
+        }
     }
 
     @Override

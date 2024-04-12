@@ -116,6 +116,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return decoderContext;
     }
 
+
     /**
      * register a core event listener.
      *

@@ -10,6 +10,7 @@ import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
+import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.loader.MapConfigLoader;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
@@ -22,18 +23,17 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
-import org.github.gestalt.config.source.ConfigSource;
-import org.github.gestalt.config.source.ConfigSourcePackage;
-import org.github.gestalt.config.source.MapConfigSource;
-import org.github.gestalt.config.source.MapConfigSourceBuilder;
+import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoPathAnnotation;
 import org.github.gestalt.config.test.classes.DBInfoPathMultiAnnotation;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.SystemWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -42,6 +42,8 @@ import java.util.*;
 import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
+import static org.mockito.Mockito.mockStatic;
 
 class GestaltTest {
 
@@ -1908,8 +1910,83 @@ class GestaltTest {
             () -> gestalt.getConfig("db.password", Byte.class, Tags.environment("dev")));
 
         Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Byte\n" +
-            " - level: WARN, message: Expected a Byte on path: db.password, decoding node: LeafNode{value='*****'} received the wrong size",
+                " - level: WARN, message: Expected a Byte on path: db.password, decoding node: " +
+                "LeafNode{value='*****'} received the wrong size",
             ex.getMessage());
+    }
+
+    @Test
+    public void testCaseSensitive() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.uri", "test");
+        configs.put("db.port", "3306");
+        configs.put("db.URI", "TEST");
+        configs.put("db.PORT", "1234");
+        configs.put("db.password", "abc123");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            // do not normalize the sentence return it as is.
+            .setSentenceLexer(new PathLexer(".", DEFAULT_EVALUATOR, (it) -> it))
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderContext());
+        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderService());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+        Assertions.assertEquals("TEST", gestalt.getConfig("db.URI", String.class));
+        Assertions.assertEquals("1234", gestalt.getConfig("db.PORT", String.class));
+
+        Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.Uri", String.class).isEmpty());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+    }
+
+    @Test
+    public void integrationTestCustomEnvironmentVariablesStyle() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("DB__URI", "test");
+        configs.put("DB__PORT", "3306");
+        configs.put("DB__PASSWORD", "abc123");
+
+        try (MockedStatic<SystemWrapper> mocked = mockStatic(SystemWrapper.class)) {
+            mocked.when(SystemWrapper::getEnvVars).thenReturn(configs);
+
+            GestaltBuilder builder = new GestaltBuilder();
+            Gestalt gestalt = builder
+                .addSource(EnvironmentConfigSourceBuilder.builder().build())
+                .addModuleConfig(EnvironmentVarsLoaderModuleConfigBuilder
+                    .builder()
+                    .setLexer(new PathLexer("__"))
+                    .build())
+                .build();
+
+            gestalt.loadConfigs();
+
+            Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+            Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+            Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+
+            Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+            Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+            Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+        }
     }
 
 

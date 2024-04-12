@@ -2,7 +2,9 @@ package org.github.gestalt.config.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -45,6 +47,10 @@ class JsonLoaderTest {
             " } ", "json");
 
         JsonLoader jsonLoader = new JsonLoader();
+        GestaltConfig config = new GestaltConfig();
+        config.setSentenceLexer(new PathLexer());
+
+        jsonLoader.applyConfig(config);
 
         GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
@@ -67,7 +73,8 @@ class JsonLoaderTest {
                                      .get().getIndex(3).isPresent());
     }
 
-    void loadSourceWithTags() throws GestaltException {
+    @Test
+    void loadSourceModuleConfig() throws GestaltException {
 
         StringConfigSource source = new StringConfigSource("{\n" +
             "  \"name\":\"Steve\",\n" +
@@ -80,6 +87,18 @@ class JsonLoaderTest {
             " } ", "json");
 
         JsonLoader jsonLoader = new JsonLoader();
+        GestaltConfig config = new GestaltConfig();
+
+        var objectMapper = new ObjectMapper().findAndRegisterModules();
+        var lexer = new PathLexer();
+        var moduleConfig = JsonModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            .setLexer(lexer)
+            .build();
+
+        config.registerModuleConfig(moduleConfig);
+
+        jsonLoader.applyConfig(config);
 
         GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
@@ -87,19 +106,117 @@ class JsonLoaderTest {
         Assertions.assertTrue(resultContainer.hasResults());
         ConfigNode result = resultContainer.results().get(0).getConfigNode();
 
-        Assertions.assertEquals(Tags.of("toy", "ball"), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
         Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
         Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
         Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
-                                              .get().getValue().get());
+            .get().getValue().get());
         Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
-                                                .get().getIndex(0).get().getValue().get());
+            .get().getIndex(0).get().getValue().get());
         Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
-                                               .get().getIndex(1).get().getValue().get());
+            .get().getIndex(1).get().getValue().get());
         Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
-                                                 .get().getIndex(2).get().getValue().get());
+            .get().getIndex(2).get().getValue().get());
         Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
-                                     .get().getIndex(3).isPresent());
+            .get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfigConstructor() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("{\n" +
+            "  \"name\":\"Steve\",\n" +
+            "  \"age\":42,\n" +
+            "  \"cars\": [\n" +
+            "    { \"name\":\"Ford\", \"models\":[ \"Fiesta\", \"Focus\", \"Mustang\" ] },\n" +
+            "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
+            "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
+            "  ]\n" +
+            " } ", "json");
+
+        JsonLoader jsonLoader = new JsonLoader(new ObjectMapper(), new PathLexer());
+        GestaltConfig config = new GestaltConfig();
+
+        var objectMapper = new ObjectMapper().findAndRegisterModules();
+        var lexer = new PathLexer();
+        var moduleConfig = JsonModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            .setLexer(lexer)
+            .build();
+
+        config.registerModuleConfig(moduleConfig);
+
+        jsonLoader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @SuppressWarnings("VariableDeclarationUsageDistance")
+    @Test
+    void loadSourceModuleConfigGestaltConfigLexer() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("{\n" +
+            "  \"name\":\"Steve\",\n" +
+            "  \"age\":42,\n" +
+            "  \"cars\": [\n" +
+            "    { \"name\":\"Ford\", \"models\":[ \"Fiesta\", \"Focus\", \"Mustang\" ] },\n" +
+            "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
+            "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
+            "  ]\n" +
+            " } ", "json");
+
+        JsonLoader jsonLoader = new JsonLoader();
+        GestaltConfig config = new GestaltConfig();
+
+        var objectMapper = new ObjectMapper().findAndRegisterModules();
+        var lexer = new PathLexer();
+        var moduleConfig = JsonModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            //.setLexer(lexer)
+            .build();
+
+        config.registerModuleConfig(moduleConfig);
+        config.setSentenceLexer(lexer);
+
+        jsonLoader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
     }
 
     @Test
@@ -150,7 +267,7 @@ class JsonLoaderTest {
             "  ]\n" +
             " } ", "json");
 
-        JsonLoader jsonLoader = new JsonLoader(new ObjectMapper());
+        JsonLoader jsonLoader = new JsonLoader(new ObjectMapper(), new PathLexer());
 
         GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
         Assertions.assertFalse(resultContainer.hasErrors());

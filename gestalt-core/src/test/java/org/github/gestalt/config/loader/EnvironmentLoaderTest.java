@@ -2,15 +2,19 @@ package org.github.gestalt.config.loader;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ConfigValue;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.parser.ConfigParser;
+import org.github.gestalt.config.parser.MapConfigParser;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
+import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.StringConfigSource;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
@@ -22,9 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
 
@@ -60,7 +62,7 @@ class EnvironmentLoaderTest {
         Mockito.when(lexer.scan("db.name"))
             .thenReturn(GResultOf.result(List.of(new ObjectToken("db"), new ObjectToken("name"))));
 
-        // mock the source so we return our test data stream.
+        // mock the source, so we return our test data stream.
         Mockito.when(source.hasList()).thenReturn(true);
         Mockito.when(source.loadList()).thenReturn(data);
         Mockito.when(source.getTags()).thenReturn(Tags.of());
@@ -434,6 +436,160 @@ class EnvironmentLoaderTest {
         Assertions.assertInstanceOf(MapNode.class, results.results().get(0).getConfigNode());
         Assertions.assertEquals(0, ((MapNode) results.results().get(0).getConfigNode()).size());
 
+    }
+
+    @Test
+    void loadSource() throws GestaltException {
+        MapConfigSource source = getConfigSource();
+
+        EnvironmentVarsLoader loader = new EnvironmentVarsLoader();
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfig() throws GestaltException {
+        MapConfigSource source = getConfigSource();
+
+        var configParser = new MapConfigParser();
+        var lexer = new PathLexer("_");
+        var moduleConfig = EnvironmentVarsLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            .setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        EnvironmentVarsLoader loader = new EnvironmentVarsLoader();
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfigConstructor() throws GestaltException {
+        MapConfigSource source = getConfigSource();
+
+        var configParser = new MapConfigParser();
+        var lexer = new PathLexer(".");
+        var moduleConfig = EnvironmentVarsLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            .setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        EnvironmentVarsLoader loader = new EnvironmentVarsLoader(new PathLexer("_"), new MapConfigParser());
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    private static MapConfigSource getConfigSource() {
+        Map<String, String> configMap = new HashMap<>();
+
+        configMap.put("NAME", "Steve");
+        configMap.put("AGE", "42");
+        configMap.put("CARS[0]_NAME", "Ford");
+        configMap.put("CARS[0]_MODELS", "Fiesta, Focus, Mustang");
+        configMap.put("CARS[1]_NAME", "BMW");
+        configMap.put("CARS[1]_MODELS", "320, X3, X5");
+        configMap.put("CARS[2]_NAME", "Fiat");
+        configMap.put("CARS[2]_MODELS", "500, Panda");
+
+        return new MapConfigSource(configMap);
+    }
+
+    @Test
+    void loadSourceModuleConfigDontFallbackToGestaltLexer() throws GestaltException {
+        Map<String, String> configMap = new HashMap<>();
+
+        configMap.put("NAME", "Steve");
+        configMap.put("AGE", "42");
+        configMap.put("CARS[0]_NAME", "Ford");
+        configMap.put("CARS[0]_MODELS", "Fiesta, Focus, Mustang");
+        configMap.put("CARS[1]_NAME", "BMW");
+        configMap.put("CARS[1]_MODELS", "320, X3, X5");
+        configMap.put("CARS[2]_NAME", "Fiat");
+        configMap.put("CARS[2]_MODELS", "500, Panda");
+
+        var configParser = new MapConfigParser();
+        var moduleConfig = EnvironmentVarsLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            //.setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+        config.setSentenceLexer(new PathLexer());
+
+        EnvironmentVarsLoader loader = new EnvironmentVarsLoader();
+        loader.applyConfig(config);
+
+        MapConfigSource source = new MapConfigSource(configMap);
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
     }
 
 }

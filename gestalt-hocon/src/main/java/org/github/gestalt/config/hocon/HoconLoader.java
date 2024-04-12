@@ -2,16 +2,19 @@ package org.github.gestalt.config.hocon;
 
 import com.typesafe.config.*;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
-import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.PathUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,24 +30,55 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class HoconLoader implements ConfigLoader {
 
-    private final ConfigParseOptions configParseOptions;
+    private final boolean isDefault;
+    private ConfigParseOptions configParseOptions;
+    private SentenceLexer lexer;
 
     /**
      * Default constructor for HoconLoader that uses the default ConfigParseOptions.
      */
     public HoconLoader() {
-        configParseOptions = ConfigParseOptions.defaults();
+        this(ConfigParseOptions.defaults(), new PathLexer(), true);
     }
 
     /**
      * Constructor for HoconLoader that accepts a ConfigParseOptions.
      *
      * @param configParseOptions options for the Hocon parsing
+     * @param lexer              the lexer to normalize paths.
      */
-    public HoconLoader(ConfigParseOptions configParseOptions) {
-        this.configParseOptions = configParseOptions;
+    public HoconLoader(ConfigParseOptions configParseOptions, SentenceLexer lexer) {
+        this(configParseOptions, lexer, false);
     }
 
+    private HoconLoader(ConfigParseOptions configParseOptions, SentenceLexer lexer, boolean isDefault) {
+        Objects.requireNonNull(lexer, "HoconLoader SentenceLexer should not be null");
+        Objects.requireNonNull(configParseOptions, "HoconLoader ConfigParseOptions should not be null");
+
+        this.configParseOptions = configParseOptions;
+        this.lexer = lexer;
+        this.isDefault = isDefault;
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the Hocon ConfigLoader we will use the lexer in the following priorities
+        // 1. the constructor
+        // 2. the module config
+        // 3. the Gestalt Configuration
+        var moduleConfig = config.getModuleConfig(HoconModuleConfig.class);
+        if (isDefault) {
+            if (moduleConfig != null && moduleConfig.getLexer() != null) {
+                lexer = moduleConfig.getLexer();
+            } else {
+                lexer = config.getSentenceLexer();
+            }
+        }
+
+        if (isDefault && moduleConfig != null && moduleConfig.getConfigParseOptions() != null) {
+            configParseOptions = moduleConfig.getConfigParseOptions();
+        }
+    }
 
     @Override
     public String name() {
@@ -109,7 +143,7 @@ public final class HoconLoader implements ConfigLoader {
     }
 
     private String normalizeSentence(String sentence) {
-        return sentence.toLowerCase(Locale.getDefault());
+        return lexer.normalizeSentence(sentence);
     }
 
     private GResultOf<ConfigNode> buildArrayConfigTree(String path, ConfigList configList) {

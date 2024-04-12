@@ -3,7 +3,9 @@ package org.github.gestalt.config.toml;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -52,6 +54,11 @@ class TomlLoaderTest {
 
         TomlLoader tomlLoader = new TomlLoader();
 
+        GestaltConfig config = new GestaltConfig();
+        config.setSentenceLexer(new PathLexer());
+
+        tomlLoader.applyConfig(config);
+
         GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
         Assertions.assertFalse(resultContainer.hasErrors());
@@ -70,6 +77,162 @@ class TomlLoaderTest {
                                                  .get().getIndex(2).get().getValue().get());
         Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
                                      .get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceWithModuleConfig() throws GestaltException {
+        var lexer = new PathLexer();
+        var objectMapper = new ObjectMapper(new TomlFactory()).findAndRegisterModules();
+
+        var moduleConfig = TomlModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            .setLexer(lexer)
+            .build();
+
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        TomlLoader tomlLoader = new TomlLoader();
+        tomlLoader.applyConfig(config);
+
+        StringConfigSource source = new StringConfigSource("name = \"Steve\" \n" +
+            "age = 42\n" +
+
+            "[[cars]]\n" +
+            "name = \"Ford\"\n" +
+            "models = [ \"Fiesta\", \"Focus\", \"Mustang\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"BMW\"\n" +
+            "models = [ \"320\", \"X3\", \"X5\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"Fiat\"\n" +
+            "models = [ \"500\", \"Panda\" ]\n", "toml");
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceWithModuleConfigConstructor() throws GestaltException {
+        var lexer = new PathLexer();
+        var objectMapper = new ObjectMapper(new TomlFactory()).findAndRegisterModules();
+
+        var moduleConfig = TomlModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            .setLexer(lexer)
+            .build();
+
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        TomlLoader tomlLoader = new TomlLoader(new ObjectMapper(new TomlFactory()).findAndRegisterModules(), new PathLexer());
+        tomlLoader.applyConfig(config);
+
+        StringConfigSource source = new StringConfigSource("name = \"Steve\" \n" +
+            "age = 42\n" +
+
+            "[[cars]]\n" +
+            "name = \"Ford\"\n" +
+            "models = [ \"Fiesta\", \"Focus\", \"Mustang\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"BMW\"\n" +
+            "models = [ \"320\", \"X3\", \"X5\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"Fiat\"\n" +
+            "models = [ \"500\", \"Panda\" ]\n", "toml");
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceWithModuleConfigGestaltConfigLexer() throws GestaltException {
+        var lexer = new PathLexer();
+        var objectMapper = new ObjectMapper(new TomlFactory()).findAndRegisterModules();
+
+        var moduleConfig = TomlModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            //.setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+        config.setSentenceLexer(lexer);
+
+        TomlLoader tomlLoader = new TomlLoader();
+        tomlLoader.applyConfig(config);
+
+        StringConfigSource source = new StringConfigSource("name = \"Steve\" \n" +
+            "age = 42\n" +
+
+            "[[cars]]\n" +
+            "name = \"Ford\"\n" +
+            "models = [ \"Fiesta\", \"Focus\", \"Mustang\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"BMW\"\n" +
+            "models = [ \"320\", \"X3\", \"X5\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"Fiat\"\n" +
+            "models = [ \"500\", \"Panda\" ]\n", "toml");
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
     }
 
     @Test
@@ -130,7 +293,7 @@ class TomlLoaderTest {
             "name = \"Fiat\"\n" +
             "models = [ \"500\", \"Panda\" ]\n", "toml");
 
-        TomlLoader tomlLoader = new TomlLoader(new ObjectMapper(new TomlFactory()));
+        TomlLoader tomlLoader = new TomlLoader(new ObjectMapper(new TomlFactory()), new PathLexer());
 
         GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
 
@@ -150,6 +313,76 @@ class TomlLoaderTest {
                                                  .get().getIndex(2).get().getValue().get());
         Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
                                      .get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceTomlSample() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("\n" +
+            "\n" +
+            "# This is a TOML document\n" +
+            "\n" +
+            "title = \"TOML Example\"\n" +
+            "\n" +
+            "[owner]\n" +
+            "name = \"Tom Preston-Werner\"\n" +
+            "dob = 1979-05-27T07:32:00-08:00\n" +
+            "\n" +
+            "[database]\n" +
+            "enabled = true\n" +
+            "ports = [ 8000, 8001, 8002 ]\n" +
+            "data = [ [\"delta\", \"phi\"], [3.14] ]\n" +
+            "temp_targets = { cpu = 79.5, case = 72.0 }\n" +
+            "\n" +
+            "[servers]\n" +
+            "\n" +
+            "[servers.alpha]\n" +
+            "ip = \"10.0.0.1\"\n" +
+            "role = \"frontend\"\n" +
+            "\n" +
+            "[servers.beta]\n" +
+            "ip = \"10.0.0.2\"\n" +
+            "role = \"backend\"\n" +
+            "\n", "toml");
+
+        TomlLoader tomlLoader = new TomlLoader(new ObjectMapper(new TomlFactory()), new PathLexer());
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Tom Preston-Werner", result.getKey("owner").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("1979-05-27T07:32:00-08:00", result.getKey("owner").get().getKey("dob").get().getValue().get());
+
+        Assertions.assertEquals("true", result.getKey("database").get().getKey("enabled").get().getValue().get());
+        Assertions.assertEquals("8000", result.getKey("database").get().getKey("ports").get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("8001", result.getKey("database").get().getKey("ports").get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("8002", result.getKey("database").get().getKey("ports").get().getIndex(2).get().getValue().get());
+
+        Assertions.assertEquals("delta", result.getKey("database").get().getKey("data").get().getIndex(0).get().getIndex(0).get()
+            .getValue().get());
+        Assertions.assertEquals("phi", result.getKey("database").get().getKey("data").get().getIndex(0).get().getIndex(1).get()
+            .getValue().get());
+        Assertions.assertEquals("3.14", result.getKey("database").get().getKey("data").get().getIndex(1).get().getIndex(0).get()
+            .getValue().get());
+
+        Assertions.assertEquals("79.5", result.getKey("database").get().getKey("temp_targets").get().getKey("cpu").get()
+            .getValue().get());
+        Assertions.assertEquals("72", result.getKey("database").get().getKey("temp_targets").get().getKey("case").get()
+            .getValue().get());
+
+        Assertions.assertEquals("10.0.0.1", result.getKey("servers").get().getKey("alpha").get().getKey("ip").get() //NOPMD
+            .getValue().get());
+        Assertions.assertEquals("frontend", result.getKey("servers").get().getKey("alpha").get().getKey("role").get()
+            .getValue().get());
+
+
+        Assertions.assertEquals("10.0.0.2", result.getKey("servers").get().getKey("beta").get().getKey("ip").get()  //NOPMD
+            .getValue().get());
+        Assertions.assertEquals("backend", result.getKey("servers").get().getKey("beta").get().getKey("role").get()
+            .getValue().get());
     }
 
     @Test

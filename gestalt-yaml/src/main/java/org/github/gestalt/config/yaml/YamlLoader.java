@@ -4,16 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
-import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.PathUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,24 +31,56 @@ import static com.fasterxml.jackson.databind.node.JsonNodeType.MISSING;
  */
 public final class YamlLoader implements ConfigLoader {
 
-    private final ObjectMapper objectMapper;
-
-    /**
-     * Constructor for YamlLoader that accepts a ObjectMapper.
-     *
-     * @param objectMapper for loading yaml config, it should have a YAMLFactory registered to it.
-     */
-    public YamlLoader(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private final boolean isDefault;
+    private ObjectMapper objectMapper;
+    private SentenceLexer lexer;
 
     /**
      * Default constructor for YamlLoader that creates a new ObjectMapper with a YAMLFactory registered to it.
      */
     public YamlLoader() {
-        objectMapper = new ObjectMapper(new YAMLFactory());
-        objectMapper.findAndRegisterModules();
+        this(new ObjectMapper(new YAMLFactory()).findAndRegisterModules(), new PathLexer(), true);
     }
+
+    /**
+     * Constructor for YamlLoader that accepts a ObjectMapper.
+     *
+     * @param objectMapper for loading yaml config, it should have a YAMLFactory registered to it.
+     * @param lexer        the lexer to normalize paths.
+     */
+    public YamlLoader(ObjectMapper objectMapper, SentenceLexer lexer) {
+        this(objectMapper, lexer, false);
+    }
+
+    public YamlLoader(ObjectMapper objectMapper, SentenceLexer lexer, boolean isDefault) {
+        Objects.requireNonNull(lexer, "YamlLoader SentenceLexer should not be null");
+        Objects.requireNonNull(objectMapper, "YamlLoader ObjectMapper should not be null");
+
+        this.objectMapper = objectMapper;
+        this.lexer = lexer;
+        this.isDefault = isDefault;
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        // for the Yaml ConfigLoader we will use the lexer in the following priorities
+        // 1. the constructor
+        // 2. the module config
+        // 3. the Gestalt Configuration
+        var moduleConfig = config.getModuleConfig(YamlModuleConfig.class);
+        if (isDefault) {
+            if (moduleConfig != null && moduleConfig.getLexer() != null) {
+                lexer = moduleConfig.getLexer();
+            } else {
+                lexer = config.getSentenceLexer();
+            }
+        }
+
+        if (isDefault && moduleConfig != null && moduleConfig.getObjectMapper() != null) {
+            objectMapper = moduleConfig.getObjectMapper();
+        }
+    }
+
 
     @Override
     public String name() {
@@ -115,7 +150,7 @@ public final class YamlLoader implements ConfigLoader {
     }
 
     private String normalizeSentence(String sentence) {
-        return sentence.toLowerCase(Locale.getDefault());
+        return lexer.normalizeSentence(sentence);
     }
 
     private GResultOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {
