@@ -440,18 +440,7 @@ class EnvironmentLoaderTest {
 
     @Test
     void loadSource() throws GestaltException {
-        Map<String, String> configMap = new HashMap<>();
-
-        configMap.put("NAME", "Steve");
-        configMap.put("AGE", "42");
-        configMap.put("CARS[0]_NAME", "Ford");
-        configMap.put("CARS[0]_MODELS", "Fiesta, Focus, Mustang");
-        configMap.put("CARS[1]_NAME", "BMW");
-        configMap.put("CARS[1]_MODELS", "320, X3, X5");
-        configMap.put("CARS[2]_NAME", "Fiat");
-        configMap.put("CARS[2]_MODELS", "500, Panda");
-
-        MapConfigSource source = new MapConfigSource(configMap);
+        MapConfigSource source = getConfigSource();
 
         EnvironmentVarsLoader loader = new EnvironmentVarsLoader();
 
@@ -475,18 +464,7 @@ class EnvironmentLoaderTest {
 
     @Test
     void loadSourceModuleConfig() throws GestaltException {
-        Map<String, String> configMap = new HashMap<>();
-
-        configMap.put("NAME", "Steve");
-        configMap.put("AGE", "42");
-        configMap.put("CARS[0]_NAME", "Ford");
-        configMap.put("CARS[0]_MODELS", "Fiesta, Focus, Mustang");
-        configMap.put("CARS[1]_NAME", "BMW");
-        configMap.put("CARS[1]_MODELS", "320, X3, X5");
-        configMap.put("CARS[2]_NAME", "Fiat");
-        configMap.put("CARS[2]_MODELS", "500, Panda");
-
-        MapConfigSource source = new MapConfigSource(configMap);
+        MapConfigSource source = getConfigSource();
 
         var configParser = new MapConfigParser();
         var lexer = new PathLexer("_");
@@ -517,6 +495,56 @@ class EnvironmentLoaderTest {
             .get().getValue().get());
 
         Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfigConstructor() throws GestaltException {
+        MapConfigSource source = getConfigSource();
+
+        var configParser = new MapConfigParser();
+        var lexer = new PathLexer(".");
+        var moduleConfig = EnvironmentVarsLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            .setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        EnvironmentVarsLoader loader = new EnvironmentVarsLoader(new PathLexer("_"), new MapConfigParser());
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    private static MapConfigSource getConfigSource() {
+        Map<String, String> configMap = new HashMap<>();
+
+        configMap.put("NAME", "Steve");
+        configMap.put("AGE", "42");
+        configMap.put("CARS[0]_NAME", "Ford");
+        configMap.put("CARS[0]_MODELS", "Fiesta, Focus, Mustang");
+        configMap.put("CARS[1]_NAME", "BMW");
+        configMap.put("CARS[1]_MODELS", "320, X3, X5");
+        configMap.put("CARS[2]_NAME", "Fiat");
+        configMap.put("CARS[2]_MODELS", "500, Panda");
+
+        return new MapConfigSource(configMap);
     }
 
     @Test

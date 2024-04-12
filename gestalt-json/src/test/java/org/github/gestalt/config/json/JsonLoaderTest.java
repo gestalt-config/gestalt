@@ -122,6 +122,55 @@ class JsonLoaderTest {
     }
 
     @Test
+    void loadSourceModuleConfigConstructor() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("{\n" +
+            "  \"name\":\"Steve\",\n" +
+            "  \"age\":42,\n" +
+            "  \"cars\": [\n" +
+            "    { \"name\":\"Ford\", \"models\":[ \"Fiesta\", \"Focus\", \"Mustang\" ] },\n" +
+            "    { \"name\":\"BMW\", \"models\":[ \"320\", \"X3\", \"X5\" ] },\n" +
+            "    { \"name\":\"Fiat\", \"models\":[ \"500\", \"Panda\" ] }\n" +
+            "  ]\n" +
+            " } ", "json");
+
+        JsonLoader jsonLoader = new JsonLoader(new ObjectMapper(), new PathLexer());
+        GestaltConfig config = new GestaltConfig();
+
+        var objectMapper = new ObjectMapper().findAndRegisterModules();
+        var lexer = new PathLexer();
+        var moduleConfig = JsonModuleConfigBuilder.builder()
+            .setObjectMapper(objectMapper)
+            .setLexer(lexer)
+            .build();
+
+        config.registerModuleConfig(moduleConfig);
+
+        jsonLoader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = jsonLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @SuppressWarnings("VariableDeclarationUsageDistance")
+    @Test
     void loadSourceModuleConfigGestaltConfigLexer() throws GestaltException {
 
         StringConfigSource source = new StringConfigSource("{\n" +

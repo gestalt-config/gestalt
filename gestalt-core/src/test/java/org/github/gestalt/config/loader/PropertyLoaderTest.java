@@ -387,21 +387,7 @@ class PropertyLoaderTest {
 
     @Test
     void loadSource() throws GestaltException, IOException {
-        Properties configMap = new Properties();
-
-        configMap.put("name", "Steve");
-        configMap.put("age", "42");
-        configMap.put("cars[0].name", "Ford");
-        configMap.put("cars[0].models", "Fiesta, Focus, Mustang");
-        configMap.put("cars[1].name", "BMW");
-        configMap.put("cars[1].models", "320, X3, X5");
-        configMap.put("cars[2].name", "Fiat");
-        configMap.put("cars[2].models", "500, Panda");
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        configMap.store(outputStream, "");
-
-        InputStreamConfigSource source = new InputStreamConfigSource(new ByteArrayInputStream(outputStream.toByteArray()), "properties");
+        InputStreamConfigSource source = getConfigSource();
 
         PropertyLoader loader = new PropertyLoader();
 
@@ -425,20 +411,7 @@ class PropertyLoaderTest {
 
     @Test
     void loadSourceModuleConfig() throws GestaltException, IOException {
-        Properties configMap = new Properties();
-
-        configMap.put("name", "Steve");
-        configMap.put("age", "42");
-        configMap.put("cars[0].name", "Ford");
-        configMap.put("cars[0].models", "Fiesta, Focus, Mustang");
-        configMap.put("cars[1].name", "BMW");
-        configMap.put("cars[1].models", "320, X3, X5");
-        configMap.put("cars[2].name", "Fiat");
-        configMap.put("cars[2].models", "500, Panda");
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        configMap.store(outputStream, "");
-        InputStreamConfigSource source = new InputStreamConfigSource(new ByteArrayInputStream(outputStream.toByteArray()), "properties");
+        InputStreamConfigSource source = getConfigSource();
 
         var configParser = new MapConfigParser();
         var lexer = new PathLexer(".");
@@ -469,6 +442,58 @@ class PropertyLoaderTest {
             .get().getValue().get());
 
         Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceModuleConfigConstructor() throws GestaltException, IOException {
+        InputStreamConfigSource source = getConfigSource();
+
+        var configParser = new MapConfigParser();
+        var lexer = new PathLexer("_"); // bad config, but shouldnt be used.
+        var moduleConfig = MapConfigLoaderModuleConfigBuilder.builder()
+            .setConfigParser(configParser)
+            .setLexer(lexer)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        PropertyLoader loader = new PropertyLoader(new PathLexer(), new MapConfigParser());
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    private static InputStreamConfigSource getConfigSource() throws IOException, GestaltException {
+        Properties configMap = new Properties();
+
+        configMap.put("name", "Steve");
+        configMap.put("age", "42");
+        configMap.put("cars[0].name", "Ford");
+        configMap.put("cars[0].models", "Fiesta, Focus, Mustang");
+        configMap.put("cars[1].name", "BMW");
+        configMap.put("cars[1].models", "320, X3, X5");
+        configMap.put("cars[2].name", "Fiat");
+        configMap.put("cars[2].models", "500, Panda");
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        configMap.store(outputStream, "");
+        return new InputStreamConfigSource(new ByteArrayInputStream(outputStream.toByteArray()), "properties");
     }
 
     @Test
