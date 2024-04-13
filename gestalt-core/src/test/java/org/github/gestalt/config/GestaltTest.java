@@ -7,6 +7,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.PathLexerBuilder;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
@@ -1987,6 +1988,44 @@ class GestaltTest {
             Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
             Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
         }
+    }
+
+    @Test
+    public void testRelaxedLexer() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.uri", "test");
+        configs.put("db_port", "3306");
+        configs.put("db-password", "abc123");
+
+        SentenceLexer lexer = PathLexerBuilder.builder()
+            .setDelimiter("[._-]")
+            .build();
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            // do not normalize the sentence return it as is.
+            .setSentenceLexer(lexer)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderContext());
+        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderService());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+
+        Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
     }
 
 

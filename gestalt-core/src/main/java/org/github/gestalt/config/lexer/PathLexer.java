@@ -69,11 +69,11 @@ public final class PathLexer extends SentenceLexer {
     /**
      * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
      *
-     * @param delimiter        the character to split the sentence
-     * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
-     *                         name = name of the element
-     *                         array = if this element is an array
-     *                         index = the index for the array
+     * @param delimiter          the character to split the sentence
+     * @param pathPatternRegex   a regex with capture groups to decide what kind of token this is. The regex should have a capture group
+     *                           name = name of the element
+     *                           array = if this element is an array
+     *                           index = the index for the array
      * @param sentenceNormalizer defines how to normalize a sentence.
      */
     public PathLexer(String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
@@ -84,12 +84,12 @@ public final class PathLexer extends SentenceLexer {
      * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
      *
      * @param normalizedDelimiter how we want to represent the path when we rebuild it from the config tree.
-     * @param delimiter        the character to split the sentence
-     * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
-     *                         name = name of the element
-     *                         array = if this element is an array
-     *                         index = the index for the array
-     * @param sentenceNormalizer defines how to normalize a sentence.
+     * @param delimiter           the character to split the sentence
+     * @param pathPatternRegex    a regex with capture groups to decide what kind of token this is. The regex should have a capture group
+     *                            name = name of the element
+     *                            array = if this element is an array
+     *                            index = the index for the array
+     * @param sentenceNormalizer  defines how to normalize a sentence.
      */
     public PathLexer(String normalizedDelimiter, String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
         this(normalizedDelimiter, delimiter, pathPatternRegex, sentenceNormalizer, "[", "]", "=");
@@ -100,7 +100,11 @@ public final class PathLexer extends SentenceLexer {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
         this.normalizedDelimiter = normalizedDelimiter;
         this.delimiter = delimiter;
-        this.delimiterRegex = Pattern.quote(delimiter);
+        if (delimiter.length() == 1) {
+            this.delimiterRegex = Pattern.quote(delimiter);
+        } else {
+            this.delimiterRegex = delimiter;
+        }
         this.sentenceNormalizer = sentenceNormalizer;
         this.normalizedArrayOpenTag = normalizedArrayOpenTag;
         this.normalizedArrayCloseTag = normalizedArrayCloseTag;

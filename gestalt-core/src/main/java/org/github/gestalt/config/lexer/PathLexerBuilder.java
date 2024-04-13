@@ -6,13 +6,13 @@ package org.github.gestalt.config.lexer;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public final class PathLexerBuilder {
-    private String normalizedDelimiter;
-    private String normalizedArrayOpenTag;
-    private String normalizedArrayCloseTag;
-    private String normalizedMapTag;
-    private String delimiter;
-    private SentenceNormalizer sentenceNormalizer;
-    private String pathPatternRegex;
+    private String normalizedDelimiter = ".";
+    private String normalizedArrayOpenTag = "[";
+    private String normalizedArrayCloseTag = "]";
+    private String normalizedMapTag = "=";
+    private String delimiter= ".";
+    private SentenceNormalizer sentenceNormalizer = new LowerCaseSentenceNormalizer();
+    private String pathPatternRegex = PathLexer.DEFAULT_EVALUATOR;
 
     private PathLexerBuilder() {
     }
@@ -93,7 +93,7 @@ public final class PathLexerBuilder {
      *                          name = name of the element
      *                          array = if this element is an array
      *                          index = the index for the array
-     *                          
+     *
      * @param pathPatternRegex path regex
      * @return the builder
      */
