@@ -96,7 +96,7 @@ public final class ArrayNode implements ConfigNode {
         return "ArrayNode{" +
             "values=[" +
             IntStream.range(0, values.size())
-                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(path, n), secretConcealer, lexer))
+                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(lexer, path, n), secretConcealer, lexer))
                 .collect(Collectors.joining(", ")) +
             "]}";
     }

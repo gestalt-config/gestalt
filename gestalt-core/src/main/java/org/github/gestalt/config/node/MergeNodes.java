@@ -63,7 +63,7 @@ public final class MergeNodes {
             Optional<ConfigNode> array1AtIndex = arrayNode1.getIndex(i);
             Optional<ConfigNode> array2AtIndex = arrayNode2.getIndex(i);
             if (array1AtIndex.isPresent() && array2AtIndex.isPresent()) {
-                String nextPath = PathUtil.pathForIndex(path, i);
+                String nextPath = PathUtil.pathForIndex(lexer, path, i);
                 GResultOf<ConfigNode> result = mergeNodes(nextPath, lexer, array1AtIndex.get(), array2AtIndex.get());
 
                 // if there are errors, add them to the error list abd do not add the merge results

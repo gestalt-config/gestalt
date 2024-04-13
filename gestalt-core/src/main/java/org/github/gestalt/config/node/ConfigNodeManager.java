@@ -152,7 +152,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         for (int i = 0; i < size; i++) {
             Optional<ConfigNode> currentNodeOption = node.getIndex(i);
             if (currentNodeOption.isPresent()) {
-                String nextPath = PathUtil.pathForIndex(path, i);
+                String nextPath = PathUtil.pathForIndex(lexer, path, i);
                 GResultOf<ConfigNode> newNode = postProcess(nextPath, currentNodeOption.get(), postProcessors);
 
                 errors.addAll(newNode.getErrors());
@@ -258,7 +258,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             if (valueOptional.isEmpty()) {
                 errors.add(new ValidationError.ArrayMissingIndex(i, path));
             } else {
-                String nextPath = PathUtil.pathForIndex(path, i);
+                String nextPath = PathUtil.pathForIndex(lexer, path, i);
                 errors.addAll(validateNode(nextPath, valueOptional.get()));
             }
         }

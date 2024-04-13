@@ -151,7 +151,7 @@ public final class HoconLoader implements ConfigLoader {
         List<ConfigNode> array = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(0);
         configList.forEach(it -> {
-            String currentPath = PathUtil.pathForIndex(path, index.getAndIncrement());
+            String currentPath = PathUtil.pathForIndex(lexer, path, index.getAndIncrement());
 
             GResultOf<ConfigNode> node = buildConfigTree(currentPath, it);
             errors.addAll(node.getErrors());

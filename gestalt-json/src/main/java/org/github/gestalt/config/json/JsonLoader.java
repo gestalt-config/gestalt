@@ -153,7 +153,7 @@ public final class JsonLoader implements ConfigLoader {
         List<ConfigNode> array = new ArrayList<>();
         int arraySize = jsonNode.size();
         for (int i = 0; i < arraySize; i++) {
-            String currentPath = PathUtil.pathForIndex(path, i);
+            String currentPath = PathUtil.pathForIndex(lexer, path, i);
 
             JsonNode arrayNodes = jsonNode.get(i);
             GResultOf<ConfigNode> node = buildConfigTree(currentPath, arrayNodes);

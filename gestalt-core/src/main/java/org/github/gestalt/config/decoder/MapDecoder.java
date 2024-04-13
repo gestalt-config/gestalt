@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
@@ -171,6 +172,8 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
     private Stream<Map.Entry<String, ConfigNode>> convertMapToStream(String path, Map.Entry<String, ConfigNode> entry,
                                                                      DecoderContext decoderContext) {
+
+        SentenceLexer lexer = decoderContext.getDefaultLexer();
         // if the key or entry is null, return the current entry and let later code deal with the null value.
         if (path == null || entry.getValue() == null) {
             return Stream.of(entry);
@@ -179,7 +182,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
             return node.getMapNode().entrySet()
                 .stream()
-                .flatMap(it -> convertMapToStream(pathForKey(decoderContext.getDefaultLexer(), path, it.getKey()), it, decoderContext));
+                .flatMap(it -> convertMapToStream(pathForKey(lexer, path, it.getKey()), it, decoderContext));
 
         } else if (entry.getValue() instanceof ArrayNode) {
             ArrayNode node = (ArrayNode) entry.getValue();
@@ -189,7 +192,9 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
             for (int i = 0; i < nodes.size(); i++) {
                 stream = Stream
-                    .concat(stream, convertMapToStream(pathForIndex(path, i), Map.entry(forIndex(i), nodes.get(i)), decoderContext));
+                    .concat(stream, convertMapToStream(
+                        pathForIndex(lexer, path, i),
+                        Map.entry(forIndex(lexer, i), nodes.get(i)), decoderContext));
             }
 
             return stream;

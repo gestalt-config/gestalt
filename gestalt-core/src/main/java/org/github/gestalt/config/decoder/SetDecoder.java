@@ -63,7 +63,7 @@ public final class SetDecoder extends CollectionDecoder<Set<?>> {
             var valueOptional = node.getIndex(i);
             if (valueOptional.isPresent()) {
                 ConfigNode currentNode = valueOptional.get();
-                String nextPath = PathUtil.pathForIndex(path, i);
+                String nextPath = PathUtil.pathForIndex(decoderContext.getDefaultLexer(), path, i);
                 GResultOf<?> resultOf = decoderContext.getDecoderService()
                     .decodeNode(nextPath, tags, currentNode, klass.getFirstParameterType(), decoderContext);
 

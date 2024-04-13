@@ -12,6 +12,21 @@ public class NoResultSentenceLexer extends SentenceLexer {
     }
 
     @Override
+    public String getNormalizedArrayOpenTag() {
+        return "";
+    }
+
+    @Override
+    public String getNormalizedArrayCloseTag() {
+        return "";
+    }
+
+    @Override
+    public String getNormalizedMapTag() {
+        return "";
+    }
+
+    @Override
     public String getDeliminator() {
         return "";
     }

@@ -24,6 +24,27 @@ public abstract class SentenceLexer {
     public abstract String getNormalizedDeliminator();
 
     /**
+     *  Return the deliminator that we use to represent a normalized opening tag for an array.
+     *
+     * @return the deliminator that we use to represent a normalized opening tag for an array
+     */
+    public abstract String getNormalizedArrayOpenTag();
+
+    /**
+     *  Return the deliminator that we use to represent a normalized closing tag for an array.
+     *
+     * @return the deliminator that we use to represent a normalized closing tag for an array
+     */
+    public abstract String getNormalizedArrayCloseTag();
+
+    /**
+     *  Return the deliminator that we use to represent a normalized map separator.
+     *
+     * @return the deliminator that we use to represent a normalized map separator
+     */
+    public abstract String getNormalizedMapTag();
+
+    /**
      * Return the deliminator that we use split apart a path. Ie what we turn all configurations into.
      *
      * @return the deliminator
