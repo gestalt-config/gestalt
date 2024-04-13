@@ -67,7 +67,6 @@ class DataClassDecoder : Decoder<Any> {
         }
 
         val decoderService = decoderContext.decoderService
-        val secretConceal = decoderContext.secretConcealer
 
         if (type is KTypeCapture<*>) {
             val classifier = type.kType.classifier
@@ -92,7 +91,7 @@ class DataClassDecoder : Decoder<Any> {
                         if (configAnnotation?.path?.isNotEmpty() == true) {
                             paramName = configAnnotation.path
                         }
-                        val nextPath = PathUtil.pathForKey(path, paramName)
+                        val nextPath = PathUtil.pathForKey(decoderContext.getDefaultLexer(), path, paramName)
 
                         val configNode = decoderService.getNextNode(nextPath, paramName, node)
                         errors.addAll(configNode.getErrorsNotLevel(ValidationLevel.MISSING_VALUE))
@@ -132,7 +131,7 @@ class DataClassDecoder : Decoder<Any> {
                                 if (defaultGResultOf.hasResults()) {
                                     resultValid = true
                                     results = defaultGResultOf.results()
-                                    errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, secretConceal))
+                                    errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, decoderContext))
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }
@@ -141,7 +140,7 @@ class DataClassDecoder : Decoder<Any> {
                             // if the type is nullable, it is an optional value.
                             it.type.isMarkedNullable -> {
                                 resultValid = true
-                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, secretConceal))
+                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, decoderContext))
                             }
 
                             // if we dont have results for the config node, and the value is not optional
@@ -151,7 +150,7 @@ class DataClassDecoder : Decoder<Any> {
 
                             // if we dont have results for the config node, and the value is optional
                             it.isOptional -> {
-                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, secretConceal))
+                                errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, decoderContext))
                             }
 
                         }

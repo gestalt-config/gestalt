@@ -1,5 +1,6 @@
 package org.github.gestalt.config.utils;
 
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.TagToken;
@@ -20,15 +21,16 @@ public final class PathUtil {
     /**
      * Returns the path for a list of tokens.
      *
+     * @param lexer lexer used to get the delimiter to build the path
      * @param tokens list of tokens on the path.
      * @return the path built from the tokens
      */
-    public static String toPath(List<Token> tokens) {
+    public static String toPath(SentenceLexer lexer, List<Token> tokens) {
         StringBuilder pathBuilder = new StringBuilder();
         tokens.forEach(token -> {
             if (token instanceof ObjectToken) {
                 if (pathBuilder.length() != 0) {
-                    pathBuilder.append('.');
+                    pathBuilder.append(lexer.getNormalizedDeliminator());
                 }
                 pathBuilder.append(((ObjectToken) token).getName());
             } else if (token instanceof ArrayToken) {
@@ -48,12 +50,13 @@ public final class PathUtil {
     /**
      * used to generate a path wit the next key in the format path.key .
      *
+     * @param lexer lexer used to get the delimiter to build the path
      * @param path current path
      * @param key  current key
      * @return path for key
      */
-    public static String pathForKey(String path, String key) {
-        return path == null || path.isEmpty() ? key : path + "." + key;
+    public static String pathForKey(SentenceLexer lexer, String path, String key) {
+        return path == null || path.isEmpty() ? key : path + lexer.getNormalizedDeliminator() + key;
     }
 
     /**
@@ -64,7 +67,17 @@ public final class PathUtil {
      * @return path for index
      */
     public static String pathForIndex(String path, int index) {
-        return path == null || path.isEmpty() ? "[" + index + "]" : path + "[" + index + "]";
+        return path == null || path.isEmpty() ? forIndex(index) : path + forIndex(index);
+    }
+
+    /**
+     * used to generate the next index in the format [index] .
+     *
+     * @param index current index
+     * @return path for index
+     */
+    public static String forIndex(int index) {
+        return  "[" + index + "]";
     }
 }
 

@@ -45,7 +45,7 @@ class IntegerDecoder : LeafDecoder<Int>() {
                 val intVal = value.toInt()
                 GResultOf.result(intVal)
             } catch (e: NumberFormatException) {
-                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.secretConcealer))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext))
             }
         } else {
             GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))

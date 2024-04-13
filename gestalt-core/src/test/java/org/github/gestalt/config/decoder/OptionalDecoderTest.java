@@ -69,7 +69,7 @@ class OptionalDecoderTest {
         OptionalDecoder decoder = new OptionalDecoder();
 
         GResultOf<Optional<?>> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<Optional<Integer>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -82,7 +82,7 @@ class OptionalDecoderTest {
         OptionalDecoder decoder = new OptionalDecoder();
 
         GResultOf<Optional<?>> result = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<Optional<Integer>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -103,7 +103,7 @@ class OptionalDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Optional<?>> result = decoder.decode("db", Tags.of(), new MapNode(configs), new TypeCapture<Optional<DBInfoOptional>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -123,7 +123,7 @@ class OptionalDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Optional<?>> result = decoder.decode("db", Tags.of(), new MapNode(configs), new TypeCapture<Optional<DBInfoOptional>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -148,7 +148,7 @@ class OptionalDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Optional<?>> result = decoder.decode("db", Tags.of(), new MapNode(configs), new TypeCapture<Optional<DBInfoOptional1>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -168,7 +168,7 @@ class OptionalDecoderTest {
         OptionalDecoder decoder = new OptionalDecoder();
 
         GResultOf<Optional<?>> result = decoder.decode("db.port", Tags.of(), null, new TypeCapture<Optional<Integer>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -183,7 +183,7 @@ class OptionalDecoderTest {
         OptionalDecoder integerDecoder = new OptionalDecoder();
 
         GResultOf<Optional<?>> result = integerDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            new TypeCapture<Optional<Integer>>() { }, new DecoderContext(decoderService, null, null));
+            new TypeCapture<Optional<Integer>>() { }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertEquals(Optional.empty(), result.results());

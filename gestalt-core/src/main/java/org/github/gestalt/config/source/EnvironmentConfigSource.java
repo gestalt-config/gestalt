@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +38,8 @@ public final class EnvironmentConfigSource implements ConfigSource {
     private final boolean removePrefix;
 
     private final Tags tags;
+
+    private final Pattern startsWith = Pattern.compile("^[^a-zA-Z0-9]");
 
     /**
      * Default constructor for EnvironmentConfigSource.
@@ -162,7 +166,8 @@ public final class EnvironmentConfigSource implements ConfigSource {
                     key = key.substring(prefix.length());
 
                     //if the next character is a _ or . remove that as well
-                    if (key.startsWith("_") || key.startsWith(".")) {
+
+                    if (startsWith.matcher(key).find()) {
                         key = key.substring(1);
                     }
                 }

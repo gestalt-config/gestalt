@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
+
 class PathLexerTest {
 
     @Test
@@ -319,5 +321,21 @@ class PathLexerTest {
 
         List<Token> tokens = result.results();
         Assertions.assertEquals(1, tokens.size());
+    }
+
+    @Test
+    public void testTokenizerFullConstructor() {
+        PathLexer pathLexer = new PathLexer(".", "_", DEFAULT_EVALUATOR, new LowerCaseSentenceNormalizer());
+
+        List<String> result = pathLexer.tokenizer("the_quick[]_brown_fox");
+
+        Assertions.assertEquals(".", pathLexer.getNormalizedDeliminator());
+        Assertions.assertEquals("_", pathLexer.getDeliminator());
+
+        Assertions.assertEquals(4, result.size());
+        Assertions.assertEquals("the", result.get(0));
+        Assertions.assertEquals("quick[]", result.get(1));
+        Assertions.assertEquals("brown", result.get(2));
+        Assertions.assertEquals("fox", result.get(3));
     }
 }

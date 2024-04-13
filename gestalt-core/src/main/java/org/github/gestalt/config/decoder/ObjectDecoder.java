@@ -8,7 +8,6 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
@@ -75,8 +74,6 @@ public final class ObjectDecoder implements Decoder<Object> {
 
         DecoderService decoderSrv = decoderContext.getDecoderService();
 
-        SecretConcealer secretConcealer = decoderContext.getSecretConcealer();
-
         try {
             Constructor<?> constructor = klass.getDeclaredConstructor();
             if (Modifier.isPrivate(constructor.getModifiers())) {
@@ -107,7 +104,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                 name = name.isEmpty() ? fieldName : name;
 
                 // check if there is a node in the map for this field.
-                String nextPath = PathUtil.pathForKey(path, name);
+                String nextPath = PathUtil.pathForKey(decoderContext.getDefaultLexer(), path, name);
                 GResultOf<ConfigNode> configNode = decoderSrv.getNextNode(nextPath, name, node);
 
                 // Add any errors that are not missing value ones.
@@ -140,7 +137,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                         if (defaultGResultOf.hasResults()) {
                             foundValue = true;
                             setField(obj, field, klass, defaultGResultOf.results());
-                            errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), secretConcealer));
+                            errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), decoderContext));
                         }
                     } else {
                         // even though we have default value in the annotation lets try to decode the field,
@@ -152,7 +149,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                         if (decodedResults.hasResults()) {
                             //only add the errors if we actually found a result, otherwise we dont care.
                             errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
-                            errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), secretConcealer));
+                            errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
                             foundValue = true;
                             setField(obj, field, klass, decodedResults.results());
                         }
@@ -164,7 +161,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                     // check to see if the field value result will be null. If so add a null value error
                     boolean initialized = fieldHasInitializedValue(obj, field, klass);
                     if (initialized) {
-                        errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), secretConcealer));
+                        errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
                     } else {
                         errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "object decoding"));
                     }

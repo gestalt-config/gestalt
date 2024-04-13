@@ -3,6 +3,7 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
@@ -2165,7 +2166,7 @@ class ConfigNodeManagerTest {
         }
 
         @Override
-        public String printer(String path, SecretConcealer secretConcealer) {
+        public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
             return null;
         }
     }

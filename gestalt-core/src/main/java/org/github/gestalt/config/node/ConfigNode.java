@@ -1,5 +1,6 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 import java.util.Optional;
@@ -48,5 +49,14 @@ public interface ConfigNode {
      */
     int size();
 
-    String printer(String path, SecretConcealer secretConcealer);
+    /**
+     * Safely prints out the config tree at this path.
+     *
+     * @param path the current path.
+     * @param secretConcealer used to conceal any secrets.
+     * @param lexer lexer used to get the normalized path delimiters.
+     *
+     * @return the safe string with secrets concealed.
+     */
+    String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer);
 }

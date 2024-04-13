@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -75,7 +76,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.5f), result.results());
@@ -87,7 +88,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124.5"), new TypeCapture<Double>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.5f), result.results());
@@ -99,7 +100,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("124"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(BigDecimal.valueOf(124.0f), result.results());
@@ -111,7 +112,7 @@ class BigDecimalDecoderTest {
         BigDecimalDecoder doubleDecoder = new BigDecimalDecoder();
 
         GResultOf<BigDecimal> result = doubleDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

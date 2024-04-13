@@ -70,7 +70,7 @@ class OptionalIntDecoderTest {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
         GResultOf<OptionalInt> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalInt>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -83,7 +83,7 @@ class OptionalIntDecoderTest {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
         GResultOf<OptionalInt> result = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalInt>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -99,7 +99,7 @@ class OptionalIntDecoderTest {
         OptionalIntDecoder decoder = new OptionalIntDecoder();
 
         GResultOf<OptionalInt> result = decoder.decode("db.port", Tags.of(), null,
-            TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -114,7 +114,7 @@ class OptionalIntDecoderTest {
         OptionalIntDecoder integerDecoder = new OptionalIntDecoder();
 
         GResultOf<OptionalInt> result = integerDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(OptionalInt.class), new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertEquals(OptionalInt.empty(), result.results());

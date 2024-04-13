@@ -76,7 +76,7 @@ public final class DateDecoder extends LeafDecoder<Date> {
             results = GResultOf.result(Date.from(instant));
         } catch (DateTimeParseException e) {
             results = GResultOf.errors(
-                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext));
         }
         return results;
     }

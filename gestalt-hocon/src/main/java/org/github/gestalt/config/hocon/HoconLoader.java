@@ -171,7 +171,7 @@ public final class HoconLoader implements ConfigLoader {
 
         configObject.forEach((key, value) -> {
             String newPath = normalizeSentence(key);
-            String currentPath = PathUtil.pathForKey(path, key);
+            String currentPath = PathUtil.pathForKey(lexer, path, key);
 
             GResultOf<ConfigNode> node = buildConfigTree(currentPath, value);
             errors.addAll(node.getErrors());

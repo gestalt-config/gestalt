@@ -16,7 +16,15 @@ import java.util.stream.Collectors;
 public abstract class SentenceLexer {
 
     /**
-     * Return the deliminator.
+     * Return the deliminator that we use to represent a normalized path.
+     * Ie how we want to display a path being rebuilt from the config tree
+     *
+     * @return the deliminator
+     */
+    public abstract String getNormalizedDeliminator();
+
+    /**
+     * Return the deliminator that we use split apart a path. Ie what we turn all configurations into.
      *
      * @return the deliminator
      */

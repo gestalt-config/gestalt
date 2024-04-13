@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -65,7 +66,7 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         GResultOf<Boolean> result = decoder.decode("db.enabled", Tags.of(), new LeafNode("true"),
-            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results());
@@ -76,7 +77,7 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         GResultOf<Boolean> result = decoder.decode("db.enabled", Tags.of(), new LeafNode("false"),
-            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertFalse(result.results());
@@ -87,7 +88,7 @@ class BooleanDecoderTest {
         BooleanDecoder decoder = new BooleanDecoder();
 
         GResultOf<Boolean> result = decoder.decode("db.enabled", Tags.of(), new LeafNode(null),
-            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Boolean.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

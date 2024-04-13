@@ -182,7 +182,7 @@ public final class YamlLoader implements ConfigLoader {
             String key = normalizeSentence(entry.getKey());
             JsonNode jsonValue = entry.getValue();
 
-            String currentPath = PathUtil.pathForKey(path, key);
+            String currentPath = PathUtil.pathForKey(lexer, path, key);
 
             GResultOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
             errors.addAll(node.getErrors());

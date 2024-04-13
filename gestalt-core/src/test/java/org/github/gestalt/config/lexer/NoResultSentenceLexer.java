@@ -7,8 +7,13 @@ import java.util.List;
 
 public class NoResultSentenceLexer extends SentenceLexer {
     @Override
-    public String getDeliminator() {
+    public String getNormalizedDeliminator() {
         return null;
+    }
+
+    @Override
+    public String getDeliminator() {
+        return "";
     }
 
     @Override

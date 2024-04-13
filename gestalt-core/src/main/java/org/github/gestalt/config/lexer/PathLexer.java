@@ -29,6 +29,7 @@ public final class PathLexer extends SentenceLexer {
     public static final String DEFAULT_EVALUATOR = "^((?<name>[\\w .,+=\\-;:\"'`~!@#$%^&*()\\<>]+)(?<array>\\[(?<index>\\d*)])?)$";
     public static final String DELIMITER_DEFAULT = ".";
     private final Pattern pathPattern;
+    private final String normalizedDelimiter;
     private final String delimiter;
     private final String delimiterRegex;
     private final SentenceNormalizer sentenceNormalizer;
@@ -38,6 +39,7 @@ public final class PathLexer extends SentenceLexer {
      */
     public PathLexer() {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
+        this.normalizedDelimiter = DELIMITER_DEFAULT;
         this.delimiter = DELIMITER_DEFAULT;
         this.delimiterRegex = Pattern.quote(DELIMITER_DEFAULT);
         this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
@@ -50,6 +52,7 @@ public final class PathLexer extends SentenceLexer {
      */
     public PathLexer(String delimiter) {
         this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
+        this.normalizedDelimiter = delimiter;
         this.delimiter = delimiter;
         this.delimiterRegex = Pattern.quote(delimiter);
         this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
@@ -66,6 +69,7 @@ public final class PathLexer extends SentenceLexer {
      */
     public PathLexer(String delimiter, String pathPatternRegex) {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
+        this.normalizedDelimiter = delimiter;
         this.delimiter = delimiter;
         this.delimiterRegex = Pattern.quote(delimiter);
         this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
@@ -83,9 +87,34 @@ public final class PathLexer extends SentenceLexer {
      */
     public PathLexer(String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
+        this.normalizedDelimiter = delimiter;
         this.delimiter = delimiter;
         this.delimiterRegex = Pattern.quote(delimiter);
         this.sentenceNormalizer = sentenceNormalizer;
+    }
+
+    /**
+     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
+     *
+     * @param normalizedDelimiter how we want to represent the path when we rebuild it from the config tree.
+     * @param delimiter        the character to split the sentence
+     * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
+     *                         name = name of the element
+     *                         array = if this element is an array
+     *                         index = the index for the array
+     * @param sentenceNormalizer defines how to normalize a sentence.
+     */
+    public PathLexer(String normalizedDelimiter, String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
+        this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
+        this.normalizedDelimiter = normalizedDelimiter;
+        this.delimiter = delimiter;
+        this.delimiterRegex = Pattern.quote(delimiter);
+        this.sentenceNormalizer = sentenceNormalizer;
+    }
+
+    @Override
+    public String getNormalizedDeliminator() {
+        return normalizedDelimiter;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.github.gestalt.config.decoder.DecoderRegistry
 import org.github.gestalt.config.entity.ValidationLevel
 import org.github.gestalt.config.exceptions.GestaltException
 import org.github.gestalt.config.kotlin.reflect.kTypeCaptureOf
+import org.github.gestalt.config.lexer.PathLexer
 import org.github.gestalt.config.lexer.SentenceLexer
 import org.github.gestalt.config.node.ConfigNodeService
 import org.github.gestalt.config.node.LeafNode
@@ -65,7 +66,7 @@ internal class ByteDecoderTest {
             TypeCapture.of(
                 Byte::class.java
             ),
-            DecoderContext(decoderService, null, null),
+            DecoderContext(decoderService, null, null, PathLexer()),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -83,7 +84,7 @@ internal class ByteDecoderTest {
             TypeCapture.of(
                 Byte::class.java
             ),
-            DecoderContext(decoderService, null, null),
+            DecoderContext(decoderService, null, null, PathLexer()),
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -106,7 +107,7 @@ internal class ByteDecoderTest {
             TypeCapture.of(
                 Byte::class.java
             ),
-            DecoderContext(decoderService, null, null),
+            DecoderContext(decoderService, null, null, PathLexer()),
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())

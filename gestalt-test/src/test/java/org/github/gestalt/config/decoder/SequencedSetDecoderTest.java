@@ -63,7 +63,7 @@ class SequencedSetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<SequencedSet<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -97,7 +97,7 @@ class SequencedSetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<SequencedSet<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());

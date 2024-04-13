@@ -44,7 +44,7 @@ class CharDecoder : LeafDecoder<Char>() {
             results = value[0]
         }
         if (value.length != 1) {
-            error.add(ValidationError.DecodingCharWrongSize(path, node, decoderContext.secretConcealer))
+            error.add(ValidationError.DecodingCharWrongSize(path, node, decoderContext))
         }
         return GResultOf.resultOf(results, error)
     }

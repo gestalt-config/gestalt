@@ -1,5 +1,7 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.utils.PathUtil;
 
@@ -85,15 +87,16 @@ public final class ArrayNode implements ConfigNode {
 
     @Override
     public String toString() {
-        return printer("", null);
+        // should not be used.
+        return printer("", null, new PathLexer());
     }
 
     @Override
-    public String printer(String path, SecretConcealer secretConcealer) {
+    public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
         return "ArrayNode{" +
             "values=[" +
             IntStream.range(0, values.size())
-                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(path, n), secretConcealer))
+                .mapToObj(n -> values.get(n).printer(PathUtil.pathForIndex(path, n), secretConcealer, lexer))
                 .collect(Collectors.joining(", ")) +
             "]}";
     }

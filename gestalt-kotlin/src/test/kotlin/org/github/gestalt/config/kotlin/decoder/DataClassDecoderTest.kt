@@ -74,7 +74,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -93,7 +93,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             configs,
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -115,7 +115,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             TypeCapture.of(DBInfo::class.java),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -136,7 +136,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -165,7 +165,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoRequired>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -184,7 +184,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -207,7 +207,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNoDefaultOptional>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -237,7 +237,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNullable>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -267,7 +267,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoNoDefault>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -292,7 +292,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -323,7 +323,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoRequired>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -353,7 +353,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfo>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertFalse(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -384,7 +384,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotation>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())
@@ -406,7 +406,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotation>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertTrue(result.hasErrors())
@@ -436,7 +436,7 @@ class DataClassDecoderTest {
             "db.host", Tags.of(),
             MapNode(configs),
             kTypeCaptureOf<DBInfoAnnotationLong>(),
-            DecoderContext(decoderService, null, null)
+            DecoderContext(decoderService, null, null, PathLexer())
         )
         Assertions.assertTrue(result.hasResults())
         Assertions.assertFalse(result.hasErrors())

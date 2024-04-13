@@ -3,6 +3,8 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
@@ -14,6 +16,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.github.gestalt.config.utils.GResultOf.resultOf;
@@ -27,7 +30,27 @@ import static org.github.gestalt.config.utils.GResultOf.resultOf;
 public final class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
     // We store the node roots by tags. The default will be an empty Tags.
-    private final Map<Tags, ConfigNode> roots = new HashMap<>();
+    private final Map<Tags, ConfigNode> roots = new ConcurrentHashMap<>();
+    // Sentence Lexer used to build a normalized path.
+    private SentenceLexer lexer;
+
+    public ConfigNodeManager() {
+        this(new PathLexer());
+    }
+
+    /**
+     * Constructor that takes a sentence Lexer to build a normalized path.
+     *
+     * @param lexer sentence Lexer to build a normalized path
+     */
+    public ConfigNodeManager(SentenceLexer lexer) {
+        this.lexer = lexer;
+    }
+
+    @Override
+    public void setLexer(SentenceLexer lexer) {
+        this.lexer = lexer;
+    }
 
     @Override
     public GResultOf<ConfigNode> addNode(ConfigNodeContainer newNode) throws GestaltException {
@@ -44,7 +67,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
         } else {
             // If there is already a config node in the root, merge the nodes together then save them.
             ConfigNode rootForTokens = roots.get(newNode.getTags());
-            GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", rootForTokens, newNode.getConfigNode());
+            GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", lexer, rootForTokens, newNode.getConfigNode());
 
             if (mergedNode.hasResults()) {
                 roots.put(newNode.getTags(), mergedNode.results());
@@ -150,7 +173,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
 
         for (Map.Entry<String, ConfigNode> entry : node.getMapNode().entrySet()) {
             String key = entry.getKey();
-            String nextPath = PathUtil.pathForKey(path, key);
+            String nextPath = PathUtil.pathForKey(lexer, path, key);
             GResultOf<ConfigNode> newNode = postProcess(nextPath, entry.getValue(), postProcessors);
 
             errors.addAll(newNode.getErrors());
@@ -191,7 +214,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             if (newRoot == null) {
                 newRoot = currentNode;
             } else {
-                GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", newRoot, currentNode);
+                GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", lexer, newRoot, currentNode);
 
                 errors.addAll(mergedNode.getErrors());
                 if (mergedNode.hasResults()) {
@@ -251,7 +274,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             } else if (value == null) {
                 errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
             } else {
-                String nextPath = PathUtil.pathForKey(path, key);
+                String nextPath = PathUtil.pathForKey(lexer, path, key);
                 errors.addAll(validateNode(nextPath, value));
             }
         });
@@ -289,7 +312,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             } else if (!resultsForDefault.hasResults()) {
                 results = resultsForTags;
             } else {
-                results = MergeNodes.mergeNodes(path, resultsForDefault.results(), resultsForTags.results());
+                results = MergeNodes.mergeNodes(path, lexer, resultsForDefault.results(), resultsForTags.results());
             }
         }
 
@@ -387,14 +410,14 @@ public final class ConfigNodeManager implements ConfigNodeService {
 
     @Override
     public String debugPrintRoot(Tags tags, SecretConcealer secretConcealer) {
-        return roots.get(tags).printer("", secretConcealer);
+        return roots.get(tags).printer("", secretConcealer, lexer);
     }
 
     @Override
     public String debugPrintRoot(SecretConcealer secretConcealer) {
         return roots.entrySet()
             .stream()
-            .map((it) -> "tags: " + it.getKey() + " = " + it.getValue().printer("", secretConcealer))
+            .map((it) -> "tags: " + it.getKey() + " = " + it.getValue().printer("", secretConcealer, lexer))
             .collect(Collectors.joining("\n"));
     }
 }

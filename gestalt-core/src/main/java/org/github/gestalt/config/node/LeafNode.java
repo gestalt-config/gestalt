@@ -1,5 +1,7 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 import java.util.Objects;
@@ -66,11 +68,12 @@ public final class LeafNode implements ConfigNode {
 
     @Override
     public String toString() {
-        return printer("", null);
+        // should not be used.
+        return printer("", null, new PathLexer());
     }
 
     @Override
-    public String printer(String path, SecretConcealer secretConcealer) {
+    public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
         String nodeValue = value;
         if (secretConcealer != null) {
             nodeValue = secretConcealer.concealSecret(path, nodeValue);

@@ -56,7 +56,7 @@ class SequencedMapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            new TypeCapture<SequencedMap<String, Integer>>() { }, new DecoderContext(decoderService, null, null));
+            new TypeCapture<SequencedMap<String, Integer>>() { }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -85,7 +85,7 @@ class SequencedMapDecoderTest {
         MapDecoder decoder = new MapDecoder();
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-                new TypeCapture<SequencedMap<Integer, Integer>>() { }, new DecoderContext(decoderService, null, null));
+                new TypeCapture<SequencedMap<Integer, Integer>>() { }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -108,7 +108,7 @@ class SequencedMapDecoderTest {
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new LeafNode("port=100,uri=300,password=6000"),
             new TypeCapture<SequencedMap<String, Integer>>() {
-            }, new DecoderContext(decoderService, null, null));
+            }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 

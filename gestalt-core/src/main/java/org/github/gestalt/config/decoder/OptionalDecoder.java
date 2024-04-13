@@ -42,12 +42,12 @@ public final class OptionalDecoder implements Decoder<Optional<?>> {
                 return GResultOf.resultOf(Optional.of(optionalValue.results()), optionalValue.getErrors());
             } else {
                 var errors = optionalValue.getErrorsNotLevel(ValidationLevel.MISSING_VALUE);
-                errors.add(new ValidationError.OptionalMissingValueDecoding(path, node, name(), decoderContext.getSecretConcealer()));
+                errors.add(new ValidationError.OptionalMissingValueDecoding(path, node, name(), decoderContext));
                 return GResultOf.resultOf(Optional.ofNullable(optionalValue.results()), errors);
             }
         } else {
             return GResultOf.resultOf(Optional.empty(),
-                new ValidationError.OptionalMissingValueDecoding(path, name(), decoderContext.getSecretConcealer()));
+                new ValidationError.OptionalMissingValueDecoding(path, name(), decoderContext));
         }
     }
 }

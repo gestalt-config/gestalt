@@ -71,7 +71,7 @@ public class GestaltBuilder {
     private GestaltConfig gestaltConfig = new GestaltConfig();
     private MetricsManager metricsManager;
     private ValidationManager validationManager;
-    private ConfigNodeService configNodeService = new ConfigNodeManager();
+    private ConfigNodeService configNodeService = new ConfigNodeManager(sentenceLexer);
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
@@ -1092,6 +1092,8 @@ public class GestaltBuilder {
         configureValidators();
         configureConfigLoaders();
         configurePostProcessors();
+
+        configNodeService.setLexer(sentenceLexer);
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();

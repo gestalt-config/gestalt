@@ -3,6 +3,7 @@ package org.github.gestalt.config.parser;
 import org.github.gestalt.config.entity.ConfigValue;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
@@ -28,8 +29,8 @@ public final class MapConfigParser implements ConfigParser {
     private static final System.Logger logger = System.getLogger(MapConfigParser.class.getName());
 
     @Override
-    public GResultOf<ConfigNode> parse(List<Pair<List<Token>, ConfigValue>> configs, boolean failOnErrors) {
-        return buildConfigTree(configs, 0, failOnErrors);
+    public GResultOf<ConfigNode> parse(SentenceLexer lexer, List<Pair<List<Token>, ConfigValue>> configs, boolean failOnErrors) {
+        return buildConfigTree(lexer, configs, 0, failOnErrors);
     }
 
     /**
@@ -42,7 +43,7 @@ public final class MapConfigParser implements ConfigParser {
      * @param failOnErrors Results can be unpredictable if it continues
      * @return the ConfigNode root for the configurations at this point.
      */
-    GResultOf<ConfigNode> buildConfigTree(List<Pair<List<Token>, ConfigValue>> tokens, int index,
+    GResultOf<ConfigNode> buildConfigTree(SentenceLexer lexer, List<Pair<List<Token>, ConfigValue>> tokens, int index,
                                           boolean failOnErrors) {
 
         if (tokens == null || tokens.isEmpty()) {
@@ -50,7 +51,7 @@ public final class MapConfigParser implements ConfigParser {
         }
 
         // build the current path, mostly for logging.
-        String currentPath = PathUtil.toPath(tokens.get(0).getFirst().subList(0, index));
+        String currentPath = PathUtil.toPath(lexer, tokens.get(0).getFirst().subList(0, index));
         List<ValidationError> errorList = new ArrayList<>();
 
         // if there is only 1 token and we are at the end of the path return a valid leaf.
@@ -106,7 +107,7 @@ public final class MapConfigParser implements ConfigParser {
                 .collect(Collectors.groupingBy(tokenPair -> tokenPair.getFirst().get(index)))
                 .entrySet()
                 .stream()
-                .map(entry -> new Pair<>(entry.getKey(), buildConfigTree(entry.getValue(), index + 1, failOnErrors)))
+                .map(entry -> new Pair<>(entry.getKey(), buildConfigTree(lexer, entry.getValue(), index + 1, failOnErrors)))
                 .collect(Collectors.toList());
 
         // Get any errors and split them by level.

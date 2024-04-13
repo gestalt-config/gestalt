@@ -5,6 +5,7 @@ import org.github.gestalt.config.entity.ConfigContainer;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -78,7 +79,7 @@ class ConfigDecoderTest {
         ConfigDecoder decoder = new ConfigDecoder();
 
         GResultOf<ConfigContainer<?>> result = decoder.decode("db.user", Tags.of(), new LeafNode("test"),
-            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null));
+            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(true, result.results().isPresent());
@@ -91,7 +92,7 @@ class ConfigDecoderTest {
         ConfigDecoder decoder = new ConfigDecoder();
 
         GResultOf<ConfigContainer<?>> result = decoder.decode("db.user", Tags.of(), new LeafNode(null),
-            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null));
+            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -106,7 +107,7 @@ class ConfigDecoderTest {
         ConfigDecoder decoder = new ConfigDecoder();
 
         GResultOf<ConfigContainer<?>> result = decoder.decode("db.user", Tags.of(), null,
-            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null));
+            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -121,7 +122,7 @@ class ConfigDecoderTest {
         ConfigDecoder decoder = new ConfigDecoder();
 
         GResultOf<ConfigContainer<?>> result = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
-            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null));
+            new TypeCapture<ConfigContainer<String>>() {}, new DecoderContext(decoderService, gestalt, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

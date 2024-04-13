@@ -47,7 +47,7 @@ class ByteDecoder : LeafDecoder<Byte>() {
                 ValidationError.DecodingByteTooLong(
                     path,
                     node,
-                    decoderContext.secretConcealer
+                    decoderContext
                 )
             )
         } else {
@@ -55,7 +55,7 @@ class ByteDecoder : LeafDecoder<Byte>() {
                 ValidationError.DecodingEmptyByte(
                     path,
                     node,
-                    decoderContext.secretConcealer
+                    decoderContext
                 )
             )
         }

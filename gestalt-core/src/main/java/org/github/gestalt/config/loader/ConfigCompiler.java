@@ -74,7 +74,7 @@ public final class ConfigCompiler {
                 new Pair<>(validatedToken.getFirst().results(), new ConfigValue(validatedToken.getSecond())))
             .collect(Collectors.toList());
 
-        GResultOf<ConfigNode> parserResults = parser.parse(validTokens, failOnErrors);
+        GResultOf<ConfigNode> parserResults = parser.parse(lexer, validTokens, failOnErrors);
         errorMessage.addAll(parserResults.getErrors());
         return GResultOf.resultOf(parserResults.results(), errorMessage);
     }

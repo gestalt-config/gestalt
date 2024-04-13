@@ -3,6 +3,7 @@ package org.github.gestalt.config.parser;
 import org.github.gestalt.config.entity.ConfigValue;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
@@ -34,7 +35,7 @@ class MapConfigParserTest {
     }
 
     @Test
-    public void testBuildConfigTree() {
+    public void testbuildConfigTree() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
         List<Pair<List<Token>, ConfigValue>> test = List.of(
@@ -46,7 +47,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("20"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.parse(test, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.parse(new PathLexer(), test, false);
         assertTrue(resultsOf.hasResults());
         assertFalse(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -73,7 +74,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("20"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertFalse(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -96,7 +97,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("11"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertFalse(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -133,7 +134,7 @@ class MapConfigParserTest {
                 new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("101"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertFalse(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -186,7 +187,7 @@ class MapConfigParserTest {
                 new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("101"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertFalse(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -222,7 +223,7 @@ class MapConfigParserTest {
                 new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0), new ObjectToken("name")), new ConfigValue("host1"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertFalse(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -239,7 +240,7 @@ class MapConfigParserTest {
     public void testValidateNullTokens() {
         MapConfigParser mapConfigParser = new MapConfigParser();
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(null, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), null, 0, false);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -262,7 +263,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -288,7 +289,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -315,7 +316,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -338,7 +339,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts")), new ConfigValue("hostDB2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -361,7 +362,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -386,7 +387,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ObjectToken("name")), new ConfigValue("hostDB2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -409,7 +410,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(-1)), new ConfigValue("host2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
 
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
@@ -432,7 +433,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("db"), new ObjectToken("hosts"), new ArrayToken(0)), new ConfigValue("host2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -455,7 +456,7 @@ class MapConfigParserTest {
                 new ConfigValue("hostDB2"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -479,7 +480,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("10"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, false);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, false);
         assertTrue(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNotNull(resultsOf.results());
@@ -524,7 +525,7 @@ class MapConfigParserTest {
                 new ObjectToken("redis"), new ObjectToken("port")), new ConfigValue("10"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -545,7 +546,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("admin"), new ArrayToken(1)), new ConfigValue("Gary"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
@@ -566,7 +567,7 @@ class MapConfigParserTest {
             new Pair<>(List.of(new ObjectToken("redis"), new OtherToken()), new ConfigValue("10"))
         );
 
-        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(test, 0, true);
+        GResultOf<ConfigNode> resultsOf = mapConfigParser.buildConfigTree(new PathLexer(), test, 0, true);
         assertFalse(resultsOf.hasResults());
         assertTrue(resultsOf.hasErrors());
         assertNull(resultsOf.results());
