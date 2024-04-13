@@ -7,7 +7,6 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -87,7 +86,10 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                         continue;
                     }
 
-                    mapResult.put(keyValuePair[0].trim(), new LeafNode(keyValuePair[1].trim()));
+
+                    var mapKey = keyValuePair[0].trim().replace("\\,", ",").replace("\\=", "=");
+                    var mapValue = keyValuePair[1].trim().replace("\\,", ",").replace("\\=", "=");
+                    mapResult.put(mapKey, new LeafNode(mapValue));
                 }
 
                 // if there are no errors try and decode the new map.
@@ -167,7 +169,8 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
         return results;
     }
 
-    private Stream<Map.Entry<String, ConfigNode>> convertMapToStream(String path, Map.Entry<String, ConfigNode> entry, DecoderContext decoderContext) {
+    private Stream<Map.Entry<String, ConfigNode>> convertMapToStream(String path, Map.Entry<String, ConfigNode> entry,
+                                                                     DecoderContext decoderContext) {
         // if the key or entry is null, return the current entry and let later code deal with the null value.
         if (path == null || entry.getValue() == null) {
             return Stream.of(entry);

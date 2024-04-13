@@ -670,7 +670,7 @@ class ProxyDecoderPassThroughTest {
             } catch (UndeclaredThrowableException e) {
                 Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
                 Assertions.assertEquals("Failed to get pass through object from proxy config while calling method: getUri with " +
-                        "type: class java.lang.String in path: db.",
+                        "type: class java.lang.String in path: db",
                     e.getUndeclaredThrowable().getMessage());
             }
         } catch (GestaltException e) {
@@ -715,7 +715,7 @@ class ProxyDecoderPassThroughTest {
             } catch (UndeclaredThrowableException e) {
                 Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
                 Assertions.assertEquals("Failed to get pass through object from proxy config while calling method: getPort " +
-                        "with type: class java.lang.Integer in path: db.",
+                        "with type: class java.lang.Integer in path: db",
                     e.getUndeclaredThrowable().getMessage());
             }
         } catch (GestaltException e) {
@@ -760,7 +760,7 @@ class ProxyDecoderPassThroughTest {
             } catch (UndeclaredThrowableException e) {
                 Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
                 Assertions.assertEquals("Failed to get pass through object from proxy config while calling method: getPort with " +
-                        "type: int in path: db.",
+                        "type: int in path: db",
                     e.getUndeclaredThrowable().getMessage());
             }
         } catch (GestaltException e) {
@@ -805,7 +805,7 @@ class ProxyDecoderPassThroughTest {
             } catch (UndeclaredThrowableException e) {
                 Assertions.assertEquals(GestaltException.class, e.getUndeclaredThrowable().getClass());
                 Assertions.assertEquals("Failed to get pass through object from proxy config while calling method: getPort with " +
-                        "type: class java.util.Optional in path: db.",
+                        "type: class java.util.Optional in path: db",
                     e.getUndeclaredThrowable().getMessage());
             }
         } catch (GestaltException e) {

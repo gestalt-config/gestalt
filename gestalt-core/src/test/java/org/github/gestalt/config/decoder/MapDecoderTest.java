@@ -265,7 +265,7 @@ class MapDecoderTest {
     }
 
     @Test
-    void decodeLeafEscape() {
+    void decodeLeafSeparatorEscape() {
         MapDecoder decoder = new MapDecoder();
 
         GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new LeafNode("port=100\\, uri=300 , password=6000"),
@@ -275,8 +275,24 @@ class MapDecoderTest {
         Assertions.assertFalse(result.hasErrors());
 
         Map<String, String> results = (Map<String, String>) result.results();
-        Assertions.assertEquals("100\\, uri=300", results.get("port"));
+        Assertions.assertEquals("100, uri=300", results.get("port"));
         Assertions.assertEquals("6000", results.get("password"));
+    }
+
+    @Test
+    void decodeLeafValueSeparatorEscape() {
+        MapDecoder decoder = new MapDecoder();
+
+        GResultOf<Map<?, ?>> result = decoder.decode("db.host", Tags.of(), new LeafNode("port\\=100=75,uri=300,password=6000"),
+            new TypeCapture<Map<String, Integer>>() {
+            }, new DecoderContext(decoderService, null, null, new PathLexer()));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Map<String, Integer> results = (Map<String, Integer>) result.results();
+        Assertions.assertEquals(75, results.get("port=100"));
+        Assertions.assertEquals(300, results.get("uri"));
+        Assertions.assertEquals(6000, results.get("password"));
     }
 
     @Test
