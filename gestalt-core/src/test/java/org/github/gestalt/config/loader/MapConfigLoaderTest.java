@@ -54,7 +54,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(GResultOf.result(node));
+        Mockito.when(parser.parse(any(), anyList(), eq(false))).thenReturn(GResultOf.result(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(GResultOf.result(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -78,7 +78,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), argument.capture(), eq(false));
 
         // result the parser was sent the correct arguments.
         Assertions.assertEquals(2, argument.getValue().size());
@@ -114,7 +114,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(GResultOf.result(node));
+        Mockito.when(parser.parse(any(), anyList(), eq(false))).thenReturn(GResultOf.result(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(GResultOf.result(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -138,7 +138,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), argument.capture(), eq(false));
 
         // result the parser was sent the correct arguments.
         Assertions.assertEquals(2, argument.getValue().size());
@@ -175,7 +175,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(GResultOf.result(node));
+        Mockito.when(parser.parse(any(), anyList(), eq(false))).thenReturn(GResultOf.result(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(GResultOf.result(Collections.singletonList(new ObjectToken("test"))));
         Mockito.when(lexer.scan("db.name"))
@@ -203,7 +203,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(any(), eq(false));
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), any(), eq(false));
     }
 
     @Test
@@ -222,7 +222,7 @@ class MapConfigLoaderTest {
         ConfigSource source = Mockito.mock(ConfigSource.class);
 
         // mock the interactions with the parser and lexer
-        Mockito.when(parser.parse(anyList(), eq(false))).thenReturn(GResultOf.result(node));
+        Mockito.when(parser.parse(any(), anyList(), eq(false))).thenReturn(GResultOf.result(node));
         Mockito.when(lexer.scan("test"))
             .thenReturn(GResultOf.errors(new ValidationError.EmptyPath()));
         Mockito.when(lexer.scan("db.name"))
@@ -246,7 +246,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(2)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(1)).parse(argument.capture(), eq(false));
+        Mockito.verify(parser, Mockito.times(1)).parse(any(), argument.capture(), eq(false));
 
         // result the parser was sent the correct arguments.
         Assertions.assertEquals(1, argument.getValue().size());
@@ -289,7 +289,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), any(), eq(false));
 
     }
 
@@ -319,7 +319,7 @@ class MapConfigLoaderTest {
 
         // verify we get the correct number of calls and capture the parsers arguments.
         Mockito.verify(lexer, Mockito.times(0)).scan(anyString());
-        Mockito.verify(parser, Mockito.times(0)).parse(any(), eq(false));
+        Mockito.verify(parser, Mockito.times(0)).parse(any(), any(), eq(false));
     }
 
     @Test

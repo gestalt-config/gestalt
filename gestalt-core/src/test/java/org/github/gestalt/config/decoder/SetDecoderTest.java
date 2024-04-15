@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
@@ -85,7 +86,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<Set<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -111,7 +112,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<HashSet<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -139,7 +140,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<TreeSet<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -167,7 +168,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<LinkedHashSet<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -199,7 +200,7 @@ class SetDecoderTest {
         // since I included all maps we pass in a List, this will not be found and will default to a
         // hashSet. In the real case it will not get called as the canDecode will return false
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -227,7 +228,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -253,7 +254,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -274,7 +275,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("0.1111, 0.22"), new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -292,7 +293,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode("a,b,c\\,d"), new TypeCapture<List<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -310,7 +311,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new LeafNode(null), new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -325,7 +326,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), null, new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());
@@ -342,7 +343,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -355,7 +356,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -368,7 +369,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -388,7 +389,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -419,7 +420,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -442,7 +443,7 @@ class SetDecoderTest {
         SetDecoder decoder = new SetDecoder();
 
         GResultOf<Set<?>> values = decoder.decode("db.hosts", Tags.of(), new MapNode(new HashMap<>()), new TypeCapture<Set<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(values.hasErrors());
         Assertions.assertFalse(values.hasResults());

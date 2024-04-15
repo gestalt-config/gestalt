@@ -4,6 +4,7 @@ import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -195,7 +196,7 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("value");
 
         GResultOf<String> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(String.class),
-            new DecoderContext(decoderRegistry, null, null));
+            new DecoderContext(decoderRegistry, null, null, new PathLexer()));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -210,7 +211,7 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("100");
 
         GResultOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
-            new DecoderContext(decoderRegistry, null, null));
+            new DecoderContext(decoderRegistry, null, null, new PathLexer()));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 
@@ -226,7 +227,7 @@ class DecoderRegistryTest {
         ConfigNode leaf = new LeafNode("100");
 
         GResultOf<Long> test = decoderRegistry.decodeNode("test", Tags.of(), leaf, TypeCapture.of(Long.class),
-            new DecoderContext(decoderRegistry, null, null));
+            new DecoderContext(decoderRegistry, null, null, new PathLexer()));
         Assertions.assertTrue(test.hasResults());
         Assertions.assertFalse(test.hasErrors());
 

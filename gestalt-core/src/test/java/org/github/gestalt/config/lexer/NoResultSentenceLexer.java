@@ -7,12 +7,32 @@ import java.util.List;
 
 public class NoResultSentenceLexer extends SentenceLexer {
     @Override
-    public String getDeliminator() {
+    public String getNormalizedDeliminator() {
         return null;
     }
 
     @Override
-    protected List<String> tokenizer(String sentence) {
+    public String getNormalizedArrayOpenTag() {
+        return "";
+    }
+
+    @Override
+    public String getNormalizedArrayCloseTag() {
+        return "";
+    }
+
+    @Override
+    public String getNormalizedMapTag() {
+        return "";
+    }
+
+    @Override
+    public String getDeliminator() {
+        return "";
+    }
+
+    @Override
+    public List<String> tokenizer(String sentence) {
         return null;
     }
 

@@ -38,8 +38,7 @@ public final class URIDecoder extends LeafDecoder<URI> {
             return GResultOf.result(new URI(value));
         } catch (URISyntaxException e) {
             return GResultOf.errors(
-                new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage(),
-                    decoderContext.getSecretConcealer()));
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage(), decoderContext));
         }
     }
 }

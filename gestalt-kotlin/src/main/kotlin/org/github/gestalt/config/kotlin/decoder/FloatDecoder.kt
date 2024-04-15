@@ -45,7 +45,7 @@ class FloatDecoder : LeafDecoder<Float>() {
                 val floatVal = value.toFloat()
                 GResultOf.result(floatVal)
             } catch (e: NumberFormatException) {
-                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.secretConcealer))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext))
             }
         } else {
             GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))

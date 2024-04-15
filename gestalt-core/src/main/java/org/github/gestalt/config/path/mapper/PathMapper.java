@@ -23,7 +23,7 @@ public interface PathMapper {
     }
 
     /**
-     * Takes a sentance and converts it into a set of tokens to navigate.
+     * Takes a sentence and converts it into a set of tokens to navigate.
      *
      * @param path     the current path we are looking in
      * @param sentence the next segment of the path to check

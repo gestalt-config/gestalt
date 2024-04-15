@@ -1,5 +1,7 @@
 package org.github.gestalt.config.entity;
 
+import org.github.gestalt.config.decoder.DecoderContext;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.post.process.transform.substitution.SubstitutionNode;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -402,25 +404,25 @@ public abstract class ValidationError {
         private final ConfigNode node;
         private final String decoder;
         private final String className;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public OptionalMissingValueDecoding(String path, String decoder, SecretConcealer secretConcealer) {
-            this(path, null, decoder, null, secretConcealer);
+        public OptionalMissingValueDecoding(String path, String decoder, DecoderContext context) {
+            this(path, null, decoder, null, context);
         }
 
 
-        public OptionalMissingValueDecoding(String path, ConfigNode node, String decoder, SecretConcealer secretConcealer) {
-            this(path, node, decoder, null, secretConcealer);
+        public OptionalMissingValueDecoding(String path, ConfigNode node, String decoder, DecoderContext context) {
+            this(path, node, decoder, null, context);
         }
 
         public OptionalMissingValueDecoding(String path, ConfigNode node, String decoder, String className,
-                                            SecretConcealer secretConcealer) {
+                                            DecoderContext context) {
             super(ValidationLevel.MISSING_OPTIONAL_VALUE);
             this.path = path;
             this.node = node;
             this.decoder = decoder;
             this.className = className;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
@@ -428,7 +430,7 @@ public abstract class ValidationError {
             StringBuilder description = new StringBuilder(62);
             description.append("Missing Optional Value while decoding ").append(decoder).append(" on path: ").append(path);
             if (node != null) {
-                description.append(", with node: ").append(node.printer(path, secretConcealer));
+                description.append(", with node: ").append(node.printer(path, context.getSecretConcealer(), context.getDefaultLexer()));
             }
             if (className != null) {
                 description.append(", with class: ").append(className);
@@ -615,20 +617,20 @@ public abstract class ValidationError {
         private final String path;
         private final ConfigNode node;
         private final String nodeType;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public DecodingNumberFormatException(String path, ConfigNode node, String nodeType, SecretConcealer secretConcealer) {
+        public DecodingNumberFormatException(String path, ConfigNode node, String nodeType, DecoderContext context) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
             this.nodeType = nodeType;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
         public String description() {
-            return "Unable to decode a number on path: " + path + ", from node: " + node.printer(path, secretConcealer) +
-                " attempting to decode " + nodeType;
+            return "Unable to decode a number on path: " + path + ", from node: " +
+                node.printer(path, context.getSecretConcealer(), context.getDefaultLexer()) + " attempting to decode " + nodeType;
         }
     }
 
@@ -638,19 +640,19 @@ public abstract class ValidationError {
     public static class DecodingCharWrongSize extends ValidationError {
         private final String path;
         private final ConfigNode node;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public DecodingCharWrongSize(String path, ConfigNode node, SecretConcealer secretConcealer) {
+        public DecodingCharWrongSize(String path, ConfigNode node, DecoderContext context) {
             super(ValidationLevel.WARN);
             this.path = path;
             this.node = node;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
         public String description() {
-            return "Expected a char on path: " + path + ", decoding node: " + node.printer(path, secretConcealer) +
-                " received the wrong size";
+            return "Expected a char on path: " + path + ", decoding node: " +
+                node.printer(path, context.getSecretConcealer(), context.getDefaultLexer()) + " received the wrong size";
         }
     }
 
@@ -660,19 +662,19 @@ public abstract class ValidationError {
     public static class DecodingByteTooLong extends ValidationError {
         private final String path;
         private final ConfigNode node;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public DecodingByteTooLong(String path, ConfigNode node, SecretConcealer secretConcealer) {
+        public DecodingByteTooLong(String path, ConfigNode node, DecoderContext context) {
             super(ValidationLevel.WARN);
             this.path = path;
             this.node = node;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
         public String description() {
-            return "Expected a Byte on path: " + path + ", decoding node: " + node.printer(path, secretConcealer) +
-                " received the wrong size";
+            return "Expected a Byte on path: " + path + ", decoding node: " +
+                node.printer(path, context.getSecretConcealer(), context.getDefaultLexer()) + " received the wrong size";
         }
     }
 
@@ -682,19 +684,19 @@ public abstract class ValidationError {
     public static class DecodingEmptyByte extends ValidationError {
         private final String path;
         private final ConfigNode node;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public DecodingEmptyByte(String path, ConfigNode node, SecretConcealer secretConcealer) {
+        public DecodingEmptyByte(String path, ConfigNode node, DecoderContext context) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
         public String description() {
-            return "Expected a Byte on path: " + path + ", decoding node: " + node.printer(path, secretConcealer) +
-                " received an empty node";
+            return "Expected a Byte on path: " + path + ", decoding node: " +
+                node.printer(path, context.getSecretConcealer(), context.getDefaultLexer()) + " received an empty node";
         }
     }
 
@@ -706,21 +708,21 @@ public abstract class ValidationError {
         private final ConfigNode node;
         private final String decoder;
         private final String reason;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public ErrorDecodingException(String path, ConfigNode node, String decoder, String reason, SecretConcealer secretConcealer) {
+        public ErrorDecodingException(String path, ConfigNode node, String decoder, String reason, DecoderContext context) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
             this.decoder = decoder;
             this.reason = reason;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
         public String description() {
-            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " + node.printer(path, secretConcealer) +
-                ", with reason: " + reason;
+            return "Unable to decode a " + decoder + " on path: " + path + ", from node: " +
+                node.printer(path, context.getSecretConcealer(), context.getDefaultLexer()) + ", with reason: " + reason;
         }
     }
 
@@ -765,21 +767,21 @@ public abstract class ValidationError {
         private final String path;
         private final String content;
         private final ConfigNode node;
-        private final SecretConcealer secretConcealer;
+        private final DecoderContext context;
 
-        public MapEntryInvalid(String path, String content, ConfigNode node, SecretConcealer secretConcealer) {
+        public MapEntryInvalid(String path, String content, ConfigNode node, DecoderContext context) {
             super(ValidationLevel.ERROR);
 
             this.path = path;
             this.content = content;
             this.node = node;
-            this.secretConcealer = secretConcealer;
+            this.context = context;
         }
 
         @Override
         public String description() {
             return "Map entry is not in the format '<KEY>=<VALUE> for entry" + content + ", on path " + path +
-                ", for node: " + node.printer(path, secretConcealer);
+                ", for node: " + node.printer(path, context.getSecretConcealer(), context.getDefaultLexer());
         }
     }
 
@@ -1340,19 +1342,22 @@ public abstract class ValidationError {
         private final ConfigNode node;
         private final int depth;
         private final SecretConcealer secretConcealer;
+        private final SentenceLexer lexer;
 
-        public ExceededMaximumNestedSubstitutionDepth(String path, int depth, ConfigNode node, SecretConcealer secretConcealer) {
+        public ExceededMaximumNestedSubstitutionDepth(String path, int depth, ConfigNode node, SecretConcealer secretConcealer,
+                                                      SentenceLexer lexer) {
             super(ValidationLevel.ERROR);
             this.path = path;
             this.node = node;
             this.depth = depth;
             this.secretConcealer = secretConcealer;
+            this.lexer = lexer;
         }
 
         @Override
         public String description() {
             return "Exceeded maximum nested substitution depth of " + depth + " on path " + path + " for node: " +
-                node.printer(path, secretConcealer);
+                node.printer(path, secretConcealer, lexer);
         }
     }
 

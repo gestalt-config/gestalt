@@ -38,8 +38,7 @@ public final class URLDecoder extends LeafDecoder<URL> {
             return GResultOf.result(new URL(value));
         } catch (MalformedURLException e) {
             return GResultOf.errors(
-                new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage(),
-                    decoderContext.getSecretConcealer()));
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getLocalizedMessage(), decoderContext));
         }
     }
 }

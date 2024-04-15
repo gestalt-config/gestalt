@@ -38,7 +38,7 @@ public final class UUIDDecoder extends LeafDecoder<UUID> {
             return GResultOf.result(UUID.fromString(value));
         } catch (IllegalArgumentException e) {
             return GResultOf.errors(
-                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext));
         }
     }
 }

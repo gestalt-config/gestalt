@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -61,7 +62,7 @@ class PatternDecoderTest {
         PatternDecoder decoder = new PatternDecoder();
 
         GResultOf<Pattern> result = decoder.decode("db.user", Tags.of(), new LeafNode("test"),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -74,7 +75,7 @@ class PatternDecoderTest {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         GResultOf<Pattern> result = stringDecoder.decode("db.user", Tags.of(), new LeafNode(null),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -89,7 +90,7 @@ class PatternDecoderTest {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         GResultOf<Pattern> result = stringDecoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -104,7 +105,7 @@ class PatternDecoderTest {
         PatternDecoder stringDecoder = new PatternDecoder();
 
         GResultOf<Pattern> result = stringDecoder.decode("db.user", Tags.of(), null,
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

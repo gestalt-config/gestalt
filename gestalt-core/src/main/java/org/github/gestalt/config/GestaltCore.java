@@ -101,7 +101,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.metricsManager = metricsManager;
         this.validationManager = validationManager;
         this.defaultTags = defaultTags;
-        this.decoderContext = new DecoderContext(decoderService, this, secretConcealer);
+        this.decoderContext = new DecoderContext(decoderService, this, secretConcealer, sentenceLexer);
     }
 
     List<ValidationError> getLoadErrors() {
@@ -261,7 +261,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         ConfigPrefix[] prefix = klass.getAnnotationsByType(ConfigPrefix.class);
         for (ConfigPrefix configPrefix : prefix) {
             if (combinedPath.length() > 0) {
-                combinedPath.append(sentenceLexer.getDeliminator());
+                combinedPath.append(sentenceLexer.getNormalizedDeliminator());
             }
             combinedPath.append(configPrefix.prefix());
         }
@@ -394,7 +394,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             if (tokens.hasErrors()) {
                 throw new GestaltException("Unable to parse path: " + combinedPath, tokens.getErrors());
             } else {
-                GResultOf<T> results = getAndDecodeConfig2(combinedPath, tokens.results(), klass, tags);
+                GResultOf<T> results = getAndDecodeConfig(combinedPath, tokens.results(), klass, tags);
 
                 getConfigMetrics(results);
 
@@ -487,7 +487,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
-    private <T> GResultOf<T> getAndDecodeConfig2(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
+    private <T> GResultOf<T> getAndDecodeConfig(String path, List<Token> tokens, TypeCapture<T> klass, Tags tags) {
         GResultOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
 
         if (!node.hasErrors() || node.hasErrors(ValidationLevel.MISSING_VALUE)) {

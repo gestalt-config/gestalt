@@ -1,5 +1,6 @@
 package org.github.gestalt.config.utils;
 
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.token.ArrayToken;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.TagToken;
@@ -14,20 +15,34 @@ class PathUtilTest {
     @Test
     void toPath() {
         List<Token> tokens = List.of(new ObjectToken("obj"), new ArrayToken(1), new TagToken("tag", "value"));
-        Assertions.assertEquals("obj[1]tag=value", PathUtil.toPath(tokens));
+        Assertions.assertEquals("obj[1]tag=value", PathUtil.toPath(new PathLexer(), tokens));
     }
 
     @Test
     void pathForKey() {
-        Assertions.assertEquals("my.path.test", PathUtil.pathForKey("my.path", "test"));
-        Assertions.assertEquals("test", PathUtil.pathForKey("", "test"));
-        Assertions.assertEquals("test", PathUtil.pathForKey(null, "test"));
+        Assertions.assertEquals("my.path.test", PathUtil.pathForKey(new PathLexer(), "my.path", "test"));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), "", "test"));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), null, "test"));
+    }
+
+    @Test
+    void pathForKeyCustomNormalizer() {
+        Assertions.assertEquals("my_path_test", PathUtil.pathForKey(new PathLexer("_"), "my_path", "test"));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), "", "test"));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), null, "test"));
     }
 
     @Test
     void pathForIndex() {
-        Assertions.assertEquals("my.path[0]", PathUtil.pathForIndex("my.path", 0));
-        Assertions.assertEquals("[0]", PathUtil.pathForIndex("", 0));
-        Assertions.assertEquals("[0]", PathUtil.pathForIndex(null, 0));
+        Assertions.assertEquals("my.path[0]", PathUtil.pathForIndex(new PathLexer(), "my.path", 0));
+        Assertions.assertEquals("[0]", PathUtil.pathForIndex(new PathLexer(), "", 0));
+        Assertions.assertEquals("[0]", PathUtil.pathForIndex(new PathLexer(), null, 0));
+    }
+
+    @Test
+    void pathForIndexArray() {
+        Assertions.assertEquals("my.path.test", PathUtil.pathForKey(new PathLexer(), "", List.of("my", "path", "test")));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), "", List.of("test")));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), null, List.of("test")));
     }
 }

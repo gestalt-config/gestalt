@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -65,7 +66,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("RED"),
-            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(Colours.RED, result.results());
@@ -78,7 +79,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
-            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
@@ -93,7 +94,7 @@ class EnumDecoderTest {
         EnumDecoder decoder = new EnumDecoder();
 
         GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode("pink"),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());

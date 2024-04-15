@@ -1,19 +1,20 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.lang.System.Logger.Level.TRACE;
+import static org.github.gestalt.config.utils.PathUtil.*;
 
 /**
  * Decode a Map. Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int.
@@ -82,11 +83,14 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
                     String[] keyValuePair = entry.split("(?<!\\\\)=", 2);
                     if (keyValuePair.length != 2) {
-                        errors.add(new ValidationError.MapEntryInvalid(path, entry, node, decoderContext.getSecretConcealer()));
+                        errors.add(new ValidationError.MapEntryInvalid(path, entry, node, decoderContext));
                         continue;
                     }
 
-                    mapResult.put(keyValuePair[0].trim(), new LeafNode(keyValuePair[1].trim()));
+
+                    var mapKey = keyValuePair[0].trim().replace("\\,", ",").replace("\\=", "=");
+                    var mapValue = keyValuePair[1].trim().replace("\\,", ",").replace("\\=", "=");
+                    mapResult.put(mapKey, new LeafNode(mapValue));
                 }
 
                 // if there are no errors try and decode the new map.
@@ -123,7 +127,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                 // if the value of the map is a primitive or a wrapper, flat map any entries that are map nodes.
                 // if the value is a class, then we want to decode the map nodes into an object
                 if (ClassUtils.isPrimitiveOrWrapper(valueType.getRawType())) {
-                    stream = stream.flatMap(it -> convertMapToStream(it.getKey(), it));
+                    stream = stream.flatMap(it -> convertMapToStream(it.getKey(), it, decoderContext));
                 }
 
                 Map<?, ?> map = stream.map(it -> {
@@ -133,7 +137,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
                         return null;
                     }
 
-                    String nextPath = PathUtil.pathForKey(path, key);
+                    String nextPath = pathForKey(decoderContext.getDefaultLexer(), path, key);
                     GResultOf<Object> keyValidate = decoderContext.getDecoderService()
                         .decodeNode(nextPath, tags, new LeafNode(key), (TypeCapture<Object>) keyType, decoderContext);
                     GResultOf<Object> valueValidate = decoderContext.getDecoderService()
@@ -166,14 +170,20 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
         return results;
     }
 
-    private Stream<Map.Entry<String, ConfigNode>> convertMapToStream(String path, Map.Entry<String, ConfigNode> entry) {
+    private Stream<Map.Entry<String, ConfigNode>> convertMapToStream(String path, Map.Entry<String, ConfigNode> entry,
+                                                                     DecoderContext decoderContext) {
+
+        SentenceLexer lexer = decoderContext.getDefaultLexer();
         // if the key or entry is null, return the current entry and let later code deal with the null value.
         if (path == null || entry.getValue() == null) {
             return Stream.of(entry);
         } else if (entry.getValue() instanceof MapNode) {
             MapNode node = (MapNode) entry.getValue();
 
-            return node.getMapNode().entrySet().stream().flatMap(it -> convertMapToStream(path + "." + it.getKey(), it));
+            return node.getMapNode().entrySet()
+                .stream()
+                .flatMap(it -> convertMapToStream(pathForKey(lexer, path, it.getKey()), it, decoderContext));
+
         } else if (entry.getValue() instanceof ArrayNode) {
             ArrayNode node = (ArrayNode) entry.getValue();
 
@@ -181,7 +191,10 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
             List<ConfigNode> nodes = node.getArray();
 
             for (int i = 0; i < nodes.size(); i++) {
-                stream = Stream.concat(stream, convertMapToStream(path + "[" + i + "]", Map.entry("[" + i + "]", nodes.get(i))));
+                stream = Stream
+                    .concat(stream, convertMapToStream(
+                        pathForIndex(lexer, path, i),
+                        Map.entry(forIndex(lexer, i), nodes.get(i)), decoderContext));
             }
 
             return stream;

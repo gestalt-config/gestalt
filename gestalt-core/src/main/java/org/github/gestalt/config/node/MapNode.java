@@ -1,5 +1,7 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.utils.PathUtil;
 
@@ -84,17 +86,18 @@ public final class MapNode implements ConfigNode {
 
     @Override
     public String toString() {
-        return printer("", null);
+        // should not be used.
+        return printer("", null, new PathLexer());
     }
 
     @Override
-    public String printer(String path, SecretConcealer secretConcealer) {
+    public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
         return "MapNode{" +
             nodes.entrySet().stream()
                 .map((it) -> {
                     var printedNode = new StringBuilder().append(it.getKey()).append('=');
                     if (it.getValue() != null) {
-                        printedNode.append(it.getValue().printer(PathUtil.pathForKey(path, it.getKey()), secretConcealer));
+                        printedNode.append(it.getValue().printer(PathUtil.pathForKey(lexer, path, it.getKey()), secretConcealer, lexer));
                     } else {
                         printedNode.append("'null'");
                     }

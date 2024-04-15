@@ -2,6 +2,7 @@ package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.post.process.PostProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
@@ -17,6 +18,12 @@ import java.util.List;
  */
 public interface ConfigNodeService {
 
+    /**
+     * Set the sentence lexer used to rebuild normalized paths.
+     *
+     * @param lexer the sentence lexer used to rebuild normalized paths.
+     */
+    void setLexer(SentenceLexer lexer);
     /**
      * Add a new node, if a root already exists merge the nodes.
      * When adding a node and merging, the new node always takes precedence.

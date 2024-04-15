@@ -29,6 +29,10 @@ public final class PathLexer extends SentenceLexer {
     public static final String DEFAULT_EVALUATOR = "^((?<name>[\\w .,+=\\-;:\"'`~!@#$%^&*()\\<>]+)(?<array>\\[(?<index>\\d*)])?)$";
     public static final String DELIMITER_DEFAULT = ".";
     private final Pattern pathPattern;
+    private final String normalizedDelimiter;
+    private final String normalizedArrayOpenTag;
+    private final String normalizedArrayCloseTag;
+    private final String normalizedMapTag;
     private final String delimiter;
     private final String delimiterRegex;
     private final SentenceNormalizer sentenceNormalizer;
@@ -37,10 +41,7 @@ public final class PathLexer extends SentenceLexer {
      * Build a path lexer to tokenize a path.
      */
     public PathLexer() {
-        this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
-        this.delimiter = DELIMITER_DEFAULT;
-        this.delimiterRegex = Pattern.quote(DELIMITER_DEFAULT);
-        this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
+        this(DELIMITER_DEFAULT, DELIMITER_DEFAULT, DEFAULT_EVALUATOR, new LowerCaseSentenceNormalizer(), "[", "]", "=");
     }
 
     /**
@@ -49,10 +50,7 @@ public final class PathLexer extends SentenceLexer {
      * @param delimiter the character to split the sentence
      */
     public PathLexer(String delimiter) {
-        this.pathPattern = Pattern.compile(DEFAULT_EVALUATOR, Pattern.CASE_INSENSITIVE);
-        this.delimiter = delimiter;
-        this.delimiterRegex = Pattern.quote(delimiter);
-        this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
+        this(delimiter, delimiter, DEFAULT_EVALUATOR, new LowerCaseSentenceNormalizer(), "[", "]", "=");
     }
 
     /**
@@ -65,27 +63,72 @@ public final class PathLexer extends SentenceLexer {
      *                         index = the index for the array
      */
     public PathLexer(String delimiter, String pathPatternRegex) {
-        this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
-        this.delimiter = delimiter;
-        this.delimiterRegex = Pattern.quote(delimiter);
-        this.sentenceNormalizer = new LowerCaseSentenceNormalizer();
+        this(delimiter, delimiter, pathPatternRegex, new LowerCaseSentenceNormalizer(), "[", "]", "=");
     }
 
     /**
      * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
      *
-     * @param delimiter        the character to split the sentence
-     * @param pathPatternRegex a regex with capture groups to decide what kind of token this is. The regex should have a capture group
-     *                         name = name of the element
-     *                         array = if this element is an array
-     *                         index = the index for the array
+     * @param delimiter          the character to split the sentence
+     * @param pathPatternRegex   a regex with capture groups to decide what kind of token this is. The regex should have a capture group
+     *                           name = name of the element
+     *                           array = if this element is an array
+     *                           index = the index for the array
      * @param sentenceNormalizer defines how to normalize a sentence.
      */
     public PathLexer(String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
+        this(delimiter, delimiter, pathPatternRegex, sentenceNormalizer, "[", "]", "=");
+    }
+
+    /**
+     * construct a Path lexer, remember that the delimiter is a regex, so if you want to use . you need to escape it. "."
+     *
+     * @param normalizedDelimiter how we want to represent the path when we rebuild it from the config tree.
+     * @param delimiter           the character to split the sentence
+     * @param pathPatternRegex    a regex with capture groups to decide what kind of token this is. The regex should have a capture group
+     *                            name = name of the element
+     *                            array = if this element is an array
+     *                            index = the index for the array
+     * @param sentenceNormalizer  defines how to normalize a sentence.
+     */
+    public PathLexer(String normalizedDelimiter, String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer) {
+        this(normalizedDelimiter, delimiter, pathPatternRegex, sentenceNormalizer, "[", "]", "=");
+    }
+
+    public PathLexer(String normalizedDelimiter, String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer,
+                     String normalizedArrayOpenTag, String normalizedArrayCloseTag, String normalizedMapTag) {
         this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
+        this.normalizedDelimiter = normalizedDelimiter;
         this.delimiter = delimiter;
-        this.delimiterRegex = Pattern.quote(delimiter);
+        if (delimiter.length() == 1) {
+            this.delimiterRegex = Pattern.quote(delimiter);
+        } else {
+            this.delimiterRegex = delimiter;
+        }
         this.sentenceNormalizer = sentenceNormalizer;
+        this.normalizedArrayOpenTag = normalizedArrayOpenTag;
+        this.normalizedArrayCloseTag = normalizedArrayCloseTag;
+        this.normalizedMapTag = normalizedMapTag;
+    }
+
+    @Override
+    public String getNormalizedDeliminator() {
+        return normalizedDelimiter;
+    }
+
+    @Override
+    public String getNormalizedArrayOpenTag() {
+        return normalizedArrayOpenTag;
+    }
+
+    @Override
+    public String getNormalizedArrayCloseTag() {
+        return normalizedArrayCloseTag;
+    }
+
+    @Override
+    public String getNormalizedMapTag() {
+        return normalizedMapTag;
     }
 
     @Override
@@ -94,7 +137,7 @@ public final class PathLexer extends SentenceLexer {
     }
 
     @Override
-    protected List<String> tokenizer(String sentence) {
+    public List<String> tokenizer(String sentence) {
         return sentence != null && !sentence.isEmpty() ? List.of(sentence.split(delimiterRegex)) : Collections.emptyList();
     }
 

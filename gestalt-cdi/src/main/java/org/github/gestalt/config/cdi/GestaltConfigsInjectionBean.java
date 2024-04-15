@@ -39,11 +39,6 @@ public final class GestaltConfigsInjectionBean<T> implements Bean<T> {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public T create(final CreationalContext<T> creationalContext) {
         String prefix = configClassWithPrefix.getPrefix();
         if (prefix.isBlank()) {

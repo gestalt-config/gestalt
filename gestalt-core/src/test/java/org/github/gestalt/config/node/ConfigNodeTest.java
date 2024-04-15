@@ -1,5 +1,6 @@
 package org.github.gestalt.config.node;
 
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -160,10 +161,10 @@ class ConfigNodeTest {
         LeafNode leaf = new LeafNode("leaf");
 
         Assertions.assertEquals("ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}",
-            arrayNode.printer("", null));
+            arrayNode.printer("", null, new PathLexer()));
         Assertions.assertEquals("MapNode{test2=LeafNode{value='leaf2'}, test=LeafNode{value='leaf'}}",
-            objectNode.printer("", null));
-        Assertions.assertEquals("LeafNode{value='leaf'}", leaf.printer("", null));
+            objectNode.printer("", null, new PathLexer()));
+        Assertions.assertEquals("LeafNode{value='leaf'}", leaf.printer("", null, new PathLexer()));
     }
 
     @Test
@@ -176,7 +177,20 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{test2=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}, " +
                 "test=LeafNode{value='leaf'}}",
-            objectNode.printer("", null));
+            objectNode.printer("", null, new PathLexer()));
+    }
+
+    @Test
+    void printerComplexTestCustomDelimiter() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("test", new LeafNode("leaf"));
+        mapNode.put("test2", arrayNode);
+        MapNode objectNode = new MapNode(mapNode);
+
+        Assertions.assertEquals("MapNode{test2=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}, " +
+                "test=LeafNode{value='leaf'}}",
+            objectNode.printer("", null, new PathLexer("_")));
     }
 
     @Test
@@ -189,7 +203,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{abc=LeafNode{value='*****'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}]}}",
-            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****")));
+            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****"), new PathLexer()));
     }
 
     @Test
@@ -202,7 +216,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{abc=LeafNode{value='*****'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}]}}",
-            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****")));
+            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****"), new PathLexer()));
     }
 
     @Test
@@ -214,7 +228,7 @@ class ConfigNodeTest {
         MapNode objectNode = new MapNode(mapNode);
 
         Assertions.assertEquals("MapNode{abc='null', def=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}}",
-            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****")));
+            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****"), new PathLexer()));
     }
 
     @Test
@@ -228,7 +242,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{abc=LeafNode{value='null'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}, LeafNode{value='null'}]}, hij='null'}",
-            objectNode.printer("", new SecretConcealer(Set.of("aaa"), "*****")));
+            objectNode.printer("", new SecretConcealer(Set.of("aaa"), "*****"), new PathLexer()));
     }
 }
 

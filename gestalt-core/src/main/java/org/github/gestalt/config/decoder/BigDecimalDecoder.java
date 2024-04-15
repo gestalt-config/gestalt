@@ -43,7 +43,7 @@ public final class BigDecimalDecoder extends LeafDecoder<BigDecimal> {
                 results = GResultOf.result(bigDecimal);
             } catch (NumberFormatException e) {
                 results = GResultOf.errors(
-                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

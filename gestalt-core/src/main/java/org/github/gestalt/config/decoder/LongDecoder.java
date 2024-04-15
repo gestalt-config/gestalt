@@ -40,7 +40,7 @@ public final class LongDecoder extends LeafDecoder<Long> {
                 results = GResultOf.result(longVal);
             } catch (NumberFormatException e) {
                 results = GResultOf.errors(
-                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.getSecretConcealer()));
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext));
             }
         } else {
             results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));

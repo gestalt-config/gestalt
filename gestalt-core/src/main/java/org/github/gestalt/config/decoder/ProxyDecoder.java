@@ -11,7 +11,6 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
@@ -98,7 +97,6 @@ public final class ProxyDecoder implements Decoder<Object> {
         Method[] classMethods = klass.getMethods();
 
         DecoderService decoderService = decoderContext.getDecoderService();
-        SecretConcealer secretConcealer = decoderContext.getSecretConcealer();
 
         Map<String, Object> methodResults = new HashMap<>();
         // for each method, we want to get the corresponding bean value. ie if it is getCar, the bean value would be car.
@@ -119,7 +117,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                 name = getConfigNameFromMethod(methodName, returnType);
             }
 
-            String nextPath = PathUtil.pathForKey(path, name);
+            String nextPath = PathUtil.pathForKey(decoderContext.getDefaultLexer(), path, name);
 
             GResultOf<ConfigNode> configNode = decoderService.getNextNode(nextPath, name, node);
 
@@ -146,7 +144,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                     if (defaultGResultOf.hasResults()) {
                         methodResults.put(methodName, defaultGResultOf.results());
                         foundValue = true;
-                        errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), secretConcealer));
+                        errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
                     }
                 } else {
                     // even though we have default value in the annotation lets try to decode the field,
@@ -158,7 +156,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                     if (decodedResults.hasResults()) {
                         //only add the errors if we actually found a result, otherwise we dont care.
                         errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
-                        errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), secretConcealer));
+                        errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
                         foundValue = true;
                         methodResults.put(methodName, decodedResults.results());
                     }
@@ -168,7 +166,7 @@ public final class ProxyDecoder implements Decoder<Object> {
             if (!foundValue && !method.isDefault()) {
                 errors.add(new ValidationError.NoResultsFoundForNode(nextPath, type.getRawType(), "proxy decoding"));
             } else if (!foundValue && method.isDefault()) {
-                errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), secretConcealer));
+                errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
             }
         }
 
@@ -233,7 +231,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                     }
                 } else {
                     throw new GestaltException("Failed to get pass through object from proxy config while calling method: " + methodName +
-                        " with type: " + returnType + " in path: " + path + ".");
+                        " with type: " + returnType + " in path: " + path);
                 }
             }
 
@@ -257,7 +255,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                 name = getConfigNameFromMethod(methodName, returnType);
             }
 
-            String nextPath = PathUtil.pathForKey(path, name);
+            String nextPath = PathUtil.pathForKey(decoderContext.getDefaultLexer(), path, name);
 
             Optional<Object> result = Optional.empty();
             if (decoderContext.getGestalt() != null) {
@@ -338,7 +336,7 @@ public final class ProxyDecoder implements Decoder<Object> {
                         }
                     } else {
                         throw new GestaltException("Failed to get cached object from proxy config while calling method: " + methodName +
-                            " with type: " + returnType + " in path: " + path + ".");
+                            " with type: " + returnType + " in path: " + path);
                     }
                 }
 

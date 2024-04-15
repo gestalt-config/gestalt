@@ -45,7 +45,7 @@ class LongDecoder : LeafDecoder<Long>() {
                 val longVal = value.toLong()
                 GResultOf.result(longVal)
             } catch (e: NumberFormatException) {
-                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext.secretConcealer))
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext))
             }
         } else {
             GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))

@@ -99,7 +99,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfo.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -121,7 +122,8 @@ class ObjectDecoderTest {
         configs.put("timeout", new LeafNode("10"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoExtended.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -144,7 +146,7 @@ class ObjectDecoderTest {
         configs.put("user", new LeafNode("Ted"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoExtended.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -173,7 +175,8 @@ class ObjectDecoderTest {
         configs.put("timeout", new LeafNode("10"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoExtendedDefault.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -196,7 +199,8 @@ class ObjectDecoderTest {
         configs.put("user", new LeafNode("Ted"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoExtendedDefault.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoExtendedDefault.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -225,7 +229,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoNoDefaultConstructor.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoDefaultConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -245,7 +250,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoPrivateConstructor.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoPrivateConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -264,7 +270,8 @@ class ObjectDecoderTest {
         configs.put("uri", new LeafNode("mysql.com"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -290,7 +297,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoSetterChangeValue.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoSetterChangeValue.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -310,7 +318,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoIntegerPortNonNullGetter.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoIntegerPortNonNullGetter.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
@@ -340,7 +349,8 @@ class ObjectDecoderTest {
         //configs.put("enabled", new LeafNode("true")); missing
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBooleanEnabledNonNullGetter.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBooleanEnabledNonNullGetter.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
@@ -370,7 +380,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -400,7 +411,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoNoConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -432,7 +444,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoIntegerPort.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoIntegerPort.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -460,7 +473,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -480,7 +493,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -497,7 +510,7 @@ class ObjectDecoderTest {
         Map<String, ConfigNode> configs = new HashMap<>();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -530,7 +543,7 @@ class ObjectDecoderTest {
         configs.put("port", new LeafNode("100"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoOptional.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -561,7 +574,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -590,7 +604,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfo.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfo.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -610,7 +625,8 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(null), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
+            new MapNode(null), TypeCapture.of(DBInfoNoConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -649,7 +665,8 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(null), TypeCapture.of(DBInfoStatic.class), new DecoderContext(decoderService, null, null));
+            new MapNode(null), TypeCapture.of(DBInfoStatic.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -668,7 +685,8 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            null, TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
+            null, TypeCapture.of(DBInfoNoConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -683,7 +701,8 @@ class ObjectDecoderTest {
         ObjectDecoder decoder = new ObjectDecoder();
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class), new DecoderContext(decoderService, null, null));
+            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -705,7 +724,8 @@ class ObjectDecoderTest {
         configs.put("idletimeoutsec", new LeafNode("1000"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBPool.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBPool.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -736,7 +756,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -756,7 +776,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoAnnotationsLong.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoAnnotationsLong.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -775,7 +796,7 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoAnnotations.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -801,7 +822,8 @@ class ObjectDecoderTest {
 
         GResultOf<Object> result =
             decoder.decode("db.host", Tags.of(), new MapNode(configs),
-                TypeCapture.of(DBInfoAnnotationsDefault.class), new DecoderContext(decoderService, null, null));
+                TypeCapture.of(DBInfoAnnotationsDefault.class),
+                new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -826,7 +848,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
-            TypeCapture.of(DBInfoBadAnnotations.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(DBInfoBadAnnotations.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -855,7 +878,7 @@ class ObjectDecoderTest {
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
             new MapNode(configs), TypeCapture.of(DBInfoBadAnnotationsWithClassDefault.class),
-            new DecoderContext(decoderService, null, null));
+            new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
@@ -887,7 +910,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -907,7 +931,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsLong.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsLong.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -926,7 +951,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotations.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -951,7 +977,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsDefault.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoMethodAnnotationsDefault.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -976,7 +1003,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBadMethodAnnotations.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBadMethodAnnotations.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1006,7 +1034,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -1026,7 +1055,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(DBInfoBothAnnotations.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1052,7 +1082,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsWrapper.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsWrapper.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1083,7 +1114,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsPrimitive.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithDefaultsPrimitive.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1113,7 +1145,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithWithoutDefaultsPrimitive.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithWithoutDefaultsPrimitive.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1143,7 +1176,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithoutDefaultsWrapper.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithoutDefaultsWrapper.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -1174,7 +1208,8 @@ class ObjectDecoderTest {
         configs.put("password", new LeafNode("pass"));
 
         GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new MapNode(configs), TypeCapture.of(ObjectWithZeroDefaultsWrapper.class), new DecoderContext(decoderService, null, null));
+            new MapNode(configs), TypeCapture.of(ObjectWithZeroDefaultsWrapper.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 

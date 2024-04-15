@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -67,7 +68,7 @@ class ByteDecoderTest {
         ByteDecoder decoder = new ByteDecoder();
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
-            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals("a".getBytes(Charset.defaultCharset())[0], result.results());
@@ -79,7 +80,7 @@ class ByteDecoderTest {
         ByteDecoder decoder = new ByteDecoder();
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
-            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals((byte) 97, result.results());
@@ -94,7 +95,7 @@ class ByteDecoderTest {
         ByteDecoder decoder = new ByteDecoder();
 
         GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
-            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

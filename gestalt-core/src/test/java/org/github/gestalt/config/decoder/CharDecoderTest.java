@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -64,7 +65,7 @@ class CharDecoderTest {
         CharDecoder decoder = new CharDecoder();
 
         GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
-            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals('a', result.results());
@@ -76,7 +77,7 @@ class CharDecoderTest {
         CharDecoder decoder = new CharDecoder();
 
         GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
-            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
 
@@ -93,7 +94,7 @@ class CharDecoderTest {
         CharDecoder decoder = new CharDecoder();
 
         GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
-            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 import java.util.Objects;
@@ -13,13 +14,14 @@ import java.util.Objects;
 public class DecoderContext {
     private final DecoderService decoderService;
     private final Gestalt gestalt;
-
+    private final SentenceLexer defaultLexer;
     private final SecretConcealer secretConcealer;
 
-    public DecoderContext(DecoderService decoderService, Gestalt gestalt, SecretConcealer secretConcealer) {
+    public DecoderContext(DecoderService decoderService, Gestalt gestalt, SecretConcealer secretConcealer, SentenceLexer defaultLexer) {
         this.decoderService = decoderService;
         this.gestalt = gestalt;
         this.secretConcealer = secretConcealer;
+        this.defaultLexer = defaultLexer;
     }
 
     public DecoderService getDecoderService() {
@@ -34,6 +36,10 @@ public class DecoderContext {
         return secretConcealer;
     }
 
+    public SentenceLexer getDefaultLexer() {
+        return defaultLexer;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -45,11 +51,12 @@ public class DecoderContext {
         DecoderContext that = (DecoderContext) o;
         return Objects.equals(decoderService, that.decoderService) &&
             Objects.equals(gestalt, that.gestalt) &&
-            Objects.equals(secretConcealer, that.secretConcealer);
+            Objects.equals(secretConcealer, that.secretConcealer) &&
+            Objects.equals(defaultLexer, that.defaultLexer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(decoderService, gestalt, secretConcealer);
+        return Objects.hash(decoderService, gestalt, secretConcealer, defaultLexer);
     }
 }

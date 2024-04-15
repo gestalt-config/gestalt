@@ -74,11 +74,6 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public T create(CreationalContext<T> context) {
         InjectionPoint ip = (InjectionPoint) bm.getInjectableReference(new MetadataInjectionPoint(), context);

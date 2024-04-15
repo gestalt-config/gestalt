@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -65,7 +66,7 @@ class DurationDecoderTest {
         DurationDecoder decoder = new DurationDecoder();
 
         GResultOf<Duration> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"),
-            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(Duration.ofMillis(124L), result.results());
@@ -77,7 +78,7 @@ class DurationDecoderTest {
         DurationDecoder decoder = new DurationDecoder();
 
         GResultOf<Duration> result = decoder.decode("db.port", Tags.of(), new LeafNode("PT20S"),
-            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(Duration.ofSeconds(20), result.results());
@@ -89,7 +90,7 @@ class DurationDecoderTest {
         DurationDecoder decoder = new DurationDecoder();
 
         GResultOf<Duration> result = decoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

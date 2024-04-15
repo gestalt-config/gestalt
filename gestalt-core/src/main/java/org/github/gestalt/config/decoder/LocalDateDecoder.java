@@ -71,7 +71,7 @@ public final class LocalDateDecoder extends LeafDecoder<LocalDate> {
             results = GResultOf.result(LocalDate.parse(value, formatter));
         } catch (DateTimeParseException e) {
             results = GResultOf.errors(
-                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext.getSecretConcealer()));
+                new ValidationError.ErrorDecodingException(path, node, name(), e.getMessage(), decoderContext));
         }
         return results;
     }

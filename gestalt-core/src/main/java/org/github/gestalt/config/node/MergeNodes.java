@@ -1,6 +1,7 @@
 package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
@@ -26,19 +27,20 @@ public final class MergeNodes {
      * Merge two nodes and return the results of the merge. The values in node1 will be overridden by the values in node2
      *
      * @param path  the path of the nodes we are merging.
+     * @param lexer lexer used to get the delimiter to build the path
      * @param node1 the base node, its properties will be overridden by the node2
      * @param node2 the node to override the values of.
      * @return the merged nodes.
      */
-    public static GResultOf<ConfigNode> mergeNodes(String path, ConfigNode node1, ConfigNode node2) {
+    public static GResultOf<ConfigNode> mergeNodes(String path, SentenceLexer lexer, ConfigNode node1, ConfigNode node2) {
         if (node1.getClass() != node2.getClass()) {
             return GResultOf.errors(
                 new ValidationError.UnableToMergeDifferentNodes(node1.getClass(), node2.getClass()));
         } else {
             if (node1 instanceof ArrayNode) {
-                return mergeArrayNodes(path, (ArrayNode) node1, (ArrayNode) node2);
+                return mergeArrayNodes(path, lexer, (ArrayNode) node1, (ArrayNode) node2);
             } else if (node1 instanceof MapNode) {
-                return mergeMapNodes(path, (MapNode) node1, (MapNode) node2);
+                return mergeMapNodes(path, lexer, (MapNode) node1, (MapNode) node2);
             } else if (node1 instanceof LeafNode) {
                 return mergeLeafNodes(path, (LeafNode) node1, (LeafNode) node2);
             } else {
@@ -47,7 +49,7 @@ public final class MergeNodes {
         }
     }
 
-    private static GResultOf<ConfigNode> mergeArrayNodes(String path, ArrayNode arrayNode1, ArrayNode arrayNode2) {
+    private static GResultOf<ConfigNode> mergeArrayNodes(String path, SentenceLexer lexer, ArrayNode arrayNode1, ArrayNode arrayNode2) {
         // get the maximum array size of both the nodes.
         int maxSize = Math.max(arrayNode1.size(), arrayNode2.size());
         ConfigNode[] values = new ConfigNode[maxSize];
@@ -61,8 +63,8 @@ public final class MergeNodes {
             Optional<ConfigNode> array1AtIndex = arrayNode1.getIndex(i);
             Optional<ConfigNode> array2AtIndex = arrayNode2.getIndex(i);
             if (array1AtIndex.isPresent() && array2AtIndex.isPresent()) {
-                String nextPath = PathUtil.pathForIndex(path, i);
-                GResultOf<ConfigNode> result = mergeNodes(nextPath, array1AtIndex.get(), array2AtIndex.get());
+                String nextPath = PathUtil.pathForIndex(lexer, path, i);
+                GResultOf<ConfigNode> result = mergeNodes(nextPath, lexer, array1AtIndex.get(), array2AtIndex.get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
                 errors.addAll(result.getErrors());
@@ -84,7 +86,7 @@ public final class MergeNodes {
         return resultOf(results, errors);
     }
 
-    private static GResultOf<ConfigNode> mergeMapNodes(String path, MapNode mapNode1, MapNode mapNode2) {
+    private static GResultOf<ConfigNode> mergeMapNodes(String path, SentenceLexer lexer, MapNode mapNode1, MapNode mapNode2) {
         Map<String, ConfigNode> mergedNode = new HashMap<>();
         List<ValidationError> errors = new ArrayList<>();
 
@@ -98,8 +100,8 @@ public final class MergeNodes {
             } else if (entry.getValue() == null) {
                 errors.add(new ValidationError.EmptyNodeValueProvided(path, key));
             } else if (mapNode2.getKey(key).isPresent()) {
-                String nextPath = PathUtil.pathForKey(path, key);
-                GResultOf<ConfigNode> result = mergeNodes(nextPath, entry.getValue(), mapNode2.getKey(key).get());
+                String nextPath = PathUtil.pathForKey(lexer, path, key);
+                GResultOf<ConfigNode> result = mergeNodes(nextPath, lexer, entry.getValue(), mapNode2.getKey(key).get());
 
                 // if there are errors, add them to the error list abd do not add the merge results
                 errors.addAll(result.getErrors());

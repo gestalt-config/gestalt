@@ -53,7 +53,7 @@ class SequencedCollectionDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<String>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());
@@ -82,7 +82,7 @@ class SequencedCollectionDecoderTest {
         ListDecoder decoder = new ListDecoder();
 
         GResultOf<List<?>> values = decoder.decode("db.hosts", Tags.of(), nodes, new TypeCapture<SequencedCollection<Double>>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
 
         Assertions.assertFalse(values.hasErrors());
         Assertions.assertTrue(values.hasResults());

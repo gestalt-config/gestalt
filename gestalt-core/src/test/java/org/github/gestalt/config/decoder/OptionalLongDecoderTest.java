@@ -70,7 +70,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), new LeafNode("124"), new TypeCapture<OptionalLong>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertTrue(result.results().isPresent());
@@ -83,7 +83,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), new LeafNode(null), new TypeCapture<OptionalLong>() {
-        }, new DecoderContext(decoderService, null, null));
+        }, new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -99,7 +99,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder decoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = decoder.decode("db.port", Tags.of(), null,
-            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertFalse(result.results().isPresent());
@@ -115,7 +115,7 @@ class OptionalLongDecoderTest {
         OptionalLongDecoder longDecoder = new OptionalLongDecoder();
 
         GResultOf<OptionalLong> result = longDecoder.decode("db.port", Tags.of(), new LeafNode("12s4"),
-            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(OptionalLong.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertEquals(OptionalLong.empty(), result.results());
 

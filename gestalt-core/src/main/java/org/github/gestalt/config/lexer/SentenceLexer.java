@@ -16,7 +16,36 @@ import java.util.stream.Collectors;
 public abstract class SentenceLexer {
 
     /**
-     * Return the deliminator.
+     * Return the deliminator that we use to represent a normalized path.
+     * Ie how we want to display a path being rebuilt from the config tree
+     *
+     * @return the deliminator
+     */
+    public abstract String getNormalizedDeliminator();
+
+    /**
+     *  Return the deliminator that we use to represent a normalized opening tag for an array.
+     *
+     * @return the deliminator that we use to represent a normalized opening tag for an array
+     */
+    public abstract String getNormalizedArrayOpenTag();
+
+    /**
+     *  Return the deliminator that we use to represent a normalized closing tag for an array.
+     *
+     * @return the deliminator that we use to represent a normalized closing tag for an array
+     */
+    public abstract String getNormalizedArrayCloseTag();
+
+    /**
+     *  Return the deliminator that we use to represent a normalized map separator.
+     *
+     * @return the deliminator that we use to represent a normalized map separator
+     */
+    public abstract String getNormalizedMapTag();
+
+    /**
+     * Return the deliminator that we use split apart a path. Ie what we turn all configurations into.
      *
      * @return the deliminator
      */
@@ -28,7 +57,7 @@ public abstract class SentenceLexer {
      * @param sentence the sentence to tokenize
      * @return list of tokenized strings from sentance.
      */
-    protected abstract List<String> tokenizer(String sentence);
+    public abstract List<String> tokenizer(String sentence);
 
     /**
      * Takes in an elements such as abc or def[3] then converts it into a Token.

@@ -3,6 +3,7 @@ package org.github.gestalt.config.decoder;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.integration.GestaltIntegrationTests;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -66,7 +67,7 @@ class PathDecoderTest {
         URL defaultFileURL = GestaltIntegrationTests.class.getClassLoader().getResource("default.properties");
         File defaultFile = new File(defaultFileURL.getFile());
         GResultOf<Path> result = decoder.decode("db.user", Tags.of(), new LeafNode(defaultFile.getAbsolutePath()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -79,7 +80,7 @@ class PathDecoderTest {
         PathDecoder stringDecoder = new PathDecoder();
 
         GResultOf<Path> result = stringDecoder.decode("db.user", Tags.of(), new LeafNode(null),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -94,7 +95,7 @@ class PathDecoderTest {
         PathDecoder stringDecoder = new PathDecoder();
 
         GResultOf<Path> result = stringDecoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());

@@ -42,7 +42,7 @@ public final class CharDecoder extends LeafDecoder<Character> {
         }
 
         if (value.length() != 1) {
-            error.add(new ValidationError.DecodingCharWrongSize(path, node, decoderContext.getSecretConcealer()));
+            error.add(new ValidationError.DecodingCharWrongSize(path, node, decoderContext));
         }
 
 

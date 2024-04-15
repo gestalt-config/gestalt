@@ -2,6 +2,7 @@ package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
@@ -65,7 +66,7 @@ class LocalDateTimeDecoderTest {
         String now = Instant.now().toString();
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), new LeafNode(now),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -80,7 +81,7 @@ class LocalDateTimeDecoderTest {
         String now = Instant.now().toString();
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), new LeafNode(now),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -97,7 +98,7 @@ class LocalDateTimeDecoderTest {
         LocalDateTime localDate = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), new LeafNode(date),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
 
@@ -112,7 +113,7 @@ class LocalDateTimeDecoderTest {
         String now = "not a date";
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), new LeafNode(now),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -128,7 +129,7 @@ class LocalDateTimeDecoderTest {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), new LeafNode(null),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -143,7 +144,7 @@ class LocalDateTimeDecoderTest {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), new MapNode(new HashMap<>()),
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -158,7 +159,7 @@ class LocalDateTimeDecoderTest {
         LocalDateTimeDecoder decoder = new LocalDateTimeDecoder();
 
         GResultOf<LocalDateTime> result = decoder.decode("db.user", Tags.of(), null,
-            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null));
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
