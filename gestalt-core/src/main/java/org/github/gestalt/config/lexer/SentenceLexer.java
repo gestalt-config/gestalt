@@ -57,7 +57,7 @@ public abstract class SentenceLexer {
      * @param sentence the sentence to tokenize
      * @return list of tokenized strings from sentance.
      */
-    protected abstract List<String> tokenizer(String sentence);
+    public abstract List<String> tokenizer(String sentence);
 
     /**
      * Takes in an elements such as abc or def[3] then converts it into a Token.

@@ -80,6 +80,51 @@ class TomlLoaderTest {
     }
 
     @Test
+    void loadSourceLexedMultiPath() throws GestaltException {
+
+        StringConfigSource source = new StringConfigSource("user.name = \"Steve\" \n" +
+            "age = 42\n" +
+
+            "[[cars]]\n" +
+            "name = \"Ford\"\n" +
+            "models = [ \"Fiesta\", \"Focus\", \"Mustang\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"BMW\"\n" +
+            "models = [ \"320\", \"X3\", \"X5\" ]\n" +
+
+            "[[cars]]\n" +
+            "name = \"Fiat\"\n" +
+            "models = [ \"500\", \"Panda\" ]\n", "toml");
+
+        TomlLoader tomlLoader = new TomlLoader();
+
+        GestaltConfig config = new GestaltConfig();
+        config.setSentenceLexer(new PathLexer());
+
+        tomlLoader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = tomlLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+        Assertions.assertEquals("Steve", result.getKey("user").get().getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(0).get().getValue().get());
+        Assertions.assertEquals("Focus", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(1).get().getValue().get());
+        Assertions.assertEquals("Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(2).get().getValue().get());
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getIndex(3).isPresent());
+    }
+
+    @Test
     void loadSourceWithModuleConfig() throws GestaltException {
         var lexer = new PathLexer();
         var objectMapper = new ObjectMapper(new TomlFactory()).findAndRegisterModules();

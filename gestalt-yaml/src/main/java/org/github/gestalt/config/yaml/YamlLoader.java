@@ -153,6 +153,10 @@ public final class YamlLoader implements ConfigLoader {
         return lexer.normalizeSentence(sentence);
     }
 
+    private List<String> tokenizer(String sentence) {
+        return lexer.tokenizer(sentence);
+    }
+
     private GResultOf<ConfigNode> buildArrayConfigTree(String path, JsonNode jsonNode) {
         List<ValidationError> errors = new ArrayList<>();
         List<ConfigNode> array = new ArrayList<>();
@@ -180,16 +184,23 @@ public final class YamlLoader implements ConfigLoader {
         for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
             Map.Entry<String, JsonNode> entry = it.next();
             String key = normalizeSentence(entry.getKey());
+            List<String> tokenList = tokenizer(key);
+            String currentPath = PathUtil.pathForKey(lexer, path, tokenList);
+
             JsonNode jsonValue = entry.getValue();
-
-            String currentPath = PathUtil.pathForKey(lexer, path, key);
-
             GResultOf<ConfigNode> node = buildConfigTree(currentPath, jsonValue);
             errors.addAll(node.getErrors());
             if (!node.hasResults()) {
                 errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
             } else {
-                mapNode.put(key, node.results());
+                ConfigNode currentNode = node.results();
+                for (int i = tokenList.size() - 1; i > 0; i--) {
+                    Map<String, ConfigNode> nextMapNode = new HashMap<>();
+                    nextMapNode.put(tokenList.get(i), currentNode);
+                    currentNode = new MapNode(nextMapNode);
+                }
+
+                mapNode.put(tokenList.get(0), currentNode);
             }
         }
 

@@ -38,4 +38,11 @@ class PathUtilTest {
         Assertions.assertEquals("[0]", PathUtil.pathForIndex(new PathLexer(), "", 0));
         Assertions.assertEquals("[0]", PathUtil.pathForIndex(new PathLexer(), null, 0));
     }
+
+    @Test
+    void pathForIndexArray() {
+        Assertions.assertEquals("my.path.test", PathUtil.pathForKey(new PathLexer(), "", List.of("my", "path", "test")));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), "", List.of("test")));
+        Assertions.assertEquals("test", PathUtil.pathForKey(new PathLexer(), null, List.of("test")));
+    }
 }

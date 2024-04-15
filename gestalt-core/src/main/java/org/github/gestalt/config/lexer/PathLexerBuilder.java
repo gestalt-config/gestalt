@@ -10,7 +10,7 @@ public final class PathLexerBuilder {
     private String normalizedArrayOpenTag = "[";
     private String normalizedArrayCloseTag = "]";
     private String normalizedMapTag = "=";
-    private String delimiter= ".";
+    private String delimiter = ".";
     private SentenceNormalizer sentenceNormalizer = new LowerCaseSentenceNormalizer();
     private String pathPatternRegex = PathLexer.DEFAULT_EVALUATOR;
 
@@ -90,9 +90,9 @@ public final class PathLexerBuilder {
 
     /**
      * a regex with capture groups to decide what kind of token this is. The regex should have a capture group.
-     *                          name = name of the element
-     *                          array = if this element is an array
-     *                          index = the index for the array
+     * name = name of the element
+     * array = if this element is an array
+     * index = the index for the array
      *
      * @param pathPatternRegex path regex
      * @return the builder

@@ -32,7 +32,7 @@ public class NoResultSentenceLexer extends SentenceLexer {
     }
 
     @Override
-    protected List<String> tokenizer(String sentence) {
+    public List<String> tokenizer(String sentence) {
         return null;
     }
 

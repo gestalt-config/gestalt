@@ -137,7 +137,7 @@ public final class PathLexer extends SentenceLexer {
     }
 
     @Override
-    protected List<String> tokenizer(String sentence) {
+    public List<String> tokenizer(String sentence) {
         return sentence != null && !sentence.isEmpty() ? List.of(sentence.split(delimiterRegex)) : Collections.emptyList();
     }
 

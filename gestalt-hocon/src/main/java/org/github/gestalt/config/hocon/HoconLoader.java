@@ -146,6 +146,10 @@ public final class HoconLoader implements ConfigLoader {
         return lexer.normalizeSentence(sentence);
     }
 
+    private List<String> tokenizer(String sentence) {
+        return lexer.tokenizer(sentence);
+    }
+
     private GResultOf<ConfigNode> buildArrayConfigTree(String path, ConfigList configList) {
         List<ValidationError> errors = new ArrayList<>();
         List<ConfigNode> array = new ArrayList<>();
@@ -171,14 +175,23 @@ public final class HoconLoader implements ConfigLoader {
 
         configObject.forEach((key, value) -> {
             String newPath = normalizeSentence(key);
-            String currentPath = PathUtil.pathForKey(lexer, path, key);
+            List<String> tokenList = tokenizer(newPath);
+
+            String currentPath = PathUtil.pathForKey(lexer, path, tokenList);
 
             GResultOf<ConfigNode> node = buildConfigTree(currentPath, value);
             errors.addAll(node.getErrors());
             if (!node.hasResults()) {
                 errors.add(new ValidationError.NoResultsFoundForPath(currentPath));
             } else {
-                mapNode.put(newPath, node.results());
+                ConfigNode currentNode = node.results();
+                for (int i = tokenList.size() - 1; i > 0; i--) {
+                    Map<String, ConfigNode> nextMapNode = new HashMap<>();
+                    nextMapNode.put(tokenList.get(i), currentNode);
+                    currentNode = new MapNode(nextMapNode);
+                }
+
+                mapNode.put(tokenList.get(0), currentNode);
             }
         });
 

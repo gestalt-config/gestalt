@@ -18,6 +18,7 @@ public final class PathUtil {
 
     }
 
+
     /**
      * Returns the path for a list of tokens.
      *
@@ -48,7 +49,7 @@ public final class PathUtil {
     }
 
     /**
-     * used to generate a path wit the next key in the format path.key .
+     * used to generate a path with the next key in the format path.key .
      *
      * @param lexer lexer used to get the delimiter to build the path
      * @param path current path
@@ -57,6 +58,20 @@ public final class PathUtil {
      */
     public static String pathForKey(SentenceLexer lexer, String path, String key) {
         return path == null || path.isEmpty() ? key : path + lexer.getNormalizedDeliminator() + key;
+    }
+
+    /**
+     * used to generate a path with the next key in the format path.v1.v2 for a list of keys.
+     *
+     * @param lexer lexer used to get the delimiter to build the path
+     * @param path current path
+     * @param pathParts parts of the path to append to the root path.
+     * @return combined path.
+     */
+    public static String pathForKey(SentenceLexer lexer, String path, List<String> pathParts) {
+        return pathParts
+            .stream()
+            .reduce(path, (collectPath, key) -> pathForKey(lexer, collectPath, key));
     }
 
     /**
