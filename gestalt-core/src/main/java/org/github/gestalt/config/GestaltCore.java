@@ -12,8 +12,8 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderService;
-import org.github.gestalt.config.metrics.MetricsManager;
-import org.github.gestalt.config.metrics.MetricsMarker;
+import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.ObservationMarker;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.post.process.PostProcessor;
@@ -61,7 +61,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final Tags defaultTags;
 
-    private final MetricsManager metricsManager;
+    private final ObservationManager observationManager;
 
     private final ValidationManager validationManager;
 
@@ -80,7 +80,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param reloadStrategy       reloadStrategy holds all reload listeners
      * @param postProcessor        postProcessor list of post processors
      * @param secretConcealer      Utility for concealing secrets
-     * @param metricsManager       Manages reporting of metrics
+     * @param observationManager       Manages reporting of observations
      * @param validationManager    Validation Manager, for validating configuration objects
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
@@ -88,7 +88,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
                        ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
                        List<PostProcessor> postProcessor, SecretConcealer secretConcealer,
-                       MetricsManager metricsManager, ValidationManager validationManager, Tags defaultTags) {
+                       ObservationManager observationManager, ValidationManager validationManager, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
         this.decoderService = decoderService;
@@ -98,7 +98,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.coreReloadListenersContainer = reloadStrategy;
         this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
         this.secretConcealer = secretConcealer;
-        this.metricsManager = metricsManager;
+        this.observationManager = observationManager;
         this.validationManager = validationManager;
         this.defaultTags = defaultTags;
         this.decoderContext = new DecoderContext(decoderService, this, secretConcealer, sentenceLexer);
@@ -174,10 +174,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     @Override
     public void reload(ConfigSourcePackage reloadSourcePackage) throws GestaltException {
 
-        MetricsMarker reloadMarker = null;
+        ObservationMarker reloadMarker = null;
         try {
-            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                reloadMarker = metricsManager.startMetric("reload",
+            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
+                reloadMarker = observationManager.startObservation("reload",
                     Tags.of(Tags.of("source", reloadSourcePackage.getConfigSource().name()), reloadSourcePackage.getTags()));
             }
 
@@ -212,12 +212,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
 
             coreReloadListenersContainer.reload();
-            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                metricsManager.finalizeMetric(reloadMarker, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
+                observationManager.finalizeObservation(reloadMarker, Tags.of());
             }
         } catch (Exception ex) {
-            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                metricsManager.finalizeMetric(reloadMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
+            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
+                observationManager.finalizeObservation(reloadMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
             }
             throw ex;
         }
@@ -381,12 +381,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
-        MetricsMarker getConfigMarker = null;
+        ObservationMarker getConfigMarker = null;
         boolean defaultReturned = false;
         Exception exceptionThrown = null;
         try {
-            if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
-                getConfigMarker = metricsManager.startGetConfig(path, klass, tags, failOnErrors);
+            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
+                getConfigMarker = observationManager.startGetConfig(path, klass, tags, failOnErrors);
             }
 
             String combinedPath = buildPathWithConfigPrefix(klass, path);
@@ -396,7 +396,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             } else {
                 GResultOf<T> results = getAndDecodeConfig(combinedPath, tokens.results(), klass, tags);
 
-                getConfigMetrics(results);
+                getConfigObservations(results);
 
                 if (checkErrorsShouldFail(results)) {
                     if (failOnErrors) {
@@ -428,7 +428,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                         var validationResults = validationManager.validator(resultConfig, path, klass, tags);
                         // if there are validation errors we can either fail with an exception or return the default value.
                         if (validationResults.hasErrors()) {
-                            updateValidationMetrics(validationResults);
+                            updateValidationObservations(validationResults);
 
                             if (failOnErrors) {
                                 throw new GestaltException("Validation failed for config path: " + combinedPath +
@@ -469,12 +469,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             exceptionThrown = ex;
             throw ex;
         } finally {
-            finalizeMetrics(getConfigMarker, defaultReturned, exceptionThrown);
+            finalizeObservations(getConfigMarker, defaultReturned, exceptionThrown);
         }
     }
 
-    private void finalizeMetrics(MetricsMarker getConfigMarker, boolean defaultReturned, Exception exceptionThrown) {
-        if (gestaltConfig.isMetricsEnabled() && metricsManager != null && getConfigMarker != null) {
+    private void finalizeObservations(ObservationMarker getConfigMarker, boolean defaultReturned, Exception exceptionThrown) {
+        if (gestaltConfig.isObservationsEnabled() && observationManager != null && getConfigMarker != null) {
             Set<Tag> tagSet = new HashSet<>();
             if (defaultReturned) {
                 tagSet.add(Tag.of("default", "true"));
@@ -483,7 +483,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             if (exceptionThrown != null) {
                 tagSet.add(Tag.of("exception", exceptionThrown.getClass().getCanonicalName()));
             }
-            metricsManager.finalizeMetric(getConfigMarker, Tags.of(tagSet));
+            observationManager.finalizeObservation(getConfigMarker, Tags.of(tagSet));
         }
     }
 
@@ -525,35 +525,35 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
-    private <T> void getConfigMetrics(GResultOf<T> results) throws GestaltException {
-        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+    private <T> void getConfigObservations(GResultOf<T> results) throws GestaltException {
+        if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
             int missing = results.getErrors(ValidationLevel.MISSING_VALUE).size();
             if (missing != 0) {
-                metricsManager.recordMetric("get.config.missing", missing, Tags.of("optional", "false"));
+                observationManager.recordObservation("get.config.missing", missing, Tags.of("optional", "false"));
             }
 
             int missingOptional = results.getErrors(ValidationLevel.MISSING_OPTIONAL_VALUE).size();
             if (missingOptional != 0) {
-                metricsManager.recordMetric("get.config.missing", missingOptional, Tags.of("optional", "true"));
+                observationManager.recordObservation("get.config.missing", missingOptional, Tags.of("optional", "true"));
             }
 
             int errors = results.getErrors(ValidationLevel.ERROR).size();
             if (errors != 0) {
-                metricsManager.recordMetric("get.config.error", errors, Tags.of());
+                observationManager.recordObservation("get.config.error", errors, Tags.of());
             }
 
             int warnings = results.getErrors(ValidationLevel.WARN).size();
             if (warnings != 0) {
-                metricsManager.recordMetric("get.config.warning", warnings, Tags.of());
+                observationManager.recordObservation("get.config.warning", warnings, Tags.of());
             }
         }
     }
 
-    private <T> void updateValidationMetrics(GResultOf<T> results) {
-        if (gestaltConfig.isMetricsEnabled() && metricsManager != null) {
+    private <T> void updateValidationObservations(GResultOf<T> results) {
+        if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
             int validationErrors = results.getErrors().size();
             if (validationErrors != 0) {
-                metricsManager.recordMetric("get.config.validation.error", validationErrors, Tags.of());
+                observationManager.recordObservation("get.config.validation.error", validationErrors, Tags.of());
             }
         }
     }

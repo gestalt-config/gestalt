@@ -46,8 +46,8 @@ public class GestaltConfig {
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = TransformerPostProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
-    // if metrics should be enabled
-    private boolean metricsEnabled = false;
+    // if observations should be enabled
+    private boolean observationsEnabled = false;
 
     // if validation should be enabled.
     private boolean validationEnabled = false;
@@ -322,21 +322,21 @@ public class GestaltConfig {
     }
 
     /**
-     * Get if the metrics are enabled.
+     * Get if the observations are enabled.
      *
-     * @return if the metrics are enabled
+     * @return if the observations are enabled
      */
-    public boolean isMetricsEnabled() {
-        return metricsEnabled;
+    public boolean isObservationsEnabled() {
+        return observationsEnabled;
     }
 
     /**
-     * set if the metrics are enabled.
+     * set if the observations are enabled.
      *
-     * @param metricsEnabled if the metrics are enabled
+     * @param observationsEnabled if the observations are enabled
      */
-    public void setMetricsEnabled(boolean metricsEnabled) {
-        this.metricsEnabled = metricsEnabled;
+    public void setObservationsEnabled(boolean observationsEnabled) {
+        this.observationsEnabled = observationsEnabled;
     }
 
     /**

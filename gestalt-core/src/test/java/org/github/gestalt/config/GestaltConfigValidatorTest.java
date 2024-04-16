@@ -22,7 +22,7 @@ public class GestaltConfigValidatorTest {
 
     @BeforeAll
     public static void beforeAll() {
-        try (InputStream is = GestaltMetricsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+        try (InputStream is = GestaltObservationsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(is);
         } catch (IOException e) {
             // dont care

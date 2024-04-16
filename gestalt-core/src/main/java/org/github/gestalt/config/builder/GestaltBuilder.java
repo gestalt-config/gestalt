@@ -15,8 +15,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.ConfigLoaderService;
-import org.github.gestalt.config.metrics.MetricsManager;
-import org.github.gestalt.config.metrics.MetricsRecorder;
+import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.path.mapper.PathMapper;
@@ -69,7 +69,7 @@ public class GestaltBuilder {
     private DecoderService decoderService;
     private SentenceLexer sentenceLexer = new PathLexer();
     private GestaltConfig gestaltConfig = new GestaltConfig();
-    private MetricsManager metricsManager;
+    private ObservationManager observationManager;
     private ValidationManager validationManager;
     private ConfigNodeService configNodeService = new ConfigNodeManager(sentenceLexer);
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
@@ -77,7 +77,7 @@ public class GestaltBuilder {
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<PostProcessor> postProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
-    private List<MetricsRecorder> metricsRecorders = new ArrayList<>();
+    private List<ObservationRecorder> observationRecorders = new ArrayList<>();
     private List<ConfigValidator> configValidators = new ArrayList<>();
     private boolean useCacheDecorator = true;
     private Set<String> securityRules = new HashSet<>(
@@ -92,8 +92,8 @@ public class GestaltBuilder {
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatMissingDiscretionaryValuesAsErrors = null;
-    // If we should enable metrics
-    private Boolean metricsEnabled = null;
+    // If we should enable observations
+    private Boolean observationsEnabled = null;
     // If we should enable Validation
     private Boolean validationEnabled = null;
 
@@ -166,16 +166,16 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add default metric recorders to the builder. Uses the ServiceLoader to find all registered MetricsRecorder and adds them
+     * Add default observation recorders to the builder. Uses the ServiceLoader to find all registered ObservationsRecorder and adds them
      *
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder addDefaultMetricsRecorder() {
-        List<MetricsRecorder> metricsRecordersSet = new ArrayList<>();
-        ServiceLoader<MetricsRecorder> loader = ServiceLoader.load(MetricsRecorder.class);
-        loader.forEach(metricsRecordersSet::add);
+    public GestaltBuilder addDefaultObservationsRecorder() {
+        List<ObservationRecorder> observationRecordersSet = new ArrayList<>();
+        ServiceLoader<ObservationRecorder> loader = ServiceLoader.load(ObservationRecorder.class);
+        loader.forEach(observationRecordersSet::add);
 
-        metricsRecorders.addAll(metricsRecordersSet);
+        observationRecorders.addAll(observationRecordersSet);
         return this;
     }
 
@@ -473,45 +473,45 @@ public class GestaltBuilder {
     }
 
     /**
-     * Sets the list of MetricsRecorder. Replaces any MetricsRecorder already set.
+     * Sets the list of ObservationRecorder. Replaces any ObservabilityRecorder already set.
      *
-     * @param metricsRecorders list of metricsRecorders to record metrics to.
+     * @param observationRecorders list of observationRecorders to record observations to.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException exception if there are no MetricsRecorder
+     * @throws GestaltConfigurationException exception if there are no ObservationRecorder
      */
-    public GestaltBuilder setMetricsRecorders(List<MetricsRecorder> metricsRecorders) throws GestaltConfigurationException {
-        if (metricsRecorders == null || metricsRecorders.isEmpty()) {
-            throw new GestaltConfigurationException("No MetricsRecorder provided while setting");
+    public GestaltBuilder setObservationsRecorders(List<ObservationRecorder> observationRecorders) throws GestaltConfigurationException {
+        if (observationRecorders == null || observationRecorders.isEmpty()) {
+            throw new GestaltConfigurationException("No ObservationRecorder provided while setting");
         }
-        this.metricsRecorders = metricsRecorders;
+        this.observationRecorders = observationRecorders;
 
         return this;
     }
 
     /**
-     * List of MetricsRecorder to add to the builder.
+     * List of ObservationRecorder to add to the builder.
      *
-     * @param metricsRecordersSet list of MetricsRecorder to add.
+     * @param observationRecordersSet list of ObservationRecorder to add.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException no MetricsRecorder provided
+     * @throws GestaltConfigurationException no ObservationRecorder provided
      */
-    public GestaltBuilder addMetricsRecorders(List<MetricsRecorder> metricsRecordersSet) throws GestaltConfigurationException {
-        Objects.requireNonNull(metricsRecordersSet, "MetricsRecorders should not be null");
+    public GestaltBuilder addObservationsRecorders(List<ObservationRecorder> observationRecordersSet) throws GestaltConfigurationException {
+        Objects.requireNonNull(observationRecordersSet, "ObservationRecorder should not be null");
 
-        metricsRecorders.addAll(metricsRecordersSet);
+        observationRecorders.addAll(observationRecordersSet);
 
         return this;
     }
 
     /**
-     * Add a single MetricsRecorder to the builder.
+     * Add a single ObservationRecorder to the builder.
      *
-     * @param metricsRecorder add a single MetricsRecorder
+     * @param observationRecorder add a single ObservationRecorder
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder addMetricsRecorder(MetricsRecorder metricsRecorder) {
-        Objects.requireNonNull(metricsRecorder, "MetricsRecorder should not be null");
-        this.metricsRecorders.add(metricsRecorder);
+    public GestaltBuilder addObservationsRecorder(ObservationRecorder observationRecorder) {
+        Objects.requireNonNull(observationRecorder, "ObservationRecorder should not be null");
+        this.observationRecorders.add(observationRecorder);
         return this;
     }
 
@@ -639,18 +639,18 @@ public class GestaltBuilder {
     }
 
     /**
-     * Sets the MetricsManager if you want to provide your own. Otherwise, a default is provided.
+     * Sets the ObservationRecorder if you want to provide your own. Otherwise, a default is provided.
      *
-     * <p>If there are any MetricRecorders, it will not add the default metric recorders.
+     * <p>If there are any ObservationRecorder, it will not add the default observations recorders.
      * So you will need to add the defaults manually if needed.
      *
-     * @param metricsManager Metrics Manager
+     * @param observationManager Observation Manager
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setMetricsManager(MetricsManager metricsManager) {
-        Objects.requireNonNull(metricsManager, "MetricsManager should not be null");
-        this.metricsManager = metricsManager;
-        metricsManager.addMetricsRecorders(metricsRecorders);
+    public GestaltBuilder setObservationsManager(ObservationManager observationManager) {
+        Objects.requireNonNull(observationManager, "ObservationManager should not be null");
+        this.observationManager = observationManager;
+        observationManager.addObservationRecorders(observationRecorders);
         return this;
     }
 
@@ -843,13 +843,13 @@ public class GestaltBuilder {
     }
 
     /**
-     * If we are to enable metrics.
+     * If we are to enable observations.
      *
-     * @param metricsEnabled If we are to enable metrics
+     * @param observationsEnabled If we are to enable observations
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setMetricsEnabled(Boolean metricsEnabled) {
-        this.metricsEnabled = metricsEnabled;
+    public GestaltBuilder setObservationsEnabled(Boolean observationsEnabled) {
+        this.observationsEnabled = observationsEnabled;
         return this;
     }
 
@@ -1088,7 +1088,7 @@ public class GestaltBuilder {
 
         configurePathMappers();
         configureDecoders();
-        configureMetrics();
+        configureObservations();
         configureValidators();
         configureConfigLoaders();
         configurePostProcessors();
@@ -1098,7 +1098,7 @@ public class GestaltBuilder {
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
-            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, metricsManager,
+            gestaltConfig, configNodeService, coreReloadListenersContainer, postProcessors, secretConcealer, observationManager,
             validationManager, defaultTags);
 
         // register gestaltCore with all the source reload strategies.
@@ -1112,7 +1112,7 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
-            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, metricsManager, gestaltConfig);
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationManager, gestaltConfig);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.
@@ -1160,8 +1160,8 @@ public class GestaltBuilder {
         configValidators = configValidators.stream().filter(Objects::nonNull).collect(Collectors.toList());
         configValidators.forEach(it -> it.applyConfig(gestaltConfig));
 
-        // if the metricsManager does not exist, create it.
-        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
+        // if the validationManager does not exist, create it.
+        // Otherwise, get all the recorders from the validationManager, combine them with the ones in the builder,
         if (validationManager == null) {
             validationManager = new ValidationManager(configValidators);
         } else {
@@ -1169,21 +1169,21 @@ public class GestaltBuilder {
         }
     }
 
-    private void configureMetrics() {
-        // setup the default metricsRecorders, if there are none add the default ones.
-        if (metricsRecorders.isEmpty()) {
-            logger.log(TRACE, "No metric recorders provided, using defaults");
-            addDefaultMetricsRecorder();
+    private void configureObservations() {
+        // setup the default observationRecorders, if there are none add the default ones.
+        if (observationRecorders.isEmpty()) {
+            logger.log(TRACE, "No observation recorders provided, using defaults");
+            addDefaultObservationsRecorder();
         }
-        metricsRecorders = metricsRecorders.stream().filter(Objects::nonNull).collect(Collectors.toList());
-        metricsRecorders.forEach(it -> it.applyConfig(gestaltConfig));
+        observationRecorders = observationRecorders.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        observationRecorders.forEach(it -> it.applyConfig(gestaltConfig));
 
-        // if the metricsManager does not exist, create it.
-        // Otherwise, get all the recorders from the metricsManager, combine them with the ones in the builder,
-        if (metricsManager == null) {
-            metricsManager = new MetricsManager(metricsRecorders);
+        // if the ObservationManager does not exist, create it.
+        // Otherwise, get all the recorders from the ObservationManager, combine them with the ones in the builder,
+        if (observationManager == null) {
+            observationManager = new ObservationManager(observationRecorders);
         } else {
-            metricsManager.addMetricsRecorders(metricsRecorders);
+            observationManager.addObservationRecorders(observationRecorders);
         }
     }
 
@@ -1261,8 +1261,8 @@ public class GestaltBuilder {
         newConfig.setProxyDecoderMode(Objects.requireNonNullElseGet(proxyDecoderMode,
             () -> gestaltConfig.getProxyDecoderMode()));
 
-        newConfig.setMetricsEnabled(Objects.requireNonNullElseGet(metricsEnabled,
-            () -> gestaltConfig.isMetricsEnabled()));
+        newConfig.setObservationsEnabled(Objects.requireNonNullElseGet(observationsEnabled,
+            () -> gestaltConfig.isObservationsEnabled()));
 
         newConfig.setValidationEnabled(Objects.requireNonNullElseGet(validationEnabled,
             () -> gestaltConfig.isValidationEnabled()));

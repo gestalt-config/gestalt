@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.LogManager;
-import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
@@ -51,7 +50,7 @@ class GestaltTest {
 
     @BeforeAll
     public static void beforeAll() {
-        try (InputStream is = GestaltMetricsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+        try (InputStream is = GestaltObservationsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(is);
         } catch (IOException e) {
             // dont care
@@ -1835,7 +1834,7 @@ class GestaltTest {
     }
 
     @Test
-    public void testMetricsGetError() throws GestaltException {
+    public void testObservationsGetError() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");

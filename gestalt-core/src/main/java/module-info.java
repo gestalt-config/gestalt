@@ -1,3 +1,5 @@
+import org.github.gestalt.config.observations.ObservationRecorder;
+
 /*
  * Module info definition for gestalt core
  */
@@ -8,7 +10,7 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.post.process.PostProcessor;
     uses org.github.gestalt.config.post.process.transform.Transformer;
     uses org.github.gestalt.config.validation.ConfigValidator;
-    uses org.github.gestalt.config.metrics.MetricsRecorder;
+    uses ObservationRecorder;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -18,7 +20,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.exceptions;
     exports org.github.gestalt.config.lexer;
     exports org.github.gestalt.config.loader;
-    exports org.github.gestalt.config.metrics;
+    exports org.github.gestalt.config.observations;
     exports org.github.gestalt.config.node;
     exports org.github.gestalt.config.parser;
     exports org.github.gestalt.config.path.mapper;

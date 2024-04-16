@@ -1,12 +1,12 @@
-package org.github.gestalt.config.micrometer.metrics;
+package org.github.gestalt.config.micrometer.observations;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.github.gestalt.config.entity.GestaltConfig;
-import org.github.gestalt.config.metrics.MetricsRecord;
-import org.github.gestalt.config.metrics.MetricsRecorder;
+import org.github.gestalt.config.observations.ObservationRecord;
+import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
 import org.github.gestalt.config.micrometer.config.MicrometerModuleConfig;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -15,19 +15,19 @@ import org.github.gestalt.config.tag.Tags;
 import java.util.stream.Collectors;
 
 /**
- * Micrometer implementation of the MetricsRecorder. Allows you to submit metrics to your meterRegistry.
+ * Micrometer implementation of the ObservationRecorder. Allows you to submit metrics to your meterRegistry.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class MicrometerMetricRecorder implements MetricsRecorder {
-    private static final System.Logger logger = System.getLogger(MicrometerMetricRecorder.class.getName());
+public final class MicrometerObservationRecorder implements ObservationRecorder {
+    private static final System.Logger logger = System.getLogger(MicrometerObservationRecorder.class.getName());
 
     private MicrometerModuleConfig micrometerModuleConfig;
     private MeterRegistry meterRegistry;
 
     @Override
     public String recorderId() {
-        return "MicrometerMetricRecorder";
+        return "MicrometerObservationRecorder";
     }
 
     public MeterRegistry getMeterRegistry() {
@@ -48,7 +48,7 @@ public final class MicrometerMetricRecorder implements MetricsRecorder {
     }
 
     @Override
-    public <T> MetricsRecord startGetConfig(String path, TypeCapture<T> klass, Tags tags, boolean isOptional) {
+    public <T> ObservationRecord startGetConfig(String path, TypeCapture<T> klass, Tags tags, boolean isOptional) {
         io.micrometer.core.instrument.Tags metricTags = io.micrometer.core.instrument.Tags.empty();
 
         if (micrometerModuleConfig.isIncludePath()) {
@@ -71,11 +71,11 @@ public final class MicrometerMetricRecorder implements MetricsRecorder {
         }
 
         Timer.Sample sample = Timer.start(meterRegistry);
-        return new MicrometerMetricsRecord("config.get", sample, metricTags);
+        return new MicrometerObservationRecord("config.get", sample, metricTags);
     }
 
     @Override
-    public MetricsRecord startMetric(String metric, Tags tags) {
+    public ObservationRecord startObservation(String metric, Tags tags) {
         io.micrometer.core.instrument.Tags metricTags = io.micrometer.core.instrument.Tags.empty();
 
         if (micrometerModuleConfig.isIncludeTags()) {
@@ -86,13 +86,13 @@ public final class MicrometerMetricRecorder implements MetricsRecorder {
         }
 
         Timer.Sample sample = Timer.start(meterRegistry);
-        return new MicrometerMetricsRecord(metric, sample, metricTags);
+        return new MicrometerObservationRecord(metric, sample, metricTags);
     }
 
     @Override
-    public void finalizeMetric(MetricsRecord marker, Tags tags) {
-        if (marker instanceof MicrometerMetricsRecord) {
-            MicrometerMetricsRecord micrometerMetricsRecord = (MicrometerMetricsRecord) marker;
+    public void finalizeObservation(ObservationRecord marker, Tags tags) {
+        if (marker instanceof MicrometerObservationRecord) {
+            MicrometerObservationRecord micrometerMetricsRecord = (MicrometerObservationRecord) marker;
 
             io.micrometer.core.instrument.Tags metricTags = micrometerMetricsRecord.getTags();
 
@@ -114,7 +114,7 @@ public final class MicrometerMetricRecorder implements MetricsRecorder {
     }
 
     @Override
-    public void recordMetric(String metric, double count, Tags tags) {
+    public void recordObservation(String observation, double count, Tags tags) {
         io.micrometer.core.instrument.Tags metricTags = io.micrometer.core.instrument.Tags.empty();
 
         metricTags = metricTags.and(tags.getTags()
@@ -122,7 +122,7 @@ public final class MicrometerMetricRecorder implements MetricsRecorder {
             .map(it -> Tag.of(it.getKey(), it.getValue()))
             .collect(Collectors.toList()));
 
-        var counter = meterRegistry.counter(micrometerModuleConfig.getPrefix() + "." + metric, metricTags);
+        var counter = meterRegistry.counter(micrometerModuleConfig.getPrefix() + "." + observation, metricTags);
         counter.increment(count);
     }
 }

@@ -851,7 +851,7 @@ public class GestaltConfigTest {
     }
 
     @Test
-    public void testMetrics() throws GestaltException {
+    public void testObservations() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.password", "test");
         configs.put("db.port", "123");

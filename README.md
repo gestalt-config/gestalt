@@ -1054,8 +1054,8 @@ By default, the builder has several rules predefined [here](https://github.com/g
 
 # Additional Modules
 
-## Micrometer Metrics
-Gestalt exposes several metrics and provides a implementation for [micrometer](https://micrometer.io/). 
+## Micrometer Observability
+Gestalt exposes several observations and provides a implementation for [micrometer](https://micrometer.io/). 
 
 To import the micrometer implementation add `gestalt-micrometer` to your build files. 
 
@@ -1079,7 +1079,7 @@ SimpleMeterRegistry registry = new SimpleMeterRegistry();
 
 Gestalt gestalt = new GestaltBuilder()
     .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-    .setMetricsEnabled(true)
+    .setObservationsEnabled(true)
     .addModuleConfig(MicrometerModuleConfigBuilder.builder()
         .setMeterRegistry(registry)
         .setPrefix("myApp")
@@ -1091,25 +1091,25 @@ gestalt.loadConfigs();
 
 There are several options to configure the micrometer module. 
 
-| Option          | Description                                                                                                               | Default             |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------|---------------------|
-| meterRegistry   | Provide the micrometer registry to submit metrics.                                                                        | SimpleMeterRegistry |
-| includePath     | When getting a config include the path in the metrics tags. This can be a high cardinality metric so is not recommended.  | false               | 
-| includeClass    | When getting a config include the class in the metrics tags. This can be a high cardinality metric so is not recommended. | false               |
-| includeOptional | When getting a config include if the configuration is optional or default as a true or false in the metrics tags.         | false               |
-| includeTags     | When getting a config include the tags in the request in the metrics tags.                                                | false               |
-| prefix          | Add a prefix to the metrics to better group your metrics.                                                                 | gestalt             |
+| Option          | Description                                                                                                                         | Default             |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| meterRegistry   | Provide the micrometer registry to submit observations.                                                                             | SimpleMeterRegistry |
+| includePath     | When getting a config include the path in the observations tags. This can be a high cardinality observation so is not recommended.  | false               | 
+| includeClass    | When getting a config include the class in the observations tags. This can be a high cardinality observation so is not recommended. | false               |
+| includeOptional | When getting a config include if the configuration is optional or default as a true or false in the observation tags.               | false               |
+| includeTags     | When getting a config include the tags in the request in the observations tags.                                                     | false               |
+| prefix          | Add a prefix to the observations to better group your observations.                                                                 | gestalt             |
 
-The following metrics are exposed
+The following observations are exposed
 
-| Metric             | Description                                                                                                 | Type     | tags                                                                                                          |
-|--------------------|-------------------------------------------------------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------|
-| config.get         | Recorded when we request a configuration from gestalt that is not cached.                                   | Timer    | default:true if a default or optional value is returned. exception:exception class if there was an exception. |
-| reload             | Recorded when a configuration is reloaded.                                                                  | Timer    | source:source name. exception:exception class if there was an exception.                                      | 
-| get.config.missing | Incremented for each missing configuration, if decoding a class this can be more than one.                  | Counter  | optional: true or false depending if the optional value is optional or has a default.                         |
-| get.config.error   | Incremented for each error while getting a configuration, if decoding a class this can be more than one.    | Counter  |                                                                                                               |
-| get.config.warning | Incremented for warning error while getting a configuration, if decoding a class this can be more than one. | Counter  |                                                                                                               | 
-| cache.hit          | Incremented for each request served from the cache. A cache miss would be recorded in the metric config.get | Counter  |                                                                                                               |
+| Observations       | Description                                                                                                       | Type     | tags                                                                                                          |
+|--------------------|-------------------------------------------------------------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------|
+| config.get         | Recorded when we request a configuration from gestalt that is not cached.                                         | Timer    | default:true if a default or optional value is returned. exception:exception class if there was an exception. |
+| reload             | Recorded when a configuration is reloaded.                                                                        | Timer    | source:source name. exception:exception class if there was an exception.                                      | 
+| get.config.missing | Incremented for each missing configuration, if decoding a class this can be more than one.                        | Counter  | optional: true or false depending if the optional value is optional or has a default.                         |
+| get.config.error   | Incremented for each error while getting a configuration, if decoding a class this can be more than one.          | Counter  |                                                                                                               |
+| get.config.warning | Incremented for warning error while getting a configuration, if decoding a class this can be more than one.       | Counter  |                                                                                                               | 
+| cache.hit          | Incremented for each request served from the cache. A cache miss would be recorded in the observations config.get | Counter  |                                                                                                               |
 
 
 ## Hibernate Validator
@@ -1390,7 +1390,7 @@ So `connection-pool.size=10` and `connection.pool.size=50` are two separate path
 By modifying the delimiter in the default lexer, you can support converting snake, kebab and dot notation into similar paths. Where the lexer will split the path into tokens based on any of the `([._-])|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[0-9])(?=[A-Z][a-z])|(?<=[a-zA-Z])(?=[0-9])`. Or split them based on CamelCase, Snake Case, Dot Notation, or Kebab Case. 
 
 ```java
-Map<String, String> configs = Map.of("db.uri", "test");
+Map<String, String> configs = Map.of("db.uri", "test"); 
 String json = "{\"db_port\":3306}";
 String toml = "db-password = \"abc123\"";
 

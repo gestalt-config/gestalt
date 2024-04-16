@@ -1,5 +1,8 @@
+import org.github.gestalt.config.observations.ObservationRecorder;
+import org.github.gestalt.config.micrometer.observations.MicrometerObservationRecorder;
+
 /*
- * Module info definition for gestalt yaml integration
+ * Module info definition for gestalt micrometer integration
  */
 @SuppressWarnings({ "requires-transitive-automatic" })
 module org.github.gestalt.micrometer {
@@ -8,8 +11,8 @@ module org.github.gestalt.micrometer {
 
     exports org.github.gestalt.config.micrometer.config;
     exports org.github.gestalt.config.micrometer.builder;
-    exports org.github.gestalt.config.micrometer.metrics;
+    exports org.github.gestalt.config.micrometer.observations;
 
-    provides org.github.gestalt.config.metrics.MetricsRecorder with
-        org.github.gestalt.config.micrometer.metrics.MicrometerMetricRecorder;
+    provides ObservationRecorder with
+        MicrometerObservationRecorder;
 }

@@ -27,7 +27,7 @@ public class MainClass {
         configTest.integrationTestPostProcessorNode();
         configTest.integrationTestCamelCase();
         configTest.testEscapedSubstitution();
-        configTest.testMetrics();
+        configTest.testObservations();
         configTest.testValidationOk();
         configTest.testValidationError();
 

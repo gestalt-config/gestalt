@@ -12,8 +12,8 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
-import org.github.gestalt.config.metrics.MetricsManager;
-import org.github.gestalt.config.metrics.TestMetricsRecorder;
+import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
@@ -113,11 +113,11 @@ class GestaltBuilderTest {
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
-            .setMetricsEnabled(true)
-            .addMetricsRecorder(new TestMetricsRecorder(0))
-            .addMetricsRecorders(List.of(new TestMetricsRecorder(1)))
-            .setMetricsRecorders(List.of(new TestMetricsRecorder(0), new TestMetricsRecorder(1)))
-            .setMetricsManager(new MetricsManager(List.of()))
+            .setObservationsEnabled(true)
+            .addObservationsRecorder(new TestObservationRecorder(0))
+            .addObservationsRecorders(List.of(new TestObservationRecorder(1)))
+            .setObservationsRecorders(List.of(new TestObservationRecorder(0), new TestObservationRecorder(1)))
+            .setObservationsManager(new ObservationManager(List.of()))
             .addValidator(new TestConfigValidator(true))
             .addValidators(List.of(new TestConfigValidator(true)))
             .setValidators(List.of(new TestConfigValidator(true)))

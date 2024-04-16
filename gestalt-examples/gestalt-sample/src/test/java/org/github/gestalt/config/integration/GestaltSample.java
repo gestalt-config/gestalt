@@ -18,14 +18,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.github.gestalt.config.Gestalt;
-import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
-import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
 import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
@@ -1447,7 +1445,7 @@ public class GestaltSample {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setMetricsEnabled(true)
+            .setObservationsEnabled(true)
             .addModuleConfig(MicrometerModuleConfigBuilder.builder()
                 .setMeterRegistry(registry)
                 .setPrefix("myApp")
@@ -1623,9 +1621,6 @@ public class GestaltSample {
             .build();
 
         gestalt.loadConfigs();
-        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
-        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
-        Assertions.assertEquals(0, errors.size());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));

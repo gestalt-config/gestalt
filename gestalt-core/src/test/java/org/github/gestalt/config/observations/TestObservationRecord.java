@@ -1,14 +1,14 @@
-package org.github.gestalt.config.metrics;
+package org.github.gestalt.config.observations;
 
 import org.github.gestalt.config.tag.Tags;
 
-public class TestMetricsRecord implements MetricsRecord {
+public class TestObservationRecord implements ObservationRecord {
     public double data;
     public boolean isOptional;
     public Tags tags;
     public String path;
 
-    public TestMetricsRecord(String path, double data, boolean isOptional, Tags tags) {
+    public TestObservationRecord(String path, double data, boolean isOptional, Tags tags) {
         this.path = path;
         this.data = data;
         this.isOptional = isOptional;

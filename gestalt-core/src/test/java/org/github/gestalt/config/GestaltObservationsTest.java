@@ -2,8 +2,8 @@ package org.github.gestalt.config;
 
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.metrics.MetricsRecorder;
-import org.github.gestalt.config.metrics.TestMetricsRecorder;
+import org.github.gestalt.config.observations.ObservationRecorder;
+import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-public class GestaltMetricsTest {
+public class GestaltObservationsTest {
 
     @BeforeAll
     public static void beforeAll() {
-        try (InputStream is = GestaltMetricsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+        try (InputStream is = GestaltObservationsTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(is);
         } catch (IOException e) {
             // dont care
@@ -46,13 +46,13 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -80,7 +80,7 @@ public class GestaltMetricsTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsEnabled(true)
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -101,14 +101,14 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricRecordersArray = new ArrayList<MetricsRecorder>();
+        var metricRecordersArray = new ArrayList<ObservationRecorder>();
         metricRecordersArray.add(null);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsEnabled(true)
-            .addMetricsRecorders(metricRecordersArray)
+            .setObservationsEnabled(true)
+            .addObservationsRecorders(metricRecordersArray)
             .build();
 
         gestalt.loadConfigs();
@@ -129,13 +129,13 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -183,12 +183,12 @@ public class GestaltMetricsTest {
         configs.put("db.password", "test");
         configs.put("db.port", "123");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -214,12 +214,12 @@ public class GestaltMetricsTest {
         configs.put("db.password", "test");
         configs.put("db.port", "123");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -241,12 +241,12 @@ public class GestaltMetricsTest {
         configs.put("db.password", "test");
         configs.put("db.port", "123");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -268,12 +268,12 @@ public class GestaltMetricsTest {
         configs.put("db.password", "test");
         configs.put("db.port", "123");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -301,13 +301,13 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -341,13 +341,13 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -375,13 +375,13 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .setValidationEnabled(true)
             .addValidator(new TestConfigValidator(false))
             .build();
@@ -417,13 +417,13 @@ public class GestaltMetricsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .setValidationEnabled(true)
             .addValidator(new TestConfigValidator(false))
             .build();
@@ -448,13 +448,13 @@ public class GestaltMetricsTest {
         configs.put("db.port", "123");
         configs.put("db.uri", "my.sql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
         var reload = new ManualConfigReloadStrategy();
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).addConfigReloadStrategy(reload).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -480,13 +480,13 @@ public class GestaltMetricsTest {
         configs.put("db.port", "123");
         configs.put("db.uri", "my.sql.com");
 
-        var metricsRecorder = new TestMetricsRecorder(0);
+        var metricsRecorder = new TestObservationRecorder(0);
         var reload = new ManualConfigReloadStrategy();
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).addConfigReloadStrategy(reload).build())
-            .setMetricsRecorders(List.of(metricsRecorder))
-            .setMetricsEnabled(true)
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
             .build();
 
         gestalt.loadConfigs();
