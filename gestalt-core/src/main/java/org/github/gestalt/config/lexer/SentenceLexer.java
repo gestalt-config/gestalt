@@ -3,6 +3,7 @@ package org.github.gestalt.config.lexer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
+import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,13 +93,14 @@ public abstract class SentenceLexer {
             return GResultOf.result(List.of());
         }
 
-        String normalizedSentence = normalizeSentence(sentence);
+        List<String> tokenList = tokenizer(sentence);
+        tokenList = tokenList.stream().map(this::normalizeSentence).collect(Collectors.toList());
 
-        List<String> tokenList = tokenizer(normalizedSentence);
+        var dotPath = PathUtil.pathForKey(this, "", tokenList);
 
         List<GResultOf<List<Token>>> tokenWithValidations = tokenList
             .stream()
-            .map(word -> evaluator(word, normalizedSentence))
+            .map(word -> evaluator(word, dotPath))
             .collect(Collectors.toList());
 
         List<Token> tokens = tokenWithValidations.stream().filter(GResultOf::hasResults)

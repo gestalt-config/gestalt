@@ -34,7 +34,7 @@ public final class PathLexer extends SentenceLexer {
     private final String normalizedArrayCloseTag;
     private final String normalizedMapTag;
     private final String delimiter;
-    private final String delimiterRegex;
+    private final Pattern delimiterRegex;
     private final SentenceNormalizer sentenceNormalizer;
 
     /**
@@ -101,9 +101,9 @@ public final class PathLexer extends SentenceLexer {
         this.normalizedDelimiter = normalizedDelimiter;
         this.delimiter = delimiter;
         if (delimiter.length() == 1) {
-            this.delimiterRegex = Pattern.quote(delimiter);
+            this.delimiterRegex = Pattern.compile(Pattern.quote(delimiter));
         } else {
-            this.delimiterRegex = delimiter;
+            this.delimiterRegex = Pattern.compile(delimiter);
         }
         this.sentenceNormalizer = sentenceNormalizer;
         this.normalizedArrayOpenTag = normalizedArrayOpenTag;
@@ -138,7 +138,7 @@ public final class PathLexer extends SentenceLexer {
 
     @Override
     public List<String> tokenizer(String sentence) {
-        return sentence != null && !sentence.isEmpty() ? List.of(sentence.split(delimiterRegex)) : Collections.emptyList();
+        return sentence != null && !sentence.isEmpty() ? List.of(delimiterRegex.split(sentence)) : Collections.emptyList();
     }
 
     @Override

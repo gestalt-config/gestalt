@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Loads from a hocon files from multiple sources, such as a file.
@@ -174,8 +175,8 @@ public final class HoconLoader implements ConfigLoader {
         Map<String, ConfigNode> mapNode = new LinkedHashMap<>();
 
         configObject.forEach((key, value) -> {
-            String newPath = normalizeSentence(key);
-            List<String> tokenList = tokenizer(newPath);
+            List<String> tokenList = tokenizer(key);
+            tokenList = tokenList.stream().map(this::normalizeSentence).collect(Collectors.toList());
 
             String currentPath = PathUtil.pathForKey(lexer, path, tokenList);
 

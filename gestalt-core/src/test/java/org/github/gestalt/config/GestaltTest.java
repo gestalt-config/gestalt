@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.LogManager;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
@@ -1997,9 +1998,10 @@ class GestaltTest {
         configs.put("db.uri", "test");
         configs.put("db_port", "3306");
         configs.put("db-password", "abc123");
+        configs.put("dbTimeout", "1000");
 
         SentenceLexer lexer = PathLexerBuilder.builder()
-            .setDelimiter("[._-]")
+            .setDelimiter("([._-])|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[0-9])(?=[A-Z][a-z])|(?<=[a-zA-Z])(?=[0-9])")
             .build();
 
         Gestalt gestalt = new GestaltBuilder()
@@ -2014,14 +2016,12 @@ class GestaltTest {
         List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
         Assertions.assertEquals(0, errors.size());
 
-        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderContext());
-        Assertions.assertNotNull(((GestaltCore) gestalt).getDecoderService());
-
         Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
 
 
         Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("1000", gestalt.getConfig("db.timeout", String.class));
 
         Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
         Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());

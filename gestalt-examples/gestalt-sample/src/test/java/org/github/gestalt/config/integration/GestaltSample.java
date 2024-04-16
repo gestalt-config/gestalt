@@ -32,6 +32,8 @@ import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
 import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.lexer.PathLexerBuilder;
+import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
 import org.github.gestalt.config.post.process.transform.RandomTransformer;
@@ -1598,6 +1600,77 @@ public class GestaltSample {
             Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
             Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
         }
+    }
+
+    @Test
+    public void testRelaxedLexer() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.uri", "test");
+        configs.put("db_port", "3306");
+        configs.put("db-password", "abc123");
+        configs.put("dbTimeout", "1000");
+
+        SentenceLexer lexer = PathLexerBuilder.builder()
+            .setDelimiter("([._-])|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[0-9])(?=[A-Z][a-z])|(?<=[a-zA-Z])(?=[0-9])")
+            .build();
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            // do not normalize the sentence return it as is.
+            .setSentenceLexer(lexer)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+
+        Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("1000", gestalt.getConfig("db.timeout", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+    }
+
+    @Test
+    public void testRelaxedLexerMultiFormat() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.uri", "test");
+        String json = "{\"db_port\":3306}";
+        String toml = "db-password = \"abc123\"";
+
+        SentenceLexer lexer = PathLexerBuilder.builder()
+            .setDelimiter("[._-]")
+            .build();
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig(json).setFormat("json").build())
+            .addSource(StringConfigSourceBuilder.builder().setConfig(toml).setFormat("toml").build())
+            .useCacheDecorator(false)
+            // do not normalize the sentence return it as is.
+            .setSentenceLexer(lexer)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.uri", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+
+        Assertions.assertEquals("abc123", gestalt.getConfig("db.password", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
     }
 
     public enum Role {

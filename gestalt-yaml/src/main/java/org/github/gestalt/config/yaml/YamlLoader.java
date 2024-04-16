@@ -21,6 +21,7 @@ import org.github.gestalt.config.utils.PathUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.MISSING;
 
@@ -183,8 +184,8 @@ public final class YamlLoader implements ConfigLoader {
 
         for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
             Map.Entry<String, JsonNode> entry = it.next();
-            String key = normalizeSentence(entry.getKey());
-            List<String> tokenList = tokenizer(key);
+            List<String> tokenList = tokenizer(entry.getKey());
+            tokenList = tokenList.stream().map(this::normalizeSentence).collect(Collectors.toList());
             String currentPath = PathUtil.pathForKey(lexer, path, tokenList);
 
             JsonNode jsonValue = entry.getValue();
