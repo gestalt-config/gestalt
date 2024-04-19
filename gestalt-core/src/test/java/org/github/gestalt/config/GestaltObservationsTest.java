@@ -9,7 +9,7 @@ import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoOptional;
-import org.github.gestalt.config.validation.TestConfigValidator;
+import org.github.gestalt.config.processor.TestResultProcessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -383,7 +383,7 @@ public class GestaltObservationsTest {
             .setObservationsRecorders(List.of(metricsRecorder))
             .setObservationsEnabled(true)
             .setValidationEnabled(true)
-            .addValidator(new TestConfigValidator(false))
+            .addValidator(new TestResultProcessor(false))
             .build();
 
         gestalt.loadConfigs();
@@ -425,7 +425,7 @@ public class GestaltObservationsTest {
             .setObservationsRecorders(List.of(metricsRecorder))
             .setObservationsEnabled(true)
             .setValidationEnabled(true)
-            .addValidator(new TestConfigValidator(false))
+            .addValidator(new TestResultProcessor(false))
             .build();
 
         gestalt.loadConfigs();

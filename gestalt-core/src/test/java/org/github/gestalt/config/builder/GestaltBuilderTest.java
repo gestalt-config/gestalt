@@ -20,10 +20,10 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
-import org.github.gestalt.config.post.process.PostProcessor;
-import org.github.gestalt.config.post.process.PostProcessorConfig;
-import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
-import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
@@ -35,8 +35,8 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
-import org.github.gestalt.config.validation.TestConfigValidator;
-import org.github.gestalt.config.validation.ValidationManager;
+import org.github.gestalt.config.processor.TestResultProcessor;
+import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -107,9 +107,9 @@ class GestaltBuilderTest {
             .addCoreReloadListener(coreReloadListener)
             .addCoreReloadListener(List.of())
             .addPostProcessors(Collections.singletonList(
-                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .setPostProcessors(Collections.singletonList(
-                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
@@ -118,10 +118,10 @@ class GestaltBuilderTest {
             .addObservationsRecorders(List.of(new TestObservationRecorder(1)))
             .setObservationsRecorders(List.of(new TestObservationRecorder(0), new TestObservationRecorder(1)))
             .setObservationsManager(new ObservationManager(List.of()))
-            .addValidator(new TestConfigValidator(true))
-            .addValidators(List.of(new TestConfigValidator(true)))
-            .setValidators(List.of(new TestConfigValidator(true)))
-            .setValidationManager(new ValidationManager(new ArrayList<>()))
+            .addValidator(new TestResultProcessor(true))
+            .addValidators(List.of(new TestResultProcessor(true)))
+            .setValidators(List.of(new TestResultProcessor(true)))
+            .setValidationManager(new ResultsProcessorManager(new ArrayList<>()))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
@@ -786,9 +786,9 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        var processor1 = new TestPostProcessor();
-        var processor2 = new TestPostProcessor();
-        var processor3 = new TestPostProcessor();
+        var processor1 = new TestConfigNodeProcessor();
+        var processor2 = new TestConfigNodeProcessor();
+        var processor3 = new TestConfigNodeProcessor();
 
 
         GestaltBuilder builder = new GestaltBuilder();
@@ -891,7 +891,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class TestPostProcessor implements PostProcessor {
+    private static class TestConfigNodeProcessor implements ConfigNodeProcessor {
 
         public int configCount = 0;
 
@@ -901,7 +901,7 @@ class GestaltBuilderTest {
         }
 
         @Override
-        public void applyConfig(PostProcessorConfig config) {
+        public void applyConfig(ConfigNodeProcessorConfig config) {
             configCount++;
         }
     }

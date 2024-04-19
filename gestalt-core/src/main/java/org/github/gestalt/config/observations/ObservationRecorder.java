@@ -3,6 +3,7 @@ package org.github.gestalt.config.observations;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 
 /**
  * Interface for specific observation systems to implement to get hoods to record observation.
@@ -64,4 +65,16 @@ public interface ObservationRecorder {
      * @param tags tags associated with the observations
      */
     void recordObservation(String observation, double count, Tags tags);
+
+    /**
+     * Record the observation for a result.
+     *
+     * @param results the results of the request
+     * @param path the path for the request
+     * @param klass the type of object requested
+     * @param tags the tags associated with the request
+     * @param isOptional if the request result os option (ie an Optional or has a default value)
+     * @param <T> generic type of config
+     */
+    <T> void recordObservation(GResultOf<T> results, String path, TypeCapture<T> klass, Tags tags, boolean isOptional);
 }

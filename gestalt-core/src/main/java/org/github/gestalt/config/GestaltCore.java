@@ -16,7 +16,7 @@ import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.ObservationMarker;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
-import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -31,7 +31,7 @@ import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.validation.ValidationManager;
+import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private final GestaltConfig gestaltConfig;
     private final ConfigNodeService configNodeService;
     private final CoreReloadListenersContainer coreReloadListenersContainer;
-    private final List<PostProcessor> postProcessors;
+    private final List<ConfigNodeProcessor> configNodeProcessors;
 
     private final SecretConcealer secretConcealer;
 
@@ -63,7 +63,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final ObservationManager observationManager;
 
-    private final ValidationManager validationManager;
+    private final ResultsProcessorManager resultsProcessorManager;
 
     private final DecoderContext decoderContext;
 
@@ -78,17 +78,17 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param gestaltConfig        configuration for the Gestalt
      * @param configNodeService    configNodeService core functionality to manage nodes
      * @param reloadStrategy       reloadStrategy holds all reload listeners
-     * @param postProcessor        postProcessor list of post processors
+     * @param configNodeProcessor        postProcessor list of post processors
      * @param secretConcealer      Utility for concealing secrets
      * @param observationManager       Manages reporting of observations
-     * @param validationManager    Validation Manager, for validating configuration objects
+     * @param resultsProcessorManager    Validation Manager, for validating configuration objects
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
                        ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
-                       List<PostProcessor> postProcessor, SecretConcealer secretConcealer,
-                       ObservationManager observationManager, ValidationManager validationManager, Tags defaultTags) {
+                       List<ConfigNodeProcessor> configNodeProcessor, SecretConcealer secretConcealer,
+                       ObservationManager observationManager, ResultsProcessorManager resultsProcessorManager, Tags defaultTags) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
         this.decoderService = decoderService;
@@ -96,10 +96,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
         this.coreReloadListenersContainer = reloadStrategy;
-        this.postProcessors = postProcessor != null ? postProcessor : Collections.emptyList();
+        this.configNodeProcessors = configNodeProcessor != null ? configNodeProcessor : Collections.emptyList();
         this.secretConcealer = secretConcealer;
         this.observationManager = observationManager;
-        this.validationManager = validationManager;
+        this.resultsProcessorManager = resultsProcessorManager;
         this.defaultTags = defaultTags;
         this.decoderContext = new DecoderContext(decoderService, this, secretConcealer, sentenceLexer);
     }
@@ -224,7 +224,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     }
 
     void postProcessConfigs() throws GestaltException {
-        GResultOf<Boolean> results = configNodeService.postProcess(postProcessors);
+        GResultOf<Boolean> results = configNodeService.postProcess(configNodeProcessors);
 
         if (checkErrorsShouldFail(results)) {
             throw new GestaltException("Failed post processing config nodes with errors ",
@@ -396,7 +396,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             } else {
                 GResultOf<T> results = getAndDecodeConfig(combinedPath, tokens.results(), klass, tags);
 
-                getConfigObservations(results);
+                getConfigObservations(results, combinedPath, klass, tags, failOnErrors);
 
                 if (checkErrorsShouldFail(results)) {
                     if (failOnErrors) {
@@ -425,7 +425,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                     // if we have a result, lets check if validation is enabled and if we should validate the object,
                     // then validate the result.
                     if (gestaltConfig.isValidationEnabled() && shouldValidate(klass)) {
-                        var validationResults = validationManager.validator(resultConfig, path, klass, tags);
+                        var validationResults =
+                            resultsProcessorManager.processResults(results, path, failOnErrors, defaultVal, klass, tags);
+
                         // if there are validation errors we can either fail with an exception or return the default value.
                         if (validationResults.hasErrors()) {
                             updateValidationObservations(validationResults);
@@ -525,8 +527,13 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
-    private <T> void getConfigObservations(GResultOf<T> results) throws GestaltException {
+    private <T> void getConfigObservations(GResultOf<T> results, String path, TypeCapture<T> klass, Tags tags, boolean isOptional)
+        throws GestaltException {
         if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
+
+            // record all the details of the request.
+            observationManager.recordObservation(results, path, klass, tags, isOptional);
+
             int missing = results.getErrors(ValidationLevel.MISSING_VALUE).size();
             if (missing != 0) {
                 observationManager.recordObservation("get.config.missing", missing, Tags.of("optional", "false"));

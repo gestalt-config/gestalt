@@ -9,6 +9,6 @@ module org.github.gestalt.vault {
     exports org.github.gestalt.config.vault.config;
     exports org.github.gestalt.config.vault.errors;
 
-    provides org.github.gestalt.config.post.process.transform.Transformer with
+    provides org.github.gestalt.config.processor.config.transform.Transformer with
         org.github.gestalt.config.vault.VaultSecretTransformer;
 }

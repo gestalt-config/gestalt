@@ -3,8 +3,8 @@ package org.github.gestalt.config.vault;
 import io.github.jopenlibs.vault.Vault;
 import io.github.jopenlibs.vault.response.LogicalResponse;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.post.process.PostProcessorConfig;
-import org.github.gestalt.config.post.process.transform.Transformer;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.config.transform.Transformer;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.github.gestalt.config.vault.errors.VaultValidationErrors;
@@ -26,7 +26,7 @@ public final class VaultSecretTransformer implements Transformer {
     }
 
     @Override
-    public void applyConfig(PostProcessorConfig config) {
+    public void applyConfig(ConfigNodeProcessorConfig config) {
         VaultModuleConfig moduleConfig = config.getConfig().getModuleConfig(VaultModuleConfig.class);
 
         if (moduleConfig == null) {

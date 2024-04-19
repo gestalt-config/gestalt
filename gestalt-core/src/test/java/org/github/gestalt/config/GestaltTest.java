@@ -18,7 +18,7 @@ import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
-import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
@@ -481,7 +481,7 @@ class GestaltTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .useCacheDecorator(false)
-            .addPostProcessor(new TestPostProcessor("aaa"))
+            .addPostProcessor(new TestConfigNodeProcessor("aaa"))
             .build();
 
         gestalt.loadConfigs();
@@ -519,7 +519,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, null, Tags.of());
+            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
 
@@ -550,7 +550,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, null, Tags.of());
+            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
@@ -585,7 +585,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, configNodeManager, null,
-            Collections.singletonList(new TestPostProcessor("aaa")), secretConcealer, null, null, Tags.of());
+            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null, Tags.of());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
@@ -607,8 +607,8 @@ class GestaltTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .useCacheDecorator(false)
-            .addPostProcessor(new TestPostProcessorSwapNodes("path1", "path2"))
-            .addPostProcessor(new TestPostProcessorSwapNodes("prop1", "prop2"))
+            .addPostProcessor(new TestConfigNodeProcessorSwapNodes("path1", "path2"))
+            .addPostProcessor(new TestConfigNodeProcessorSwapNodes("prop1", "prop2"))
             .build();
 
         gestalt.loadConfigs();
@@ -2028,10 +2028,10 @@ class GestaltTest {
     }
 
 
-    public static class TestPostProcessor implements PostProcessor {
+    public static class TestConfigNodeProcessor implements ConfigNodeProcessor {
         private final String add;
 
-        public TestPostProcessor(String add) {
+        public TestConfigNodeProcessor(String add) {
             this.add = add;
         }
 
@@ -2044,11 +2044,11 @@ class GestaltTest {
         }
     }
 
-    public static class TestPostProcessorSwapNodes implements PostProcessor {
+    public static class TestConfigNodeProcessorSwapNodes implements ConfigNodeProcessor {
         private final String node1;
         private final String node2;
 
-        public TestPostProcessorSwapNodes(String node1, String node2) {
+        public TestConfigNodeProcessorSwapNodes(String node1, String node2) {
             this.node1 = node1;
             this.node2 = node2;
         }

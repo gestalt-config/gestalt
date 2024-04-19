@@ -1,6 +1,7 @@
 package org.github.gestalt.config.google.storage;
 
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import org.github.gestalt.config.builder.SourceBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSourcePackage;
@@ -14,7 +15,7 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
  */
 public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceBuilder, GCSConfigSource> {
 
-    private Storage storage;
+    private Storage storage = StorageOptions.getDefaultInstance().getService();
     private String objectName;
     private String bucketName;
 
@@ -45,7 +46,7 @@ public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceB
     }
 
     /**
-     * Set the GCS Storage client.
+     * Set the GCS Storage client. If not set we use StorageOptions.getDefaultInstance().
      *
      * @param storage the GCS Storage client
      * @return the builder

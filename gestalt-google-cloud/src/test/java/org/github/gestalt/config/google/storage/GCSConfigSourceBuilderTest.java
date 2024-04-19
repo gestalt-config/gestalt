@@ -33,15 +33,15 @@ class GCSConfigSourceBuilderTest {
     }
 
     @Test
-    void buildGCSConfigSourceNullStorage() {
+    void buildGCSConfigSourceNullStorageUseDefault() throws GestaltException {
         GCSConfigSourceBuilder builder = GCSConfigSourceBuilder.builder();
         //builder.setStorage(storage);
         builder.setBucketName("testBucket");
         builder.setObjectName("testObject");
 
-        GestaltException e = assertThrows(GestaltException.class, builder::build);
+        var config = builder.build();
 
-        assertEquals("Google cloud storage service null", e.getMessage());
+        assertNotNull(config);
     }
 
     @Test

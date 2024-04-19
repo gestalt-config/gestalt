@@ -7,8 +7,8 @@ import com.google.cloud.secretmanager.v1.SecretVersionName;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.google.config.GoogleModuleConfig;
 import org.github.gestalt.config.google.errors.ExceptionProcessingGCPSecret;
-import org.github.gestalt.config.post.process.PostProcessorConfig;
-import org.github.gestalt.config.post.process.transform.Transformer;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.config.transform.Transformer;
 import org.github.gestalt.config.utils.GResultOf;
 
 /**
@@ -26,7 +26,7 @@ public final class GCPSecretTransformer implements Transformer {
     }
 
     @Override
-    public void applyConfig(PostProcessorConfig config) {
+    public void applyConfig(ConfigNodeProcessorConfig config) {
         GoogleModuleConfig moduleConfig = config.getConfig().getModuleConfig(GoogleModuleConfig.class);
 
         // get the project id from the module config, or use the default

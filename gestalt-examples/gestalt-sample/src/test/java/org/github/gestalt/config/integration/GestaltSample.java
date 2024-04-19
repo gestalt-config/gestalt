@@ -34,9 +34,9 @@ import org.github.gestalt.config.lexer.PathLexerBuilder;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
-import org.github.gestalt.config.post.process.transform.RandomTransformer;
-import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
-import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.processor.config.transform.RandomTransformer;
+import org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
@@ -801,6 +801,10 @@ public class GestaltSample {
     }
 
     // This example shows a how to load a source from a GCP storage.
+    // must be logged in to run test
+    // gcloud init
+    // gcloud auth login
+    // gcloud auth application-default login
     @Tag("cloud")
     @Test
     public void integrationTestGoogleCloud() throws GestaltException {
@@ -858,6 +862,8 @@ public class GestaltSample {
     }
 
     // This example shows a how to load a source from an S3 bucket.
+    // must be logged in to run the test
+    // aws configure
     @Tag("cloud")
     @Test
     public void integrationTestAws() throws GestaltException {
@@ -1255,7 +1261,7 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .addPostProcessor(new StringSubstitutionConfigNodeProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
             .build();
 
         gestalt.loadConfigs();

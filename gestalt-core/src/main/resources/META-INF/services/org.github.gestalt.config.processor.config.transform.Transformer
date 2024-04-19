@@ -1,0 +1,11 @@
+org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer
+org.github.gestalt.config.processor.config.transform.Base64EncoderTransformer
+org.github.gestalt.config.processor.config.transform.ClasspathTransformer
+org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer
+org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformerOld
+org.github.gestalt.config.processor.config.transform.FileTransformer
+org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer
+org.github.gestalt.config.processor.config.transform.NodeTransformer
+org.github.gestalt.config.processor.config.transform.RandomTransformer
+org.github.gestalt.config.processor.config.transform.URLDecoderTransformer
+org.github.gestalt.config.processor.config.transform.URLEncoderTransformer

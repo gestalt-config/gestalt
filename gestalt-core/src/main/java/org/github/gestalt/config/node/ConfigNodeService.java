@@ -3,7 +3,7 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.Token;
@@ -40,11 +40,11 @@ public interface ConfigNodeService {
      * The post processors are run in order of priority, with the next post processor getting the results from the previous.
      * The post processor returns a node that is then used to replace the current node.
      *
-     * @param postProcessors list of post processors to apply.
+     * @param configNodeProcessors list of post processors to apply.
      * @return if the post process has completed successfully
      * @throws GestaltException any exceptions
      */
-    GResultOf<Boolean> postProcess(List<PostProcessor> postProcessors) throws GestaltException;
+    GResultOf<Boolean> postProcess(List<ConfigNodeProcessor> configNodeProcessors) throws GestaltException;
 
     /**
      * Reload a node, if there are more than one node it will merge it into the config tree in the same order as the existing node.

@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.post.process.PostProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.TestSource;
@@ -1830,8 +1830,8 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessor("abc"),
-            new TestPostProcessor("def")));
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestConfigNodeProcessor("abc"),
+            new TestConfigNodeProcessor("def")));
         Assertions.assertFalse(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1924,8 +1924,8 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorErrors(),
-            new TestPostProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestConfigNodeProcessorErrors(),
+            new TestConfigNodeProcessor("abc")));
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1971,8 +1971,8 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestPostProcessorNoResults(),
-            new TestPostProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestConfigNodeProcessorNoResults(),
+            new TestConfigNodeProcessor("abc")));
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -2003,7 +2003,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestConfigNodeProcessor("abc")));
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -2049,7 +2049,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestPostProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestConfigNodeProcessor("abc")));
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -2171,10 +2171,10 @@ class ConfigNodeManagerTest {
         }
     }
 
-    public static class TestPostProcessor implements PostProcessor {
+    public static class TestConfigNodeProcessor implements ConfigNodeProcessor {
         private final String add;
 
-        public TestPostProcessor(String add) {
+        public TestConfigNodeProcessor(String add) {
             this.add = add;
         }
 
@@ -2187,8 +2187,8 @@ class ConfigNodeManagerTest {
         }
     }
 
-    public static class TestPostProcessorErrors implements PostProcessor {
-        public TestPostProcessorErrors() {
+    public static class TestConfigNodeProcessorErrors implements ConfigNodeProcessor {
+        public TestConfigNodeProcessorErrors() {
         }
 
         @Override
@@ -2201,8 +2201,8 @@ class ConfigNodeManagerTest {
         }
     }
 
-    public static class TestPostProcessorNoResults implements PostProcessor {
-        public TestPostProcessorNoResults() {
+    public static class TestConfigNodeProcessorNoResults implements ConfigNodeProcessor {
+        public TestConfigNodeProcessorNoResults() {
         }
 
         @Override
