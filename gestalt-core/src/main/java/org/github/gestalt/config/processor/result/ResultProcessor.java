@@ -1,6 +1,7 @@
 package org.github.gestalt.config.processor.result;
 
 import org.github.gestalt.config.entity.GestaltConfig;
+import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
@@ -32,6 +33,8 @@ public interface ResultProcessor {
      * @param tags any tags used to retrieve te object
      * @return The validation results with either errors or a successful  obj.
      * @param <T> Class of the object.
+     * @throws GestaltException for any exceptions while processing the results, such as if there are errors in the result.
      */
-    <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, T defaultVal, TypeCapture<T> klass, Tags tags);
+    <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, T defaultVal, TypeCapture<T> klass, Tags tags)
+        throws GestaltException;
 }

@@ -1,27 +1,22 @@
-package org.github.gestalt.config.processor;
+package org.github.gestalt.config.processor.result.validation;
 
-import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.processor.result.ResultProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 
-@ConfigPriority(400)
-public class TestResultProcessor implements ResultProcessor {
-
+public class TestConfigValidator implements ConfigValidator {
     public boolean isOk = true;
 
-    public TestResultProcessor(boolean isOk) {
+    public TestConfigValidator(boolean isOk) {
         this.isOk = isOk;
     }
 
     @Override
-    public <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, T defaultVal,
-                                           TypeCapture<T> klass, Tags tags) {
+    public <T> GResultOf<T> validator(T obj, String path, TypeCapture<T> klass, Tags tags) {
         if (isOk) {
-            return results;
+            return GResultOf.result(obj);
         } else {
             return GResultOf.errors(new ValidationError(ValidationLevel.ERROR) {
                 @Override

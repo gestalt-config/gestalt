@@ -1,4 +1,3 @@
-import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 
 /*
@@ -8,10 +7,11 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.decoder.Decoder;
     uses org.github.gestalt.config.loader.ConfigLoader;
     uses org.github.gestalt.config.path.mapper.PathMapper;
-    uses ConfigNodeProcessor;
+    uses org.github.gestalt.config.processor.config.ConfigNodeProcessor;
     uses org.github.gestalt.config.processor.config.transform.Transformer;
     uses org.github.gestalt.config.processor.result.ResultProcessor;
     uses org.github.gestalt.config.observations.ObservationRecorder;
+    uses org.github.gestalt.config.processor.result.validation.ConfigValidator;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -36,6 +36,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.processor.config;
     exports org.github.gestalt.config.processor.config.transform;
     exports org.github.gestalt.config.processor.config.transform.substitution;
+    exports org.github.gestalt.config.processor.result.validation;
 
     provides org.github.gestalt.config.decoder.Decoder with
         org.github.gestalt.config.decoder.ArrayDecoder,
@@ -82,7 +83,7 @@ module org.github.gestalt.core {
         org.github.gestalt.config.path.mapper.StandardPathMapper,
         org.github.gestalt.config.path.mapper.SnakeCasePathMapper;
 
-    provides ConfigNodeProcessor with
+    provides org.github.gestalt.config.processor.config.ConfigNodeProcessor with
         StringSubstitutionConfigNodeProcessor;
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with

@@ -1,6 +1,3 @@
-import com.github.gestalt.config.validation.hibernate.HibernateResultProcessor;
-import org.github.gestalt.config.processor.result.ResultProcessor;
-
 /*
  * Module info definition for gestalt yaml integration
  */
@@ -14,6 +11,6 @@ module org.github.gestalt.validation.hibernate {
     exports com.github.gestalt.config.validation.hibernate.config;
     exports com.github.gestalt.config.validation.hibernate.builder;
 
-    provides ResultProcessor with
-            HibernateResultProcessor;
+    provides org.github.gestalt.config.processor.result.validation.ConfigValidator with
+        com.github.gestalt.config.validation.hibernate.HibernateConfigValidator;
 }

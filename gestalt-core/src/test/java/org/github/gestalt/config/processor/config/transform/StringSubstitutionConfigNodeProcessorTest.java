@@ -22,7 +22,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:test}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
@@ -38,7 +39,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("place", "world");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place}!");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -54,7 +56,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("place", "world");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello Earth!");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -72,7 +75,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place} it is ${map:weather} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -88,7 +92,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         Map<String, String> customMap = new HashMap<>();
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=world} it is ${weather:=sunny} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -104,7 +109,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         Map<String, String> customMap = new HashMap<>();
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=world} it is ${weather:=} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -122,7 +128,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=abc:=} it is ${weather:=aaa.*} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -138,7 +145,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         Map<String, String> customMap = new HashMap<>();
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=world:=} it is ${weather:=sunny.*} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -156,7 +164,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:place:=earth} it is ${weather:=overcast} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -175,7 +184,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:place:world}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -196,7 +206,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -213,7 +224,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${map:noValue}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
@@ -230,7 +242,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("test", "value");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${noTransform:value}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("test.path", node);
 
@@ -409,7 +422,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${map:${variable}} it is ${map:weather} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -429,7 +443,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${${source}:${variable}} it is ${map:weather} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -450,7 +465,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("weather", "sunny");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("hello ${${source}:${variable1}} it is ${map:weather} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -469,7 +485,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path.${this.path}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -489,7 +506,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here}}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -508,7 +526,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -529,7 +548,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -549,7 +569,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here.${their.${test}}}}}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -569,7 +590,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("${my.path.${your.path}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -589,7 +611,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("my.path.greeting", "good day");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("\\${my.path.${your.path}.night\\}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
@@ -607,7 +630,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("path2", "cloudy");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
 
@@ -625,7 +649,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         customMap.put("path2", "cloudy");
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
 
@@ -641,7 +666,8 @@ class StringSubstitutionConfigNodeProcessorTest {
         Map<String, String> customMap = new HashMap<>();
         CustomMapTransformer transformer = new CustomMapTransformer(customMap);
 
-        StringSubstitutionConfigNodeProcessor transformerPostProcessor = new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
+        StringSubstitutionConfigNodeProcessor transformerPostProcessor =
+            new StringSubstitutionConfigNodeProcessor(Collections.singletonList(transformer));
         LeafNode node = new LeafNode("the weather is ${path1:=${path2:=rainy}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("weather", node);
 

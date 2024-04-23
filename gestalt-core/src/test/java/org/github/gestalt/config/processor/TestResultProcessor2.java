@@ -8,12 +8,12 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 
-@ConfigPriority(400)
-public class TestResultProcessor implements ResultProcessor {
+@ConfigPriority(450)
+public class TestResultProcessor2 implements ResultProcessor {
 
     public boolean isOk = true;
 
-    public TestResultProcessor(boolean isOk) {
+    public TestResultProcessor2(boolean isOk) {
         this.isOk = isOk;
     }
 
@@ -26,7 +26,7 @@ public class TestResultProcessor implements ResultProcessor {
             return GResultOf.errors(new ValidationError(ValidationLevel.ERROR) {
                 @Override
                 public String description() {
-                    return "something broke";
+                    return "something broke2";
                 }
             });
         }

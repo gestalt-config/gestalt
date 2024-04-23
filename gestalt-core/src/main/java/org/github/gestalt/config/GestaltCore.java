@@ -37,6 +37,7 @@ import java.util.*;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.Logger.Level.WARNING;
+import static org.github.gestalt.config.utils.ErrorsUtil.checkErrorsShouldFail;
 
 /**
  * Central access point to Gestalt that has API's to build and get configurations.
@@ -116,6 +117,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return decoderContext;
     }
 
+    public GestaltConfig getGestaltConfig() {
+        return gestaltConfig;
+    }
 
     /**
      * register a core event listener.
@@ -226,7 +230,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     void postProcessConfigs() throws GestaltException {
         GResultOf<Boolean> results = configNodeService.postProcess(configNodeProcessors);
 
-        if (checkErrorsShouldFail(results)) {
+        if (checkErrorsShouldFail(results, gestaltConfig)) {
             throw new GestaltException("Failed post processing config nodes with errors ",
                 results.getErrors());
 
@@ -398,74 +402,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
                 getConfigObservations(results, combinedPath, klass, tags, failOnErrors);
 
-                if (checkErrorsShouldFail(results)) {
-                    if (failOnErrors) {
-                        throw new GestaltException("Failed getting config path: " + combinedPath + ", for class: " + klass.getName(),
-                            results.getErrors());
-                    } else {
-                        if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
-                            String errorMsg = ErrorsUtil.buildErrorMessage("Failed getting config path: " + combinedPath +
-                                ", for class: " + klass.getName() + " returning empty Optional", results.getErrors());
-                            logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
-                        }
-                        defaultReturned = true;
+                var processedResults = resultsProcessorManager.processResults(results, path, !failOnErrors, defaultVal, klass, tags);
 
-                        return defaultVal;
-                    }
-
-                } else if (results.hasErrors() && logger.isLoggable(DEBUG)) {
-                    String errorMsg = ErrorsUtil.buildErrorMessage("Errors getting config path: " + combinedPath +
-                        ", for class: " + klass.getName(), results.getErrors());
-                    logger.log(DEBUG, errorMsg);
-                }
-
-                if (results.hasResults()) {
-                    var resultConfig = results.results();
-
-                    // if we have a result, lets check if validation is enabled and if we should validate the object,
-                    // then validate the result.
-                    if (gestaltConfig.isValidationEnabled() && shouldValidate(klass)) {
-                        var validationResults =
-                            resultsProcessorManager.processResults(results, path, failOnErrors, defaultVal, klass, tags);
-
-                        // if there are validation errors we can either fail with an exception or return the default value.
-                        if (validationResults.hasErrors()) {
-                            updateValidationObservations(validationResults);
-
-                            if (failOnErrors) {
-                                throw new GestaltException("Validation failed for config path: " + combinedPath +
-                                    ", and class: " + klass.getName(), validationResults.getErrors());
-
-                            } else {
-                                if (logger.isLoggable(WARNING)) {
-                                    String errorMsg = ErrorsUtil.buildErrorMessage("Validation failed for config path: " +
-                                        combinedPath + ", and class: " + klass.getName() + " returning default value",
-                                        validationResults.getErrors());
-                                    logger.log(WARNING, errorMsg);
-                                }
-                                defaultReturned = true;
-
-                                return defaultVal;
-                            }
-                        }
-                    }
-
-                    return resultConfig;
-                }
-            }
-
-            if (logger.isLoggable(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional())) {
-                String errorMsg = ErrorsUtil.buildErrorMessage("No results for Optional config path: " + combinedPath +
-                    ", and class: " + klass.getName() + " returning empty Optional", tokens.getErrors());
-                logger.log(gestaltConfig.getLogLevelForMissingValuesWhenDefaultOrOptional(), errorMsg);
-            }
-
-            if (failOnErrors) {
-                throw new GestaltException("No results for config path: " + combinedPath + ", and class: " + klass.getName());
-            } else {
-                defaultReturned = true;
-
-                return defaultVal;
+                defaultReturned = processedResults.isDefault();
+                return processedResults.results();
             }
         } catch (Exception ex) {
             exceptionThrown = ex;
@@ -519,14 +459,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
     }
 
-    private <T> boolean checkErrorsShouldFail(GResultOf<T> results) {
-        if (results.hasErrors()) {
-            return !results.getErrors().stream().allMatch(this::ignoreError) || !results.hasResults();
-        } else {
-            return false;
-        }
-    }
-
     private <T> void getConfigObservations(GResultOf<T> results, String path, TypeCapture<T> klass, Tags tags, boolean isOptional)
         throws GestaltException {
         if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
@@ -554,34 +486,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 observationManager.recordObservation("get.config.warning", warnings, Tags.of());
             }
         }
-    }
-
-    private <T> void updateValidationObservations(GResultOf<T> results) {
-        if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-            int validationErrors = results.getErrors().size();
-            if (validationErrors != 0) {
-                observationManager.recordObservation("get.config.validation.error", validationErrors, Tags.of());
-            }
-        }
-    }
-
-    private boolean ignoreError(ValidationError error) {
-        if (error.level().equals(ValidationLevel.WARN) && gestaltConfig.isTreatWarningsAsErrors()) {
-            return false;
-        } else if (error instanceof ValidationError.ArrayMissingIndex && !gestaltConfig.isTreatMissingArrayIndexAsError()) {
-            return true;
-        } else if (error.hasNoResults() && !gestaltConfig.isTreatMissingValuesAsErrors()) {
-            return true;
-        } else if (error.level().equals(ValidationLevel.MISSING_OPTIONAL_VALUE) &&
-            !gestaltConfig.isTreatMissingDiscretionaryValuesAsErrors()) {
-            return true;
-        }
-
-        return error.level() == ValidationLevel.WARN || error.level() == ValidationLevel.DEBUG;
-    }
-
-    private <T> boolean shouldValidate(TypeCapture<T> klass) {
-        return !klass.isAssignableFrom(String.class) && !ClassUtils.isPrimitiveOrWrapper(klass.getRawType());
     }
 
     /**

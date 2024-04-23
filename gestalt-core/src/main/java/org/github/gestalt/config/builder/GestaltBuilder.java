@@ -22,6 +22,10 @@ import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.result.DefaultResultProcessor;
+import org.github.gestalt.config.processor.result.ErrorResultProcessor;
+import org.github.gestalt.config.processor.result.validation.ConfigValidator;
+import org.github.gestalt.config.processor.result.validation.ValidationResultProcessor;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
@@ -78,7 +82,9 @@ public class GestaltBuilder {
     private List<ConfigNodeProcessor> configNodeProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
     private List<ObservationRecorder> observationRecorders = new ArrayList<>();
+    private List<ConfigValidator> configValidators = new ArrayList<>();
     private List<ResultProcessor> resultProcessors = new ArrayList<>();
+    private final List<ResultProcessor> coreResultProcessors = List.of(new ErrorResultProcessor(), new DefaultResultProcessor());
     private boolean useCacheDecorator = true;
     private Set<String> securityRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
@@ -95,7 +101,12 @@ public class GestaltBuilder {
     // If we should enable observations
     private Boolean observationsEnabled = null;
     // If we should enable Validation
-    private Boolean validationEnabled = null;
+    private Boolean validationEnabled = false;
+
+    // if we should add the core result processors.
+    // The core result processors are central to Gestalt and should be added.
+    // The only reason to not add them is to fully customize gestalt.
+    private boolean addCoreResultProcessors = true;
 
     private Level logLevelForMissingValuesWhenDefaultOrOptional = null;
 
@@ -185,11 +196,26 @@ public class GestaltBuilder {
      * @return GestaltBuilder builder
      */
     public GestaltBuilder addDefaultValidators() {
-        List<ResultProcessor> validatorsSet = new ArrayList<>();
-        ServiceLoader<ResultProcessor> loader = ServiceLoader.load(ResultProcessor.class);
+        List<ConfigValidator> validatorsSet = new ArrayList<>();
+        ServiceLoader<ConfigValidator> loader = ServiceLoader.load(ConfigValidator.class);
         loader.forEach(validatorsSet::add);
 
-        resultProcessors.addAll(validatorsSet);
+        configValidators.addAll(validatorsSet);
+        return this;
+    }
+
+
+    /**
+     * Add default Result Processors to the builder. Uses the ServiceLoader to find all registered ResultProcessor and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultResultProcessor() {
+        List<ResultProcessor> resultProcessorSet = new ArrayList<>();
+        ServiceLoader<ResultProcessor> loader = ServiceLoader.load(ResultProcessor.class);
+        loader.forEach(resultProcessorSet::add);
+
+        resultProcessors.addAll(resultProcessorSet);
         return this;
     }
 
@@ -518,15 +544,15 @@ public class GestaltBuilder {
     /**
      * Sets the list of Validator. Replaces any Validator already set.
      *
-     * @param resultProcessors list of Validator to validate objects.
+     * @param configValidators list of Validator to validate objects.
      * @return GestaltBuilder builder
      * @throws GestaltConfigurationException exception if there are no Validator
      */
-    public GestaltBuilder setValidators(List<ResultProcessor> resultProcessors) throws GestaltConfigurationException {
-        if (resultProcessors == null || resultProcessors.isEmpty()) {
+    public GestaltBuilder setValidators(List<ConfigValidator> configValidators) throws GestaltConfigurationException {
+        if (configValidators == null || configValidators.isEmpty()) {
             throw new GestaltConfigurationException("No Validators provided while setting");
         }
-        this.resultProcessors = resultProcessors;
+        this.configValidators = configValidators;
 
         return this;
     }
@@ -536,12 +562,11 @@ public class GestaltBuilder {
      *
      * @param validatorsSet list of Validator to add.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException no Validator provided
      */
-    public GestaltBuilder addValidators(List<ResultProcessor> validatorsSet) throws GestaltConfigurationException {
+    public GestaltBuilder addValidators(List<ConfigValidator> validatorsSet) {
         Objects.requireNonNull(validatorsSet, "Validator should not be null");
 
-        resultProcessors.addAll(validatorsSet);
+        configValidators.addAll(validatorsSet);
 
         return this;
     }
@@ -549,11 +574,54 @@ public class GestaltBuilder {
     /**
      * Add a single Validator to the builder.
      *
-     * @param resultProcessor add a single Validator
+     * @param configValidator add a single Validator
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder addValidator(ResultProcessor resultProcessor) {
-        Objects.requireNonNull(resultProcessor, "Validator should not be null");
+    public GestaltBuilder addValidator(ConfigValidator configValidator) {
+        Objects.requireNonNull(configValidator, "Validator should not be null");
+        this.configValidators.add(configValidator);
+        return this;
+    }
+
+    /**
+     * Sets the list of ResultProcessor. Replaces any ResultProcessor already set.
+     *
+     * @param resultProcessors list of resultProcessors.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException exception if there are no ResultProcessor
+     */
+    public GestaltBuilder setResultProcessor(List<ResultProcessor> resultProcessors) throws GestaltConfigurationException {
+        if (resultProcessors == null || resultProcessors.isEmpty()) {
+            throw new GestaltConfigurationException("No ResultProcessor provided while setting");
+        }
+        this.resultProcessors = resultProcessors;
+
+        return this;
+    }
+
+    /**
+     * List of ResultProcessor to add to the builder.
+     *
+     * @param resultProcessorSet list of ResultProcessor to add.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException no ResultProcessor provided
+     */
+    public GestaltBuilder addResultProcessors(List<ResultProcessor> resultProcessorSet) throws GestaltConfigurationException {
+        Objects.requireNonNull(resultProcessorSet, "ResultProcessor should not be null");
+
+        resultProcessors.addAll(resultProcessorSet);
+
+        return this;
+    }
+
+    /**
+     * Add a single ResultProcessor to the builder.
+     *
+     * @param resultProcessor add a single ResultProcessor
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addResultProcessor(ResultProcessor resultProcessor) {
+        Objects.requireNonNull(resultProcessor, "ResultProcessor should not be null");
         this.resultProcessors.add(resultProcessor);
         return this;
     }
@@ -655,18 +723,18 @@ public class GestaltBuilder {
     }
 
     /**
-     * Sets the ValidationManager if you want to provide your own. Otherwise, a default is provided.
+     * Sets the ResultsProcessorManager if you want to provide your own. Otherwise, a default is provided.
      *
-     * <p>If there are any Validators, it will not add the default Validators.
+     * <p>If there are any ResultProcessors, it will not add the default ResultsProcessors.
      * So you will need to add the defaults manually if needed.
      *
-     * @param resultsProcessorManager Validation Manager
+     * @param resultsProcessorManager the ResultsProcessorManager
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setValidationManager(ResultsProcessorManager resultsProcessorManager) {
-        Objects.requireNonNull(resultsProcessorManager, "ValidationManager should not be null");
+    public GestaltBuilder setResultsProcessorManager(ResultsProcessorManager resultsProcessorManager) {
+        Objects.requireNonNull(resultsProcessorManager, "ResultsProcessorManager should not be null");
         this.resultsProcessorManager = resultsProcessorManager;
-        resultsProcessorManager.addValidators(resultProcessors);
+        resultsProcessorManager.addResultProcessors(resultProcessors);
         return this;
     }
 
@@ -862,6 +930,18 @@ public class GestaltBuilder {
     public GestaltBuilder setValidationEnabled(Boolean validationEnabled) {
         this.validationEnabled = validationEnabled;
         return this;
+    }
+
+    /**
+     * If we should add the core result processors.
+     * The core result processors are central to Gestalt and should be added.
+     * The only reason to not add them is to fully customize gestalt.
+     * If they are not added you will get strange and possible incorrect behaviour.
+     *
+     * @param addCoreResultProcessors add a core result processor.
+     */
+    public void setAddCoreResultProcessors(boolean addCoreResultProcessors) {
+        this.addCoreResultProcessors = addCoreResultProcessors;
     }
 
     /**
@@ -1089,7 +1169,9 @@ public class GestaltBuilder {
         configurePathMappers();
         configureDecoders();
         configureObservations();
-        configureValidators();
+        configureValidation();
+        configureCoreResultProcessors();
+        configureResultProcessors();
         configureConfigLoaders();
         configurePostProcessors();
 
@@ -1151,21 +1233,63 @@ public class GestaltBuilder {
         configLoaderService.setLoaders(dedupedConfigs);
     }
 
-    private void configureValidators() {
-        // setup the default validators, if there are none add the default ones.
+    // should be called after configureObservations, so we have an observationManager to pass into the ValidationResultProcessor.
+    private void configureValidation() {
+        if (validationEnabled) {
+            // setup the default validators, if there are none add the default ones.
+            if (configValidators.isEmpty()) {
+                logger.log(TRACE, "No validators recorders provided, using defaults");
+                addDefaultValidators();
+            }
+            configValidators = configValidators.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            configValidators.forEach(it -> it.applyConfig(gestaltConfig));
+
+            var validationResultProcessor = new ValidationResultProcessor(configValidators, observationManager);
+            validationResultProcessor.applyConfig(gestaltConfig);
+
+            // if the ResultsProcessorManager does not exist, create it.
+            // Otherwise, get all the recorders from the ResultsProcessorManager, combine them with the ones in the builder,
+            if (resultsProcessorManager == null) {
+                resultsProcessorManager = new ResultsProcessorManager(List.of(validationResultProcessor));
+            } else {
+                resultsProcessorManager.addResultProcessors(List.of(validationResultProcessor));
+            }
+        }
+    }
+
+    private void configureCoreResultProcessors() {
+        // setup the core resultProcessors, if there are none or they are disabled print out a warning.
+        if (coreResultProcessors.isEmpty() || !addCoreResultProcessors) {
+            logger.log(WARNING, "No Core ResultProcessors added, Gestalt may not behave as expected");
+            return;
+        }
+
+        coreResultProcessors.forEach(it -> it.applyConfig(gestaltConfig));
+
+        // if the ResultsProcessorManager does not exist, create it.
+        // Otherwise, get all the recorders from the ResultsProcessorManager, combine them with the ones in the builder,
+        if (resultsProcessorManager == null) {
+            resultsProcessorManager = new ResultsProcessorManager(coreResultProcessors);
+        } else {
+            resultsProcessorManager.addResultProcessors(coreResultProcessors);
+        }
+    }
+
+    private void configureResultProcessors() {
+        // setup the default resultProcessors, if there are none add the default ones.
         if (resultProcessors.isEmpty()) {
-            logger.log(TRACE, "No validators recorders provided, using defaults");
-            addDefaultValidators();
+            logger.log(TRACE, "No resultProcessors provided, using defaults");
+            addDefaultResultProcessor();
         }
         resultProcessors = resultProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
         resultProcessors.forEach(it -> it.applyConfig(gestaltConfig));
 
-        // if the validationManager does not exist, create it.
-        // Otherwise, get all the recorders from the validationManager, combine them with the ones in the builder,
+        // if the ResultsProcessorManager does not exist, create it.
+        // Otherwise, get all the recorders from the ResultsProcessorManager, combine them with the ones in the builder,
         if (resultsProcessorManager == null) {
             resultsProcessorManager = new ResultsProcessorManager(resultProcessors);
         } else {
-            resultsProcessorManager.addValidators(resultProcessors);
+            resultsProcessorManager.addResultProcessors(resultProcessors);
         }
     }
 
@@ -1263,9 +1387,6 @@ public class GestaltBuilder {
 
         newConfig.setObservationsEnabled(Objects.requireNonNullElseGet(observationsEnabled,
             () -> gestaltConfig.isObservationsEnabled()));
-
-        newConfig.setValidationEnabled(Objects.requireNonNullElseGet(validationEnabled,
-            () -> gestaltConfig.isValidationEnabled()));
 
         newConfig.setSentenceLexer(Objects.requireNonNullElseGet(sentenceLexer,
             () -> gestaltConfig.getSentenceLexer()));

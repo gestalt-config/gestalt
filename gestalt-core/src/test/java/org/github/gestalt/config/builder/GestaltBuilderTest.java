@@ -1,7 +1,6 @@
 package org.github.gestalt.config.builder;
 
 import org.github.gestalt.config.Gestalt;
-import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
@@ -26,7 +25,6 @@ import org.github.gestalt.config.processor.config.transform.EnvironmentVariables
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -118,10 +116,10 @@ class GestaltBuilderTest {
             .addObservationsRecorders(List.of(new TestObservationRecorder(1)))
             .setObservationsRecorders(List.of(new TestObservationRecorder(0), new TestObservationRecorder(1)))
             .setObservationsManager(new ObservationManager(List.of()))
-            .addValidator(new TestResultProcessor(true))
-            .addValidators(List.of(new TestResultProcessor(true)))
-            .setValidators(List.of(new TestResultProcessor(true)))
-            .setValidationManager(new ResultsProcessorManager(new ArrayList<>()))
+            .addResultProcessor(new TestResultProcessor(true))
+            .addResultProcessors(List.of(new TestResultProcessor(true)))
+            .setResultProcessor(List.of(new TestResultProcessor(true)))
+            .setResultsProcessorManager(new ResultsProcessorManager(new ArrayList<>()))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
@@ -290,7 +288,6 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
@@ -322,29 +319,18 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
         GestaltConfig config = new GestaltConfig();
         config.setTreatWarningsAsErrors(false);
         config.setTreatMissingArrayIndexAsError(false);
         config.setTreatMissingValuesAsErrors(false);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
-                new StringDecoder(), new ObjectDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
+            .setGestaltConfig(config)
+            .build();
 
         gestalt.loadConfigs();
-
 
         try {
             DBInfo dbInfo = gestalt.getConfig("db", DBInfo.class);

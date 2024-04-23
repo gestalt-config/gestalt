@@ -7,18 +7,16 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.github.gestalt.config.entity.GestaltConfig;
-import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class HibernateResultProcessorTest {
+class HibernateConfigValidatorTest {
 
     @Test
-    public void testHibernateProcessResultsOk() {
+    public void testHibernateValidatorOk() {
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         var validator = factory.getValidator();
@@ -26,20 +24,20 @@ class HibernateResultProcessorTest {
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(builder.build());
 
-        HibernateResultProcessor hibernateValidator = new HibernateResultProcessor();
+        HibernateConfigValidator hibernateValidator = new HibernateConfigValidator();
 
         hibernateValidator.applyConfig(gestaltConfig);
 
         Car car = new Car("Morris", "DD-AB-123", 2);
 
-        var results = hibernateValidator.processResults(GResultOf.result(car), "car", false, null, TypeCapture.of(Car.class), Tags.of());
+        var results = hibernateValidator.validator(car, "car", TypeCapture.of(Car.class), Tags.of());
 
         Assertions.assertTrue(results.hasResults());
         Assertions.assertFalse(results.hasErrors());
     }
 
     @Test
-    public void testHibernateProcessResultsErrors() {
+    public void testHibernateValidatorErrors() {
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         var validator = factory.getValidator();
@@ -47,13 +45,13 @@ class HibernateResultProcessorTest {
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(builder.build());
 
-        HibernateResultProcessor hibernateValidator = new HibernateResultProcessor();
+        HibernateConfigValidator hibernateValidator = new HibernateConfigValidator();
 
         hibernateValidator.applyConfig(gestaltConfig);
 
         Car car = new Car("Morris", "DD-AB-123", 1);
 
-        var results = hibernateValidator.processResults(GResultOf.result(car), "car", false, null, TypeCapture.of(Car.class), Tags.of());
+        var results = hibernateValidator.validator(car, "car", TypeCapture.of(Car.class), Tags.of());
 
         Assertions.assertFalse(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
@@ -64,7 +62,7 @@ class HibernateResultProcessorTest {
     }
 
     @Test
-    public void testHibernateProcessResultsMultipleErrors() {
+    public void testHibernateValidatorMultipleErrors() {
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         var validator = factory.getValidator();
@@ -72,13 +70,13 @@ class HibernateResultProcessorTest {
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(builder.build());
 
-        HibernateResultProcessor hibernateValidator = new HibernateResultProcessor();
+        HibernateConfigValidator hibernateValidator = new HibernateConfigValidator();
 
         hibernateValidator.applyConfig(gestaltConfig);
 
         Car car = new Car("Morris", "A", 1);
 
-        var results = hibernateValidator.processResults(GResultOf.result(car), "car", false, null, TypeCapture.of(Car.class), Tags.of());
+        var results = hibernateValidator.validator(car, "car", TypeCapture.of(Car.class), Tags.of());
 
         Assertions.assertFalse(results.hasResults());
         Assertions.assertTrue(results.hasErrors());
@@ -94,33 +92,6 @@ class HibernateResultProcessorTest {
         org.assertj.core.api.Assertions.assertThat(results.getErrors().get(1).description()).containsAnyOf(
             "Hibernate Validator, on path: car, error: size must be between 2 and 14",
             "Hibernate Validator, on path: car, error: must be greater than or equal to 2");
-    }
-
-    @Test
-    public void testHibernateProcessResultsHadErrors() {
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        var validator = factory.getValidator();
-        HibernateModuleBuilder builder = HibernateModuleBuilder.builder().setValidator(validator);
-        GestaltConfig gestaltConfig = new GestaltConfig();
-        gestaltConfig.registerModuleConfig(builder.build());
-
-        HibernateResultProcessor hibernateValidator = new HibernateResultProcessor();
-
-        hibernateValidator.applyConfig(gestaltConfig);
-
-        var results = hibernateValidator.processResults(GResultOf.errors(new ValidationError(ValidationLevel.ERROR) {
-            @Override
-            public String description() {
-                return "Something bad";
-            }
-        }), "car", false, null, TypeCapture.of(Car.class), Tags.of());
-
-        Assertions.assertFalse(results.hasResults());
-        Assertions.assertTrue(results.hasErrors());
-        Assertions.assertEquals(1, results.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
-        Assertions.assertEquals("Something bad", results.getErrors().get(0).description());
     }
 
     public static class Car {

@@ -2,6 +2,7 @@ package org.github.gestalt.config;
 
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.processor.TestValidationProcessor;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
@@ -45,7 +46,6 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
             .build();
 
         gestalt.loadConfigs();
@@ -72,8 +72,7 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
-            .addValidators(validatorArray)
+            .addResultProcessors(validatorArray)
             .build();
 
         gestalt.loadConfigs();
@@ -97,8 +96,7 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(true))
+            .addResultProcessor(new TestResultProcessor(true))
             .build();
 
         gestalt.loadConfigs();
@@ -122,8 +120,7 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(true))
+            .addResultProcessor(new TestResultProcessor(true))
             .build();
 
         gestalt.loadConfigs();
@@ -147,8 +144,7 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(false))
+            .addValidator(new TestValidationProcessor(false))
             .build();
 
         gestalt.loadConfigs();
@@ -172,8 +168,7 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(false))
+            .addValidator(new TestValidationProcessor(false))
             .build();
 
         gestalt.loadConfigs();
@@ -197,8 +192,7 @@ public class GestaltResultProcessorTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
-            .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(true))
+            .addValidator(new TestValidationProcessor(true))
             .build();
 
         gestalt.loadConfigs();
@@ -223,7 +217,7 @@ public class GestaltResultProcessorTest {
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
             .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(false))
+            .addValidator(new TestValidationProcessor(false))
             .build();
 
         gestalt.loadConfigs();
@@ -253,7 +247,7 @@ public class GestaltResultProcessorTest {
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
             .setValidationEnabled(true)
-            .addValidator(new TestResultProcessor(false))
+            .addValidator(new TestValidationProcessor(false))
             .build();
 
         gestalt.loadConfigs();

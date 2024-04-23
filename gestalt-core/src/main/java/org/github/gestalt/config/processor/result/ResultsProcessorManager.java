@@ -1,10 +1,14 @@
 package org.github.gestalt.config.processor.result;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
+import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Manages all result processors. Gestalt calls the manager who then forwards the calls to all registered result processors
@@ -14,19 +18,37 @@ import java.util.List;
  */
 public final class ResultsProcessorManager {
 
-    private final List<ResultProcessor> resultProcessors;
+    private List<ResultProcessor> resultProcessors;
 
     public ResultsProcessorManager(List<ResultProcessor> resultProcessors) {
-        this.resultProcessors = resultProcessors;
+        this.resultProcessors = new ArrayList<>(resultProcessors);
+        this.resultProcessors = orderedResultProcessors();
     }
 
     /**
-     * Add a list of validators to the manager.
+     * Add a list of ResultProcessor to the manager.
      *
-     * @param validatorsSet list of validators
+     * @param resultProcessorSet list of validators
      */
-    public void addValidators(List<ResultProcessor> validatorsSet) {
-        this.resultProcessors.addAll(validatorsSet);
+    public void addResultProcessors(List<ResultProcessor> resultProcessorSet) {
+        this.resultProcessors.addAll(resultProcessorSet);
+        this.resultProcessors = orderedResultProcessors();
+    }
+
+    /**
+     * the result processors in order.
+     *
+     * @return the result processors in order.
+     */
+    private List<ResultProcessor> orderedResultProcessors() {
+        return resultProcessors.stream().sorted((to, from) -> {
+            var toAnnotation = to.getClass().getAnnotationsByType(ConfigPriority.class);
+            var toValue = toAnnotation.length > 0 ? toAnnotation[0].value() : 1000;
+            var fromAnnotation = from.getClass().getAnnotationsByType(ConfigPriority.class);
+            var fromValue = fromAnnotation.length > 0 ? fromAnnotation[0].value() : 1000;
+
+            return toValue - fromValue;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -41,9 +63,10 @@ public final class ResultsProcessorManager {
      * @param tags       any tags used to retrieve te object
      * @param <T>        Class of the object.
      * @return The validation results with either errors or a successful  obj.
+     * @throws GestaltException for any exceptions while processing the results, such as if there are errors in the result.
      */
     public <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, T defaultVal,
-                                           TypeCapture<T> klass, Tags tags) {
+                                           TypeCapture<T> klass, Tags tags) throws GestaltException {
 
         GResultOf<T> processedResults = results;
         for (var resultProcessor : resultProcessors) {

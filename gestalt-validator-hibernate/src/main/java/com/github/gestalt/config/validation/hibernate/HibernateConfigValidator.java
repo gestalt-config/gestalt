@@ -7,10 +7,10 @@ import jakarta.validation.ValidatorFactory;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.processor.result.validation.ConfigValidator;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
-import org.github.gestalt.config.processor.result.ResultProcessor;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class HibernateResultProcessor implements ResultProcessor {
+public final class HibernateConfigValidator implements ConfigValidator {
 
-    private static final System.Logger logger = System.getLogger(HibernateResultProcessor.class.getName());
+    private static final System.Logger logger = System.getLogger(HibernateConfigValidator.class.getName());
 
     private jakarta.validation.Validator validator;
 
-    public HibernateResultProcessor() {
+    public HibernateConfigValidator() {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             validator = factory.getValidator();
         }
@@ -49,22 +49,17 @@ public final class HibernateResultProcessor implements ResultProcessor {
     }
 
     @Override
-    public <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, T defaultVal,
-                                           TypeCapture<T> klass, Tags tags) {
-        if (results.hasResults()) {
-            Set<ConstraintViolation<T>> constraintViolations = validator.validate(results.results());
+    public <T> GResultOf<T> validator(T obj, String path, TypeCapture<T> klass, Tags tags) {
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate(obj);
 
-            if (constraintViolations.isEmpty()) {
-                return GResultOf.result(results.results());
-            } else {
-                return GResultOf.errors(constraintViolations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .map(it -> new HibernateValidatorError(path, it))
-                    .collect(Collectors.toList()));
-            }
+        if (constraintViolations.isEmpty()) {
+            return GResultOf.result(obj);
+        } else {
+            return GResultOf.errors(constraintViolations.stream()
+                .map(ConstraintViolation::getMessage)
+                .map(it -> new HibernateValidatorError(path, it))
+                .collect(Collectors.toList()));
         }
-
-        return results;
     }
 
     public static class HibernateValidatorError extends ValidationError {

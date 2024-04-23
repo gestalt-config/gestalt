@@ -49,8 +49,6 @@ public class GestaltConfig {
     // if observations should be enabled
     private boolean observationsEnabled = false;
 
-    // if validation should be enabled.
-    private boolean validationEnabled = false;
     // The sentence lexer used for gestalt.
     private SentenceLexer sentenceLexer = new PathLexer();
 
@@ -337,24 +335,6 @@ public class GestaltConfig {
      */
     public void setObservationsEnabled(boolean observationsEnabled) {
         this.observationsEnabled = observationsEnabled;
-    }
-
-    /**
-     * Get if validation is enabled.
-     *
-     * @return if validation is enabled
-     */
-    public boolean isValidationEnabled() {
-        return validationEnabled;
-    }
-
-    /**
-     * Set if validation is enabled.
-     *
-     * @param validationEnabled if validation is enabled.
-     */
-    public void setValidationEnabled(boolean validationEnabled) {
-        this.validationEnabled = validationEnabled;
     }
 
     /**
