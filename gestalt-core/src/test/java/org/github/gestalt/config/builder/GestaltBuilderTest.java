@@ -19,10 +19,13 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
+import org.github.gestalt.config.processor.TestValidationProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.result.DefaultResultProcessor;
+import org.github.gestalt.config.processor.result.ErrorResultProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.source.ConfigSource;
@@ -120,6 +123,10 @@ class GestaltBuilderTest {
             .addResultProcessors(List.of(new TestResultProcessor(true)))
             .setResultProcessor(List.of(new TestResultProcessor(true)))
             .setResultsProcessorManager(new ResultsProcessorManager(new ArrayList<>()))
+            .setAddCoreResultProcessors(true)
+            .addValidator(new TestValidationProcessor(true))
+            .addValidators(List.of(new TestValidationProcessor(true)))
+            .setValidators(List.of(new TestValidationProcessor(true)))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
@@ -820,6 +827,68 @@ class GestaltBuilderTest {
         Assertions.assertEquals(1, mapper1.configCount);
         Assertions.assertEquals(1, mapper2.configCount);
         Assertions.assertEquals(1, mapper3.configCount);
+    }
+
+    @Test
+    public void buildWithResultProcessorManager() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setResultsProcessorManager(new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())))
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void buildWithNoResultProcessorManager() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setAddCoreResultProcessors(false)
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertNull(gestalt.getConfig("db.none", "default", String.class));
     }
 
     private static class TestDecoder implements Decoder {

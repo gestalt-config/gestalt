@@ -94,6 +94,22 @@ class HibernateConfigValidatorTest {
             "Hibernate Validator, on path: car, error: must be greater than or equal to 2");
     }
 
+    @Test
+    public void testHibernateValidatorNoModuleUseDefault() {
+        GestaltConfig gestaltConfig = new GestaltConfig();
+
+        HibernateConfigValidator hibernateValidator = new HibernateConfigValidator();
+
+        hibernateValidator.applyConfig(gestaltConfig);
+
+        Car car = new Car("Morris", "DD-AB-123", 2);
+
+        var results = hibernateValidator.validator(car, "car", TypeCapture.of(Car.class), Tags.of());
+
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+    }
+
     public static class Car {
 
         @NotNull

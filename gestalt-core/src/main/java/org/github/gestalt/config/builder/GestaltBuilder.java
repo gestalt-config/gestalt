@@ -503,12 +503,9 @@ public class GestaltBuilder {
      *
      * @param observationRecorders list of observationRecorders to record observations to.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException exception if there are no ObservationRecorder
      */
-    public GestaltBuilder setObservationsRecorders(List<ObservationRecorder> observationRecorders) throws GestaltConfigurationException {
-        if (observationRecorders == null || observationRecorders.isEmpty()) {
-            throw new GestaltConfigurationException("No ObservationRecorder provided while setting");
-        }
+    public GestaltBuilder setObservationsRecorders(List<ObservationRecorder> observationRecorders) {
+        Objects.requireNonNull(observationRecorders, "No ObservationRecorder provided while setting");
         this.observationRecorders = observationRecorders;
 
         return this;
@@ -519,9 +516,8 @@ public class GestaltBuilder {
      *
      * @param observationRecordersSet list of ObservationRecorder to add.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException no ObservationRecorder provided
      */
-    public GestaltBuilder addObservationsRecorders(List<ObservationRecorder> observationRecordersSet) throws GestaltConfigurationException {
+    public GestaltBuilder addObservationsRecorders(List<ObservationRecorder> observationRecordersSet) {
         Objects.requireNonNull(observationRecordersSet, "ObservationRecorder should not be null");
 
         observationRecorders.addAll(observationRecordersSet);
@@ -546,12 +542,9 @@ public class GestaltBuilder {
      *
      * @param configValidators list of Validator to validate objects.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException exception if there are no Validator
      */
-    public GestaltBuilder setValidators(List<ConfigValidator> configValidators) throws GestaltConfigurationException {
-        if (configValidators == null || configValidators.isEmpty()) {
-            throw new GestaltConfigurationException("No Validators provided while setting");
-        }
+    public GestaltBuilder setValidators(List<ConfigValidator> configValidators) {
+        Objects.requireNonNull(configValidators, "No Validators provided while setting");
         this.configValidators = configValidators;
 
         return this;
@@ -588,12 +581,9 @@ public class GestaltBuilder {
      *
      * @param resultProcessors list of resultProcessors.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException exception if there are no ResultProcessor
      */
-    public GestaltBuilder setResultProcessor(List<ResultProcessor> resultProcessors) throws GestaltConfigurationException {
-        if (resultProcessors == null || resultProcessors.isEmpty()) {
-            throw new GestaltConfigurationException("No ResultProcessor provided while setting");
-        }
+    public GestaltBuilder setResultProcessor(List<ResultProcessor> resultProcessors) {
+        Objects.requireNonNull(resultProcessors, "ResultProcessor should not be null");
         this.resultProcessors = resultProcessors;
 
         return this;
@@ -604,9 +594,8 @@ public class GestaltBuilder {
      *
      * @param resultProcessorSet list of ResultProcessor to add.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException no ResultProcessor provided
      */
-    public GestaltBuilder addResultProcessors(List<ResultProcessor> resultProcessorSet) throws GestaltConfigurationException {
+    public GestaltBuilder addResultProcessors(List<ResultProcessor> resultProcessorSet) {
         Objects.requireNonNull(resultProcessorSet, "ResultProcessor should not be null");
 
         resultProcessors.addAll(resultProcessorSet);
@@ -939,9 +928,11 @@ public class GestaltBuilder {
      * If they are not added you will get strange and possible incorrect behaviour.
      *
      * @param addCoreResultProcessors add a core result processor.
+     * @return GestaltBuilder builder
      */
-    public void setAddCoreResultProcessors(boolean addCoreResultProcessors) {
+    public GestaltBuilder setAddCoreResultProcessors(boolean addCoreResultProcessors) {
         this.addCoreResultProcessors = addCoreResultProcessors;
+        return this;
     }
 
     /**

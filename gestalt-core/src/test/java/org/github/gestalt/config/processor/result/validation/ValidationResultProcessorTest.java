@@ -237,4 +237,68 @@ class ValidationResultProcessorTest {
             .recordObservation(eq("get.config.validation.error"), eq(1.0D), eq(Tags.of()));
 
     }
+
+    @Test
+    public void testValidatorLoadService() throws GestaltException {
+        GestaltConfig config = new GestaltConfig();
+        config.setObservationsEnabled(true);
+
+        var validationManager = new ValidationResultProcessor();
+        validationManager.applyConfig(config);
+
+        var dbInfo = new DBInfo();
+        dbInfo.setPassword("test");
+
+        var dbInfo2 = new DBInfo();
+        dbInfo2.setPassword("pass");
+
+        var results = validationManager.processResults(GResultOf.result(dbInfo), "my.path", true, dbInfo2,
+            TypeCapture.of(DBInfo.class), Tags.of());
+
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals("test", results.results().getPassword());
+
+        Mockito.verify(observationManager, times(0))
+            .recordObservation(eq("get.config.validation.error"), eq(1.0D), eq(Tags.of()));
+    }
+
+    @Test
+    public void testValidatorIgnoreNumber() throws GestaltException {
+        GestaltConfig config = new GestaltConfig();
+        config.setObservationsEnabled(true);
+
+        var validationManager = new ValidationResultProcessor(List.of(new TestConfigValidator(true)), observationManager);
+        validationManager.applyConfig(config);
+
+        var results = validationManager.processResults(GResultOf.result(1), "my.path", true, null,
+            TypeCapture.of(Integer.class), Tags.of());
+
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results());
+        Mockito.verify(observationManager, times(0))
+            .recordObservation(eq("get.config.validation.error"), anyDouble(), any());
+    }
+
+    @Test
+    public void testValidatorNullInt() throws GestaltException {
+        GestaltConfig config = new GestaltConfig();
+        config.setObservationsEnabled(true);
+
+        var validationManager = new ValidationResultProcessor(List.of(new TestConfigValidator(true)), observationManager);
+        validationManager.applyConfig(config);
+
+        var results = validationManager.processResults(GResultOf.result(null), "my.path", true, null,
+            TypeCapture.of(Integer.class), Tags.of());
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Mockito.verify(observationManager, times(0))
+            .recordObservation(eq("get.config.validation.error"), anyDouble(), any());
+    }
+
 }

@@ -12,6 +12,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
@@ -24,11 +25,12 @@ public class ValidationResultProcessor implements ResultProcessor {
 
     private GestaltConfig gestaltConfig;
     private ObservationManager observationManager;
-    private List<ConfigValidator> configValidators;
+    private final List<ConfigValidator> configValidators;
 
     public ValidationResultProcessor() {
+        configValidators = new ArrayList<>();
         ServiceLoader<ConfigValidator> loader = ServiceLoader.load(ConfigValidator.class);
-        loader.forEach(it -> configValidators.add(it));
+        loader.forEach(configValidators::add);
     }
 
     public ValidationResultProcessor(List<ConfigValidator> configValidators, ObservationManager observationManager) {
@@ -80,7 +82,7 @@ public class ValidationResultProcessor implements ResultProcessor {
     }
 
     private <T> void updateValidationObservations(List<ValidationError> errors) {
-        if (gestaltConfig != null && gestaltConfig.isObservationsEnabled() && observationManager != null && !errors.isEmpty()) {
+        if (gestaltConfig != null && gestaltConfig.isObservationsEnabled() && observationManager != null) {
             observationManager.recordObservation("get.config.validation.error", errors.size(), Tags.of());
         }
     }

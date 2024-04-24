@@ -152,4 +152,26 @@ class ResultsProcessorManagerTest {
         Assertions.assertEquals("something broke", results.getErrors().get(0).description());
     }
 
+    @Test
+    public void testTwoResultProcessorResultHasError2() throws GestaltException {
+        var validationManager = new ResultsProcessorManager(List.of(
+            new TestResultProcessor(false), new TestResultProcessor(false), new TestResultProcessor3(false)));
+
+        var results = validationManager.processResults(GResultOf.errors(new ValidationError(ValidationLevel.ERROR) {
+                @Override
+                public String description() {
+                    return "there was an error";
+                }
+            }), "my.path", false, null,
+            TypeCapture.of(String.class), Tags.of());
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+
+        Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("something broke", results.getErrors().get(0).description());
+    }
+
 }

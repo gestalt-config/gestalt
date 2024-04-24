@@ -14,7 +14,7 @@ import org.github.gestalt.config.utils.GResultOf;
 public interface ResultProcessor {
 
     /**
-     * If your Validator needs access to the Gestalt Config.
+     * If your Result Processor needs access to the Gestalt Config.
      *
      * @param config Gestalt configuration
      */

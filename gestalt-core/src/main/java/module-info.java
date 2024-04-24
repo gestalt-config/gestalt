@@ -32,10 +32,10 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;
     exports org.github.gestalt.config.utils;
-    exports org.github.gestalt.config.processor.result;
     exports org.github.gestalt.config.processor.config;
     exports org.github.gestalt.config.processor.config.transform;
     exports org.github.gestalt.config.processor.config.transform.substitution;
+    exports org.github.gestalt.config.processor.result;
     exports org.github.gestalt.config.processor.result.validation;
 
     provides org.github.gestalt.config.decoder.Decoder with
