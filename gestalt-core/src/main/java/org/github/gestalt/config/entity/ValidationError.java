@@ -3,7 +3,7 @@ package org.github.gestalt.config.entity;
 import org.github.gestalt.config.decoder.DecoderContext;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
-import org.github.gestalt.config.post.process.transform.substitution.SubstitutionNode;
+import org.github.gestalt.config.processor.config.transform.substitution.SubstitutionNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.token.Token;

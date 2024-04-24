@@ -7,10 +7,10 @@ import jakarta.validation.ValidatorFactory;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.processor.result.validation.ConfigValidator;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
-import org.github.gestalt.config.validation.ConfigValidator;
 
 import java.util.Set;
 import java.util.stream.Collectors;

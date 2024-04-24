@@ -1,7 +1,6 @@
 package org.github.gestalt.config.builder;
 
 import org.github.gestalt.config.Gestalt;
-import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.decoder.*;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
@@ -20,13 +19,15 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.path.mapper.DotNotationPathMapper;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
-import org.github.gestalt.config.post.process.PostProcessor;
-import org.github.gestalt.config.post.process.PostProcessorConfig;
-import org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer;
-import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.processor.TestValidationProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.result.DefaultResultProcessor;
+import org.github.gestalt.config.processor.result.ErrorResultProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -35,8 +36,8 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
-import org.github.gestalt.config.validation.TestConfigValidator;
-import org.github.gestalt.config.validation.ValidationManager;
+import org.github.gestalt.config.processor.TestResultProcessor;
+import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -107,9 +108,9 @@ class GestaltBuilderTest {
             .addCoreReloadListener(coreReloadListener)
             .addCoreReloadListener(List.of())
             .addPostProcessors(Collections.singletonList(
-                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .setPostProcessors(Collections.singletonList(
-                new TransformerPostProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
@@ -118,10 +119,14 @@ class GestaltBuilderTest {
             .addObservationsRecorders(List.of(new TestObservationRecorder(1)))
             .setObservationsRecorders(List.of(new TestObservationRecorder(0), new TestObservationRecorder(1)))
             .setObservationsManager(new ObservationManager(List.of()))
-            .addValidator(new TestConfigValidator(true))
-            .addValidators(List.of(new TestConfigValidator(true)))
-            .setValidators(List.of(new TestConfigValidator(true)))
-            .setValidationManager(new ValidationManager(new ArrayList<>()))
+            .addResultProcessor(new TestResultProcessor(true))
+            .addResultProcessors(List.of(new TestResultProcessor(true)))
+            .setResultProcessor(List.of(new TestResultProcessor(true)))
+            .setResultsProcessorManager(new ResultsProcessorManager(new ArrayList<>()))
+            .setAddCoreResultProcessors(true)
+            .addValidator(new TestValidationProcessor(true))
+            .addValidators(List.of(new TestValidationProcessor(true)))
+            .setValidators(List.of(new TestValidationProcessor(true)))
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
@@ -290,7 +295,6 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
@@ -322,29 +326,18 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
-        configLoaderRegistry.addLoader(new MapConfigLoader());
-
         GestaltConfig config = new GestaltConfig();
         config.setTreatWarningsAsErrors(false);
         config.setTreatMissingArrayIndexAsError(false);
         config.setTreatMissingValuesAsErrors(false);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        SentenceLexer lexer = new PathLexer(".");
-
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
-
-        GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
-            List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
-            new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(),
-                new StringDecoder(), new ObjectDecoder()),
-                configNodeManager, lexer, List.of(new StandardPathMapper())),
-            lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()))
+            .setGestaltConfig(config)
+            .build();
 
         gestalt.loadConfigs();
-
 
         try {
             DBInfo dbInfo = gestalt.getConfig("db", DBInfo.class);
@@ -786,9 +779,9 @@ class GestaltBuilderTest {
         configs.put("admin[0]", "John");
         configs.put("admin[1]", "Steve");
 
-        var processor1 = new TestPostProcessor();
-        var processor2 = new TestPostProcessor();
-        var processor3 = new TestPostProcessor();
+        var processor1 = new TestConfigNodeProcessor();
+        var processor2 = new TestConfigNodeProcessor();
+        var processor3 = new TestConfigNodeProcessor();
 
 
         GestaltBuilder builder = new GestaltBuilder();
@@ -834,6 +827,68 @@ class GestaltBuilderTest {
         Assertions.assertEquals(1, mapper1.configCount);
         Assertions.assertEquals(1, mapper2.configCount);
         Assertions.assertEquals(1, mapper3.configCount);
+    }
+
+    @Test
+    public void buildWithResultProcessorManager() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setResultsProcessorManager(new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())))
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void buildWithNoResultProcessorManager() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setAddCoreResultProcessors(false)
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertNull(gestalt.getConfig("db.none", "default", String.class));
     }
 
     private static class TestDecoder implements Decoder {
@@ -891,7 +946,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class TestPostProcessor implements PostProcessor {
+    private static class TestConfigNodeProcessor implements ConfigNodeProcessor {
 
         public int configCount = 0;
 
@@ -901,7 +956,7 @@ class GestaltBuilderTest {
         }
 
         @Override
-        public void applyConfig(PostProcessorConfig config) {
+        public void applyConfig(ConfigNodeProcessorConfig config) {
             configCount++;
         }
     }

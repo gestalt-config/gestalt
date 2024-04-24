@@ -4,12 +4,13 @@ import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.observations.TestObservationRecorder;
+import org.github.gestalt.config.processor.TestValidationProcessor;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoOptional;
-import org.github.gestalt.config.validation.TestConfigValidator;
+import org.github.gestalt.config.processor.TestResultProcessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -383,7 +384,7 @@ public class GestaltObservationsTest {
             .setObservationsRecorders(List.of(metricsRecorder))
             .setObservationsEnabled(true)
             .setValidationEnabled(true)
-            .addValidator(new TestConfigValidator(false))
+            .addValidator(new TestValidationProcessor(false))
             .build();
 
         gestalt.loadConfigs();
@@ -424,8 +425,7 @@ public class GestaltObservationsTest {
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
             .setObservationsRecorders(List.of(metricsRecorder))
             .setObservationsEnabled(true)
-            .setValidationEnabled(true)
-            .addValidator(new TestConfigValidator(false))
+            .addResultProcessor(new TestResultProcessor(false))
             .build();
 
         gestalt.loadConfigs();
@@ -435,9 +435,6 @@ public class GestaltObservationsTest {
         Assertions.assertEquals("db", metricsRecorder.metrics.get("db").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db").data);
         Assertions.assertEquals(Tags.of("environment", "dev", "default", "true"), metricsRecorder.metrics.get("db").tags);
-
-        Assertions.assertEquals(1.0, metricsRecorder.metrics.get("get.config.validation.error").data);
-        Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("get.config.validation.error").tags);
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilde
 import org.github.gestalt.config.micrometer.config.MicrometerModuleConfig;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.stream.Collectors;
 
@@ -124,5 +125,10 @@ public final class MicrometerObservationRecorder implements ObservationRecorder 
 
         var counter = meterRegistry.counter(micrometerModuleConfig.getPrefix() + "." + observation, metricTags);
         counter.increment(count);
+    }
+
+    @Override
+    public <T> void recordObservation(GResultOf<T> results, String path, TypeCapture<T> klass, Tags tags, boolean isOptional) {
+        // not recording any metrics for this type of observation.
     }
 }

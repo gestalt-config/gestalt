@@ -3,7 +3,7 @@ package org.github.gestalt.config.entity;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -44,13 +44,11 @@ public class GestaltConfig {
     private int maxSubstitutionNestedDepth = 5;
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
-    private String substitutionRegex = TransformerPostProcessor.DEFAULT_SUBSTITUTION_REGEX;
+    private String substitutionRegex = StringSubstitutionConfigNodeProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
     // if observations should be enabled
     private boolean observationsEnabled = false;
 
-    // if validation should be enabled.
-    private boolean validationEnabled = false;
     // The sentence lexer used for gestalt.
     private SentenceLexer sentenceLexer = new PathLexer();
 
@@ -337,24 +335,6 @@ public class GestaltConfig {
      */
     public void setObservationsEnabled(boolean observationsEnabled) {
         this.observationsEnabled = observationsEnabled;
-    }
-
-    /**
-     * Get if validation is enabled.
-     *
-     * @return if validation is enabled
-     */
-    public boolean isValidationEnabled() {
-        return validationEnabled;
-    }
-
-    /**
-     * Set if validation is enabled.
-     *
-     * @param validationEnabled if validation is enabled.
-     */
-    public void setValidationEnabled(boolean validationEnabled) {
-        this.validationEnabled = validationEnabled;
     }
 
     /**

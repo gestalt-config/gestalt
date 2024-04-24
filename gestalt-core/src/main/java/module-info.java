@@ -1,4 +1,4 @@
-import org.github.gestalt.config.observations.ObservationRecorder;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 
 /*
  * Module info definition for gestalt core
@@ -7,10 +7,11 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.decoder.Decoder;
     uses org.github.gestalt.config.loader.ConfigLoader;
     uses org.github.gestalt.config.path.mapper.PathMapper;
-    uses org.github.gestalt.config.post.process.PostProcessor;
-    uses org.github.gestalt.config.post.process.transform.Transformer;
-    uses org.github.gestalt.config.validation.ConfigValidator;
-    uses ObservationRecorder;
+    uses org.github.gestalt.config.processor.config.ConfigNodeProcessor;
+    uses org.github.gestalt.config.processor.config.transform.Transformer;
+    uses org.github.gestalt.config.processor.result.ResultProcessor;
+    uses org.github.gestalt.config.observations.ObservationRecorder;
+    uses org.github.gestalt.config.processor.result.validation.ConfigValidator;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -24,9 +25,6 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.node;
     exports org.github.gestalt.config.parser;
     exports org.github.gestalt.config.path.mapper;
-    exports org.github.gestalt.config.post.process;
-    exports org.github.gestalt.config.post.process.transform;
-    exports org.github.gestalt.config.post.process.transform.substitution;
     exports org.github.gestalt.config.reflect;
     exports org.github.gestalt.config.reload;
     exports org.github.gestalt.config.secret.rules;
@@ -34,7 +32,11 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;
     exports org.github.gestalt.config.utils;
-    exports org.github.gestalt.config.validation;
+    exports org.github.gestalt.config.processor.config;
+    exports org.github.gestalt.config.processor.config.transform;
+    exports org.github.gestalt.config.processor.config.transform.substitution;
+    exports org.github.gestalt.config.processor.result;
+    exports org.github.gestalt.config.processor.result.validation;
 
     provides org.github.gestalt.config.decoder.Decoder with
         org.github.gestalt.config.decoder.ArrayDecoder,
@@ -81,20 +83,20 @@ module org.github.gestalt.core {
         org.github.gestalt.config.path.mapper.StandardPathMapper,
         org.github.gestalt.config.path.mapper.SnakeCasePathMapper;
 
-    provides org.github.gestalt.config.post.process.PostProcessor with
-        org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+    provides org.github.gestalt.config.processor.config.ConfigNodeProcessor with
+        StringSubstitutionConfigNodeProcessor;
 
-    provides org.github.gestalt.config.post.process.transform.Transformer with
-        org.github.gestalt.config.post.process.transform.Base64DecoderTransformer,
-        org.github.gestalt.config.post.process.transform.Base64EncoderTransformer,
-        org.github.gestalt.config.post.process.transform.ClasspathTransformer,
-        org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformer,
-        org.github.gestalt.config.post.process.transform.EnvironmentVariablesTransformerOld,
-        org.github.gestalt.config.post.process.transform.FileTransformer,
-        org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer,
-        org.github.gestalt.config.post.process.transform.NodeTransformer,
-        org.github.gestalt.config.post.process.transform.RandomTransformer,
-        org.github.gestalt.config.post.process.transform.URLDecoderTransformer,
-        org.github.gestalt.config.post.process.transform.URLEncoderTransformer;
+    provides org.github.gestalt.config.processor.config.transform.Transformer with
+        org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer,
+        org.github.gestalt.config.processor.config.transform.Base64EncoderTransformer,
+        org.github.gestalt.config.processor.config.transform.ClasspathTransformer,
+        org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer,
+        org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformerOld,
+        org.github.gestalt.config.processor.config.transform.FileTransformer,
+        org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer,
+        org.github.gestalt.config.processor.config.transform.NodeTransformer,
+        org.github.gestalt.config.processor.config.transform.RandomTransformer,
+        org.github.gestalt.config.processor.config.transform.URLDecoderTransformer,
+        org.github.gestalt.config.processor.config.transform.URLEncoderTransformer;
 }
 

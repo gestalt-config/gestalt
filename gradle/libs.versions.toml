@@ -7,7 +7,7 @@ kotlin = "1.9.23"
 kotlinDokka = "1.9.20"
 # Kotlin DI
 kodeinDI = "7.21.2"
-koinDI = "3.5.5"
+koinDI = "3.5.6"
 # Java DI
 guice = "7.0.0"
 cdi = "4.0.1"
@@ -17,7 +17,7 @@ weldCore = "5.1.2.Final"
 jackson = "2.17.0"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.30"
+awsBom = "2.25.34"
 gcpLibraries = "26.37.0"
 # vault
 vault = "6.2.0"
@@ -93,7 +93,7 @@ jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", ver
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 # metrics
 micrometer = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
-# configValidators
+# resultProcessors
 hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernateValidator" }
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "expressly" }
 # Testing

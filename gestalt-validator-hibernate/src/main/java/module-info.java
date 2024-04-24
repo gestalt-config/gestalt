@@ -11,6 +11,6 @@ module org.github.gestalt.validation.hibernate {
     exports com.github.gestalt.config.validation.hibernate.config;
     exports com.github.gestalt.config.validation.hibernate.builder;
 
-    provides org.github.gestalt.config.validation.ConfigValidator with
+    provides org.github.gestalt.config.processor.result.validation.ConfigValidator with
         com.github.gestalt.config.validation.hibernate.HibernateConfigValidator;
 }

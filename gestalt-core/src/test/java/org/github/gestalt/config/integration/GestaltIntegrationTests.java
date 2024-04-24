@@ -9,8 +9,8 @@ import org.github.gestalt.config.entity.ConfigContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
-import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
-import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
@@ -476,7 +476,7 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addPostProcessor(new TransformerPostProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
+            .addPostProcessor(new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
 
         gestalt.loadConfigs();

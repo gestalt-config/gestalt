@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.aws.config.AWSModuleConfig;
 import org.github.gestalt.config.aws.errors.AWSValidationErrors;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.post.process.PostProcessorConfig;
-import org.github.gestalt.config.post.process.transform.Transformer;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.config.transform.Transformer;
 import org.github.gestalt.config.utils.GResultOf;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -32,7 +32,7 @@ public final class AWSSecretTransformer implements Transformer {
     }
 
     @Override
-    public void applyConfig(PostProcessorConfig config) {
+    public void applyConfig(ConfigNodeProcessorConfig config) {
         AWSModuleConfig moduleConfig = config.getConfig().getModuleConfig(AWSModuleConfig.class);
 
         if (moduleConfig == null) {

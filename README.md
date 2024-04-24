@@ -39,7 +39,7 @@ Let's dive in and explore how Gestalt can streamline your configuration manageme
 
 - **Java Modules:** Supports Java 9 modules with proper exports.
 
-- **Well Tested:** Our codebase boasts an impressive 89% code coverage, validated by over 1300 meaningful tests.
+- **Well Tested:** Our codebase boasts an impressive 90% code coverage, validated by over 1450 meaningful tests.
 
 
 
@@ -730,7 +730,7 @@ And finally the path `my.path.greeting` is resolved to `good day`
 
 
 ### Random String Substitution
-To inject a random variable during post-processing you can use the format ${random:type(origin, bound)}
+To inject a random variable during config node processing you can use the format ${random:type(origin, bound)}
 The random value is generated while loading the config, so you will always get the same random value when asking gestalt.
 
 ```properties
@@ -805,7 +805,7 @@ If you provide 2 tags in the source, when retrieving the configuration you must 
   float defaultGutShot = gestalt.getConfig("gut.shot.multiplier", Float.class);  // not found
 ```
 
-* **Note**: The post processor string replacement doesn't accept tags, so it will always replace the configs with the tag-less ones.
+* **Note**: The config node processor string replacement doesn't accept tags, so it will always replace the configs with the tag-less ones.
 
 
 ## Supported config sources
@@ -1422,6 +1422,9 @@ Gestalt gestalt = new GestaltBuilder()
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample-java-latest/src/test)
 
+# Backwards Compatibility
+Gestalt tries its best to maintain backwards compatibility with external API's such as the builders, sources, decoders, and Gestalt itself. When changes are made, they are deprecated for several releases to give people a chance to migrate.
+For internal APIs backwards compatibility is not always guaranteed. Internal APIs are considered ConfigNodeProcessor, ResultProcessor, ConfigValidator, Transformer, PathMappers, ConfigLoaders and such that end users will rarely need to modify. Although they are exposed and meant to be used, it is rare that end users will need to modify them. For those advanced users, they may have extra burden of updating with releases.   
 
 # Architectural details
 This section is more for those wishing to know more about how Gestalt works, or how to add their own functionality. If you only wish to get configuration from Gestalt As Is, then feel free to skip it.
@@ -1536,40 +1539,49 @@ Gestalt will use the ConfigLoaderService to find a ConfigLoader that will load t
 When a source needs to be reloaded, it will be passed into the reload function. The sources will then be converted into a Config node as in the loading. Then Gestalt will use the ConfigNodeService to reload the source. Since the ConfigNodeService holds onto the source ID with the ConfigNodeContainer we are able to determine with config node to reload then take all the config nodes and re-merge them in the same order to rebuild the config tree with the newly loaded node.
 
 
-# Post Processors
-To implement your own Post Processor you need to inherit from PostProcessor.
+# Config Node Processors
+To implement your own Config Node Processor you need to inherit from ConfigNodeProcessor.
 
 ```java
 /**
- * Interface for the Post Processing of Config nodes. This will be run against every node in the tree. 
+ * Interface for the Config Node Processing. This will be run against every node in the tree.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public interface PostProcessor {
+public interface ConfigNodeProcessor {
+
+  /**
+   * run the config node process the current node. You need to return a node, so if your config node processor does nothing to the node
+   * return the original node.
+   *
+   * @param path        current path
+   * @param currentNode current node to process.
+   * @return the node after running through the processor.
+   */
   GResultOf<ConfigNode> process(String path, ConfigNode currentNode);
 
   /**
-   * Apply the GestaltConfig to the Post Processor. Needed when building via the ServiceLoader
-   * It is a default method as most Post Processor don't need to apply configs.
+   * Apply the ConfigNodeProcessorConfig to the config node Processor. Needed when building via the ServiceLoader
+   * It is a default method as most Config Node Processor don't need to apply configs.
    *
-   * @param config GestaltConfig to update the Post Processor
+   * @param config GestaltConfig to update the Processor
    */
-  default void applyConfig(GestaltConfig config) {
+  default void applyConfig(ConfigNodeProcessorConfig config) {
   }
 }
 ```
 
 When you write your own applyConfig method, each node of the config tree will be passed into the process method. You can either modify the current node or return it as is. The return value will be used to replace the tree, so if you return nothing your tree will be lost.
-You can re-write any intermediate node or only modify the leaf nodes as TransformerPostProcessor does.
-To register your own default PostProcessor, add it to a file in META-INF\services\org.github.gestalt.config.post.process.PostProcessor and add the full path to your PostProcessor.
+You can re-write any intermediate node or only modify the leaf nodes as `TransformerConfigNodeProcessor` does.
+To register your own default `ConfigNodeProcessor`, add it to a file in `META-INF\services\org.github.gestalt.config.processor.config.ConfigNodeProcessor` and add the full path to your `ConfigNodeProcessor`.
 
-The TransformerPostProcessor is a specific type of PostProcessor that allows you to replace strings in a leaf node that match ${transformer:key} into a config value. where the transformer is the name of a Transformer registered with the TransformerPostProcessor, such as in the above PostProcessor section with envMap, sys, and map. The key is a string lookup into the transformer.
+The `TransformerConfigNodeProcessor` is a specific type of `ConfigNodeProcessor` that allows you to replace strings in a leaf node that match `${transformer:key}` into a config value. where the transformer is the name of a Transformer registered with the TransformerConfigNodeProcessor, such as in the above ConfigNodeProcessor section with envMap, sys, and map. The key is a string lookup into the transformer.
 To implement your own Transformer you need to implement the Transformer class.
 
 ```java
 /**
- * Allows you to add your own custom source for the TransformerPostProcessor.
- * Whenever the TransformerPostProcessor sees a value ${name:key} the transform is selected that matches the same name
+ * Allows you to add your own custom source for the TransformerConfigNodeProcessor.
+ * Whenever the TransformerConfigNodeProcessor sees a value ${name:key} the transform is selected that matches the same name
  */
 public interface Transformer {
   /**
@@ -1589,8 +1601,91 @@ public interface Transformer {
 }
 ```
 
-To register your own default Transformer, add it to a file in META-INF\services\org.github.gestalt.config.post.process.transform.Transformer and add the full path to your Transformer.
+To register your own default Transformer, add it to a file in `META-INF\services\org.github.gestalt.config.processor.config.transform.Transformer` and add the full path to your Transformer.
 
-the annotation @ConfigPriority(100), specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}
+the annotation `@ConfigPriority(100)`, specifies the descending priority order to check your transformer when a substitution has been made without specifying the source ${key}
 
 
+# Result Processors
+
+Result Processors are used to modify the result of getting a configuration and decoding it.
+Each processor has an annotation `@ConfigPriority` so we run them in order passing the output of one Result Processor as the input to the next. 
+
+Gestalt has two core result processors `ErrorResultProcessor` and `DefaultResultProcessor`.
+The `ErrorResultProcessor` throws a `GestaltException` if there is an unrecoverable error. 
+The `DefaultResultProcessor` will convert the result into a default value if there is no result. 
+
+To implement your own Result Processors you need to inherit from ResultProcessor.
+
+To automatically register your own default `ResultProcessor`, add it to a file in `META-INF\services\org.github.gestalt.config.processor.result.ResultProcessor` and add the full package of classpath your `ResultProcessor`. 
+
+Alternatively, you can implement the interface and register it with the gestalt builder `addResultProcessors(List<ResultProcessor> resultProcessorSet)`.
+
+```java
+public interface ResultProcessor {
+
+  /**
+   * If your Result Processor needs access to the Gestalt Config.
+   *
+   * @param config Gestalt configuration
+   */
+  default void applyConfig(GestaltConfig config) {}
+
+  /**
+   * Returns the {@link GResultOf} with any processed results.
+   * You can modify the results, errors or any combination.
+   * If your post processor does nothing to the node, return the original node.
+   *
+   * @param results GResultOf to process.
+   * @param path path the object was located at
+   * @param isOptional if the result is optional (an Optional or has a default.
+   * @param defaultVal value to return in the event of failure.
+   * @param klass the type of object.
+   * @param tags any tags used to retrieve te object
+   * @return The validation results with either errors or a successful  obj.
+   * @param <T> Class of the object.
+   * @throws GestaltException for any exceptions while processing the results, such as if there are errors in the result.
+   */
+  <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, 
+                                  T defaultVal, TypeCapture<T> klass, Tags tags)
+    throws GestaltException;
+}
+```
+
+## Validation
+Validations are implemented as a Result Processor as well in `ValidationResultProcessor`.
+To ensure a simple API for validations it does not use the ResultProcessor interface but a `ConfigValidator` interface. 
+
+To automatically register your own default `ConfigValidator`, add it to a file in `META-INF\services\org.github.gestalt.config.processor.result.validation.ConfigValidator` and add the full package of classpath `ConfigValidator`. This is how `gestalt-validator-hibernate` automatically is discovered. 
+
+Alternatively, you can implement the interface and register it with the gestalt builder `addValidators(List<ConfigValidator> validatorsSet)`.  
+
+```java
+/**
+ * Interface for validating objects.
+ *
+ *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ */
+public interface ConfigValidator {
+
+    /**
+     * If your Validator needs access to the Gestalt Config.
+     *
+     * @param config Gestalt configuration
+     */
+    default void applyConfig(GestaltConfig config) {}
+
+    /**
+     * Returns the {@link GResultOf} with the validation results. If the object is ok it will return the result with no errors.
+     * If there are validation errors they will be returned.
+     *
+     * @param obj object to validate.
+     * @param path path the object was located at
+     * @param klass the type of object.
+     * @param tags any tags used to retrieve te object
+     * @return The validation results with either errors or a successful  obj.
+     * @param <T> Class of the object.
+     */
+    <T> GResultOf<T> validator(T obj, String path, TypeCapture<T> klass, Tags tags);
+}
+```

@@ -3,6 +3,7 @@ package org.github.gestalt.config.observations;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,5 +54,10 @@ public class TestObservationRecorder implements ObservationRecorder {
         } else {
             metrics.put(observation, new TestObservationRecord(observation, count + recoderId, false, tags));
         }
+    }
+
+    @Override
+    public <T> void recordObservation(GResultOf<T> results, String path, TypeCapture<T> klass, Tags tags, boolean isOptional) {
+
     }
 }

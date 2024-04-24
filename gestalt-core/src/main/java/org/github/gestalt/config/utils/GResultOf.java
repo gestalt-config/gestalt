@@ -19,10 +19,12 @@ import java.util.stream.Collectors;
 public final class GResultOf<T> {
     private final T results;
     private final List<ValidationError> errors;
+    private final boolean isDefault;
 
-    private GResultOf(T results, List<ValidationError> errors) {
+    private GResultOf(T results, List<ValidationError> errors, boolean isDefault) {
         this.results = results;
         this.errors = Objects.requireNonNullElse(errors, Collections.emptyList());
+        this.isDefault = isDefault;
     }
 
     /**
@@ -33,7 +35,19 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> result(T answer) {
-        return new GResultOf<>(answer, Collections.emptyList());
+        return new GResultOf<>(answer, Collections.emptyList(), false);
+    }
+
+    /**
+     * Create a GResultOf with a valid result.
+     *
+     * @param answer valid results
+     * @param isDefault if this is a default value
+     * @param <T>    type of GResultOf
+     * @return GResultOf
+     */
+    public static <T> GResultOf<T> result(T answer, boolean isDefault) {
+        return new GResultOf<>(answer, Collections.emptyList(), isDefault);
     }
 
     /**
@@ -44,7 +58,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> errors(List<ValidationError> errors) {
-        return new GResultOf<>(null, errors);
+        return new GResultOf<>(null, errors, false);
     }
 
     /**
@@ -55,7 +69,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> errors(ValidationError errors) {
-        return new GResultOf<>(null, Collections.singletonList(errors));
+        return new GResultOf<>(null, Collections.singletonList(errors), false);
     }
 
     /**
@@ -67,7 +81,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> resultOf(T answer, ValidationError errors) {
-        return new GResultOf<>(answer, List.of(errors));
+        return new GResultOf<>(answer, List.of(errors), false);
     }
 
     /**
@@ -79,7 +93,16 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> resultOf(T answer, List<ValidationError> errors) {
-        return new GResultOf<>(answer, errors);
+        return new GResultOf<>(answer, errors, false);
+    }
+
+    /**
+     * Get if this result is a default value (optional or provided default).
+     *
+     * @return this result is a default value (optional or provided default)
+     */
+    public boolean isDefault() {
+        return isDefault;
     }
 
     /**
