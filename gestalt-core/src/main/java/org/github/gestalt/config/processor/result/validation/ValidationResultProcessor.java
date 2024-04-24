@@ -81,7 +81,7 @@ public class ValidationResultProcessor implements ResultProcessor {
         return !klass.isAssignableFrom(String.class) && !ClassUtils.isPrimitiveOrWrapper(klass.getRawType());
     }
 
-    private <T> void updateValidationObservations(List<ValidationError> errors) {
+    private void updateValidationObservations(List<ValidationError> errors) {
         if (gestaltConfig != null && gestaltConfig.isObservationsEnabled() && observationManager != null) {
             observationManager.recordObservation("get.config.validation.error", errors.size(), Tags.of());
         }

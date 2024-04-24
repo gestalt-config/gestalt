@@ -101,7 +101,7 @@ public class GestaltBuilder {
     // If we should enable observations
     private Boolean observationsEnabled = null;
     // If we should enable Validation
-    private Boolean validationEnabled = false;
+    private boolean validationEnabled = false;
 
     // if we should add the core result processors.
     // The core result processors are central to Gestalt and should be added.
@@ -916,7 +916,7 @@ public class GestaltBuilder {
      * @param validationEnabled If we are to enable validation
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setValidationEnabled(Boolean validationEnabled) {
+    public GestaltBuilder setValidationEnabled(boolean validationEnabled) {
         this.validationEnabled = validationEnabled;
         return this;
     }
