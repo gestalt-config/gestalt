@@ -39,7 +39,7 @@ Let's dive in and explore how Gestalt can streamline your configuration manageme
 
 - **Java Modules:** Supports Java 9 modules with proper exports.
 
-- **Well Tested:** Our codebase boasts an impressive 89% code coverage, validated by over 1300 meaningful tests.
+- **Well Tested:** Our codebase boasts an impressive 90% code coverage, validated by over 1450 meaningful tests.
 
 
 
@@ -1422,6 +1422,9 @@ Gestalt gestalt = new GestaltBuilder()
 # Example code
 For more examples of how to use gestalt see the [gestalt-sample](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample/src/test) or for Java 17 + samples [gestalt-sample-java-latest](https://github.com/gestalt-config/gestalt/tree/main/gestalt-examples/gestalt-sample-java-latest/src/test)
 
+# Backwards Compatibility
+Gestalt tries its best to maintain backwards compatibility with external API's such as the builders, sources, decoders, and Gestalt itself. When changes are made, they are deprecated for several releases to give people a chance to migrate.
+For internal APIs backwards compatibility is not always guaranteed. Internal APIs are considered ConfigNodeProcessor, ResultProcessor, ConfigValidator, Transformer, PathMappers, ConfigLoaders and such that end users will rarely need to modify. Although they are exposed and meant to be used, it is rare that end users will need to modify them. For those advanced users, they may have extra burden of updating with releases.   
 
 # Architectural details
 This section is more for those wishing to know more about how Gestalt works, or how to add their own functionality. If you only wish to get configuration from Gestalt As Is, then feel free to skip it.
