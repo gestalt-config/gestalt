@@ -28,6 +28,7 @@ import org.github.gestalt.config.processor.result.DefaultResultProcessor;
 import org.github.gestalt.config.processor.result.ErrorResultProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
+import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -130,6 +131,7 @@ class GestaltBuilderTest {
             .setSecurityMaskingRule(new HashSet<>())
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
+            .setSecretConcealer(new SecretConcealerManager(Set.of(), it -> "****"))
             .setTreatWarningsAsErrors(true)
             .setTreatMissingValuesAsErrors(true)
             .setTreatMissingDiscretionaryValuesAsErrors(true)
