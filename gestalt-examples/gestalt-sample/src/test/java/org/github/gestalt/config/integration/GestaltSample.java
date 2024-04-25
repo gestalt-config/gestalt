@@ -1263,7 +1263,7 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addPostProcessor(new StringSubstitutionConfigNodeProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .addConfigNodeProcessor(new StringSubstitutionConfigNodeProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
             .build();
 
         gestalt.loadConfigs();

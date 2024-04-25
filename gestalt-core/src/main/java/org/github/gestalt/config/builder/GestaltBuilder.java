@@ -398,15 +398,15 @@ public class GestaltBuilder {
     }
 
     /**
-     * Sets the list of PostProcessors. Replaces any PostProcessors already set.
+     * Sets the list of ConfigNodeProcessor. Replaces any ConfigNodeProcessor already set.
      *
-     * @param configNodeProcessors list of postProcessors to run.
+     * @param configNodeProcessors list of ConfigNodeProcessor to run.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException exception if there are no postProcessors
+     * @throws GestaltConfigurationException exception if there are no ConfigNodeProcessor
      */
-    public GestaltBuilder setPostProcessors(List<ConfigNodeProcessor> configNodeProcessors) throws GestaltConfigurationException {
+    public GestaltBuilder setConfigNodeProcessors(List<ConfigNodeProcessor> configNodeProcessors) throws GestaltConfigurationException {
         if (configNodeProcessors == null || configNodeProcessors.isEmpty()) {
-            throw new GestaltConfigurationException("No PostProcessors provided while setting");
+            throw new GestaltConfigurationException("No ConfigNodeProcessor provided while setting");
         }
         this.configNodeProcessors = configNodeProcessors;
 
@@ -414,15 +414,15 @@ public class GestaltBuilder {
     }
 
     /**
-     * List of PostProcessor to add to the builder.
+     * List of ConfigNodeProcessor to add to the builder.
      *
-     * @param configNodeProcessors list of PostProcessor to add.
+     * @param configNodeProcessors list of ConfigNodeProcessor to add.
      * @return GestaltBuilder builder
-     * @throws GestaltConfigurationException no PostProcessor provided
+     * @throws GestaltConfigurationException no ConfigNodeProcessor provided
      */
-    public GestaltBuilder addPostProcessors(List<ConfigNodeProcessor> configNodeProcessors) throws GestaltConfigurationException {
+    public GestaltBuilder addConfigNodeProcessors(List<ConfigNodeProcessor> configNodeProcessors) throws GestaltConfigurationException {
         if (configNodeProcessors == null || configNodeProcessors.isEmpty()) {
-            throw new GestaltConfigurationException("No PostProcessor provided while adding");
+            throw new GestaltConfigurationException("No ConfigNodeProcessor provided while adding");
         }
         this.configNodeProcessors.addAll(configNodeProcessors);
 
@@ -430,13 +430,13 @@ public class GestaltBuilder {
     }
 
     /**
-     * Add a single PostProcessor to the builder.
+     * Add a single ConfigNodeProcessor to the builder.
      *
-     * @param configNodeProcessor add a single PostProcessor
+     * @param configNodeProcessor add a single ConfigNodeProcessor
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder addPostProcessor(ConfigNodeProcessor configNodeProcessor) {
-        Objects.requireNonNull(configNodeProcessor, "PostProcessor should not be null");
+    public GestaltBuilder addConfigNodeProcessor(ConfigNodeProcessor configNodeProcessor) {
+        Objects.requireNonNull(configNodeProcessor, "ConfigNodeProcessor should not be null");
         this.configNodeProcessors.add(configNodeProcessor);
         return this;
     }

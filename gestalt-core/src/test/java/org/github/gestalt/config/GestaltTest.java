@@ -487,7 +487,7 @@ class GestaltTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .useCacheDecorator(false)
-            .addPostProcessor(new TestConfigNodeProcessor("aaa"))
+            .addConfigNodeProcessor(new TestConfigNodeProcessor("aaa"))
             .build();
 
         gestalt.loadConfigs();
@@ -613,8 +613,8 @@ class GestaltTest {
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .useCacheDecorator(false)
-            .addPostProcessor(new TestConfigNodeProcessorSwapNodes("path1", "path2"))
-            .addPostProcessor(new TestConfigNodeProcessorSwapNodes("prop1", "prop2"))
+            .addConfigNodeProcessor(new TestConfigNodeProcessorSwapNodes("path1", "path2"))
+            .addConfigNodeProcessor(new TestConfigNodeProcessorSwapNodes("prop1", "prop2"))
             .build();
 
         gestalt.loadConfigs();

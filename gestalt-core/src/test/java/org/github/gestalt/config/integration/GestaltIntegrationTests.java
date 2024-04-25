@@ -476,7 +476,7 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addPostProcessor(new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
+            .addConfigNodeProcessor(new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
 
         gestalt.loadConfigs();

@@ -108,9 +108,9 @@ class GestaltBuilderTest {
             .setConfigNodeService(configNodeManager)
             .addCoreReloadListener(coreReloadListener)
             .addCoreReloadListener(List.of())
-            .addPostProcessors(Collections.singletonList(
+            .addConfigNodeProcessors(Collections.singletonList(
                 new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
-            .setPostProcessors(Collections.singletonList(
+            .setConfigNodeProcessors(Collections.singletonList(
                 new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
@@ -592,14 +592,14 @@ class GestaltBuilderTest {
     public void buildBadPostProcessor() {
         GestaltBuilder builder = new GestaltBuilder();
         try {
-            builder.addPostProcessors(null);
+            builder.addConfigNodeProcessors(null);
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
         }
 
         try {
-            builder.setPostProcessors(null);
+            builder.setConfigNodeProcessors(null);
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
@@ -610,14 +610,14 @@ class GestaltBuilderTest {
     public void buildBadPostProcessorEmpty() {
         GestaltBuilder builder = new GestaltBuilder();
         try {
-            builder.addPostProcessors(List.of());
+            builder.addConfigNodeProcessors(List.of());
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
         }
 
         try {
-            builder.setPostProcessors(List.of());
+            builder.setConfigNodeProcessors(List.of());
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
             Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
@@ -790,8 +790,8 @@ class GestaltBuilderTest {
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .addDefaultPostProcessors()
-            .addPostProcessor(processor1)
-            .addPostProcessors(List.of(processor2, processor3))
+            .addConfigNodeProcessor(processor1)
+            .addConfigNodeProcessors(List.of(processor2, processor3))
             .build();
 
         gestalt.loadConfigs();
