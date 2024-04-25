@@ -595,14 +595,14 @@ class GestaltBuilderTest {
             builder.addConfigNodeProcessors(null);
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
-            Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
+            Assertions.assertEquals("No ConfigNodeProcessor provided while adding", e.getMessage());
         }
 
         try {
             builder.setConfigNodeProcessors(null);
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
-            Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
+            Assertions.assertEquals("No ConfigNodeProcessor provided while setting", e.getMessage());
         }
     }
 
@@ -613,14 +613,14 @@ class GestaltBuilderTest {
             builder.addConfigNodeProcessors(List.of());
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
-            Assertions.assertEquals("No PostProcessor provided while adding", e.getMessage());
+            Assertions.assertEquals("No ConfigNodeProcessor provided while adding", e.getMessage());
         }
 
         try {
             builder.setConfigNodeProcessors(List.of());
             Assertions.fail("Should not hit this");
         } catch (GestaltConfigurationException e) {
-            Assertions.assertEquals("No PostProcessors provided while setting", e.getMessage());
+            Assertions.assertEquals("No ConfigNodeProcessor provided while setting", e.getMessage());
         }
     }
 
