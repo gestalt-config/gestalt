@@ -24,6 +24,7 @@ public interface ConfigNodeService {
      * @param lexer the sentence lexer used to rebuild normalized paths.
      */
     void setLexer(SentenceLexer lexer);
+
     /**
      * Add a new node, if a root already exists merge the nodes.
      * When adding a node and merging, the new node always takes precedence.
