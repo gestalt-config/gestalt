@@ -26,7 +26,9 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
+import org.github.gestalt.config.secret.rules.MD5SecretObfuscator;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
+import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
@@ -42,6 +44,7 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.LogManager;
 
@@ -515,7 +518,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
@@ -546,7 +549,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
@@ -578,7 +581,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = Mockito.mock(ConfigNodeManager.class);
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltConfig config = new GestaltConfig();
         config.setTreatMissingValuesAsErrors(false);
@@ -839,7 +842,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             List.of(),
@@ -860,7 +863,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         Gestalt gestalt = new GestaltCore(configLoaderRegistry,
             null,
@@ -888,7 +891,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
@@ -923,7 +926,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
@@ -954,7 +957,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         Mockito.when(configLoaderRegistry.getLoader(Mockito.anyString())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(
@@ -1025,7 +1028,7 @@ class GestaltTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()),
@@ -1235,7 +1238,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
@@ -1298,7 +1301,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
@@ -1333,7 +1336,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
@@ -1405,7 +1408,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         CoreListener coreListener = new CoreListener();
@@ -1475,7 +1478,7 @@ class GestaltTest {
         CoreListener coreListener = new CoreListener();
         coreReloadListenersContainer.registerListener(coreListener);
         ConfigSourcePackage source = MapConfigSourceBuilder.builder().setCustomConfig(configs).build();
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         GestaltCore gestalt = new GestaltCore(configLoaderRegistry,
             List.of(source),
@@ -1599,7 +1602,7 @@ class GestaltTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
 
         SentenceLexer lexer = new PathLexer(".");
-        SecretConcealer secretConcealer = new SecretConcealer(Set.of("secret"), "*****");
+        SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "*****");
 
         CoreReloadListenersContainer coreReloadListenersContainer = Mockito.mock();
 
@@ -1673,6 +1676,33 @@ class GestaltTest {
 
         Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='*****'}, salt=LeafNode{value='*****'}, " +
             "port=LeafNode{value='abcdef'}, secret=MapNode{user=LeafNode{value='*****'}}, uri=LeafNode{value='my.sql.com'}}}", rootNode);
+    }
+
+    @Test
+    public void testSecretMaskingHash() throws GestaltException, NoSuchAlgorithmException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "abcdef");
+        configs.put("db.uri", "my.sql.com");
+        configs.put("db.salt", "pepper");
+        configs.put("db.secret.user", "12345");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .setSecretObfuscation(new MD5SecretObfuscator())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        String rootNode = gestalt.debugPrint(Tags.of());
+
+        Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='098f6bcd4621d373cade4e832627b4f6'}, " +
+            "salt=LeafNode{value='b3f952d5d9adea6f63bee9d4c6fceeaa'}, port=LeafNode{value='abcdef'}, " +
+            "secret=MapNode{user=LeafNode{value='827ccb0eea8a706c4c34a16891f84e7b'}}, uri=LeafNode{value='my.sql.com'}}}", rootNode);
     }
 
     @Test

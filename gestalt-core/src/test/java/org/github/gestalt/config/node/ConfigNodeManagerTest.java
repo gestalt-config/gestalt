@@ -6,6 +6,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
+import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.TestSource;
 import org.github.gestalt.config.tag.Tags;
@@ -2121,15 +2122,15 @@ class ConfigNodeManagerTest {
                 "tags: Tags{[Tag{key='environment', value='stage'}]} = MapNode{admin=ArrayNode{" +
                 "values=[LeafNode{value='Jill'}, LeafNode{value='Jane'}]}, db=MapNode{port=LeafNode{value='3306'}, " +
                 "name=LeafNode{value='test'}}}",
-            configNodeManager.debugPrintRoot(new SecretConcealer(Set.of(), "***")));
+            configNodeManager.debugPrintRoot(new SecretConcealerManager(Set.of(), it -> "***")));
 
         Assertions.assertEquals("MapNode{admin=ArrayNode{values=[LeafNode{value='John'}, LeafNode{value='Steve'}]}, " +
                 "db=MapNode{port=LeafNode{value='3306'}, name=LeafNode{value='test'}}}",
-            configNodeManager.debugPrintRoot(Tags.environment("dev"), new SecretConcealer(Set.of(), "***")));
+            configNodeManager.debugPrintRoot(Tags.environment("dev"), new SecretConcealerManager(Set.of(), it -> "***")));
 
         Assertions.assertEquals("MapNode{admin=ArrayNode{values=[LeafNode{value='Jill'}, LeafNode{value='Jane'}]}, " +
                 "db=MapNode{port=LeafNode{value='3306'}, name=LeafNode{value='test'}}}",
-            configNodeManager.debugPrintRoot(Tags.environment("stage"), new SecretConcealer(Set.of(), "***")));
+            configNodeManager.debugPrintRoot(Tags.environment("stage"), new SecretConcealerManager(Set.of(), it -> "***")));
     }
 
     public static class TestToken extends Token {

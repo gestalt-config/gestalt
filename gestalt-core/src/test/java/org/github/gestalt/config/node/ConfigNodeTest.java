@@ -1,7 +1,7 @@
 package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.lexer.PathLexer;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
+import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -203,7 +203,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{abc=LeafNode{value='*****'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}]}}",
-            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****"), new PathLexer()));
+            objectNode.printer("", new SecretConcealerManager(Set.of("abc"), it -> "*****"), new PathLexer()));
     }
 
     @Test
@@ -216,7 +216,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{abc=LeafNode{value='*****'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}]}}",
-            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****"), new PathLexer()));
+            objectNode.printer("", new SecretConcealerManager(Set.of("abc"), it -> "*****"), new PathLexer()));
     }
 
     @Test
@@ -228,7 +228,7 @@ class ConfigNodeTest {
         MapNode objectNode = new MapNode(mapNode);
 
         Assertions.assertEquals("MapNode{abc='null', def=ArrayNode{values=[LeafNode{value='a'}, LeafNode{value='b'}]}}",
-            objectNode.printer("", new SecretConcealer(Set.of("abc"), "*****"), new PathLexer()));
+            objectNode.printer("", new SecretConcealerManager(Set.of("abc"), it -> "*****"), new PathLexer()));
     }
 
     @Test
@@ -242,7 +242,7 @@ class ConfigNodeTest {
 
         Assertions.assertEquals("MapNode{abc=LeafNode{value='null'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}, LeafNode{value='null'}]}, hij='null'}",
-            objectNode.printer("", new SecretConcealer(Set.of("aaa"), "*****"), new PathLexer()));
+            objectNode.printer("", new SecretConcealerManager(Set.of("aaa"), it -> "*****"), new PathLexer()));
     }
 }
 

@@ -30,6 +30,8 @@ import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
+import org.github.gestalt.config.secret.rules.SecretConcealerManager;
+import org.github.gestalt.config.secret.rules.SecretObfuscator;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
@@ -93,6 +95,7 @@ public class GestaltBuilder {
             "ssl", "token", "truststore"));
     private String secretMask = "*****";
     private SecretConcealer secretConcealer;
+    private SecretObfuscator secretObfuscator = (it) -> secretMask;
 
     private Boolean treatWarningsAsErrors = null;
     private Boolean treatMissingArrayIndexAsError = null;
@@ -712,6 +715,30 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set your own custom Secret Concealer. If you set your own custom Secrete Concealer,
+     * you need to set your own rules and SecretObfuscation. The builder will not add the rules to a user supplied SecretConcealer
+     *
+     * @param secretConcealer your own custom Secret Concealer.
+     *  @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSecretConcealer(SecretConcealer secretConcealer) {
+        this.secretConcealer = secretConcealer;
+        return this;
+    }
+
+    /**
+     * Set your own custom Secret Obfuscator. Used to determine how to mask secrets.
+     *
+     * @param secretObfuscator your own custom Secret Obfuscator.
+     *  @return GestaltBuilder builder
+     */
+    public GestaltBuilder setSecretObfuscation(SecretObfuscator secretObfuscator) {
+        this.secretObfuscator = secretObfuscator;
+        return this;
+    }
+
+
+    /**
      * Sets the ResultsProcessorManager if you want to provide your own. Otherwise, a default is provided.
      *
      * <p>If there are any ResultProcessors, it will not add the default ResultsProcessors.
@@ -1152,7 +1179,9 @@ public class GestaltBuilder {
             throw new GestaltConfigurationException("No sources provided");
         }
 
-        secretConcealer = new SecretConcealer(securityRules, secretMask);
+        if (secretConcealer == null) {
+            secretConcealer = new SecretConcealerManager(securityRules, secretObfuscator);
+        }
 
         gestaltConfig = rebuildConfig();
         gestaltConfig.registerModuleConfig(modules);

@@ -8,25 +8,25 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SecretConcealerTest {
-    private SecretConcealer secretConcealer;
+class SecretConcealerManagerTest {
+    private SecretConcealerManager secretConcealer;
 
     @BeforeEach
     void setUp() {
         Set<String> secretRegex = new HashSet<>();
         secretRegex.add(".*secret.*"); // Sample secret regex
-        secretConcealer = new SecretConcealer(secretRegex, "***");
+        secretConcealer = new SecretConcealerManager(secretRegex, it -> "***");
     }
 
     @Test
     void testGetMask() {
-        assertEquals("***", secretConcealer.getMask());
+        assertEquals("***", secretConcealer.getMask().obfuscator("test"));
     }
 
     @Test
     void testAddSecretRule() {
         secretConcealer.addSecretRule(".*password.*");
-        assertEquals("***", secretConcealer.getMask()); // Ensure mask remains unchanged
+        assertEquals("***", secretConcealer.getMask().obfuscator("test")); // Ensure mask remains unchanged
     }
 
     @Test

@@ -40,6 +40,7 @@ import org.github.gestalt.config.processor.config.transform.StringSubstitutionCo
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
+import org.github.gestalt.config.secret.rules.MD5SecretObfuscator;
 import org.github.gestalt.config.source.*;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.SystemWrapper;
@@ -68,6 +69,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.LogManager;
 
@@ -1638,6 +1640,33 @@ public class GestaltSample {
         Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
         Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
         Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+    }
+
+    @Test
+    public void testSecretMaskingHash() throws GestaltException, NoSuchAlgorithmException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "abcdef");
+        configs.put("db.uri", "my.sql.com");
+        configs.put("db.salt", "pepper");
+        configs.put("db.secret.user", "12345");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .setSecretObfuscation(new MD5SecretObfuscator())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        String rootNode = gestalt.debugPrint(Tags.of());
+
+        Assertions.assertEquals("MapNode{db=MapNode{password=LeafNode{value='098f6bcd4621d373cade4e832627b4f6'}, " +
+            "salt=LeafNode{value='b3f952d5d9adea6f63bee9d4c6fceeaa'}, port=LeafNode{value='abcdef'}, " +
+            "secret=MapNode{user=LeafNode{value='827ccb0eea8a706c4c34a16891f84e7b'}}, uri=LeafNode{value='my.sql.com'}}}", rootNode);
     }
 
     @Test
