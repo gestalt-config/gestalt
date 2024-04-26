@@ -26,9 +26,9 @@ import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
-import org.github.gestalt.config.post.process.transform.RandomTransformer;
-import org.github.gestalt.config.post.process.transform.SystemPropertiesTransformer;
-import org.github.gestalt.config.post.process.transform.TransformerPostProcessor;
+import org.github.gestalt.config.processor.config.transform.RandomTransformer;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.source.*;
@@ -726,7 +726,8 @@ public class GestaltConfigTest {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addPostProcessor(new TransformerPostProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .addConfigNodeProcessor(
+                new StringSubstitutionConfigNodeProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
             .build();
 
         gestalt.loadConfigs();
@@ -862,7 +863,7 @@ public class GestaltConfigTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setMetricsEnabled(true)
+            .setObservationsEnabled(true)
             .addModuleConfig(MicrometerModuleConfigBuilder.builder()
                 .setMeterRegistry(registry)
                 .setPrefix("myApp")
