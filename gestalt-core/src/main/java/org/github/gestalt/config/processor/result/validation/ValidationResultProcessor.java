@@ -1,6 +1,5 @@
 package org.github.gestalt.config.processor.result.validation;
 
-import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -19,9 +18,6 @@ import java.util.stream.Collectors;
 
 @ConfigPriority(300)
 public class ValidationResultProcessor implements ResultProcessor {
-
-    // using the GestaltCore logger
-    private static final System.Logger logger = System.getLogger(GestaltCore.class.getName());
 
     private GestaltConfig gestaltConfig;
     private ObservationManager observationManager;

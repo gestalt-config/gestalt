@@ -17,7 +17,7 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.util.Collection;
 
@@ -65,7 +65,7 @@ class S3ConfigSourceDockerTest {
     }
 
     @Test
-    void loadFile() throws GestaltException {
+    void loadFile() throws GestaltException, IOException {
 
         final File uploadFile = new File(UPLOAD_FILE_NAME);
 
@@ -77,7 +77,11 @@ class S3ConfigSourceDockerTest {
         S3ConfigSource source = new S3ConfigSource(s3Client, BUCKET_NAME, uploadFile.getName());
 
         Assertions.assertTrue(source.hasStream());
-        Assertions.assertNotNull(source.loadStream());
+
+        var allBytes = source.loadStream().readAllBytes();
+
+        InputStream fileStream = new FileInputStream(uploadFile);
+        Assertions.assertEquals(new String(allBytes), new String(fileStream.readAllBytes()));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.secret.rules;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,7 +20,7 @@ public class MD5SecretObfuscator implements SecretObfuscator {
 
     @Override
     public String obfuscator(String value) {
-        byte[] messageDigest = md.digest(value.getBytes());
+        byte[] messageDigest = md.digest(value.getBytes(Charset.defaultCharset()));
 
         return convertToHex(messageDigest);
     }
