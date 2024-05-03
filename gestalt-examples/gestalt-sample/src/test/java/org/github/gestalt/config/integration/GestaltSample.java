@@ -2,7 +2,6 @@ package org.github.gestalt.config.integration;
 
 
 import com.adobe.testing.s3mock.testcontainers.S3MockContainer;
-import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
