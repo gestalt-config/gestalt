@@ -1,4 +1,4 @@
-// Module info definition for gestalt s3 integration
+// Module info definition for gestalt aws integration
 @SuppressWarnings({ "requires-automatic", "requires-transitive-automatic" })
 module org.github.gestalt.aws {
     requires org.github.gestalt.core;

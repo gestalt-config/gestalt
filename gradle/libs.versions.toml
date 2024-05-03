@@ -48,7 +48,7 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.28.0"
+gestalt = "0.29.0"
 # Gradle utility
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"
@@ -125,6 +125,7 @@ gradle-versions-update = { module = "nl.littlerobots.vcu:plugin", version.ref = 
 gradle-error-prone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
 # Gestalt for integration tests
 gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
+gestalt-azure = { module = "com.github.gestalt-config:gestalt-azure", version.ref = "gestalt" }
 gestalt-cdi = { module = "com.github.gestalt-config:gestalt-cdi", version.ref = "gestalt" }
 gestalt-core = { module = "com.github.gestalt-config:gestalt-core", version.ref = "gestalt" }
 gestalt-git = { module = "com.github.gestalt-config:gestalt-git", version.ref = "gestalt" }
