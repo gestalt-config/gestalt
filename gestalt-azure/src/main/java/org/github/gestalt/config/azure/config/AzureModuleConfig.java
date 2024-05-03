@@ -86,7 +86,7 @@ public final class AzureModuleConfig implements GestaltModuleConfig {
      * If this is not set, then you must provide the keyVaultUri and credential
      * it will be constructed using defaults.
      *
-     * @param secretsClient Set the SecretsManagerClient to use to communicate with AWS.
+     * @param secretsClient Set the SecretsManagerClient to use to communicate with Azure.
      */
     public void setSecretsClient(SecretClient secretsClient) {
         this.secretClient = secretsClient;

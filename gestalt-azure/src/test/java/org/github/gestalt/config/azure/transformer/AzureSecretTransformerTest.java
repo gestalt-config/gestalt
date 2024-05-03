@@ -129,6 +129,38 @@ class AzureSecretTransformerTest {
     }
 
     @Test
+    void processWithOutCredentials() throws GestaltConfigurationException {
+        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class,
+            (mock, context) -> {
+                when(mock.buildClient()).thenReturn(secretClient);
+                when(mock.vaultUrl(any())).thenReturn(mock);
+                when(mock.credential(any())).thenReturn(mock);
+            })) {
+
+            AzureSecretTransformer transform = new AzureSecretTransformer();
+            GestaltConfig gestaltConfig = new GestaltConfig();
+            AzureModuleConfig azureModule = AzureModuleBuilder
+                .builder()
+                .setKeyVaultUri("myurl")
+                .build();
+
+            gestaltConfig.registerModuleConfig(azureModule);
+            ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null);
+            transform.applyConfig(config);
+
+            when(secretClient.getSecret("secret")).thenReturn(new KeyVaultSecret("secret", "hello world"));
+
+            var results = transform.process("test", "secret", "azureSecret:secret");
+
+            Assertions.assertTrue(results.hasResults());
+            Assertions.assertFalse(results.hasErrors());
+
+            Assertions.assertEquals("hello world", results.results());
+
+        }
+    }
+
+    @Test
     void processSecretsClient() throws GestaltConfigurationException {
         AzureSecretTransformer transform = new AzureSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();

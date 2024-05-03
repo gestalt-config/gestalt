@@ -5,8 +5,8 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 
 /**
- * Builder for creating AWS specific configuration.
- * You can either specify the region and Gestalt will use defaults to build the SecretsManagerClient
+ * Builder for creating Azure specific configuration.
+ * You can either specify the keyVaultUri and Gestalt will use defaults to build the SecretsManagerClient
  * or you can provide a SecretsManagerClient yourself.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
@@ -22,9 +22,9 @@ public final class AzureModuleBuilder {
 
 
     /**
-     * Create a builder to create the AWS config.
+     * Create a builder to create the Azure config.
      *
-     * @return a builder to create the AWS config.
+     * @return a builder to create the Azure config.
      */
     public static AzureModuleBuilder builder() {
         return new AzureModuleBuilder();
@@ -82,7 +82,7 @@ public final class AzureModuleBuilder {
 
     /**
      * Set the SecretClient to use to communicate with Azure.
-     * If this is not set, then you must provide the region, and
+     * If this is not set, then you must provide the keyVaultUri, and
      * it will be constructed using defaults.
      *
      * @param secretsClient Set the SecretsManagerClient to use to communicate with Azure.
@@ -94,9 +94,9 @@ public final class AzureModuleBuilder {
     }
 
     public AzureModuleConfig build() throws GestaltConfigurationException {
-        if ((keyVaultUri == null || credential == null) && secretClient == null) {
+        if (keyVaultUri == null && secretClient == null) {
             throw new GestaltConfigurationException("AzureModuleConfig was built but one of the secret client " +
-                "or the vault endpoint and credentials must be provided");
+                "or the vault endpoint must be provided");
         }
 
         AzureModuleConfig azureModuleConfig = new AzureModuleConfig();

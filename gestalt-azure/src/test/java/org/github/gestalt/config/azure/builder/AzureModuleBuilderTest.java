@@ -83,10 +83,8 @@ class AzureModuleBuilderTest {
         AzureModuleBuilder builder = AzureModuleBuilder.builder();
 
         GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, builder::build);
-        Assertions.assertEquals("AzureModuleConfig was built but one of the secret client or the vault endpoint and " +
-                "credentials must be provided",
+        Assertions.assertEquals("AzureModuleConfig was built but one of the secret client or the vault endpoint must be provided",
             e.getMessage());
     }
-
 
 }

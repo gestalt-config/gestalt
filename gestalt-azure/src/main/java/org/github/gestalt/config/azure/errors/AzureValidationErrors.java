@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
 
 /**
- * Validation errors for AWS Module.
+ * Validation errors for Azure Module.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */

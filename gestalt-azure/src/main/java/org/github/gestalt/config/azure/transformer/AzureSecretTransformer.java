@@ -12,7 +12,7 @@ import org.github.gestalt.config.processor.config.transform.Transformer;
 import org.github.gestalt.config.utils.GResultOf;
 
 /**
- * Allows you to substitute an aws secret using ${azureSecret:secretName}.
+ * Allows you to substitute an Azure secret using ${azureSecret:secretName}.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
@@ -32,7 +32,7 @@ public final class AzureSecretTransformer implements Transformer {
 
         if (moduleConfig == null) {
             logger.log(System.Logger.Level.WARNING, "AzureModuleConfig has not been registered. " +
-                "if you wish to use the aws module with string substitution ${azureSecret:key} " +
+                "if you wish to use the Azure module with string substitution ${azureSecret:key} " +
                 "then you must register an AzureModuleConfig config moduleConfig using the builder");
         } else {
             if (moduleConfig.hasSecretsClient()) {
