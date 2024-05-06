@@ -1,5 +1,13 @@
 package org.github.gestalt.config.integration;
 
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobItem;
 import com.github.gestalt.config.validation.hibernate.builder.HibernateModuleBuilder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -19,6 +27,8 @@ import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.aws.config.AWSBuilder;
 import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
+import org.github.gestalt.config.azure.blob.BlobConfigSourceBuilder;
+import org.github.gestalt.config.azure.config.AzureModuleBuilder;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
@@ -36,6 +46,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.vault.config.VaultBuilder;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -421,6 +432,99 @@ public class GestaltConfigTest {
 
         validateResults(gestalt);
 
+
+        SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
+        Assertions.assertTrue(booking.isEnabled());
+        Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
+        Assertions.assertEquals(443, booking.getService().getPort());
+        Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+
+    // This example shows a how to load a source from an Blob bucket.
+    // must be logged in to run the test
+    // azure configure
+    // to log in you must run winget install --id=Microsoft.AzureCLI or install if for your OS
+    // ro instal Azure CLI: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli.
+    // then run
+    // az login
+    public void integrationTestAzure() throws GestaltException {
+        // Create a map of configurations we wish to inject.
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+
+        // Load the default property files from resources.
+        // Contents of the dev.properties on aws Storage, note the use of ${awsSecret:booking-host:host}
+        // the secrets "booking-host:host" value is "booking.host.name"
+        /*
+        db.hosts[0].url=jdbc:postgresql://dev.host.name1:5432/mydb
+        db.hosts[1].url=jdbc:postgresql://dev.host.name2:5432/mydb
+        db.hosts[2].url=jdbc:postgresql://dev.host.name3:5432/mydb
+        db.connectionTimeout=600
+
+        http.pool.maxTotal=1000
+        http.pool.maxPerRoute=50
+
+        subservice.booking.service.isEnabled=true
+        subservice.booking.service.host=https://dev.${azureSecret:bookingHost}
+        subservice.booking.service.port=443
+        subservice.booking.service.path=booking
+        subservice.booking.isEnabled=true
+
+        subservice.search.service.isEnabled=false
+
+        admin.user=Peter, Kim, Steve
+        admin.overrideEnabled=true
+         */
+
+        String azureAccount = System.getenv("AZURE_ACCOUNT");
+
+        var credentials = new DefaultAzureCredentialBuilder().build();
+        // verify we are logged in and have access
+        //The secret bookingHost = booking.host.name
+        SecretClient secretClient = new SecretClientBuilder()
+            .vaultUrl("https://" + azureAccount+ ".vault.azure.net")
+            .credential(credentials)
+            .buildClient();
+
+        //ensure we are logged in and can access azure
+        Assertions.assertEquals("booking.host.name", secretClient.getSecret("bookingHost").getValue());
+
+        // to generate the SAS go to the Azure portal, storage accounts, select the storage account the the data,
+        // then generate a Shared access signature
+        String azureSASUrl = System.getenv("AZURE_SAS_URL");
+        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
+            .endpoint(azureSASUrl)
+            .buildClient();
+
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient("gestalt");
+
+        // ensure we have access and can view the item.
+        for (BlobItem blobItem : containerClient.listBlobs()) {
+            Assertions.assertEquals("dev.properties", blobItem.getName());
+        }
+
+        BlobClient blobClient = containerClient.getBlobClient("dev.properties");
+
+        // using the builder to layer on the configuration files.
+        // The later ones layer on and over write any values in the previous
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(ClassPathConfigSourceBuilder.builder().setResource("/default.properties").build())
+            .addSource(BlobConfigSourceBuilder.builder()
+                .setBlobClient(blobClient)
+                .build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addModuleConfig(AzureModuleBuilder.builder().setSecretClient(secretClient).build())
+            .build();
+
+        // Load the configurations, this will throw exceptions if there are any errors.
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
 
         SubService booking = gestalt.getConfig("subservice.booking", TypeCapture.of(SubService.class));
         Assertions.assertTrue(booking.isEnabled());

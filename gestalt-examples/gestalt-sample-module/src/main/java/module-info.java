@@ -4,6 +4,7 @@
 module org.github.gestalt.config.integration {
 
     requires org.github.gestalt.aws;
+    requires org.github.gestalt.azure;
     requires org.github.gestalt.core;
     requires org.github.gestalt.git;
     requires org.github.gestalt.google;
@@ -35,6 +36,9 @@ module org.github.gestalt.config.integration {
 
     requires vault.java.driver;
     requires org.assertj.core;
+    requires com.azure.identity;
+    requires com.azure.security.keyvault.secrets;
+    requires com.azure.storage.blob;
 
     exports org.github.gestalt.config.integration;
 

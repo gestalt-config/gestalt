@@ -34,6 +34,7 @@ public class MainClass {
         if( Boolean.parseBoolean(System.getenv("LOCAL_TEST"))) {
             configTest.integrationTestGoogleCloud();
             configTest.integrationTestAws();
+            configTest.integrationTestAzure();
         }
 
         if( Boolean.parseBoolean(System.getenv("GESTALT_VAULT_TEST"))) {
@@ -44,5 +45,7 @@ public class MainClass {
         kotlinTests.integrationTest();
         kotlinTests.integrationTestEnvVars();
         kotlinTests.integrationTestWithTypeOf();
+
+        System.out.println("Completed validations");
     }
 }
