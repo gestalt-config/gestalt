@@ -1,6 +1,8 @@
 plugins {
     id("gestalt.java-common-conventions")
+    id("gestalt.java-test-conventions")
     id("gestalt.kotlin-common-conventions")
+    application
 }
 
 repositories {
@@ -8,8 +10,15 @@ repositories {
     mavenCentral()
 }
 
+application {
+    mainClass = "org.github.gestalt.config.integration.MainClass"
+}
+
+
+
 dependencies {
     implementation(libs.gestalt.aws)
+    implementation(libs.gestalt.azure)
     implementation(libs.gestalt.core)
     implementation(libs.gestalt.git)
     implementation(libs.gestalt.google)
