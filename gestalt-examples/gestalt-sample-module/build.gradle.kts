@@ -14,8 +14,6 @@ application {
     mainClass = "org.github.gestalt.config.integration.MainClass"
 }
 
-
-
 dependencies {
     implementation(libs.gestalt.aws)
     implementation(libs.gestalt.azure)
