@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     jacocoAggregation(project(":gestalt-aws"))
+    jacocoAggregation(project(":gestalt-azure"))
     jacocoAggregation(project(":gestalt-cdi"))
     jacocoAggregation(project(":gestalt-core"))
     jacocoAggregation(project(":gestalt-git"))
