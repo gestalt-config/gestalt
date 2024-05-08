@@ -1,6 +1,5 @@
 plugins {
     id("gestalt.java-common-conventions")
-    id("gestalt.java-test-conventions")
     id("gestalt.kotlin-common-conventions")
     application
 }
