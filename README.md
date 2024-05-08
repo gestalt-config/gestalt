@@ -11,7 +11,7 @@ Gestalt offers a comprehensive solution to the challenges of configuration manag
 This documentation will guide you through the key features of Gestalt, demonstrate how to get started quickly, and provide detailed insights into its capabilities. Whether you're a seasoned Java developer or just beginning your journey, Gestalt will empower you to manage your application configurations effectively and efficiently.
 
 Let's dive in and explore how Gestalt can streamline your configuration management workflow and help you build more robust and adaptable software.
-
+ 
 # Features
 - **Automatic decoding based on type:** Supports decoding into bean classes, lists, sets, or primitive types. This simplifies configuration retrieval.
 
