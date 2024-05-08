@@ -14,11 +14,11 @@ cdi = "4.0.1"
 weld = "4.0.3.Final"
 weldCore = "5.1.2.Final"
 #encoding/decoding
-jackson = "2.17.0"
+jackson = "2.17.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.34"
-gcpLibraries = "26.37.0"
+awsBom = "2.25.46"
+gcpLibraries = "26.38.0"
 azure = "1.2.23"
 # vault
 vault = "6.2.0"
@@ -40,7 +40,7 @@ koTestAssertions = "5.8.1"
 awsMock = "2.17.0"
 testcontainers = "1.19.7"
 # static code analysis
-errorprone = "2.26.1"
+errorprone = "2.27.1"
 gradleErrorProne = "3.1.0"
 detekt = "1.23.6"
 checkStyle = "10.10.0"
@@ -53,7 +53,7 @@ gestalt = "0.29.0"
 gradleVersions = "0.51.0"
 gitVersions = "3.0.0"
 gradleVersionsUpdate = "0.8.4"
-com-fasterxml-jackson-datatype = "2.17.0"
+com-fasterxml-jackson-datatype = "2.17.1"
 
 [libraries]
 # Kotlin
@@ -144,11 +144,11 @@ gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref 
 
 [bundles]
 jackson = [
-  "jackson-core",
-  "jackson-databind",
-  "jackson-dataformat-yaml",
-  "jackson-java8",
-  "jackson-jsr310",
+    "jackson-core",
+    "jackson-databind",
+    "jackson-dataformat-yaml",
+    "jackson-java8",
+    "jackson-jsr310",
 ]
 
 [plugins]
