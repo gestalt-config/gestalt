@@ -27,7 +27,7 @@ public final class ArrayNode implements ConfigNode {
      * @param values list of nodes
      */
     public ArrayNode(List<ConfigNode> values) {
-        this.values = Objects.requireNonNullElse(values, Collections.emptyList());
+        this.values = Collections.unmodifiableList(Objects.requireNonNullElse(values, Collections.emptyList()));
     }
 
     @Override

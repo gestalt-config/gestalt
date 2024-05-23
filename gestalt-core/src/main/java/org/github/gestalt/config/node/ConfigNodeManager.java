@@ -16,7 +16,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
 import static org.github.gestalt.config.utils.GResultOf.resultOf;
@@ -30,12 +30,15 @@ import static org.github.gestalt.config.utils.GResultOf.resultOf;
 public final class ConfigNodeManager implements ConfigNodeService {
     private final List<ConfigNodeContainer> configNodes = new ArrayList<>();
     // We store the node roots by tags. The default will be an empty Tags.
-    private final Map<Tags, ConfigNode> roots = new ConcurrentHashMap<>();
+    private final LinkedHashMap<Tags, ConfigNode> roots = new LinkedHashMap<>();
+    // lock to ensure we are thread safe.
+    private final StampedLock lock = new StampedLock();
+    private final ConfigNodeResolutionStrategy configNodeResolutionStrategy;
     // Sentence Lexer used to build a normalized path.
     private SentenceLexer lexer;
 
     public ConfigNodeManager() {
-        this(new PathLexer());
+        this(new ExactMatchWithFallbackConfigNodeResolutionStrategy(), new PathLexer());
     }
 
     /**
@@ -44,6 +47,17 @@ public final class ConfigNodeManager implements ConfigNodeService {
      * @param lexer sentence Lexer to build a normalized path
      */
     public ConfigNodeManager(SentenceLexer lexer) {
+        this(new ExactMatchWithFallbackConfigNodeResolutionStrategy(), lexer);
+    }
+
+    /**
+     * Constructor that takes a sentence Lexer to build a normalized path. Allows an override of the configNodeResolutionStrategy.
+     *
+     * @param configNodeResolutionStrategy how to resolve the config nodes to search.
+     * @param lexer                        sentence Lexer to build a normalized path.
+     */
+    public ConfigNodeManager(ConfigNodeResolutionStrategy configNodeResolutionStrategy, SentenceLexer lexer) {
+        this.configNodeResolutionStrategy = configNodeResolutionStrategy;
         this.lexer = lexer;
     }
 
@@ -58,28 +72,33 @@ public final class ConfigNodeManager implements ConfigNodeService {
             throw new GestaltException("No node provided");
         }
         List<ValidationError> errors = new ArrayList<>();
+        long stamp = lock.writeLock();
+        try {
+            configNodes.add(newNode);
 
-        configNodes.add(newNode);
+            // If the root is empty or the root doesn't contain the tags, add it to the root without merging with existing node.
+            if (roots.isEmpty() || !roots.containsKey(newNode.getTags())) {
+                roots.put(newNode.getTags(), newNode.getConfigNode());
+            } else {
+                // If there is already a config node in the root, merge the nodes together then save them.
+                ConfigNode rootForTokens = roots.get(newNode.getTags());
+                GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", lexer, rootForTokens, newNode.getConfigNode());
 
-        // If the root is empty or the root doesn't contain the tags, add it to the root without merging with existing node.
-        if (roots.isEmpty() || !roots.containsKey(newNode.getTags())) {
-            roots.put(newNode.getTags(), newNode.getConfigNode());
-        } else {
-            // If there is already a config node in the root, merge the nodes together then save them.
-            ConfigNode rootForTokens = roots.get(newNode.getTags());
-            GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", lexer, rootForTokens, newNode.getConfigNode());
+                if (mergedNode.hasResults()) {
+                    roots.put(newNode.getTags(), mergedNode.results());
+                }
 
-            if (mergedNode.hasResults()) {
-                roots.put(newNode.getTags(), mergedNode.results());
+                errors.addAll(mergedNode.getErrors());
             }
 
-            errors.addAll(mergedNode.getErrors());
+            errors.addAll(validateNode(roots.get(newNode.getTags())));
+            errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
+
+
+            return resultOf(roots.get(newNode.getTags()), errors);
+        } finally {
+            lock.unlockWrite(stamp);
         }
-
-        errors.addAll(validateNode(roots.get(newNode.getTags())));
-        errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
-
-        return resultOf(roots.get(newNode.getTags()), errors);
     }
 
     @Override
@@ -93,25 +112,41 @@ public final class ConfigNodeManager implements ConfigNodeService {
             return GResultOf.result(true);
         }
 
-        boolean ppSuccessful = true;
-        List<ValidationError> errors = new ArrayList<>();
+        long stamp = lock.readLock();
+        try {
+            boolean ppSuccessful = true;
+            List<ValidationError> errors = new ArrayList<>();
 
-        for (Map.Entry<Tags, ConfigNode> entry : roots.entrySet()) {
-            Tags tags = entry.getKey();
-            ConfigNode root = entry.getValue();
-            GResultOf<ConfigNode> results = postProcess("", root, configNodeProcessors);
+            for (Map.Entry<Tags, ConfigNode> entry : roots.entrySet()) {
+                Tags tags = entry.getKey();
+                ConfigNode root = entry.getValue();
+                GResultOf<ConfigNode> results = postProcess("", root, configNodeProcessors);
 
-            // If we have results we want to update the root to the new post processed config tree.
-            errors.addAll(results.getErrors());
-            if (results.hasResults()) {
-                roots.put(tags, results.results());
-            } else {
-                ppSuccessful = false;
-                errors.add(new ValidationError.NodePostProcessingNoResults());
+                // If we have results we want to update the root to the new post processed config tree.
+                errors.addAll(results.getErrors());
+                if (results.hasResults()) {
+                    boolean tryUpgradeSuccess = false;
+                    while (!tryUpgradeSuccess) {
+                        long ws = lock.tryConvertToWriteLock(stamp);
+                        if (ws != 0L) {
+                            stamp = ws;
+                            tryUpgradeSuccess = true;
+                            roots.put(tags, results.results());
+                        } else {
+                            lock.unlockRead(stamp);
+                            stamp = lock.writeLock();
+                        }
+                    }
+                } else {
+                    ppSuccessful = false;
+                    errors.add(new ValidationError.NodePostProcessingNoResults());
+                }
             }
-        }
 
-        return resultOf(ppSuccessful, errors);
+            return resultOf(ppSuccessful, errors);
+        } finally {
+            lock.unlock(stamp);
+        }
     }
 
     private GResultOf<ConfigNode> postProcess(String path, ConfigNode node, List<ConfigNodeProcessor> configNodeProcessors) {
@@ -197,40 +232,57 @@ public final class ConfigNodeManager implements ConfigNodeService {
             throw new GestaltException("Null value provided for Node to be reloaded");
         }
 
-        int index = 0;
-        for (ConfigNodeContainer nodePair : configNodes) {
+        long stamp = lock.readLock();
+        try {
+            int index = 0;
+            for (ConfigNodeContainer nodePair : configNodes) {
 
-            ConfigNode currentNode = nodePair.getConfigNode();
-            if (nodePair.getSource().equals(reloadNode.getSource())) {
-                configNodes.set(index, reloadNode);
-                currentNode = reloadNode.getConfigNode();
-            }
+                ConfigNode currentNode = nodePair.getConfigNode();
+                if (nodePair.getSource().equals(reloadNode.getSource())) {
+                    configNodes.set(index, reloadNode);
+                    currentNode = reloadNode.getConfigNode();
+                }
 
-            // only merge with other nodes of the same tags.
-            if (!nodePair.matchesTags(reloadNode.getTags())) {
-                continue;
-            }
+                // only merge with other nodes of the same tags.
+                if (!nodePair.matchesTags(reloadNode.getTags())) {
+                    continue;
+                }
 
-            if (newRoot == null) {
-                newRoot = currentNode;
-            } else {
-                GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", lexer, newRoot, currentNode);
-
-                errors.addAll(mergedNode.getErrors());
-                if (mergedNode.hasResults()) {
-                    newRoot = mergedNode.results();
+                if (newRoot == null) {
+                    newRoot = currentNode;
                 } else {
-                    errors.add(new ValidationError.NoResultsFoundForNode("", "reload node"));
+                    GResultOf<ConfigNode> mergedNode = MergeNodes.mergeNodes("", lexer, newRoot, currentNode);
+
+                    errors.addAll(mergedNode.getErrors());
+                    if (mergedNode.hasResults()) {
+                        newRoot = mergedNode.results();
+                    } else {
+                        errors.add(new ValidationError.NoResultsFoundForNode("", "reload node"));
+                    }
+                }
+                index++;
+            }
+
+            errors.addAll(validateNode(newRoot));
+            errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
+
+            boolean tryUpgradeSuccess = false;
+            while (!tryUpgradeSuccess) {
+                long ws = lock.tryConvertToWriteLock(stamp);
+                if (ws != 0L) {
+                    stamp = ws;
+                    tryUpgradeSuccess = true;
+                    roots.put(reloadNode.getTags(), newRoot);
+                } else {
+                    lock.unlockRead(stamp);
+                    stamp = lock.writeLock();
                 }
             }
-            index++;
+
+            return resultOf(newRoot, errors);
+        } finally {
+            lock.unlock(stamp);
         }
-
-        errors.addAll(validateNode(newRoot));
-        errors = errors.stream().filter(CollectionUtils.distinctBy(ValidationError::description)).collect(Collectors.toList());
-
-        roots.put(reloadNode.getTags(), newRoot);
-        return resultOf(newRoot, errors);
     }
 
     private List<ValidationError> validateNode(ConfigNode node) {
@@ -295,36 +347,62 @@ public final class ConfigNodeManager implements ConfigNodeService {
 
     @Override
     public GResultOf<ConfigNode> navigateToNode(String path, List<Token> tokens, Tags tags) {
-        GResultOf<ConfigNode> results;
-        // first check with the tags provided.
-        GResultOf<ConfigNode> resultsForTags = navigateToNodeInternal(path, tokens, tags);
+        long stamp = lock.tryOptimisticRead();
+        GResultOf<ConfigNode> value = navigateToNodeInternal(path, tokens, tags);
 
-        // if the current set of tags are the default empty tags: Tags.of()
-        // then return the current resultsForTags.
-        // otherwise try the default root node, then merge the results.
-        if (Tags.of().equals(tags)) {
-            results = resultsForTags;
-        } else {
-            GResultOf<ConfigNode> resultsForDefault = navigateToNodeInternal(path, tokens, Tags.of());
-
-            if (!resultsForTags.hasResults()) {
-                results = resultsForDefault;
-            } else if (!resultsForDefault.hasResults()) {
-                results = resultsForTags;
-            } else {
-                results = MergeNodes.mergeNodes(path, lexer, resultsForDefault.results(), resultsForTags.results());
+        if (!lock.validate(stamp)) {
+            stamp = lock.readLock();
+            try {
+                return navigateToNodeInternal(path, tokens, tags);
+            } finally {
+                lock.unlockRead(stamp);
             }
         }
-
-        return results;
+        return value;
     }
 
     private GResultOf<ConfigNode> navigateToNodeInternal(String path, List<Token> tokens, Tags tags) {
-        ConfigNode currentNode = roots.get(tags);
+        List<GResultOf<ConfigNode>> rootNodes = configNodeResolutionStrategy.rootsToSearch(roots, tags);
+
+        // if there is only one root node.
+        if (rootNodes.isEmpty()) {
+            return GResultOf.errors(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "navigating to node"));
+        } else if (rootNodes.size() == 1) {
+            if (rootNodes.get(0).hasResults()) {
+                // return the node found for the root.
+                return navigateToPathForNode(path, tokens, rootNodes.get(0).results());
+            } else {
+                return rootNodes.get(0);
+            }
+        }
+
+        GResultOf<ConfigNode> firstNode = navigateToPathForNode(path, tokens, rootNodes.get(0).results());
+
+        return rootNodes.subList(1, rootNodes.size()).stream()
+            .reduce(firstNode, (partial, element) -> {
+                if (element.hasResults()) {
+                    var currentNode = navigateToPathForNode(path, tokens, element.results());
+
+                    if (currentNode.hasResults() && partial != null && partial.hasResults()) {
+                        return MergeNodes.mergeNodes(path, lexer, partial.results(), currentNode.results());
+                    } else if (partial != null && partial.hasResults()) {
+                        return partial;
+                    } else if (currentNode.hasResults()) {
+                        return currentNode;
+                    }
+                }
+                return partial;
+            });
+    }
+
+
+    private GResultOf<ConfigNode> navigateToPathForNode(String path, List<Token> tokens, ConfigNode currentNode) {
         List<ValidationError> errors = new ArrayList<>();
 
+        ConfigNode nextNode = currentNode;
+
         for (Token token : tokens) {
-            GResultOf<ConfigNode> result = navigateToNextNode(path, token, currentNode);
+            GResultOf<ConfigNode> result = navigateToNextNode(path, token, nextNode);
 
             // if there are errors, add them to the error list and do not add the merge results
             if (result.hasErrors()) {
@@ -332,13 +410,13 @@ public final class ConfigNodeManager implements ConfigNodeService {
             }
 
             if (result.hasResults()) {
-                currentNode = result.results();
+                nextNode = result.results();
             } else {
                 errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "navigating to node"));
             }
         }
 
-        return resultOf(currentNode, errors);
+        return resultOf(nextNode, errors);
     }
 
     @Override
@@ -410,14 +488,24 @@ public final class ConfigNodeManager implements ConfigNodeService {
 
     @Override
     public String debugPrintRoot(Tags tags, SecretConcealer secretConcealer) {
-        return roots.get(tags).printer("", secretConcealer, lexer);
+        long stamp = lock.readLock();
+        try {
+            return roots.get(tags).printer("", secretConcealer, lexer);
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
     @Override
     public String debugPrintRoot(SecretConcealer secretConcealer) {
-        return roots.entrySet()
-            .stream()
-            .map((it) -> "tags: " + it.getKey() + " = " + it.getValue().printer("", secretConcealer, lexer))
-            .collect(Collectors.joining("\n"));
+        long stamp = lock.readLock();
+        try {
+            return roots.entrySet()
+                .stream()
+                .map((it) -> "tags: " + it.getKey() + " = " + it.getValue().printer("", secretConcealer, lexer))
+                .collect(Collectors.joining("\n"));
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 }

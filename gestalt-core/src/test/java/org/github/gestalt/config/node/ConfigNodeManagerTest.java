@@ -1553,7 +1553,8 @@ class ConfigNodeManagerTest {
         Assertions.assertTrue(navigateValidate.hasErrors());
         Assertions.assertFalse(navigateValidate.hasResults());
 
-        Assertions.assertEquals("Null Nodes on path: db.test", navigateValidate.getErrors().get(0).description());
+        Assertions.assertEquals("Unable to find node matching path: db.test, for class: MapNode, during navigating to node",
+            navigateValidate.getErrors().get(0).description());
     }
 
     @Test
