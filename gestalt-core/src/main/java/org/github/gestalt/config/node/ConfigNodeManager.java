@@ -38,7 +38,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
     private SentenceLexer lexer;
 
     public ConfigNodeManager() {
-        this(new ExactMatchWithFallbackConfigNodeResolutionStrategy(), new PathLexer());
+        this(new EqualTagsWithDefaultConfigNodeResolutionStrategy(), new PathLexer());
     }
 
     /**
@@ -47,7 +47,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
      * @param lexer sentence Lexer to build a normalized path
      */
     public ConfigNodeManager(SentenceLexer lexer) {
-        this(new ExactMatchWithFallbackConfigNodeResolutionStrategy(), lexer);
+        this(new EqualTagsWithDefaultConfigNodeResolutionStrategy(), lexer);
     }
 
     /**

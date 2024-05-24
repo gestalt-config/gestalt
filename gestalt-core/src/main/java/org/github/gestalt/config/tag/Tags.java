@@ -107,6 +107,10 @@ public final class Tags {
         }
     }
 
+    public boolean isSubsetOf(Tags tags) {
+        return tags.internalTags.containsAll(this.internalTags);
+    }
+
     private static boolean blankVarargs(Tag[] tags) {
         return tags == null || tags.length == 0 || tags.length == 1 && tags[0] == null;
     }

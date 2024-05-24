@@ -8,16 +8,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * Allows users to override how we find nodes to merge based on the tags.
+ * Will Search two config node roots, the one that is an equal match to the tags and the root with no tags.
+ * Then return the config node roots to be searched. Only return the roots if they exist.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class ExactMatchWithFallbackConfigNodeResolutionStrategy implements ConfigNodeResolutionStrategy {
+public class EqualTagsWithDefaultConfigNodeResolutionStrategy implements ConfigNodeResolutionStrategy {
 
     /**
-     * Given the roots and the tags we are searching for, return the roots to search.
-     * The order is important, as we will search for the nodes in order and merge them with
-     * later nodes merged over top of the previous.
+     * Will Search two config node roots, the one that exactly matches the tags and the root with no tags.
+     * Only return the roots if they exist.
      *
      * @param roots roots to search.
      * @param tags the tags we wish to search for.
@@ -35,7 +35,6 @@ public class ExactMatchWithFallbackConfigNodeResolutionStrategy implements Confi
         if (!Tags.of().equals(tags) && roots.containsKey(tags)) {
             rootsToSearch.add(GResultOf.result(roots.get(tags)));
         }
-
 
         return rootsToSearch;
     }

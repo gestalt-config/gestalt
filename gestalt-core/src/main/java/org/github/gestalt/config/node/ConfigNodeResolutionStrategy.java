@@ -19,7 +19,7 @@ public interface ConfigNodeResolutionStrategy {
      * The order is important, as we will search for the nodes in order and merge them with
      * later nodes merged over top of the previous.
      *
-     * @param roots roots to search.
+     * @param roots roots to search. It is a Linked Hash Map, so we can also tell the order they were added.
      *              DO NOT MODIFY THE ROOTS.
      *              The roots are protected by a read lock here, not a write lock.
      *              Modifying the roots here would not be thread safe.

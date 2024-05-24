@@ -4,6 +4,9 @@
 #ignore intellij directory
 .idea
 
+#ignore the kotlin directory
+.kotlin
+
 # Ignore Gradle build output directory
 build
 
