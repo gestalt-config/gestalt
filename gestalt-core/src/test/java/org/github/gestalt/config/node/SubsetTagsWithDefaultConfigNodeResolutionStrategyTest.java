@@ -81,4 +81,76 @@ class SubsetTagsWithDefaultConfigNodeResolutionStrategyTest {
         Assertions.assertTrue(foundNodes.get(2).hasResults());
         Assertions.assertEquals(new LeafNode("prod"), foundNodes.get(2).results());
     }
+
+    @Test
+    void rootsToSearchMultiTag() {
+
+        var resolution = new SubsetTagsWithDefaultConfigNodeResolutionStrategy();
+
+        var roots = new LinkedHashMap<Tags, ConfigNode>();
+        roots.put(Tags.of(), new LeafNode("default"));
+        roots.put(Tags.of(Tag.environment("dev"), Tag.profile("booking")), new LeafNode("dev-booking"));
+        roots.put(Tags.of(Tag.environment("prod"), Tag.profile("booking")), new LeafNode("prod-booking"));
+        roots.put(Tags.of(Tag.environment("prod"), Tag.profile("inventory")), new LeafNode("prod-inventory"));
+        roots.put(Tags.of(Tag.environment("stage"), Tag.profile("booking")), new LeafNode("stage-booking"));
+
+        // search for default
+        var foundNodes = resolution.rootsToSearch(roots, Tags.of());
+
+        Assertions.assertEquals(1, foundNodes.size());
+        Assertions.assertFalse(foundNodes.get(0).hasErrors());
+        Assertions.assertTrue(foundNodes.get(0).hasResults());
+
+        Assertions.assertEquals(new LeafNode("default"), foundNodes.get(0).results());
+
+        // search for dev
+        foundNodes = resolution.rootsToSearch(roots, Tags.environment("dev"));
+
+        Assertions.assertEquals(1, foundNodes.size());
+        Assertions.assertFalse(foundNodes.get(0).hasErrors());
+        Assertions.assertTrue(foundNodes.get(0).hasResults());
+
+        // search for dev and booking
+        foundNodes = resolution.rootsToSearch(roots, Tags.of(Tag.environment("dev"), Tag.profile("booking")));
+
+        Assertions.assertEquals(2, foundNodes.size());
+        Assertions.assertFalse(foundNodes.get(0).hasErrors());
+        Assertions.assertTrue(foundNodes.get(0).hasResults());
+        Assertions.assertEquals(new LeafNode("default"), foundNodes.get(0).results());
+
+        Assertions.assertFalse(foundNodes.get(1).hasErrors());
+        Assertions.assertTrue(foundNodes.get(1).hasResults());
+        Assertions.assertEquals(new LeafNode("dev-booking"), foundNodes.get(1).results());
+
+        // search for dev, prod and booking
+        foundNodes = resolution.rootsToSearch(roots,
+            Tags.of(Tag.environment("dev"), Tag.environment("prod"), Tag.profile("booking")));
+
+        Assertions.assertEquals(3, foundNodes.size());
+        Assertions.assertFalse(foundNodes.get(0).hasErrors());
+        Assertions.assertTrue(foundNodes.get(0).hasResults());
+        Assertions.assertEquals(new LeafNode("default"), foundNodes.get(0).results());
+
+        Assertions.assertFalse(foundNodes.get(1).hasErrors());
+        Assertions.assertTrue(foundNodes.get(1).hasResults());
+        Assertions.assertEquals(new LeafNode("dev-booking"), foundNodes.get(1).results());
+
+        Assertions.assertFalse(foundNodes.get(2).hasErrors());
+        Assertions.assertTrue(foundNodes.get(2).hasResults());
+        Assertions.assertEquals(new LeafNode("prod-booking"), foundNodes.get(2).results());
+
+        // search for dev, prod and booking
+        foundNodes = resolution.rootsToSearch(roots,
+            Tags.of(Tag.environment("dev"), Tag.environment("prod"), Tag.profile("inventory")));
+
+        Assertions.assertEquals(2, foundNodes.size());
+        Assertions.assertFalse(foundNodes.get(0).hasErrors());
+        Assertions.assertTrue(foundNodes.get(0).hasResults());
+        Assertions.assertEquals(new LeafNode("default"), foundNodes.get(0).results());
+
+
+        Assertions.assertFalse(foundNodes.get(1).hasErrors());
+        Assertions.assertTrue(foundNodes.get(1).hasResults());
+        Assertions.assertEquals(new LeafNode("prod-inventory"), foundNodes.get(1).results());
+    }
 }

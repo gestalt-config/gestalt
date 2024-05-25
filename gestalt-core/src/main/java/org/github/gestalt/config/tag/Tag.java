@@ -32,6 +32,26 @@ public final class Tag {
     }
 
     /**
+     * Create and return a new tag of type profile with value.
+     *
+     * @param value the profile
+     * @return tags with the profile
+     */
+    public static Tag profile(String value) {
+        return Tag.of("profile", value);
+    }
+
+    /**
+     * Create and return a new tag of type environment with value.
+     *
+     * @param value the environment
+     * @return tags with the environment
+     */
+    public static Tag environment(String value) {
+        return Tag.of("environment", value);
+    }
+
+    /**
      * Get the key for the tag.
      *
      * @return the key
