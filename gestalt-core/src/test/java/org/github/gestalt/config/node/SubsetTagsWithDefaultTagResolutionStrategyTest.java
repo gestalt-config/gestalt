@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 
-class SubsetTagsWithDefaultConfigNodeResolutionStrategyTest {
+class SubsetTagsWithDefaultTagResolutionStrategyTest {
 
     @Test
     void rootsToSearch() {
 
-        var resolution = new SubsetTagsWithDefaultConfigNodeResolutionStrategy();
+        var resolution = new SubsetTagsWithDefaultTagResolutionStrategy();
 
         var roots = new LinkedHashMap<Tags, ConfigNode>();
         roots.put(Tags.of(), new LeafNode("default"));
@@ -85,7 +85,7 @@ class SubsetTagsWithDefaultConfigNodeResolutionStrategyTest {
     @Test
     void rootsToSearchMultiTag() {
 
-        var resolution = new SubsetTagsWithDefaultConfigNodeResolutionStrategy();
+        var resolution = new SubsetTagsWithDefaultTagResolutionStrategy();
 
         var roots = new LinkedHashMap<Tags, ConfigNode>();
         roots.put(Tags.of(), new LeafNode("default"));

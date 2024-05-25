@@ -12,20 +12,20 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class SubsetTagsWithDefaultConfigNodeResolutionStrategy implements ConfigNodeResolutionStrategy {
+public class SubsetTagsWithDefaultTagResolutionStrategy implements ConfigNodeTagResolutionStrategy {
 
     /**
      * Will Search for any roots that are a subset of the tags provided with a fallback of the default root.
      *
      * @param roots roots to search.
-     * @param tags the tags we wish to search for.
+     * @param tags  the tags we wish to search for.
      * @return list of roots to search for.
      */
     public List<GResultOf<ConfigNode>> rootsToSearch(LinkedHashMap<Tags, ConfigNode> roots, Tags tags) {
         List<GResultOf<ConfigNode>> rootsToSearch = new ArrayList<>();
 
-        for (var entry:  roots.entrySet()) {
-            if (Tags.of().equals(entry.getKey()) ||  entry.getKey().isSubsetOf(tags)) {
+        for (var entry : roots.entrySet()) {
+            if (Tags.of().equals(entry.getKey()) || entry.getKey().isSubsetOf(tags)) {
                 rootsToSearch.add(GResultOf.result(entry.getValue()));
             }
         }

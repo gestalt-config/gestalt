@@ -9,6 +9,7 @@ import org.github.gestalt.config.entity.ConfigContainer;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
+import org.github.gestalt.config.node.SubsetTagsWithDefaultTagResolutionStrategy;
 import org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -16,6 +17,7 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.*;
+import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
@@ -1092,6 +1094,86 @@ public class GestaltIntegrationTests {
             .isInstanceOf(Vector.class)
             .contains("John")
             .contains("Steve");
+    }
+
+    @Test
+    public void testSubsetTagsWithDefaultTagResolutionStrategy() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "abcdef");
+        configs.put("db.uri", "my.sql.com");
+        configs.put("db.salt", "pepper");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.port", "abcdef2");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.uri", "my.sql.com3");
+        configs3.put("db.salt", "pepper3");
+
+        Map<String, String> configs4 = new HashMap<>();
+        configs4.put("db.salt", "pepper4");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs2)
+                .addTag(Tag.profile("orange"))
+                .addTag(Tag.profile("flower"))
+                .build())
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs3)
+                .addTag(Tag.profile("blue"))
+                .build())
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs4)
+                .addTag(Tag.profile("orange"))
+                .build())
+            .setTreatMissingValuesAsErrors(true)
+            .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setProxyDecoderMode(ProxyDecoderMode.CACHE)
+            .useCacheDecorator(false)
+            .setConfigNodeTagResolutionStrategy(new SubsetTagsWithDefaultTagResolutionStrategy())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Map<String, String> dbMap = gestalt.getConfig("db", new TypeCapture<>(){});
+
+        org.assertj.core.api.Assertions.assertThat(dbMap)
+            .isInstanceOf(HashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper"));
+
+        dbMap = gestalt.getConfig("db", new TypeCapture<>(){}, Tags.profile("orange"));
+
+        org.assertj.core.api.Assertions.assertThat(dbMap)
+            .isInstanceOf(HashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper4"));
+
+        dbMap = gestalt.getConfig("db", new TypeCapture<>(){}, Tags.of(Tag.profile("orange"), Tag.profile("blue")));
+
+        org.assertj.core.api.Assertions.assertThat(dbMap)
+            .isInstanceOf(HashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef"))
+            .contains(Map.entry("uri", "my.sql.com3"))
+            .contains(Map.entry("salt", "pepper4"));
+
+        dbMap = gestalt.getConfig("db", new TypeCapture<>(){}, Tags.of(Tag.profile("orange"), Tag.profile("flower")));
+
+        org.assertj.core.api.Assertions.assertThat(dbMap)
+            .isInstanceOf(HashMap.class)
+            .contains(Map.entry("password", "test"))
+            .contains(Map.entry("port", "abcdef2"))
+            .contains(Map.entry("uri", "my.sql.com"))
+            .contains(Map.entry("salt", "pepper4"));
+
     }
 
 

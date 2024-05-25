@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 
-class EqualTagsWithDefaultConfigNodeResolutionStrategyTest {
+class EqualTagsWithDefaultTagResolutionStrategyTest {
 
     @Test
     void rootsToSearch() {
 
-        var resolution = new EqualTagsWithDefaultConfigNodeResolutionStrategy();
+        var resolution = new EqualTagsWithDefaultTagResolutionStrategy();
 
         var roots = new LinkedHashMap<Tags, ConfigNode>();
         roots.put(Tags.of(), new LeafNode("default"));
@@ -64,7 +64,7 @@ class EqualTagsWithDefaultConfigNodeResolutionStrategyTest {
     @Test
     void rootsToSearchNoDefault() {
 
-        var resolution = new EqualTagsWithDefaultConfigNodeResolutionStrategy();
+        var resolution = new EqualTagsWithDefaultTagResolutionStrategy();
 
         var roots = new LinkedHashMap<Tags, ConfigNode>();
         roots.put(Tags.environment("dev"), new LeafNode("dev"));
@@ -95,7 +95,7 @@ class EqualTagsWithDefaultConfigNodeResolutionStrategyTest {
 
     @Test
     void rootsToSearchNone() {
-        var resolution = new EqualTagsWithDefaultConfigNodeResolutionStrategy();
+        var resolution = new EqualTagsWithDefaultTagResolutionStrategy();
 
         var roots = new LinkedHashMap<Tags, ConfigNode>();
         var foundNodes = resolution.rootsToSearch(roots, Tags.of());

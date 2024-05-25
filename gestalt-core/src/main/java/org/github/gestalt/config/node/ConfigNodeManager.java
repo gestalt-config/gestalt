@@ -33,12 +33,12 @@ public final class ConfigNodeManager implements ConfigNodeService {
     private final LinkedHashMap<Tags, ConfigNode> roots = new LinkedHashMap<>();
     // lock to ensure we are thread safe.
     private final StampedLock lock = new StampedLock();
-    private final ConfigNodeResolutionStrategy configNodeResolutionStrategy;
+    private final ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy;
     // Sentence Lexer used to build a normalized path.
     private SentenceLexer lexer;
 
     public ConfigNodeManager() {
-        this(new EqualTagsWithDefaultConfigNodeResolutionStrategy(), new PathLexer());
+        this(new EqualTagsWithDefaultTagResolutionStrategy(), new PathLexer());
     }
 
     /**
@@ -47,17 +47,17 @@ public final class ConfigNodeManager implements ConfigNodeService {
      * @param lexer sentence Lexer to build a normalized path
      */
     public ConfigNodeManager(SentenceLexer lexer) {
-        this(new EqualTagsWithDefaultConfigNodeResolutionStrategy(), lexer);
+        this(new EqualTagsWithDefaultTagResolutionStrategy(), lexer);
     }
 
     /**
      * Constructor that takes a sentence Lexer to build a normalized path. Allows an override of the configNodeResolutionStrategy.
      *
-     * @param configNodeResolutionStrategy how to resolve the config nodes to search.
+     * @param configNodeTagResolutionStrategy how to resolve the config nodes to search.
      * @param lexer                        sentence Lexer to build a normalized path.
      */
-    public ConfigNodeManager(ConfigNodeResolutionStrategy configNodeResolutionStrategy, SentenceLexer lexer) {
-        this.configNodeResolutionStrategy = configNodeResolutionStrategy;
+    public ConfigNodeManager(ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy, SentenceLexer lexer) {
+        this.configNodeTagResolutionStrategy = configNodeTagResolutionStrategy;
         this.lexer = lexer;
     }
 
@@ -362,7 +362,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
     }
 
     private GResultOf<ConfigNode> navigateToNodeInternal(String path, List<Token> tokens, Tags tags) {
-        List<GResultOf<ConfigNode>> rootNodes = configNodeResolutionStrategy.rootsToSearch(roots, tags);
+        List<GResultOf<ConfigNode>> rootNodes = configNodeTagResolutionStrategy.rootsToSearch(roots, tags);
 
         // if there is only one root node.
         if (rootNodes.isEmpty()) {

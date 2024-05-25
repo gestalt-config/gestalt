@@ -15,15 +15,19 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.ConfigLoaderService;
-import org.github.gestalt.config.observations.ObservationManager;
-import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.node.ConfigNodeManager;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.node.ConfigNodeTagResolutionStrategy;
+import org.github.gestalt.config.node.EqualTagsWithDefaultTagResolutionStrategy;
+import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.github.gestalt.config.processor.result.DefaultResultProcessor;
 import org.github.gestalt.config.processor.result.ErrorResultProcessor;
+import org.github.gestalt.config.processor.result.ResultProcessor;
+import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 import org.github.gestalt.config.processor.result.validation.ConfigValidator;
 import org.github.gestalt.config.processor.result.validation.ValidationResultProcessor;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
@@ -36,8 +40,6 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
-import org.github.gestalt.config.processor.result.ResultProcessor;
-import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 
 import java.lang.System.Logger.Level;
 import java.time.format.DateTimeFormatter;
@@ -71,13 +73,14 @@ public class GestaltBuilder {
     private final List<CoreReloadListener> coreCoreReloadListeners = new ArrayList<>();
     @SuppressWarnings("rawtypes")
     private final Map<Class, GestaltModuleConfig> modules = new HashMap<>();
+    private final List<ResultProcessor> coreResultProcessors = List.of(new ErrorResultProcessor(), new DefaultResultProcessor());
     private ConfigLoaderService configLoaderService = new ConfigLoaderRegistry();
     private DecoderService decoderService;
-    private SentenceLexer sentenceLexer = new PathLexer();
+    private SentenceLexer sentenceLexer;
     private GestaltConfig gestaltConfig = new GestaltConfig();
     private ObservationManager observationManager;
     private ResultsProcessorManager resultsProcessorManager;
-    private ConfigNodeService configNodeService = new ConfigNodeManager(sentenceLexer);
+    private ConfigNodeService configNodeService;
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
@@ -86,7 +89,7 @@ public class GestaltBuilder {
     private List<ObservationRecorder> observationRecorders = new ArrayList<>();
     private List<ConfigValidator> configValidators = new ArrayList<>();
     private List<ResultProcessor> resultProcessors = new ArrayList<>();
-    private final List<ResultProcessor> coreResultProcessors = List.of(new ErrorResultProcessor(), new DefaultResultProcessor());
+    private ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy;
     private boolean useCacheDecorator = true;
     private Set<String> securityRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
@@ -136,7 +139,6 @@ public class GestaltBuilder {
 
     // Default set of tags to apply to all calls to get a configuration where tags are not provided.
     private Tags defaultTags = Tags.of();
-
 
 
     /**
@@ -719,7 +721,7 @@ public class GestaltBuilder {
      * you need to set your own rules and SecretObfuscation. The builder will not add the rules to a user supplied SecretConcealer
      *
      * @param secretConcealer your own custom Secret Concealer.
-     *  @return GestaltBuilder builder
+     * @return GestaltBuilder builder
      */
     public GestaltBuilder setSecretConcealer(SecretConcealer secretConcealer) {
         this.secretConcealer = secretConcealer;
@@ -730,7 +732,7 @@ public class GestaltBuilder {
      * Set your own custom Secret Obfuscator. Used to determine how to mask secrets.
      *
      * @param secretObfuscator your own custom Secret Obfuscator.
-     *  @return GestaltBuilder builder
+     * @return GestaltBuilder builder
      */
     public GestaltBuilder setSecretObfuscation(SecretObfuscator secretObfuscator) {
         this.secretObfuscator = secretObfuscator;
@@ -963,6 +965,18 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set the ConfigNodeTagResolutionStrategy to allow users to override how we select the roots to find nodes to merge based on the tags.
+     * The default if not set is EqualTagsWithDefaultTagResolutionStrategy
+     *
+     * @param configNodeTagResolutionStrategy Allows users to override how we select the roots to find nodes to merge based on the tags.
+     * @return the builder
+     */
+    public GestaltBuilder setConfigNodeTagResolutionStrategy(ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy) {
+        this.configNodeTagResolutionStrategy = configNodeTagResolutionStrategy;
+        return this;
+    }
+
+    /**
      * Set a date decoder format. Used to decode date times.
      *
      * @param dateDecoderFormat a date decoder format
@@ -1186,6 +1200,18 @@ public class GestaltBuilder {
         gestaltConfig = rebuildConfig();
         gestaltConfig.registerModuleConfig(modules);
 
+        if (sentenceLexer == null) {
+            sentenceLexer = new PathLexer();
+        }
+
+        if (configNodeTagResolutionStrategy == null) {
+            configNodeTagResolutionStrategy = new EqualTagsWithDefaultTagResolutionStrategy();
+        }
+
+        if (configNodeService == null) {
+            configNodeService = new ConfigNodeManager(configNodeTagResolutionStrategy, sentenceLexer);
+        }
+
         configurePathMappers();
         configureDecoders();
         configureObservations();
@@ -1194,8 +1220,6 @@ public class GestaltBuilder {
         configureResultProcessors();
         configureConfigLoaders();
         configurePostProcessors();
-
-        configNodeService.setLexer(sentenceLexer);
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();

@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class EqualTagsWithDefaultConfigNodeResolutionStrategy implements ConfigNodeResolutionStrategy {
+public class EqualTagsWithDefaultTagResolutionStrategy implements ConfigNodeTagResolutionStrategy {
 
     /**
      * Will Search two config node roots, the one that exactly matches the tags and the root with no tags.

@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public interface ConfigNodeResolutionStrategy {
+public interface ConfigNodeTagResolutionStrategy {
 
     /**
      * Given the roots and the tags we are searching for, return the config node roots to search.
