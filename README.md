@@ -442,10 +442,10 @@ You can implement the interface `ConfigNodeTagResolutionStrategy` to define your
 
 The available strategies are:
 
-| name                                        | Set Theory | Description                                                                                                                                                                                     |
-|---------------------------------------------|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| EqualTagsWithDefaultTagResolutionStrategy   | Equals     | Will Search two config node roots, the one that is an equal match to the tags and the root with no tags. Then return the config node roots to be searched. Only return the roots if they exist. |
-| SubsetTagsWithDefaultTagResolutionStrategy  | Subset     | Will Search for any roots that are a subset of the tags provided with a fallback of the default root.                                                                                           |
+| name                                        | Set Theory | Description                                                                                                                                                                                                      |
+|---------------------------------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| EqualTagsWithDefaultTagResolutionStrategy   | Equals     | Will Search two config node roots, the one that is an equal match to the tags and the root with no tags. Then return the config node roots to be searched. Only return the roots if they exist.                  |
+| SubsetTagsWithDefaultTagResolutionStrategy  | Subset     | Will Search for any roots that are a subset of the tags provided with a fallback of the default root. In combination with default tags, this can be used to create a profile system similar to Spring Config.    |
 
 
 #### Example
