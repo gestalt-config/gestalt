@@ -40,7 +40,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
     public ConfigNodeManager() {
         this(new EqualTagsWithDefaultTagResolutionStrategy(), new PathLexer());
     }
-    
+
     /**
      * Constructor that takes a sentence Lexer to build a normalized path. Allows an override of the configNodeResolutionStrategy.
      *
