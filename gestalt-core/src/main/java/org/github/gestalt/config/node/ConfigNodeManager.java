@@ -35,21 +35,12 @@ public final class ConfigNodeManager implements ConfigNodeService {
     private final StampedLock lock = new StampedLock();
     private final ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy;
     // Sentence Lexer used to build a normalized path.
-    private SentenceLexer lexer;
+    private final SentenceLexer lexer;
 
     public ConfigNodeManager() {
         this(new EqualTagsWithDefaultTagResolutionStrategy(), new PathLexer());
     }
-
-    /**
-     * Constructor that takes a sentence Lexer to build a normalized path.
-     *
-     * @param lexer sentence Lexer to build a normalized path
-     */
-    public ConfigNodeManager(SentenceLexer lexer) {
-        this(new EqualTagsWithDefaultTagResolutionStrategy(), lexer);
-    }
-
+    
     /**
      * Constructor that takes a sentence Lexer to build a normalized path. Allows an override of the configNodeResolutionStrategy.
      *
@@ -58,11 +49,6 @@ public final class ConfigNodeManager implements ConfigNodeService {
      */
     public ConfigNodeManager(ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy, SentenceLexer lexer) {
         this.configNodeTagResolutionStrategy = configNodeTagResolutionStrategy;
-        this.lexer = lexer;
-    }
-
-    @Override
-    public void setLexer(SentenceLexer lexer) {
         this.lexer = lexer;
     }
 
