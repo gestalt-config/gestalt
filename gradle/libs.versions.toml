@@ -2,14 +2,15 @@
 java = "11"
 javaLatest = "21"
 # @pin
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 # @pin
 kotlinDokka = "1.9.20"
 # Kotlin DI
-kodeinDI = "7.21.2"
+kodeinDI = "7.22.0"
 koinDI = "3.5.6"
 # Java DI
 guice = "7.0.0"
+# @pin 4.1.0 requires java 17
 cdi = "4.0.1"
 weld = "4.0.3.Final"
 weldCore = "5.1.2.Final"
@@ -17,8 +18,8 @@ weldCore = "5.1.2.Final"
 jackson = "2.17.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.46"
-gcpLibraries = "26.38.0"
+awsBom = "2.25.60"
+gcpLibraries = "26.39.0"
 azure = "1.2.23"
 # vault
 vault = "6.2.0"
@@ -26,7 +27,7 @@ vault = "6.2.0"
 jgit = "6.9.0.202403050737-r"
 eddsa = "0.3.0"
 # metrics
-micrometer = "1.12.5"
+micrometer = "1.13.0"
 # validation
 hibernateValidator = "8.0.1.Final"
 expressly = "5.0.0"
@@ -34,11 +35,11 @@ expressly = "5.0.0"
 junit5 = "5.10.2"
 assertJ = "3.25.3"
 mockito = "5.2.0"
-mockk = "1.13.10"
-koTestAssertions = "5.8.1"
+mockk = "1.13.11"
+koTestAssertions = "5.9.0"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.19.7"
+testcontainers = "1.19.8"
 # static code analysis
 errorprone = "2.27.1"
 gradleErrorProne = "3.1.0"

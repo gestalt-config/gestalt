@@ -26,7 +26,7 @@ public final class MapNode implements ConfigNode {
      * @param mapNode map for the current tree
      */
     public MapNode(Map<String, ConfigNode> mapNode) {
-        this.nodes = Objects.requireNonNullElse(mapNode, Collections.emptyMap());
+        this.nodes = Collections.unmodifiableMap(Objects.requireNonNullElse(mapNode, Collections.emptyMap()));
     }
 
     @Override

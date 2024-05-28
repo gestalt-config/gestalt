@@ -1741,10 +1741,10 @@ class GestaltTest {
 
         String allNodes = gestalt.debugPrint();
 
-        Assertions.assertEquals("tags: Tags{[Tag{key='environment', value='dev'}]} = MapNode{db=MapNode{" +
-            "password=LeafNode{value='test2'}, port=LeafNode{value='hijklm'}, uri=LeafNode{value='my.postgresql.com'}}}\n" +
-            "tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='test'}, port=LeafNode{value='abcdef'}, " +
-            "uri=LeafNode{value='my.sql.com'}}}", allNodes);
+        Assertions.assertEquals("tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='test'}, " +
+            "port=LeafNode{value='abcdef'}, uri=LeafNode{value='my.sql.com'}}}\n" +
+            "tags: Tags{[Tag{key='environment', value='dev'}]} = MapNode{db=MapNode{password=LeafNode{value='test2'}, " +
+            "port=LeafNode{value='hijklm'}, uri=LeafNode{value='my.postgresql.com'}}}", allNodes);
     }
 
     @Test
@@ -2086,14 +2086,16 @@ class GestaltTest {
         public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
             if (currentNode instanceof MapNode) {
                 Map<String, ConfigNode> mapNode = ((MapNode) currentNode).getMapNode();
+                Map<String, ConfigNode> newMapNode = new HashMap<>(mapNode);
                 if (mapNode.containsKey(node1) && mapNode.containsKey(node2)) {
-                    ConfigNode configNode1 = mapNode.get(node1);
-                    ConfigNode configNode2 = mapNode.get(node2);
 
-                    mapNode.put(node1, configNode2);
-                    mapNode.put(node2, configNode1);
+                    ConfigNode configNode1 = newMapNode.get(node1);
+                    ConfigNode configNode2 = newMapNode.get(node2);
+
+                    newMapNode.put(node1, configNode2);
+                    newMapNode.put(node2, configNode1);
                 }
-                return GResultOf.result(new MapNode(mapNode));
+                return GResultOf.result(new MapNode(newMapNode));
             }
             return GResultOf.result(currentNode);
         }
