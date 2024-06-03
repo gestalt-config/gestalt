@@ -11,6 +11,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
+import org.github.gestalt.config.node.TagMergingStrategyFallback;
 import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.node.ConfigNode;
@@ -125,6 +126,7 @@ class GestaltBuilderTest {
             .setResultProcessor(List.of(new TestResultProcessor(true)))
             .setResultsProcessorManager(new ResultsProcessorManager(new ArrayList<>()))
             .setAddCoreResultProcessors(true)
+            .setTagMergingStrategy(new TagMergingStrategyFallback())
             .addValidator(new TestValidationProcessor(true))
             .addValidators(List.of(new TestValidationProcessor(true)))
             .setValidators(List.of(new TestValidationProcessor(true)))

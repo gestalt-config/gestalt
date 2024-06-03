@@ -15,10 +15,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.ConfigLoaderService;
-import org.github.gestalt.config.node.ConfigNodeManager;
-import org.github.gestalt.config.node.ConfigNodeService;
-import org.github.gestalt.config.node.ConfigNodeTagResolutionStrategy;
-import org.github.gestalt.config.node.EqualTagsWithDefaultTagResolutionStrategy;
+import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.path.mapper.PathMapper;
@@ -90,6 +87,7 @@ public class GestaltBuilder {
     private List<ConfigValidator> configValidators = new ArrayList<>();
     private List<ResultProcessor> resultProcessors = new ArrayList<>();
     private ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy;
+    private TagMergingStrategy tagMergingStrategy;
     private boolean useCacheDecorator = true;
     private Set<String> securityRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
@@ -977,6 +975,18 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set the TagMergingStrategy that controls how we merge the tags provided with the request and the default tags,
+     * then returns the results.
+     *
+     * @param tagMergingStrategy the Merges the tags provided with the request and the default tags, then returns the results.
+     * @return the builder
+     */
+    public GestaltBuilder setTagMergingStrategy(TagMergingStrategy tagMergingStrategy) {
+        this.tagMergingStrategy = tagMergingStrategy;
+        return this;
+    }
+
+    /**
      * Set a date decoder format. Used to decode date times.
      *
      * @param dateDecoderFormat a date decoder format
@@ -1212,6 +1222,10 @@ public class GestaltBuilder {
             configNodeService = new ConfigNodeManager(configNodeTagResolutionStrategy, sentenceLexer);
         }
 
+        if (tagMergingStrategy == null) {
+            tagMergingStrategy = new TagMergingStrategyFallback();
+        }
+
         configurePathMappers();
         configureDecoders();
         configureObservations();
@@ -1225,7 +1239,7 @@ public class GestaltBuilder {
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
             gestaltConfig, configNodeService, coreReloadListenersContainer, configNodeProcessors, secretConcealer, observationManager,
-            resultsProcessorManager, defaultTags);
+            resultsProcessorManager, defaultTags, tagMergingStrategy);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
@@ -1238,7 +1252,7 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
-            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationManager, gestaltConfig);
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationManager, gestaltConfig, tagMergingStrategy);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.

@@ -13,10 +13,7 @@ import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.loader.MapConfigLoader;
-import org.github.gestalt.config.node.ConfigNode;
-import org.github.gestalt.config.node.ConfigNodeManager;
-import org.github.gestalt.config.node.LeafNode;
-import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.result.DefaultResultProcessor;
@@ -525,7 +522,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null, Tags.of());
+            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null,
+            Tags.of(), new TagMergingStrategyFallback());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(GResultOf.resultOf(null, Collections.emptyList()));
 
@@ -556,7 +554,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null,
-            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null, Tags.of());
+            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null,
+            Tags.of(), new TagMergingStrategyFallback());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayInvalidIndex(-1, "test"))));
@@ -591,7 +590,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, configNodeManager, null,
-            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null, Tags.of());
+            Collections.singletonList(new TestConfigNodeProcessor("aaa")), secretConcealer, null, null,
+            Tags.of(), new TagMergingStrategyFallback());
 
         Mockito.when(configNodeManager.postProcess(Mockito.any())).thenReturn(
             GResultOf.resultOf(true, Collections.singletonList(new ValidationError.ArrayMissingIndex(1, "test"))));
@@ -849,7 +849,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+            null, null, Tags.of(), new TagMergingStrategyFallback());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.loadConfigs());
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -870,7 +870,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+            null, null, Tags.of(), new TagMergingStrategyFallback());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.loadConfigs());
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -898,7 +898,8 @@ class GestaltTest {
             new DecoderRegistry(Collections.singletonList(new StringDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())), lexer, new GestaltConfig(), new ConfigNodeManager(), null,
             Collections.emptyList(), secretConcealer, null,
-            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())), Tags.of());
+            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())),
+            Tags.of(), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
 
@@ -933,7 +934,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new StringDecoder(), new ExceptionDecoder()), configNodeManager, lexer,
                 List.of(new StandardPathMapper())), lexer, new GestaltConfig(), new ConfigNodeManager(), null,
             Collections.emptyList(), secretConcealer, null,
-            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())), Tags.of());
+            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())),
+            Tags.of(), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
 
@@ -968,7 +970,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, null, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+            null, null, Tags.of(), new TagMergingStrategyFallback());
 
         var ex = Assertions.assertThrows(GestaltException.class, gestalt::loadConfigs);
         assertThat(ex).isInstanceOf(GestaltException.class)
@@ -1035,7 +1037,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, config, new ConfigNodeManager(), null, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+            null, null, Tags.of(), new TagMergingStrategyFallback());
 
         GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, gestalt::loadConfigs);
         Assertions.assertEquals("No results found for node", e.getMessage());
@@ -1249,7 +1251,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())), lexer, new GestaltConfig(), configNodeManager,
             coreReloadListenersContainer, Collections.emptyList(), secretConcealer, null,
-            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())), Tags.of());
+            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())),
+            Tags.of(), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1312,7 +1315,7 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of());
+            null, null, Tags.of(), new TagMergingStrategyFallback());
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.reload(sourcePackage));
         assertThat(ex).hasMessage("No sources provided, unable to reload any configs");
@@ -1347,7 +1350,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())), lexer, new GestaltConfig(),
             configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer, null,
-            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())), Tags.of());
+            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())),
+            Tags.of(), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1420,7 +1424,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())), lexer, new GestaltConfig(), configNodeManager,
             coreReloadListenersContainer, Collections.emptyList(), secretConcealer, null,
-            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())), Tags.of());
+            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())),
+            Tags.of(), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1485,7 +1490,8 @@ class GestaltTest {
             new DecoderRegistry(List.of(new DoubleDecoder(), new LongDecoder(), new IntegerDecoder(), new StringDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())), lexer, new GestaltConfig(),
             configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer, null,
-            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())), Tags.of());
+            new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())),
+            Tags.of(), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
         List<ValidationError> errors = gestalt.getLoadErrors();
@@ -1613,7 +1619,7 @@ class GestaltTest {
                     new OptionalDoubleDecoder(), new OptionalIntDecoder(), new OptionalLongDecoder()),
                 configNodeManager, lexer, List.of(new StandardPathMapper())),
             lexer, new GestaltConfig(), configNodeManager, coreReloadListenersContainer, Collections.emptyList(), secretConcealer,
-            null, null, Tags.of("env", "dev"));
+            null, null, Tags.of("env", "dev"), new TagMergingStrategyFallback());
 
         gestalt.loadConfigs();
 
@@ -2054,6 +2060,48 @@ class GestaltTest {
         Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
         Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
         Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+    }
+
+    @Test
+    public void testMergeTags() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.password", "test3");
+        configs3.put("db.port", "789");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.profile("one")).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs3).setTags(Tags.profiles("one", "two")).build())
+            .setTreatWarningsAsErrors(true)
+            .setTagMergingStrategy(new TagMergingStrategyCombine())
+            .setDefaultTags(Tags.profile("one"))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("456", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.profile("one")));
+        Assertions.assertEquals("456", gestalt.getConfig("db.port", String.class, Tags.profile("one")));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class, Tags.profile("one")));
+
+        Assertions.assertEquals("test3", gestalt.getConfig("db.password", String.class, Tags.profile("two")));
+        Assertions.assertEquals("789", gestalt.getConfig("db.port", String.class, Tags.profile("two")));
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class, Tags.profile("two")));
+
     }
 
 
