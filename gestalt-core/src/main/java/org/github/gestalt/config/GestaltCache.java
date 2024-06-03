@@ -32,6 +32,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
      * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
      * @param observationManager Observations manager for submitting Observations
      * @param gestaltConfig Gestalt Configuration
+     * @param tagMergingStrategy The strategy to merge tags
      */
     public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationManager observationManager, GestaltConfig gestaltConfig,
                         TagMergingStrategy tagMergingStrategy) {
