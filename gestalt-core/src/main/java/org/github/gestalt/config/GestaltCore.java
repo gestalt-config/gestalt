@@ -87,6 +87,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param observationManager       Manages reporting of observations
      * @param resultsProcessorManager    Validation Manager, for validating configuration objects
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     * @param tagMergingStrategy   Strategy for how to merge tags
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
