@@ -18,9 +18,9 @@ weldCore = "5.1.2.Final"
 jackson = "2.17.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.60"
-gcpLibraries = "26.39.0"
-azure = "1.2.23"
+awsBom = "2.25.65"
+gcpLibraries = "26.40.0"
+azure = "1.2.24"
 # vault
 vault = "6.2.0"
 # Git support
@@ -33,7 +33,7 @@ hibernateValidator = "8.0.1.Final"
 expressly = "5.0.0"
 # testing
 junit5 = "5.10.2"
-assertJ = "3.25.3"
+assertJ = "3.26.0"
 mockito = "5.2.0"
 mockk = "1.13.11"
 koTestAssertions = "5.9.0"
@@ -41,8 +41,8 @@ koTestAssertions = "5.9.0"
 awsMock = "2.17.0"
 testcontainers = "1.19.8"
 # static code analysis
-errorprone = "2.27.1"
-gradleErrorProne = "3.1.0"
+errorprone = "2.28.0"
+gradleErrorProne = "4.0.0"
 detekt = "1.23.6"
 checkStyle = "10.10.0"
 # benchmarking
