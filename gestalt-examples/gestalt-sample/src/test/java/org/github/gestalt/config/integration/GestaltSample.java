@@ -41,6 +41,7 @@ import org.github.gestalt.config.lexer.PathLexerBuilder;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
+import org.github.gestalt.config.node.TagMergingStrategyCombine;
 import org.github.gestalt.config.processor.config.transform.RandomTransformer;
 import org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer;
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
@@ -1803,6 +1804,48 @@ public class GestaltSample {
         Assertions.assertEquals("test", gestalt.getConfig("db", DBInfo.class).getUri());
         Assertions.assertEquals(3306, gestalt.getConfig("db", DBInfo.class).getPort());
         Assertions.assertEquals("abc123", gestalt.getConfig("db", DBInfo.class).getPassword());
+    }
+
+    @Test
+    public void testMergeTags() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "3306");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.password", "test3");
+        configs3.put("db.port", "789");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.profile("one")).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs3).setTags(Tags.profiles("one", "two")).build())
+            .setTreatWarningsAsErrors(true)
+            .setTagMergingStrategy(new TagMergingStrategyCombine())
+            .setDefaultTags(Tags.profile("one"))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("456", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.profile("one")));
+        Assertions.assertEquals("456", gestalt.getConfig("db.port", String.class, Tags.profile("one")));
+        Assertions.assertEquals("my.postgresql.com", gestalt.getConfig("db.uri", String.class, Tags.profile("one")));
+
+        Assertions.assertEquals("test3", gestalt.getConfig("db.password", String.class, Tags.profile("two")));
+        Assertions.assertEquals("789", gestalt.getConfig("db.port", String.class, Tags.profile("two")));
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class, Tags.profile("two")));
+
     }
 
     public enum Role {
