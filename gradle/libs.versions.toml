@@ -18,16 +18,16 @@ weldCore = "5.1.2.Final"
 jackson = "2.17.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.25.65"
-gcpLibraries = "26.40.0"
+awsBom = "2.26.3"
+gcpLibraries = "26.41.0"
 azure = "1.2.24"
 # vault
 vault = "6.2.0"
 # Git support
-jgit = "6.9.0.202403050737-r"
+jgit = "6.10.0.202406032230-r"
 eddsa = "0.3.0"
 # metrics
-micrometer = "1.13.0"
+micrometer = "1.13.1"
 # validation
 hibernateValidator = "8.0.1.Final"
 expressly = "5.0.0"
@@ -36,7 +36,7 @@ junit5 = "5.10.2"
 assertJ = "3.26.0"
 mockito = "5.2.0"
 mockk = "1.13.11"
-koTestAssertions = "5.9.0"
+koTestAssertions = "5.9.1"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
 testcontainers = "1.19.8"
@@ -52,7 +52,7 @@ gradleJmh = "0.7.2"
 gestalt = "0.29.0"
 # Gradle utility
 gradleVersions = "0.51.0"
-gitVersions = "3.0.0"
+gitVersions = "3.1.0"
 gradleVersionsUpdate = "0.8.4"
 com-fasterxml-jackson-datatype = "2.17.1"
 

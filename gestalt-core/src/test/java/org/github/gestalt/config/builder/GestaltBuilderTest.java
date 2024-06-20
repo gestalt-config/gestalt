@@ -27,6 +27,7 @@ import org.github.gestalt.config.processor.config.transform.EnvironmentVariables
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.processor.result.DefaultResultProcessor;
 import org.github.gestalt.config.processor.result.ErrorResultProcessor;
+import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
 import org.github.gestalt.config.secret.rules.SecretConcealerManager;
@@ -39,7 +40,6 @@ import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.processor.TestResultProcessor;
-import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -120,11 +120,11 @@ class GestaltBuilderTest {
             .addObservationsRecorder(new TestObservationRecorder(0))
             .addObservationsRecorders(List.of(new TestObservationRecorder(1)))
             .setObservationsRecorders(List.of(new TestObservationRecorder(0), new TestObservationRecorder(1)))
-            .setObservationsManager(new ObservationManager(List.of()))
+            .setObservationsService(new ObservationManager(List.of()))
             .addResultProcessor(new TestResultProcessor(true))
             .addResultProcessors(List.of(new TestResultProcessor(true)))
             .setResultProcessor(List.of(new TestResultProcessor(true)))
-            .setResultsProcessorManager(new ResultsProcessorManager(new ArrayList<>()))
+            .setResultsProcessorService(new ResultsProcessorManager(new ArrayList<>()))
             .setAddCoreResultProcessors(true)
             .setTagMergingStrategy(new TagMergingStrategyFallback())
             .addValidator(new TestValidationProcessor(true))
@@ -854,7 +854,7 @@ class GestaltBuilderTest {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSources(sources)
-            .setResultsProcessorManager(new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())))
+            .setResultsProcessorService(new ResultsProcessorManager(List.of(new ErrorResultProcessor(), new DefaultResultProcessor())))
             .build();
 
         gestalt.loadConfigs();

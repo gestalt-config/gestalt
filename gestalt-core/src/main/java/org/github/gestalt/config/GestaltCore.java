@@ -13,11 +13,10 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.TagMergingStrategy;
-import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.ObservationMarker;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
+import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -32,7 +31,7 @@ import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.processor.result.ResultsProcessorManager;
+import org.github.gestalt.config.processor.result.ResultsProcessorService;
 
 import java.util.*;
 
@@ -55,7 +54,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private final GestaltConfig gestaltConfig;
     private final ConfigNodeService configNodeService;
     private final CoreReloadListenersContainer coreReloadListenersContainer;
-    private final List<ConfigNodeProcessor> configNodeProcessors;
 
     private final SecretConcealer secretConcealer;
 
@@ -63,9 +61,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private final Tags defaultTags;
 
-    private final ObservationManager observationManager;
+    private final ObservationService observationService;
 
-    private final ResultsProcessorManager resultsProcessorManager;
+    private final ResultsProcessorService resultsProcessorService;
 
     private final DecoderContext decoderContext;
 
@@ -82,18 +80,17 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param gestaltConfig        configuration for the Gestalt
      * @param configNodeService    configNodeService core functionality to manage nodes
      * @param reloadStrategy       reloadStrategy holds all reload listeners
-     * @param configNodeProcessor        postProcessor list of post processors
      * @param secretConcealer      Utility for concealing secrets
-     * @param observationManager       Manages reporting of observations
-     * @param resultsProcessorManager    Validation Manager, for validating configuration objects
+     * @param observationService       Manages reporting of observations
+     * @param resultsProcessorService    Validation Manager, for validating configuration objects
      * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
      * @param tagMergingStrategy   Strategy for how to merge tags
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
                        ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
-                       List<ConfigNodeProcessor> configNodeProcessor, SecretConcealer secretConcealer,
-                       ObservationManager observationManager, ResultsProcessorManager resultsProcessorManager,
+                       SecretConcealer secretConcealer,
+                       ObservationService observationService, ResultsProcessorService resultsProcessorService,
                        Tags defaultTags, TagMergingStrategy tagMergingStrategy) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
@@ -102,10 +99,9 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
         this.coreReloadListenersContainer = reloadStrategy;
-        this.configNodeProcessors = configNodeProcessor != null ? configNodeProcessor : Collections.emptyList();
         this.secretConcealer = secretConcealer;
-        this.observationManager = observationManager;
-        this.resultsProcessorManager = resultsProcessorManager;
+        this.observationService = observationService;
+        this.resultsProcessorService = resultsProcessorService;
         this.defaultTags = defaultTags;
         this.decoderContext = new DecoderContext(decoderService, this, secretConcealer, sentenceLexer);
         this.tagMergingStrategy = tagMergingStrategy;
@@ -186,8 +182,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
         ObservationMarker reloadMarker = null;
         try {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                reloadMarker = observationManager.startObservation("reload",
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                reloadMarker = observationService.startObservation("reload",
                     Tags.of(Tags.of("source", reloadSourcePackage.getConfigSource().name()), reloadSourcePackage.getTags()));
             }
 
@@ -222,19 +218,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             }
 
             coreReloadListenersContainer.reload();
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.finalizeObservation(reloadMarker, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.finalizeObservation(reloadMarker, Tags.of());
             }
         } catch (Exception ex) {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.finalizeObservation(reloadMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.finalizeObservation(reloadMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
             }
             throw ex;
         }
     }
 
     void postProcessConfigs() throws GestaltException {
-        GResultOf<Boolean> results = configNodeService.postProcess(configNodeProcessors);
+        GResultOf<Boolean> results = configNodeService.processConfigNodes();
 
         if (checkErrorsShouldFail(results, gestaltConfig)) {
             throw new GestaltException("Failed post processing config nodes with errors ",
@@ -423,8 +419,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         boolean defaultReturned = false;
         Exception exceptionThrown = null;
         try {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                getConfigMarker = observationManager.startGetConfig(path, klass, tags, failOnErrors);
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                getConfigMarker = observationService.startGetConfig(path, klass, tags, failOnErrors);
             }
 
             String combinedPath = buildPathWithConfigPrefix(klass, path);
@@ -436,7 +432,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
                 getConfigObservations(results, combinedPath, klass, tags, failOnErrors);
 
-                var processedResults = resultsProcessorManager.processResults(results, path, !failOnErrors, defaultVal, klass, tags);
+                var processedResults = resultsProcessorService.processResults(results, path, !failOnErrors, defaultVal, klass, tags);
 
                 defaultReturned = processedResults.isDefault();
                 return processedResults.results();
@@ -450,7 +446,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     }
 
     private void finalizeObservations(ObservationMarker getConfigMarker, boolean defaultReturned, Exception exceptionThrown) {
-        if (gestaltConfig.isObservationsEnabled() && observationManager != null && getConfigMarker != null) {
+        if (gestaltConfig.isObservationsEnabled() && observationService != null && getConfigMarker != null) {
             Set<Tag> tagSet = new HashSet<>();
             if (defaultReturned) {
                 tagSet.add(Tag.of("default", "true"));
@@ -459,7 +455,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             if (exceptionThrown != null) {
                 tagSet.add(Tag.of("exception", exceptionThrown.getClass().getCanonicalName()));
             }
-            observationManager.finalizeObservation(getConfigMarker, Tags.of(tagSet));
+            observationService.finalizeObservation(getConfigMarker, Tags.of(tagSet));
         }
     }
 
@@ -495,29 +491,29 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
     private <T> void getConfigObservations(GResultOf<T> results, String path, TypeCapture<T> klass, Tags tags, boolean isOptional)
         throws GestaltException {
-        if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
+        if (gestaltConfig.isObservationsEnabled() && observationService != null) {
 
             // record all the details of the request.
-            observationManager.recordObservation(results, path, klass, tags, isOptional);
+            observationService.recordObservation(results, path, klass, tags, isOptional);
 
             int missing = results.getErrors(ValidationLevel.MISSING_VALUE).size();
             if (missing != 0) {
-                observationManager.recordObservation("get.config.missing", missing, Tags.of("optional", "false"));
+                observationService.recordObservation("get.config.missing", missing, Tags.of("optional", "false"));
             }
 
             int missingOptional = results.getErrors(ValidationLevel.MISSING_OPTIONAL_VALUE).size();
             if (missingOptional != 0) {
-                observationManager.recordObservation("get.config.missing", missingOptional, Tags.of("optional", "true"));
+                observationService.recordObservation("get.config.missing", missingOptional, Tags.of("optional", "true"));
             }
 
             int errors = results.getErrors(ValidationLevel.ERROR).size();
             if (errors != 0) {
-                observationManager.recordObservation("get.config.error", errors, Tags.of());
+                observationService.recordObservation("get.config.error", errors, Tags.of());
             }
 
             int warnings = results.getErrors(ValidationLevel.WARN).size();
             if (warnings != 0) {
-                observationManager.recordObservation("get.config.warning", warnings, Tags.of());
+                observationService.recordObservation("get.config.warning", warnings, Tags.of());
             }
         }
     }

@@ -3,7 +3,7 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.TagMergingStrategy;
-import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.tag.Tags;
@@ -21,7 +21,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
     private final Tags defaultTags;
-    private final ObservationManager observationManager;
+    private final ObservationService observationService;
     private final GestaltConfig gestaltConfig;
     private final TagMergingStrategy tagMergingStrategy;
 
@@ -30,16 +30,16 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
      *
      * @param delegate    real Gestalt to call for configs to cache.
      * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
-     * @param observationManager Observations manager for submitting Observations
+     * @param observationService Observations service for submitting Observations
      * @param gestaltConfig Gestalt Configuration
      * @param tagMergingStrategy The strategy to merge tags
      */
-    public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationManager observationManager, GestaltConfig gestaltConfig,
+    public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationService observationService, GestaltConfig gestaltConfig,
                         TagMergingStrategy tagMergingStrategy) {
         Objects.requireNonNull(tagMergingStrategy);
         this.delegate = delegate;
         this.defaultTags = defaultTags;
-        this.observationManager = observationManager;
+        this.observationService = observationService;
         this.gestaltConfig = gestaltConfig;
         this.tagMergingStrategy = tagMergingStrategy;
     }
@@ -91,8 +91,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
         if (cache.get(key) != null) {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.recordObservation("cache.hit", 1, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
             }
             return (T) cache.get(key);
         } else {
@@ -150,8 +150,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
                 result = defaultVal;
             }
 
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.recordObservation("cache.hit", 1, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
             }
 
             return result;
@@ -210,8 +210,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
         if (cache.containsKey(key)) {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.recordObservation("cache.hit", 1, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
             }
 
             T result = (T) cache.get(key);

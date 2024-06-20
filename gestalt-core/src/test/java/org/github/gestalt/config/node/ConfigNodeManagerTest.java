@@ -3,8 +3,10 @@ package org.github.gestalt.config.node;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.github.gestalt.config.source.ConfigSource;
@@ -1829,11 +1831,12 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(Arrays.asList(new TestConfigNodeProcessor("abc"),
+                new TestConfigNodeProcessor("def")), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestConfigNodeProcessor("abc"),
-            new TestConfigNodeProcessor("def")));
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
         Assertions.assertFalse(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1858,15 +1861,6 @@ class ConfigNodeManagerTest {
     }
 
     @Test
-    public void testPostProcessorNullProcessors() {
-
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
-        GestaltException e = Assertions.assertThrows(GestaltException.class, () -> configNodeManager.postProcess(null));
-
-        Assertions.assertEquals("No postProcessors provided", e.getMessage());
-    }
-
-    @Test
     public void testPostProcessorEmpty() throws GestaltException {
         ConfigNode[] arrayNode = new ConfigNode[2];
         arrayNode[0] = new LeafNode("John");
@@ -1884,7 +1878,7 @@ class ConfigNodeManagerTest {
         ConfigNodeManager configNodeManager = new ConfigNodeManager();
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Collections.emptyList());
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
         Assertions.assertFalse(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1923,11 +1917,12 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(Arrays.asList(new TestConfigNodeProcessorErrors(),
+                new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestConfigNodeProcessorErrors(),
-            new TestConfigNodeProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -1970,11 +1965,12 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(Arrays.asList(new TestConfigNodeProcessorNoResults(),
+                new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(Arrays.asList(new TestConfigNodeProcessorNoResults(),
-            new TestConfigNodeProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -2002,10 +1998,11 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(List.of(new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestConfigNodeProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());
@@ -2048,10 +2045,11 @@ class ConfigNodeManagerTest {
         root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
         ConfigNode root1 = new MapNode(root1Node);
 
-        ConfigNodeManager configNodeManager = new ConfigNodeManager();
+        ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(List.of(new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
-        GResultOf<Boolean> resultsOf = configNodeManager.postProcess(List.of(new TestConfigNodeProcessor("abc")));
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
         Assertions.assertTrue(resultsOf.hasErrors());
         Assertions.assertTrue(resultsOf.hasResults());
         Assertions.assertNotNull(resultsOf.results());

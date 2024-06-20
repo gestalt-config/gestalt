@@ -5,7 +5,8 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorService;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ArrayToken;
@@ -37,8 +38,10 @@ public final class ConfigNodeManager implements ConfigNodeService {
     // Sentence Lexer used to build a normalized path.
     private final SentenceLexer lexer;
 
+    private final ConfigNodeProcessorService configNodeProcessorService;
+
     public ConfigNodeManager() {
-        this(new EqualTagsWithDefaultTagResolutionStrategy(), new PathLexer());
+        this(new EqualTagsWithDefaultTagResolutionStrategy(), new ConfigNodeProcessorManager(List.of(), new PathLexer()), new PathLexer());
     }
 
     /**
@@ -47,8 +50,11 @@ public final class ConfigNodeManager implements ConfigNodeService {
      * @param configNodeTagResolutionStrategy how to resolve the config nodes to search.
      * @param lexer                        sentence Lexer to build a normalized path.
      */
-    public ConfigNodeManager(ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy, SentenceLexer lexer) {
+    public ConfigNodeManager(ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy,
+                             ConfigNodeProcessorService configNodeProcessorService,
+                             SentenceLexer lexer) {
         this.configNodeTagResolutionStrategy = configNodeTagResolutionStrategy;
+        this.configNodeProcessorService = configNodeProcessorService;
         this.lexer = lexer;
     }
 
@@ -89,15 +95,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
 
     @Override
     @SuppressWarnings("ModifyCollectionInEnhancedForLoop")
-    public GResultOf<Boolean> postProcess(List<ConfigNodeProcessor> configNodeProcessors) throws GestaltException {
-        if (configNodeProcessors == null) {
-            throw new GestaltException("No postProcessors provided");
-        }
-
-        if (configNodeProcessors.isEmpty()) {
-            return GResultOf.result(true);
-        }
-
+    public GResultOf<Boolean> processConfigNodes() throws GestaltException {
         long stamp = lock.readLock();
         try {
             boolean ppSuccessful = true;
@@ -106,7 +104,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
             for (Map.Entry<Tags, ConfigNode> entry : roots.entrySet()) {
                 Tags tags = entry.getKey();
                 ConfigNode root = entry.getValue();
-                GResultOf<ConfigNode> results = postProcess("", root, configNodeProcessors);
+                GResultOf<ConfigNode> results = configNodeProcessorService.processConfigNodes("", root);
 
                 // If we have results we want to update the root to the new post processed config tree.
                 errors.addAll(results.getErrors());
@@ -134,80 +132,6 @@ public final class ConfigNodeManager implements ConfigNodeService {
             lock.unlock(stamp);
         }
     }
-
-    private GResultOf<ConfigNode> postProcess(String path, ConfigNode node, List<ConfigNodeProcessor> configNodeProcessors) {
-        ConfigNode currentNode = node;
-        List<ValidationError> errors = new ArrayList<>();
-
-        // apply the post processors to the node.
-        // If there are multiple post processors, apply them in order, each post processor operates on the result node from the
-        // last post processor.
-        for (ConfigNodeProcessor it : configNodeProcessors) {
-            GResultOf<ConfigNode> processedNode = it.process(path, currentNode);
-
-            errors.addAll(processedNode.getErrors());
-            if (processedNode.hasResults()) {
-                currentNode = processedNode.results();
-            } else {
-                errors.add(new ValidationError.NoResultsFoundForNode(path, node.getClass(), "post processing"));
-            }
-        }
-
-        // recursively apply post processing to children nodes. If this is a leaf, we can return.
-        if (currentNode instanceof ArrayNode) {
-            return postProcessArray(path, (ArrayNode) currentNode, configNodeProcessors);
-        } else if (currentNode instanceof MapNode) {
-            return postProcessMap(path, (MapNode) currentNode, configNodeProcessors);
-        } else if (currentNode instanceof LeafNode) {
-            return resultOf(currentNode, errors);
-        } else {
-            return GResultOf.errors(new ValidationError.UnknownNodeTypePostProcess(path, node.getClass().getName()));
-        }
-    }
-
-    private GResultOf<ConfigNode> postProcessArray(String path, ArrayNode node, List<ConfigNodeProcessor> configNodeProcessors) {
-        int size = node.size();
-        List<ValidationError> errors = new ArrayList<>();
-        ConfigNode[] processedNode = new ConfigNode[size];
-
-        for (int i = 0; i < size; i++) {
-            Optional<ConfigNode> currentNodeOption = node.getIndex(i);
-            if (currentNodeOption.isPresent()) {
-                String nextPath = PathUtil.pathForIndex(lexer, path, i);
-                GResultOf<ConfigNode> newNode = postProcess(nextPath, currentNodeOption.get(), configNodeProcessors);
-
-                errors.addAll(newNode.getErrors());
-                if (newNode.hasResults()) {
-                    processedNode[i] = newNode.results();
-                } else {
-                    errors.add(new ValidationError.NoResultsFoundForNode(path, ArrayNode.class, "post processing"));
-                }
-            }
-        }
-
-        return resultOf(new ArrayNode(Arrays.asList(processedNode)), errors);
-    }
-
-    private GResultOf<ConfigNode> postProcessMap(String path, MapNode node, List<ConfigNodeProcessor> configNodeProcessors) {
-        Map<String, ConfigNode> processedNode = new HashMap<>();
-        List<ValidationError> errors = new ArrayList<>();
-
-        for (Map.Entry<String, ConfigNode> entry : node.getMapNode().entrySet()) {
-            String key = entry.getKey();
-            String nextPath = PathUtil.pathForKey(lexer, path, key);
-            GResultOf<ConfigNode> newNode = postProcess(nextPath, entry.getValue(), configNodeProcessors);
-
-            errors.addAll(newNode.getErrors());
-            if (newNode.hasResults()) {
-                processedNode.put(key, newNode.results());
-            } else {
-                errors.add(new ValidationError.NoResultsFoundForNode(path, MapNode.class, "post processing"));
-            }
-        }
-
-        return resultOf(new MapNode(processedNode), errors);
-    }
-
 
     @Override
     public GResultOf<ConfigNode> reloadNode(ConfigNodeContainer reloadNode) throws GestaltException {

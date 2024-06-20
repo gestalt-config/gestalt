@@ -1,5 +1,6 @@
 package org.github.gestalt.config.processor.config.transform;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
@@ -33,6 +34,7 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
+@ConfigPriority(200)
 public final class StringSubstitutionConfigNodeProcessor implements ConfigNodeProcessor {
 
     public static final String DEFAULT_SUBSTITUTION_REGEX =

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-class ResultsProcessorManagerTest {
+class ResultsProcessorServiceTest {
 
     @Test
     public void testResultProcessorOk() throws GestaltException {

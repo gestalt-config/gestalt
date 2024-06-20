@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class LeafNode implements ConfigNode {
+public class LeafNode implements ConfigNode {
     private final String value;
 
     /**

@@ -18,13 +18,13 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.*;
 import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.ObservationRecorder;
+import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
-import org.github.gestalt.config.processor.result.DefaultResultProcessor;
-import org.github.gestalt.config.processor.result.ErrorResultProcessor;
-import org.github.gestalt.config.processor.result.ResultProcessor;
-import org.github.gestalt.config.processor.result.ResultsProcessorManager;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorService;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
+import org.github.gestalt.config.processor.result.*;
 import org.github.gestalt.config.processor.result.validation.ConfigValidator;
 import org.github.gestalt.config.processor.result.validation.ValidationResultProcessor;
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
@@ -75,8 +75,9 @@ public class GestaltBuilder {
     private DecoderService decoderService;
     private SentenceLexer sentenceLexer;
     private GestaltConfig gestaltConfig = new GestaltConfig();
-    private ObservationManager observationManager;
-    private ResultsProcessorManager resultsProcessorManager;
+    private ObservationService observationService;
+    private ResultsProcessorService resultsProcessorService;
+    private ConfigNodeProcessorService configNodeProcessorService;
     private ConfigNodeService configNodeService;
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
@@ -693,24 +694,24 @@ public class GestaltBuilder {
      * @return GestaltBuilder builder
      */
     public GestaltBuilder setConfigNodeService(ConfigNodeService configNodeService) {
-        Objects.requireNonNull(configNodeService, "ConfigNodeManager should not be null");
+        Objects.requireNonNull(configNodeService, "ConfigNodeService should not be null");
         this.configNodeService = configNodeService;
         return this;
     }
 
     /**
-     * Sets the ObservationRecorder if you want to provide your own. Otherwise, a default is provided.
+     * Sets the ObservationService if you want to provide your own. Otherwise, a default is provided.
      *
      * <p>If there are any ObservationRecorder, it will not add the default observations recorders.
      * So you will need to add the defaults manually if needed.
      *
-     * @param observationManager Observation Manager
+     * @param observationService Observation Service
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setObservationsManager(ObservationManager observationManager) {
-        Objects.requireNonNull(observationManager, "ObservationManager should not be null");
-        this.observationManager = observationManager;
-        observationManager.addObservationRecorders(observationRecorders);
+    public GestaltBuilder setObservationsService(ObservationService observationService) {
+        Objects.requireNonNull(observationService, "observationService should not be null");
+        this.observationService = observationService;
+        observationService.addObservationRecorders(observationRecorders);
         return this;
     }
 
@@ -739,18 +740,28 @@ public class GestaltBuilder {
 
 
     /**
-     * Sets the ResultsProcessorManager if you want to provide your own. Otherwise, a default is provided.
+     * Sets the ResultsProcessorService if you want to provide your own. Otherwise, a default is provided.
      *
-     * <p>If there are any ResultProcessors, it will not add the default ResultsProcessors.
-     * So you will need to add the defaults manually if needed.
-     *
-     * @param resultsProcessorManager the ResultsProcessorManager
+     * @param resultsProcessorService the resultsProcessorService
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setResultsProcessorManager(ResultsProcessorManager resultsProcessorManager) {
-        Objects.requireNonNull(resultsProcessorManager, "ResultsProcessorManager should not be null");
-        this.resultsProcessorManager = resultsProcessorManager;
-        resultsProcessorManager.addResultProcessors(resultProcessors);
+    public GestaltBuilder setResultsProcessorService(ResultsProcessorService resultsProcessorService) {
+        Objects.requireNonNull(resultsProcessorService, "ResultsProcessorService should not be null");
+        this.resultsProcessorService = resultsProcessorService;
+        resultsProcessorService.addResultProcessors(resultProcessors);
+        return this;
+    }
+
+    /**
+     * Sets the ConfigNodeProcessorService if you want to provide your own. Otherwise, a default is provided.
+     *
+     * @param configNodeProcessorService the ConfigNodeProcessorService
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setConfigNodeProcessorService(ConfigNodeProcessorService configNodeProcessorService) {
+        Objects.requireNonNull(configNodeProcessorService, "ConfigNodeProcessorService should not be null");
+        this.configNodeProcessorService = configNodeProcessorService;
+        configNodeProcessorService.addConfigNodeProcessors(configNodeProcessors);
         return this;
     }
 
@@ -1218,8 +1229,13 @@ public class GestaltBuilder {
             configNodeTagResolutionStrategy = new EqualTagsWithDefaultTagResolutionStrategy();
         }
 
+        if (configNodeProcessorService == null) {
+            // initialize the ConfigNodeProcessorManager dont provide configNodeProcessors yet, they will be added below.
+            configNodeProcessorService = new ConfigNodeProcessorManager(List.of(), sentenceLexer);
+        }
+
         if (configNodeService == null) {
-            configNodeService = new ConfigNodeManager(configNodeTagResolutionStrategy, sentenceLexer);
+            configNodeService = new ConfigNodeManager(configNodeTagResolutionStrategy, configNodeProcessorService, sentenceLexer);
         }
 
         if (tagMergingStrategy == null) {
@@ -1233,13 +1249,13 @@ public class GestaltBuilder {
         configureCoreResultProcessors();
         configureResultProcessors();
         configureConfigLoaders();
-        configurePostProcessors();
+        configureConfigNodeProcessor();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
-            gestaltConfig, configNodeService, coreReloadListenersContainer, configNodeProcessors, secretConcealer, observationManager,
-            resultsProcessorManager, defaultTags, tagMergingStrategy);
+            gestaltConfig, configNodeService, coreReloadListenersContainer, secretConcealer, observationService,
+            resultsProcessorService, defaultTags, tagMergingStrategy);
 
         // register gestaltCore with all the source reload strategies.
         reloadStrategies.forEach(it -> it.registerListener(gestaltCore));
@@ -1252,7 +1268,7 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
-            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationManager, gestaltConfig, tagMergingStrategy);
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationService, gestaltConfig, tagMergingStrategy);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.
@@ -1263,15 +1279,18 @@ public class GestaltBuilder {
         }
     }
 
-    private void configurePostProcessors() {
+    private void configureConfigNodeProcessor() {
         if (configNodeProcessors.isEmpty()) {
-            logger.log(TRACE, "No post processors provided, using defaults");
+            logger.log(TRACE, "No Config Node Processors provided, using defaults");
             addDefaultPostProcessors();
         }
+
         configNodeProcessors = configNodeProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
         configNodeProcessors.forEach(it -> it.applyConfig(config));
+
+        configNodeProcessorService.addConfigNodeProcessors(configNodeProcessors);
     }
 
     private void configureConfigLoaders() {
@@ -1302,15 +1321,15 @@ public class GestaltBuilder {
             configValidators = configValidators.stream().filter(Objects::nonNull).collect(Collectors.toList());
             configValidators.forEach(it -> it.applyConfig(gestaltConfig));
 
-            var validationResultProcessor = new ValidationResultProcessor(configValidators, observationManager);
+            var validationResultProcessor = new ValidationResultProcessor(configValidators, observationService);
             validationResultProcessor.applyConfig(gestaltConfig);
 
             // if the ResultsProcessorManager does not exist, create it.
             // Otherwise, get all the recorders from the ResultsProcessorManager, combine them with the ones in the builder,
-            if (resultsProcessorManager == null) {
-                resultsProcessorManager = new ResultsProcessorManager(List.of(validationResultProcessor));
+            if (resultsProcessorService == null) {
+                resultsProcessorService = new ResultsProcessorManager(List.of(validationResultProcessor));
             } else {
-                resultsProcessorManager.addResultProcessors(List.of(validationResultProcessor));
+                resultsProcessorService.addResultProcessors(List.of(validationResultProcessor));
             }
         }
     }
@@ -1326,10 +1345,10 @@ public class GestaltBuilder {
 
         // if the ResultsProcessorManager does not exist, create it.
         // Otherwise, get all the recorders from the ResultsProcessorManager, combine them with the ones in the builder,
-        if (resultsProcessorManager == null) {
-            resultsProcessorManager = new ResultsProcessorManager(coreResultProcessors);
+        if (resultsProcessorService == null) {
+            resultsProcessorService = new ResultsProcessorManager(coreResultProcessors);
         } else {
-            resultsProcessorManager.addResultProcessors(coreResultProcessors);
+            resultsProcessorService.addResultProcessors(coreResultProcessors);
         }
     }
 
@@ -1344,10 +1363,10 @@ public class GestaltBuilder {
 
         // if the ResultsProcessorManager does not exist, create it.
         // Otherwise, get all the recorders from the ResultsProcessorManager, combine them with the ones in the builder,
-        if (resultsProcessorManager == null) {
-            resultsProcessorManager = new ResultsProcessorManager(resultProcessors);
+        if (resultsProcessorService == null) {
+            resultsProcessorService = new ResultsProcessorManager(resultProcessors);
         } else {
-            resultsProcessorManager.addResultProcessors(resultProcessors);
+            resultsProcessorService.addResultProcessors(resultProcessors);
         }
     }
 
@@ -1362,10 +1381,10 @@ public class GestaltBuilder {
 
         // if the ObservationManager does not exist, create it.
         // Otherwise, get all the recorders from the ObservationManager, combine them with the ones in the builder,
-        if (observationManager == null) {
-            observationManager = new ObservationManager(observationRecorders);
+        if (observationService == null) {
+            observationService = new ObservationManager(observationRecorders);
         } else {
-            observationManager.addObservationRecorders(observationRecorders);
+            observationService.addObservationRecorders(observationRecorders);
         }
     }
 

@@ -4,7 +4,7 @@ import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.processor.result.ResultProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ValidationResultProcessor implements ResultProcessor {
 
     private GestaltConfig gestaltConfig;
-    private ObservationManager observationManager;
+    private ObservationService observationService;
     private final List<ConfigValidator> configValidators;
 
     public ValidationResultProcessor() {
@@ -29,9 +29,9 @@ public class ValidationResultProcessor implements ResultProcessor {
         loader.forEach(configValidators::add);
     }
 
-    public ValidationResultProcessor(List<ConfigValidator> configValidators, ObservationManager observationManager) {
+    public ValidationResultProcessor(List<ConfigValidator> configValidators, ObservationService observationService) {
         this.configValidators = configValidators;
-        this.observationManager = observationManager;
+        this.observationService = observationService;
     }
 
     @Override
@@ -78,8 +78,8 @@ public class ValidationResultProcessor implements ResultProcessor {
     }
 
     private void updateValidationObservations(List<ValidationError> errors) {
-        if (gestaltConfig != null && gestaltConfig.isObservationsEnabled() && observationManager != null) {
-            observationManager.recordObservation("get.config.validation.error", errors.size(), Tags.of());
+        if (gestaltConfig != null && gestaltConfig.isObservationsEnabled() && observationService != null) {
+            observationService.recordObservation("get.config.validation.error", errors.size(), Tags.of());
         }
     }
 }
