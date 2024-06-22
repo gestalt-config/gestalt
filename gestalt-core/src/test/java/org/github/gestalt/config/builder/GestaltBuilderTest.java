@@ -30,7 +30,9 @@ import org.github.gestalt.config.processor.result.ErrorResultProcessor;
 import org.github.gestalt.config.processor.result.ResultsProcessorManager;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.TimedConfigReloadStrategy;
+import org.github.gestalt.config.secret.rules.RegexSecretChecker;
 import org.github.gestalt.config.secret.rules.SecretConcealerManager;
+import org.github.gestalt.config.security.temporary.TemporarySecretModule;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
@@ -40,6 +42,7 @@ import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.token.Token;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.processor.TestResultProcessor;
+import org.github.gestalt.config.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -134,6 +137,10 @@ class GestaltBuilderTest {
             .addSecurityMaskingRule("secret")
             .setSecurityMask("&&&&")
             .setSecretConcealer(new SecretConcealerManager(Set.of(), it -> "****"))
+            .addTemporaryNodeAccessCount("secret")
+            .addTemporaryNodeAccessCount("secret", 1)
+            .addTemporaryNodeAccessCount(Set.of("cert"), 2)
+            .setTemporaryNodeAccessCount(List.of(new Pair<>(new RegexSecretChecker(Set.of("password")), 1)))
             .setTreatWarningsAsErrors(true)
             .setTreatMissingValuesAsErrors(true)
             .setTreatMissingDiscretionaryValuesAsErrors(true)
@@ -893,6 +900,99 @@ class GestaltBuilderTest {
         Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
         Assertions.assertNull(gestalt.getConfig("db.none", "default", String.class));
+    }
+
+    @Test
+    public void temporaryNode() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addTemporaryNodeAccessCount("password", 1)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+        Assertions.assertEquals("", gestalt.getConfigOptional("db.password", String.class).get());
+    }
+
+    @Test
+    public void buildModuleAlreadyRegisteredSecrets() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addTemporaryNodeAccessCount("cert")
+            .addModuleConfig(new TemporarySecretModule(List.of(new Pair<>(new RegexSecretChecker(Set.of("password")), 10))))
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+    }
+
+    @Test
+    public void everythingTemporarySecrets() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addTemporaryNodeAccessCount(".*", 100)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
     private static class TestDecoder implements Decoder {

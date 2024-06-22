@@ -48,6 +48,7 @@ public final class ConfigNodeManager implements ConfigNodeService {
      * Constructor that takes a sentence Lexer to build a normalized path. Allows an override of the configNodeResolutionStrategy.
      *
      * @param configNodeTagResolutionStrategy how to resolve the config nodes to search.
+     * @param configNodeProcessorService processor applied to the nodes after building the tree.
      * @param lexer                        sentence Lexer to build a normalized path.
      */
     public ConfigNodeManager(ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy,

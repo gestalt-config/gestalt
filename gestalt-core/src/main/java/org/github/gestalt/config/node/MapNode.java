@@ -40,6 +40,11 @@ public final class MapNode implements ConfigNode {
     }
 
     @Override
+    public boolean hasValue() {
+        return false;
+    }
+
+    @Override
     public Optional<ConfigNode> getIndex(int index) {
         return Optional.empty();
     }

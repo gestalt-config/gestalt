@@ -30,6 +30,11 @@ public class LeafNode implements ConfigNode {
     }
 
     @Override
+    public boolean hasValue() {
+        return value != null;
+    }
+
+    @Override
     public NodeType getNodeType() {
         return NodeType.LEAF;
     }

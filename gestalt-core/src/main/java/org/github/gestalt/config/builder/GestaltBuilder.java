@@ -30,13 +30,13 @@ import org.github.gestalt.config.processor.result.validation.ValidationResultPro
 import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
-import org.github.gestalt.config.secret.rules.SecretConcealerManager;
-import org.github.gestalt.config.secret.rules.SecretObfuscator;
+import org.github.gestalt.config.secret.rules.*;
+import org.github.gestalt.config.security.temporary.TemporarySecretModule;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
+import org.github.gestalt.config.utils.Pair;
 
 import java.lang.System.Logger.Level;
 import java.time.format.DateTimeFormatter;
@@ -96,6 +96,7 @@ public class GestaltBuilder {
             "private", "salt", "secret", "secure",
             "ssl", "token", "truststore"));
     private String secretMask = "*****";
+    private List<Pair<SecretChecker, Integer>> secretAccessCounts = new ArrayList<>();
     private SecretConcealer secretConcealer;
     private SecretObfuscator secretObfuscator = (it) -> secretMask;
 
@@ -651,6 +652,65 @@ public class GestaltBuilder {
      */
     public GestaltBuilder setSecurityMaskingRule(Set<String> regexs) {
         securityRules = regexs;
+        return this;
+    }
+
+    /**
+     * Set a single temporary node access rule. If a path matches the regex, it will be limited to the 1 access.
+     * After the value has been retrieved more than accessCount the original value will be released and GC'ed.
+     * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
+     * These values will not be cached in the Gestalt Cache and should not be cached by the caller
+     *
+     * @param regex If a path matches the regex
+     * @return the builder
+     */
+    public GestaltBuilder addTemporaryNodeAccessCount(String regex) {
+        secretAccessCounts.add(new Pair<>(new RegexSecretChecker(Set.of(regex)), 1));
+        return this;
+    }
+
+    /**
+     * Set a single temporary node access rule. If a path matches the regex, it will be limited to the number of access counts.
+     * After the value has been retrieved more than accessCount the original value will be released and GC'ed.
+     * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
+     * These values will not be cached in the Gestalt Cache and should not be cached by the caller
+     *
+     * @param regex If a path matches the regex
+     * @param accessCount After the value has been retrieved more than accessCount the original value will be released and GC'ed.
+     * @return the builder
+     */
+    public GestaltBuilder addTemporaryNodeAccessCount(String regex, int accessCount) {
+        secretAccessCounts.add(new Pair<>(new RegexSecretChecker(Set.of(regex)), accessCount));
+        return this;
+    }
+
+    /**
+     * Set a set of temporary node access rule. If a path matches the regexs, it will be limited to the number of access counts.
+     * After the value has been retrieved more than accessCount the original value will be released and GC'ed.
+     * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
+     * These values will not be cached in the Gestalt Cache and should not be cached by the caller
+     *
+     * @param regexs If a path matches the regex
+     * @param accessCount After the value has been retrieved more than accessCount the original value will be released and GC'ed.
+     * @return the builder
+     */
+    public GestaltBuilder addTemporaryNodeAccessCount(Set<String> regexs, int accessCount) {
+        secretAccessCounts.add(new Pair<>(new RegexSecretChecker(regexs), accessCount));
+        return this;
+    }
+
+    /**
+     * Set a set of temporary node access rule. If a path matches the regexs, it will be limited to the number of access counts.
+     * After the value has been retrieved more than accessCount the original value will be released and GC'ed.
+     * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
+     * These values will not be cached in the Gestalt Cache and should not be cached by the caller
+     *
+     * @param secretAccessCounts list of secret SecretChecker with the number of times the temporary node should be accessible
+     * @return the builder
+     */
+    public GestaltBuilder setTemporaryNodeAccessCount(List<Pair<SecretChecker, Integer>> secretAccessCounts) {
+        Objects.requireNonNull(secretAccessCounts, "secretAccessCounts should not be null");
+        this.secretAccessCounts = secretAccessCounts;
         return this;
     }
 
@@ -1249,6 +1309,8 @@ public class GestaltBuilder {
         configureCoreResultProcessors();
         configureResultProcessors();
         configureConfigLoaders();
+
+        configureTemporaryNodesModule();
         configureConfigNodeProcessor();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
@@ -1268,7 +1330,9 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
-            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationService, gestaltConfig, tagMergingStrategy);
+            var nonCacheableSecrets = secretAccessCounts.stream().map(Pair::getFirst).collect(Collectors.toList());
+            GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationService, gestaltConfig,
+                tagMergingStrategy, nonCacheableSecrets);
 
             // Register the cache with the gestaltCoreReloadStrategy so when the core reloads
             // we can clear the cache.
@@ -1416,6 +1480,17 @@ public class GestaltBuilder {
             decoders.addAll(decoderService.getDecoders());
             List<Decoder<?>> dedupedDecoders = dedupeDecoders();
             decoderService.setDecoders(dedupedDecoders);
+        }
+    }
+
+    private void configureTemporaryNodesModule() {
+        if (secretAccessCounts != null && !secretAccessCounts.isEmpty()) {
+            if (gestaltConfig.getModuleConfig(TemporarySecretModule.class) == null) {
+                gestaltConfig.registerModuleConfig(new TemporarySecretModule(secretAccessCounts));
+            } else {
+                TemporarySecretModule module = gestaltConfig.getModuleConfig(TemporarySecretModule.class);
+                module.addSecretCounts(secretAccessCounts);
+            }
         }
     }
 

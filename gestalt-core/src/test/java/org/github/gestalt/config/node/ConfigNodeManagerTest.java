@@ -2151,6 +2151,11 @@ class ConfigNodeManagerTest {
         }
 
         @Override
+        public boolean hasValue() {
+            return true;
+        }
+
+        @Override
         public Optional<ConfigNode> getIndex(int index) {
             return Optional.empty();
         }
