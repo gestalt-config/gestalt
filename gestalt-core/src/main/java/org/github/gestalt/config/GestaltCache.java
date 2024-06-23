@@ -35,7 +35,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
      * @param observationService Observations service for submitting Observations
      * @param gestaltConfig      Gestalt Configuration
      * @param tagMergingStrategy The strategy to merge tags
-     * @param nonCacheableSecrets secrets that we should not be caching. 
+     * @param nonCacheableSecrets secrets that we should not be caching.
      */
     public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationService observationService, GestaltConfig gestaltConfig,
                         TagMergingStrategy tagMergingStrategy, List<SecretChecker> nonCacheableSecrets) {
