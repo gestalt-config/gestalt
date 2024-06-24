@@ -1,10 +1,6 @@
 package org.github.gestalt.config.secret.rules;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Contains all the rules on how to conceal a secret, then apply them to a value.
@@ -12,11 +8,17 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class SecretConcealerManager implements SecretConcealer {
-    private final Map<String, Pattern> secretRegex;
     private final SecretObfuscator obfuscator;
 
+    private final SecretChecker secretChecker;
+
     public SecretConcealerManager(Set<String> secretRegex, SecretObfuscator obfuscator) {
-        this.secretRegex = secretRegex.stream().collect(Collectors.toMap(Function.identity(), Pattern::compile));
+        this.secretChecker = new RegexSecretChecker(secretRegex);
+        this.obfuscator = obfuscator;
+    }
+
+    public SecretConcealerManager(SecretChecker secretChecker, SecretObfuscator obfuscator) {
+        this.secretChecker = secretChecker;
         this.obfuscator = obfuscator;
     }
 
@@ -25,7 +27,7 @@ public class SecretConcealerManager implements SecretConcealer {
     }
 
     public void addSecretRule(String rule) {
-        secretRegex.put(rule, Pattern.compile(rule));
+        secretChecker.addSecret(rule);
     }
 
     /**
@@ -37,7 +39,7 @@ public class SecretConcealerManager implements SecretConcealer {
      */
     @Override
     public String concealSecret(String path, String value) {
-        if (secretRegex.values().stream().anyMatch(rule -> rule.matcher(path).find())) {
+        if (secretChecker.isSecret(path)) {
             return obfuscator.obfuscator(value);
         } else {
             return value;

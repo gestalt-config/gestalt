@@ -37,6 +37,19 @@ class ConfigNodeTest {
     }
 
     @Test
+    void hasValue() {
+        ArrayNode arrayNode = new ArrayNode(Collections.singletonList(new LeafNode("a")));
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("test", new LeafNode("leaf"));
+        MapNode objectNode = new MapNode(mapNode);
+        LeafNode leaf = new LeafNode("leaf");
+
+        Assertions.assertFalse(arrayNode.hasValue());
+        Assertions.assertFalse(objectNode.hasValue());
+        Assertions.assertTrue(leaf.hasValue());
+    }
+
+    @Test
     void getIndex() {
         ArrayNode arrayNode = new ArrayNode(Collections.singletonList(new LeafNode("a")));
         Map<String, ConfigNode> mapNode = new HashMap<>();

@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class LeafNode implements ConfigNode {
+public class LeafNode implements ConfigNode {
     private final String value;
 
     /**
@@ -27,6 +27,11 @@ public final class LeafNode implements ConfigNode {
     @Override
     public Optional<String> getValue() {
         return Optional.ofNullable(value);
+    }
+
+    @Override
+    public boolean hasValue() {
+        return value != null;
     }
 
     @Override

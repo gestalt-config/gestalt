@@ -27,6 +27,13 @@ public interface ConfigNode {
     Optional<String> getValue();
 
     /**
+     * return true if the node has a value. False if it has no value.
+     *
+     * @return true if the node has a value. False if it has no value.
+     */
+    boolean hasValue();
+
+    /**
      * Get the optional config node by index for arrays, empty otherwise.
      *
      * @param index for arrays the index we want

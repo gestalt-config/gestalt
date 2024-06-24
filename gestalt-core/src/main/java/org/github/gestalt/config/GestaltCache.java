@@ -3,9 +3,10 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.TagMergingStrategy;
-import org.github.gestalt.config.observations.ObservationManager;
+import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
+import org.github.gestalt.config.secret.rules.SecretChecker;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.Triple;
 
@@ -21,27 +22,30 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
     private final Tags defaultTags;
-    private final ObservationManager observationManager;
+    private final ObservationService observationService;
     private final GestaltConfig gestaltConfig;
     private final TagMergingStrategy tagMergingStrategy;
+    private final List<SecretChecker> nonCacheableSecrets;
 
     /**
      * Constructor for the GestaltCache that accepts a delegate.
      *
-     * @param delegate    real Gestalt to call for configs to cache.
-     * @param defaultTags Default set of tags to apply to all calls to get a configuration where tags are not provided.
-     * @param observationManager Observations manager for submitting Observations
-     * @param gestaltConfig Gestalt Configuration
+     * @param delegate           real Gestalt to call for configs to cache.
+     * @param defaultTags        Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     * @param observationService Observations service for submitting Observations
+     * @param gestaltConfig      Gestalt Configuration
      * @param tagMergingStrategy The strategy to merge tags
+     * @param nonCacheableSecrets secrets that we should not be caching.
      */
-    public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationManager observationManager, GestaltConfig gestaltConfig,
-                        TagMergingStrategy tagMergingStrategy) {
+    public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationService observationService, GestaltConfig gestaltConfig,
+                        TagMergingStrategy tagMergingStrategy, List<SecretChecker> nonCacheableSecrets) {
         Objects.requireNonNull(tagMergingStrategy);
         this.delegate = delegate;
         this.defaultTags = defaultTags;
-        this.observationManager = observationManager;
+        this.observationService = observationService;
         this.gestaltConfig = gestaltConfig;
         this.tagMergingStrategy = tagMergingStrategy;
+        this.nonCacheableSecrets = nonCacheableSecrets;
     }
 
     @Override
@@ -91,14 +95,20 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
         if (cache.get(key) != null) {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.recordObservation("cache.hit", 1, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
             }
             return (T) cache.get(key);
         } else {
             T result = delegate.getConfig(path, klass, resolvedTags);
-            cache.put(key, result);
+            updateCache(path, key, result);
             return result;
+        }
+    }
+
+    private <T> void updateCache(String path, Triple<String, TypeCapture<?>, Tags> key, T result) {
+        if (shouldCacheValue(path)) {
+            cache.put(key, result);
         }
     }
 
@@ -150,8 +160,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
                 result = defaultVal;
             }
 
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.recordObservation("cache.hit", 1, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
             }
 
             return result;
@@ -159,7 +169,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         } else {
             Optional<T> resultOptional = delegate.getConfigOptional(path, klass, resolvedTags);
             T result = resultOptional.orElse(null);
-            cache.put(key, result);
+            updateCache(path, key, result);
             if (result != null) {
                 return result;
             } else {
@@ -201,7 +211,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return  getConfigOptionalInternal(path, klass, tags);
+        return getConfigOptionalInternal(path, klass, tags);
     }
 
     @SuppressWarnings("unchecked")
@@ -210,8 +220,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
         if (cache.containsKey(key)) {
-            if (gestaltConfig.isObservationsEnabled() && observationManager != null) {
-                observationManager.recordObservation("cache.hit", 1, Tags.of());
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
             }
 
             T result = (T) cache.get(key);
@@ -219,9 +229,13 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         } else {
             Optional<T> resultOptional = delegate.getConfigOptional(path, klass, resolvedTags);
             T result = resultOptional.orElse(null);
-            cache.put(key, result);
+            updateCache(path, key, result);
             return Optional.ofNullable(result);
         }
+    }
+
+    private boolean shouldCacheValue(String path) {
+        return nonCacheableSecrets.stream().noneMatch(it -> it.isSecret(path));
     }
 
     @Override

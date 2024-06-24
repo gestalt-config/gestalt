@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class ResultsProcessorManager {
+public final class ResultsProcessorManager implements ResultsProcessorService {
 
     private List<ResultProcessor> resultProcessors;
 
@@ -30,6 +30,7 @@ public final class ResultsProcessorManager {
      *
      * @param resultProcessorSet list of validators
      */
+    @Override
     public void addResultProcessors(List<ResultProcessor> resultProcessorSet) {
         this.resultProcessors.addAll(resultProcessorSet);
         this.resultProcessors = orderedResultProcessors();
@@ -65,6 +66,7 @@ public final class ResultsProcessorManager {
      * @return The validation results with either errors or a successful  obj.
      * @throws GestaltException for any exceptions while processing the results, such as if there are errors in the result.
      */
+    @Override
     public <T> GResultOf<T> processResults(GResultOf<T> results, String path, boolean isOptional, T defaultVal,
                                            TypeCapture<T> klass, Tags tags) throws GestaltException {
 

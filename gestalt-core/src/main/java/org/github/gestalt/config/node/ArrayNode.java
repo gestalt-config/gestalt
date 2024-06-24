@@ -41,6 +41,11 @@ public final class ArrayNode implements ConfigNode {
     }
 
     @Override
+    public boolean hasValue() {
+        return false;
+    }
+
+    @Override
     public Optional<ConfigNode> getIndex(int index) {
         if (values.size() > index) {
             return Optional.ofNullable(values.get(index));

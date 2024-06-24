@@ -37,6 +37,18 @@ class SecretConcealerManagerTest {
     }
 
     @Test
+    void testConcealSecretMaskRegexCheckerConstructor() {
+
+        Set<String> secretRegex = new HashSet<>();
+        secretRegex.add(".*secret.*"); // Sample secret regex
+        SecretConcealer secretConcealerLocal = new SecretConcealerManager(new RegexSecretChecker(secretRegex), it -> "***");
+
+        String path = "path.to.secret";
+        String value = "this is a secret value";
+        assertEquals("***", secretConcealerLocal.concealSecret(path, value));
+    }
+
+    @Test
     void testConcealSecretNoMask() {
         String path = "path.to.public";
         String value = "this is a public value";

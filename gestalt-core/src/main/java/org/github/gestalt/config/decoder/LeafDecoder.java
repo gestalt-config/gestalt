@@ -29,7 +29,7 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
     public GResultOf<T> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
         GResultOf<T> results;
         if (node instanceof LeafNode) {
-            if (node.getValue().isPresent()) {
+            if (node.hasValue()) {
                 results = leafDecode(path, node, type, decoderContext);
             } else {
                 results = GResultOf.errors(new ValidationError.DecodingLeafMissingValue(path, name()));

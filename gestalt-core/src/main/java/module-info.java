@@ -1,4 +1,3 @@
-import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 
 /*
  * Module info definition for gestalt core
@@ -28,6 +27,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.reflect;
     exports org.github.gestalt.config.reload;
     exports org.github.gestalt.config.secret.rules;
+    exports org.github.gestalt.config.security.temporary;
     exports org.github.gestalt.config.source;
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;
@@ -84,7 +84,8 @@ module org.github.gestalt.core {
         org.github.gestalt.config.path.mapper.SnakeCasePathMapper;
 
     provides org.github.gestalt.config.processor.config.ConfigNodeProcessor with
-        StringSubstitutionConfigNodeProcessor;
+        org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor,
+        org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor;
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with
         org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer,
@@ -99,4 +100,5 @@ module org.github.gestalt.core {
         org.github.gestalt.config.processor.config.transform.URLDecoderTransformer,
         org.github.gestalt.config.processor.config.transform.URLEncoderTransformer;
 }
+
 
