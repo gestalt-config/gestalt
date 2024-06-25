@@ -18,7 +18,7 @@ import java.util.List;
  *
  *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-@ConfigPriority(200)
+@ConfigPriority(500)
 public class TemporarySecretConfigNodeProcessor implements ConfigNodeProcessor {
 
     private final List<Pair<SecretChecker, Integer>> secretCounts = new ArrayList<>();
