@@ -30,6 +30,7 @@ public class MainClass {
         configTest.testObservations();
         configTest.testValidationOk();
         configTest.testValidationError();
+        configTest.temporaryNode();
 
         if( Boolean.parseBoolean(System.getenv("LOCAL_TEST"))) {
             configTest.integrationTestGoogleCloud();
