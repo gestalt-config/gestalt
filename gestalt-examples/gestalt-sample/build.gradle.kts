@@ -60,6 +60,7 @@ testing {
                 implementation(libs.hibernate.validator)
 
                 implementation(libs.expressly)
+                implementation(libs.jakarta.annotation)
             }
         }
     }

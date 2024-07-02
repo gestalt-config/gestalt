@@ -15,6 +15,7 @@ import io.github.jopenlibs.vault.VaultConfig;
 import io.github.jopenlibs.vault.VaultException;
 import io.github.jopenlibs.vault.response.LogicalResponse;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -1880,6 +1881,34 @@ public class GestaltSample {
         Assertions.assertEquals("", gestalt.getConfigOptional("db.password", String.class).get());
     }
 
+    @Test
+    public void testNullableAnnotation() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        //configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        SimpleMeterRegistry registry = new SimpleMeterRegistry();
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        var hostAnnotations =  gestalt.getConfig("db", HostNullableAnnotations.class);
+        Assertions.assertEquals("test", hostAnnotations.getPassword());
+        Assertions.assertNull(hostAnnotations.getPort());
+        Assertions.assertEquals("my.sql.com", hostAnnotations.getUri());
+
+        var hostMethodAnnotations =  gestalt.getConfig("db", HostNullableMethodAnnotations.class);
+        Assertions.assertEquals("test", hostMethodAnnotations.getPassword());
+        Assertions.assertNull(hostMethodAnnotations.getPort());
+        Assertions.assertEquals("my.sql.com", hostMethodAnnotations.getUri());
+
+    }
+
     public enum Role {
         LEVEL0, LEVEL1
     }
@@ -2072,6 +2101,47 @@ public class GestaltSample {
         @Override
         public String getPassword() {
             return password;
+        }
+    }
+
+    public static class HostNullableAnnotations {
+        private String password;
+        private String uri;
+        @Nullable
+        private Integer port;
+
+        public HostNullableAnnotations() {
+        }
+
+        public String getPassword() {
+            return password;
+        }
+        public String getUri() {
+            return uri;
+        }
+        public Integer getPort() {
+            return port;
+        }
+    }
+
+    public static class HostNullableMethodAnnotations {
+        private String password;
+
+        private String uri;
+        private Integer port;
+
+        public HostNullableMethodAnnotations() {
+        }
+
+        public String getPassword() {
+            return password;
+        }
+        public String getUri() {
+            return uri;
+        }
+        @Nullable
+        public Integer getPort() {
+            return port;
         }
     }
 
