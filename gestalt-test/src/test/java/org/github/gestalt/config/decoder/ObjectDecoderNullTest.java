@@ -11,6 +11,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.test.classes.DBInfoNullable;
 import org.github.gestalt.config.test.classes.DBInfoNullableGetter;
+import org.github.gestalt.config.test.classes.DBInfoNullableGetter2;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -99,6 +100,33 @@ class ObjectDecoderNullTest {
         Assertions.assertEquals(100, results.getPort());
         Assertions.assertEquals("pass", results.getPassword());
         Assertions.assertNull(results.getUri());
+    }
+
+    @Test
+    void decodeNullableMethodShortName() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("100"));
+        //configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+            TypeCapture.of(DBInfoNullableGetter2.class),
+            new DecoderContext(decoderService, null, null, new PathLexer()));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.host.uri, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, port=LeafNode{value='100'}}, with class: DBInfoNullableGetter2",
+            result.getErrors().get(0).description());
+
+        DBInfoNullableGetter2 results = (DBInfoNullableGetter2) result.results();
+        Assertions.assertEquals(100, results.port());
+        Assertions.assertEquals("pass", results.password());
+        Assertions.assertNull(results.uri());
     }
 }
 

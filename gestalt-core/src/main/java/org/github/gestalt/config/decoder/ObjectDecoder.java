@@ -180,7 +180,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                         if (!isNullable) {
                             // if the field isnt annotated with nullable, check if the get method is annotated with nullable.
                             String methodName = getMethodName(field);
-                            var method = getMethod(klass, methodName);
+                            var method = getMethod(klass, methodName).or(() -> getMethod(klass, fieldName));
                             if (method.isPresent()) {
                                 var methodAnnotations = method.get().getAnnotations();
                                 isNullable = isNullableAnnotation(methodAnnotations);
