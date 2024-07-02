@@ -81,6 +81,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         return getConfigInternal(path, klass, null);
     }
 
+    @Override
     public <T> T getConfig(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);

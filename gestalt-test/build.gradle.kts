@@ -8,6 +8,8 @@ java {
         languageVersion.set(JavaLanguageVersion.of(libs.versions.javaLatest.get()))
     }
 }
+
 dependencies {
     testImplementation(project(":gestalt-core"))
+    testImplementation(libs.jakarta.annotation)
 }

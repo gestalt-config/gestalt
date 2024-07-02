@@ -13,6 +13,7 @@ import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
@@ -40,6 +41,15 @@ public final class ObjectDecoder implements Decoder<Object> {
         ignoreTypes = getIgnoreTypes();
     }
 
+    private String getMethodName(Field field) {
+        String methodName;
+        if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.class)) {
+            methodName = "is" + field.getName();
+        } else {
+            methodName = "get" + field.getName();
+        }
+        return methodName;
+    }
 
     @Override
     public Priority priority() {
@@ -163,7 +173,25 @@ public final class ObjectDecoder implements Decoder<Object> {
                     if (initialized) {
                         errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
                     } else {
-                        errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "object decoding"));
+                        // first check the field to see if it is annotated with nullable.
+                        var fieldAnnotations = field.getAnnotations();
+                        boolean isNullable = isNullableAnnotation(fieldAnnotations);
+
+                        if (!isNullable) {
+                            // if the field isnt annotated with nullable, check if the get method is annotated with nullable.
+                            String methodName = getMethodName(field);
+                            var method = getMethod(klass, methodName);
+                            if (method.isPresent()) {
+                                var methodAnnotations = method.get().getAnnotations();
+                                isNullable = isNullableAnnotation(methodAnnotations);
+                            }
+                        }
+
+                        if (!isNullable) {
+                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "object decoding"));
+                        } else {
+                            errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
+                        }
                     }
                 }
             }
@@ -177,13 +205,13 @@ public final class ObjectDecoder implements Decoder<Object> {
         }
     }
 
+    private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
+        return Arrays.stream(fieldAnnotations)
+            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.getDefault()).contains("nullable"));
+    }
+
     private boolean fieldHasInitializedValue(Object obj, Field field, Class<?> klass) throws IllegalAccessException {
-        String methodName;
-        if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.class)) {
-            methodName = "is" + field.getName();
-        } else {
-            methodName = "get" + field.getName();
-        }
+        String methodName = getMethodName(field);
 
         Object fieldValue = null;
         var method = getMethod(klass, methodName);
@@ -253,6 +281,7 @@ public final class ObjectDecoder implements Decoder<Object> {
         }
         return value;
     }
+
 
     private Optional<Config> findMethodConfig(Class<?> klass, String fieldName, Type fieldClass, Function<Config, String> get) {
         Optional<Config> configAnnotation;

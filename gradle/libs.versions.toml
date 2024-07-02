@@ -18,7 +18,7 @@ weldCore = "5.1.2.Final"
 jackson = "2.17.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.26.8"
+awsBom = "2.26.13"
 gcpLibraries = "26.42.0"
 azure = "1.2.24"
 # vault
@@ -32,7 +32,7 @@ micrometer = "1.13.1"
 hibernateValidator = "8.0.1.Final"
 expressly = "5.0.0"
 # testing
-junit5 = "5.10.2"
+junit5 = "5.10.3"
 assertJ = "3.26.0"
 mockito = "5.2.0"
 mockk = "1.13.11"
@@ -55,6 +55,7 @@ gradleVersions = "0.51.0"
 gitVersions = "3.1.0"
 gradleVersionsUpdate = "0.8.4"
 com-fasterxml-jackson-datatype = "2.17.1"
+jakartaAnnotations = "3.0.0"
 
 [libraries]
 # Kotlin
@@ -101,6 +102,8 @@ eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 micrometer = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
 # resultProcessors
 hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernateValidator" }
+# annotations
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotations" }
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "expressly" }
 # Testing
 junitAPI = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }

@@ -21,6 +21,8 @@ public class SubsetTagsWithDefaultTagResolutionStrategy implements ConfigNodeTag
      * @param tags  the tags we wish to search for.
      * @return list of roots to search for.
      */
+    @Override
+    @SuppressWarnings("NonApiType")
     public List<GResultOf<ConfigNode>> rootsToSearch(LinkedHashMap<Tags, ConfigNode> roots, Tags tags) {
         List<GResultOf<ConfigNode>> rootsToSearch = new ArrayList<>();
 

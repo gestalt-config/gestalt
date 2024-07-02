@@ -10,7 +10,7 @@ import org.github.gestalt.config.tag.Tags;
 public class TagMergingStrategyCombine implements TagMergingStrategy {
     @Override
     public Tags mergeTags(Tags provided, Tags defaultTags) {
-        if (provided != null && provided != Tags.of()) {
+        if (provided != null && !provided.equals(Tags.of())) {
             return provided.and(defaultTags);
         } else {
             return defaultTags;
