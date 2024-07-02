@@ -14,10 +14,9 @@ import org.github.gestalt.config.utils.PathUtil;
 import org.github.gestalt.config.utils.RecComponent;
 import org.github.gestalt.config.utils.RecordUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Decoder support for Java Records.
@@ -58,6 +57,9 @@ public final class RecordDecoder implements Decoder<Object> {
             boolean foundValue = false;
 
             String name = rc.name();
+
+            Annotation[] annotations = rc.getDeclaredAnnotations();
+
             // if we have an annotation, use that for the path instead of the name.
             Config configAnnotation = rc.getAccessor().getAnnotation(Config.class);
             if (configAnnotation != null && configAnnotation.path() != null && !configAnnotation.path().isEmpty()) {
@@ -107,11 +109,23 @@ public final class RecordDecoder implements Decoder<Object> {
             }
 
             if (!foundValue) {
-                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "record decoding"));
+                // check the record Components to see if it is annotated with nullable.
+                boolean isNullable = isNullableAnnotation(annotations);
+
                 values[i] = null;
+                if (!isNullable) {
+                    errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "record decoding"));
+                } else {
+                    errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
+                }
             }
         }
 
         return GResultOf.resultOf(RecordUtils.invokeCanonicalConstructor(klass, recordComponents, values), errors);
+    }
+
+    private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
+        return Arrays.stream(fieldAnnotations)
+            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.getDefault()).contains("nullable"));
     }
 }

@@ -167,6 +167,33 @@ class RecordDecoderTest {
     }
 
     @Test
+    void decodePersonMissingValuesNullable() {
+        RecordDecoder decoder = new RecordDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("name", new LeafNode("tim"));
+        //configs.put("id", new LeafNode("52"));
+        configs.put("address", new LeafNode("home"));
+        configs.put("phone", new LeafNode("12345"));
+
+        GResultOf<Object> result = decoder.decode("user.admin", Tags.of(), new MapNode(configs), TypeCapture.of(PersonNullable.class),
+            new DecoderContext(registry, null, null, new PathLexer()));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.MISSING_OPTIONAL_VALUE, result.getErrors().get(0).level());
+        Assertions.assertEquals("Missing Optional Value while decoding Record on path: user.admin.id, with node: " +
+                "MapNode{address=LeafNode{value='home'}, phone=LeafNode{value='12345'}, name=LeafNode{value='tim'}}, with class: PersonNullable",
+            result.getErrors().get(0).description());
+
+        PersonNullable results = (PersonNullable) result.results();
+        Assertions.assertEquals("tim", results.name());
+        Assertions.assertNull(results.id());
+
+    }
+
+    @Test
     void decodePersonWrongValues() {
         RecordDecoder decoder = new RecordDecoder();
 

@@ -26,5 +26,6 @@ public interface ConfigNodeTagResolutionStrategy {
      * @param tags the tags to search for.
      * @return list of roots to search.
      */
+    @SuppressWarnings("NonApiType")
     List<GResultOf<ConfigNode>> rootsToSearch(LinkedHashMap<Tags, ConfigNode> roots, Tags tags);
 }
