@@ -301,6 +301,13 @@ Treat missing discretionary values (optional, fields with defaults, fields with 
 - If this is `true`, if a field is missing and would have had a default, it will fail and throw an exception.
 
 
+### `@Nullable` annotations
+
+If a field or method is annotated with a `@Nullable` annotation, it will treat a missing value as a discretionary value. So as long as `treatMissingDiscretionaryValuesAsErrors` is not enabled, `@Nullable` fields will allow null values without throwing errors.
+
+There are multiple `@Nullable` annotations and for this to work the annotations must use `@Retention(RetentionPolicy.RUNTIME)` so the annotation is available at runtime for Gestalt. 
+One good library to use is `jakarta.annotation:jakarta.annotation-api` that has a `@Nullable` with `@Retention(RetentionPolicy.RUNTIME)`.
+
 #### Examples of required and discretionary fields. 
 
 Here are some examples of required and discretionary fields and which setting can control if they are treated as errors or allowed.
