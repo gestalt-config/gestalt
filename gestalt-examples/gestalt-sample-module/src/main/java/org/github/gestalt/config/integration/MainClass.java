@@ -31,6 +31,8 @@ public class MainClass {
         configTest.testValidationOk();
         configTest.testValidationError();
         configTest.temporaryNode();
+        configTest.encryptedPassword();
+        configTest.encryptedPasswordAndTemporaryNode();
 
         if( Boolean.parseBoolean(System.getenv("LOCAL_TEST"))) {
             configTest.integrationTestGoogleCloud();
