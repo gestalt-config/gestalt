@@ -1881,6 +1881,78 @@ public class GestaltSample {
         Assertions.assertEquals("", gestalt.getConfigOptional("db.password", String.class).get());
     }
 
+
+    @Test
+    public void encryptedPassword() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addEncryptedSecret("password")
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+        Assertions.assertEquals("tags: Tags{[]} = MapNode{admin=ArrayNode{values=[LeafNode{value='John2'}, " +
+            "LeafNode{value='Steve2'}]}, db=MapNode{password=EncryptedLeafNode{value='*****'}, port=LeafNode{value='3306'}, " +
+            "name=LeafNode{value='test2'}}}", gestalt.debugPrint());
+    }
+
+    @Test
+    public void encryptedPasswordAndTemporaryNode() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "pass");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .addEncryptedSecret("password")
+            .addTemporaryNodeAccessCount("password", 1)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertEquals("pass", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("test2", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+        Assertions.assertEquals("tags: Tags{[]} = MapNode{admin=ArrayNode{values=[LeafNode{value='John2'}, " +
+            "LeafNode{value='Steve2'}]}, db=MapNode{password=TemporaryLeafNode{value='*****'}, port=LeafNode{value='3306'}, " +
+            "name=LeafNode{value='test2'}}}", gestalt.debugPrint());
+    }
+
     @Test
     public void testNullableAnnotation() throws GestaltException {
         Map<String, String> configs = new HashMap<>();

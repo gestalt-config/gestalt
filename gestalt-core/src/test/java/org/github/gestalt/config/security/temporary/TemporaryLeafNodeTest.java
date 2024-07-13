@@ -39,14 +39,14 @@ class TemporaryLeafNodeTest {
         LeafNode tempNode = new LeafNode("secret");
         TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 1);
 
-        Assertions.assertEquals("LeafNode{value='secret'}", leaf.toString());
-        Assertions.assertEquals("LeafNode{value='secret'}", leaf.toString());
-        Assertions.assertEquals("LeafNode{value='secret'}", leaf.toString());
-        Assertions.assertEquals("LeafNode{value='secret'}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.toString());
         Assertions.assertEquals("secret", leaf.getValue().get());
         Assertions.assertTrue(leaf.getValue().isEmpty());
         Assertions.assertTrue(leaf.getValue().isEmpty());
-        Assertions.assertEquals("LeafNode{value=''}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value=''}", leaf.toString());
     }
 
     @Test
@@ -55,12 +55,12 @@ class TemporaryLeafNodeTest {
         TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2);
 
         SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "");
-        Assertions.assertEquals("LeafNode{value=''}", leaf.printer("secret", secretConcealer, null));
+        Assertions.assertEquals("TemporaryLeafNode{value=''}", leaf.printer("secret", secretConcealer, null));
         Assertions.assertEquals("secret", leaf.getValue().get());
         Assertions.assertEquals("secret", leaf.getValue().get());
         Assertions.assertTrue(leaf.getValue().isEmpty());
         Assertions.assertTrue(leaf.getValue().isEmpty());
-        Assertions.assertEquals("LeafNode{value=''}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value=''}", leaf.toString());
     }
 
     @Test
@@ -68,12 +68,12 @@ class TemporaryLeafNodeTest {
         LeafNode tempNode = new LeafNode("secret");
         TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2);
 
-        Assertions.assertEquals("LeafNode{value='secret'}", leaf.printer("secret", null, null));
+        Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.printer("secret", null, null));
         Assertions.assertEquals("secret", leaf.getValue().get());
         Assertions.assertEquals("secret", leaf.getValue().get());
         Assertions.assertTrue(leaf.getValue().isEmpty());
         Assertions.assertTrue(leaf.getValue().isEmpty());
-        Assertions.assertEquals("LeafNode{value=''}", leaf.toString());
+        Assertions.assertEquals("TemporaryLeafNode{value=''}", leaf.toString());
     }
 
     @Test

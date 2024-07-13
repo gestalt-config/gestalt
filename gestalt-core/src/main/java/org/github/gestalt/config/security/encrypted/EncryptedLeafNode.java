@@ -1,4 +1,4 @@
-package org.github.gestalt.config.security.temporary;
+package org.github.gestalt.config.security.encrypted;
 
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -7,9 +7,12 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Temporary leaf node that holds a decorated leaf node.
@@ -18,22 +21,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class TemporaryLeafNode extends LeafNode {
-    private final AtomicInteger accessCount;
-    private LeafNode decoratedNode;
+public class EncryptedLeafNode extends LeafNode {
+    private final Cipher decryptCipher;
 
-    public TemporaryLeafNode(LeafNode decoratedNode, int accessCount) {
+    private final byte[] encryptedData;
+
+    public EncryptedLeafNode(byte[] encryptedData, Cipher decryptCipher) throws IllegalBlockSizeException, BadPaddingException {
         super("");
-        this.accessCount = new AtomicInteger(accessCount);
-        this.decoratedNode = decoratedNode;
+
+        this.decryptCipher = decryptCipher;
+        this.encryptedData = encryptedData;
     }
 
     @Override
     public Optional<String> getValue() {
-        if (accessCount.get() > 0 && accessCount.getAndDecrement() > 0) {
-            return decoratedNode.getValue();
-        } else {
-            decoratedNode = null;
+        try {
+            return Optional.of(new String(decryptCipher.doFinal(encryptedData)));
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             return Optional.empty();
         }
     }
@@ -63,16 +67,16 @@ public class TemporaryLeafNode extends LeafNode {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TemporaryLeafNode)) {
+        if (!(o instanceof EncryptedLeafNode)) {
             return false;
         }
-        TemporaryLeafNode leafNode = (TemporaryLeafNode) o;
-        return Objects.equals(decoratedNode.getValue(), leafNode.getValue());
+        EncryptedLeafNode leafNode = (EncryptedLeafNode) o;
+        return Objects.equals(getValue(), leafNode.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(decoratedNode.getValue(), accessCount);
+        return Arrays.hashCode(encryptedData);
     }
 
     @Override
@@ -83,16 +87,13 @@ public class TemporaryLeafNode extends LeafNode {
 
     @Override
     public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
-        String nodeValue;
-        if (decoratedNode != null) {
-            nodeValue = decoratedNode.getValue().orElse("");
-        } else {
-            nodeValue = "";
-        }
+        String nodeValue  = "secret";
+
         if (secretConcealer != null) {
             nodeValue = secretConcealer.concealSecret(path, nodeValue);
         }
-        return "TemporaryLeafNode{" +
+
+        return "EncryptedLeafNode{" +
             "value='" + nodeValue + '\'' +
             "}";
     }

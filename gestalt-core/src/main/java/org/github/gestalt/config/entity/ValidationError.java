@@ -1757,5 +1757,24 @@ public abstract class ValidationError {
             return "leaf node has no value while running node transform path: " + path + " with: " + property;
         }
     }
+
+    /**
+     * If there was an exception encrypting a node.
+     */
+    public static class EncryptedNodeFailure extends ValidationError {
+        private final String path;
+        private final Exception ex;
+
+        public EncryptedNodeFailure(String path, Exception ex) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.ex = ex;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to encrypt node on path " + path + ", due to error " + ex.getMessage();
+        }
+    }
 }
 

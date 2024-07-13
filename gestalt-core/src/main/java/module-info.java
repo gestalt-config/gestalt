@@ -27,6 +27,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.reflect;
     exports org.github.gestalt.config.reload;
     exports org.github.gestalt.config.secret.rules;
+    exports org.github.gestalt.config.security.encrypted;
     exports org.github.gestalt.config.security.temporary;
     exports org.github.gestalt.config.source;
     exports org.github.gestalt.config.tag;
@@ -85,6 +86,7 @@ module org.github.gestalt.core {
 
     provides org.github.gestalt.config.processor.config.ConfigNodeProcessor with
         org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor,
+        org.github.gestalt.config.security.encrypted.EncryptedSecretConfigNodeProcessor,
         org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor;
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with

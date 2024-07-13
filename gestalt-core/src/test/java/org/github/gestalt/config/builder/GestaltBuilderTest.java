@@ -141,6 +141,8 @@ class GestaltBuilderTest {
             .addTemporaryNodeAccessCount("secret", 1)
             .addTemporaryNodeAccessCount(Set.of("cert"), 2)
             .setTemporaryNodeAccessCount(List.of(new Pair<>(new RegexSecretChecker(Set.of("password")), 1)))
+            .addEncryptedSecret("cert")
+            .setEncryptedSecrets(new RegexSecretChecker(Set.of("cert")))
             .setTreatWarningsAsErrors(true)
             .setTreatMissingValuesAsErrors(true)
             .setTreatMissingDiscretionaryValuesAsErrors(true)

@@ -22,8 +22,8 @@ import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.path.mapper.PathMapper;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessorService;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorService;
 import org.github.gestalt.config.processor.result.*;
 import org.github.gestalt.config.processor.result.validation.ConfigValidator;
 import org.github.gestalt.config.processor.result.validation.ValidationResultProcessor;
@@ -31,6 +31,7 @@ import org.github.gestalt.config.reload.ConfigReloadStrategy;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListenersContainer;
 import org.github.gestalt.config.secret.rules.*;
+import org.github.gestalt.config.security.encrypted.EncryptedSecretModule;
 import org.github.gestalt.config.security.temporary.TemporarySecretModule;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
@@ -90,13 +91,14 @@ public class GestaltBuilder {
     private ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy;
     private TagMergingStrategy tagMergingStrategy;
     private boolean useCacheDecorator = true;
-    private Set<String> securityRules = new HashSet<>(
+    private Set<String> securityMaskingRules = new HashSet<>(
         List.of("bearer", "cookie", "credential", "id",
             "key", "keystore", "passphrase", "password",
             "private", "salt", "secret", "secure",
             "ssl", "token", "truststore"));
     private String secretMask = "*****";
     private List<Pair<SecretChecker, Integer>> secretAccessCounts = new ArrayList<>();
+    private SecretChecker encryptedSecrets = new RegexSecretChecker(new HashSet<>());
     private SecretConcealer secretConcealer;
     private SecretObfuscator secretObfuscator = (it) -> secretMask;
 
@@ -639,7 +641,7 @@ public class GestaltBuilder {
      * @return GestaltBuilder builder
      */
     public GestaltBuilder addSecurityMaskingRule(String regex) {
-        securityRules.add(regex);
+        securityMaskingRules.add(regex);
         return this;
     }
 
@@ -651,7 +653,7 @@ public class GestaltBuilder {
      * @return GestaltBuilder builder
      */
     public GestaltBuilder setSecurityMaskingRule(Set<String> regexs) {
-        securityRules = regexs;
+        securityMaskingRules = regexs;
         return this;
     }
 
@@ -675,7 +677,7 @@ public class GestaltBuilder {
      * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
      * These values will not be cached in the Gestalt Cache and should not be cached by the caller
      *
-     * @param regex If a path matches the regex
+     * @param regex       If a path matches the regex
      * @param accessCount After the value has been retrieved more than accessCount the original value will be released and GC'ed.
      * @return the builder
      */
@@ -690,7 +692,7 @@ public class GestaltBuilder {
      * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
      * These values will not be cached in the Gestalt Cache and should not be cached by the caller
      *
-     * @param regexs If a path matches the regex
+     * @param regexs      If a path matches the regex
      * @param accessCount After the value has been retrieved more than accessCount the original value will be released and GC'ed.
      * @return the builder
      */
@@ -714,6 +716,29 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Set what secrets you want to be encrypted. If you already added any secrets to be encrypted this will overwrite them.
+     *
+     * @param encryptedSecrets what secrets to encrypt
+     */
+    public GestaltBuilder setEncryptedSecrets(SecretChecker encryptedSecrets
+    ) {
+        Objects.requireNonNull(encryptedSecrets, "encryptedSecrets should not be null");
+        this.encryptedSecrets = encryptedSecrets;
+        return this;
+    }
+
+    /**
+     * Add a new secret to be encrypted.
+     *
+     * @param regex the regex for the secret to be encrypted.
+     * @return the builder
+     */
+    public GestaltBuilder addEncryptedSecret(String regex) {
+        Objects.requireNonNull(regex, "regex should not be null");
+        encryptedSecrets.addSecret(regex);
+        return this;
+    }
 
     /**
      * ***USE WITH CAUTION.***
@@ -1275,7 +1300,7 @@ public class GestaltBuilder {
         }
 
         if (secretConcealer == null) {
-            secretConcealer = new SecretConcealerManager(securityRules, secretObfuscator);
+            secretConcealer = new SecretConcealerManager(securityMaskingRules, secretObfuscator);
         }
 
         gestaltConfig = rebuildConfig();
@@ -1311,6 +1336,7 @@ public class GestaltBuilder {
         configureConfigLoaders();
 
         configureTemporaryNodesModule();
+        configureEncryptedSecretsNodesModule();
         configureConfigNodeProcessor();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
@@ -1330,7 +1356,11 @@ public class GestaltBuilder {
         coreCoreReloadListeners.forEach(coreReloadListenersContainer::registerListener);
 
         if (useCacheDecorator) {
+            // do not cache the temporary nodes
             var nonCacheableSecrets = secretAccessCounts.stream().map(Pair::getFirst).collect(Collectors.toList());
+            // do not cache the encrypted nodes.
+            nonCacheableSecrets.add(encryptedSecrets);
+
             GestaltCache gestaltCache = new GestaltCache(gestaltCore, defaultTags, observationService, gestaltConfig,
                 tagMergingStrategy, nonCacheableSecrets);
 
@@ -1491,6 +1521,12 @@ public class GestaltBuilder {
                 TemporarySecretModule module = gestaltConfig.getModuleConfig(TemporarySecretModule.class);
                 module.addSecretCounts(secretAccessCounts);
             }
+        }
+    }
+
+    private void configureEncryptedSecretsNodesModule() {
+        if (gestaltConfig.getModuleConfig(EncryptedSecretModule.class) == null) {
+            gestaltConfig.registerModuleConfig(new EncryptedSecretModule(encryptedSecrets));
         }
     }
 
