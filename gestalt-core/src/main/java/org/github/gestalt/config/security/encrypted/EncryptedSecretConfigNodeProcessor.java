@@ -11,7 +11,7 @@ import org.github.gestalt.config.secret.rules.SecretChecker;
 import org.github.gestalt.config.utils.GResultOf;
 
 import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -23,15 +23,40 @@ import java.util.Set;
  * Checks if the node is a leaf and a temporary secret. if it is, replaces the leaf node with a TemporaryLeafNode that can only be accessed
  * a limited number of times. After the limited number of times, the value is released to be GC'ed.
  *
- *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 @ConfigPriority(400)
 public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
 
-    public static final String AES_CBC_PKCS_5_PADDING = "AES/CBC/PKCS5Padding";
-    private SecretChecker encryptedSecret = new RegexSecretChecker(Set.of());
+    public static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
+    public static final int GCM_TAG_LENGTH = 16;
+    public static final int GCM_IV_LENGTH = 12;
 
     private static final System.Logger logger = System.getLogger(EncryptedSecretConfigNodeProcessor.class.getName());
+    private SecretChecker encryptedSecret = new RegexSecretChecker(Set.of());
+
+    private static SecretKey generateKey(int n) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(n);
+        return keyGenerator.generateKey();
+    }
+
+    private byte[] encryptGcm(SecretKey skey, String plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+        /* Precond: skey is valid and GCM mode is available in the JRE;
+         * otherwise IllegalStateException will be thrown. */
+        byte[] ciphertext = null;
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        byte[] initVector = new byte[GCM_IV_LENGTH];
+        (new SecureRandom()).nextBytes(initVector);
+        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+        cipher.init(Cipher.ENCRYPT_MODE, skey, spec);
+        byte[] encoded = plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        ciphertext = new byte[initVector.length + cipher.getOutputSize(encoded.length)];
+        System.arraycopy(initVector, 0, ciphertext, 0, initVector.length);
+        // Perform encryption
+        cipher.doFinal(encoded, 0, encoded.length, ciphertext, initVector.length);
+        return ciphertext;
+    }
 
     @Override
     public void applyConfig(ConfigNodeProcessorConfig config) {
@@ -69,33 +94,15 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
         // We use the encryption cipher to encrypt the data and pass the encrypted data along with the
         // decryption cipher to the leaf.
         try {
-            SecretKey secretKey = generateKey(256);
-            IvParameterSpec iv = generateIv();
 
-            Cipher encryptCipher = Cipher.getInstance(AES_CBC_PKCS_5_PADDING);
-            encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+            var secretKey = generateKey(128);
+            var encryptedData = encryptGcm(secretKey, optionalLeafNodeValue.orElse(""));
 
-            Cipher decryptCipher = Cipher.getInstance(AES_CBC_PKCS_5_PADDING);
-            decryptCipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey));
 
-            return GResultOf.result(new EncryptedLeafNode(encryptCipher.doFinal(optionalLeafNodeValue.orElse("").getBytes()),
-                decryptCipher));
-
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException |
-                 InvalidAlgorithmParameterException ex) {
+        } catch (NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException |
+                 InvalidAlgorithmParameterException | InvalidKeyException | ShortBufferException ex) {
             return GResultOf.errors(new ValidationError.EncryptedNodeFailure(path, ex));
         }
-    }
-
-    private static  IvParameterSpec generateIv() {
-        byte[] iv = new byte[16];
-        new SecureRandom().nextBytes(iv);
-        return new IvParameterSpec(iv);
-    }
-
-    private static SecretKey generateKey(int n) throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(n);
-        return keyGenerator.generateKey();
     }
 }

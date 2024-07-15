@@ -7,9 +7,11 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,21 +24,25 @@ import java.util.Optional;
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class EncryptedLeafNode extends LeafNode {
-    private final Cipher decryptCipher;
+
+    public static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
+    public static final int GCM_TAG_LENGTH = 16;
+    public static final int GCM_IV_LENGTH = 12;
+    private final SecretKey skey;
 
     private final byte[] encryptedData;
 
-    public EncryptedLeafNode(byte[] encryptedData, Cipher decryptCipher) throws IllegalBlockSizeException, BadPaddingException {
+    public EncryptedLeafNode(byte[] encryptedData, SecretKey skey) throws IllegalBlockSizeException, BadPaddingException {
         super("");
 
-        this.decryptCipher = decryptCipher;
+        this.skey = skey;
         this.encryptedData = encryptedData;
     }
 
     @Override
     public Optional<String> getValue() {
         try {
-            return Optional.of(new String(decryptCipher.doFinal(encryptedData)));
+            return Optional.of(decryptGcm(skey, encryptedData));
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             return Optional.empty();
         }
@@ -96,5 +102,26 @@ public class EncryptedLeafNode extends LeafNode {
         return "EncryptedLeafNode{" +
             "value='" + nodeValue + '\'' +
             "}";
+    }
+
+    public static String decryptGcm(SecretKey skey, byte[] ciphertext)
+        throws BadPaddingException, IllegalBlockSizeException /* these indicate corrupt or malicious ciphertext */
+        /* Note that AEADBadTagException may be thrown in GCM mode; this is a subclass of BadPaddingException */
+    {
+        /* Precond: skey is valid and GCM mode is available in the JRE;
+         * otherwise IllegalStateException will be thrown. */
+        try {
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            byte[] initVector = Arrays.copyOfRange(ciphertext, 0, GCM_IV_LENGTH);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+            cipher.init(Cipher.DECRYPT_MODE, skey, spec);
+            byte[] plaintext = cipher.doFinal(ciphertext, GCM_IV_LENGTH, ciphertext.length - GCM_IV_LENGTH);
+            return new String(plaintext);
+        } catch (NoSuchPaddingException | InvalidAlgorithmParameterException |
+                 InvalidKeyException | NoSuchAlgorithmException e)
+        {
+            /* None of these exceptions should be possible if precond is met. */
+            throw new IllegalStateException(e.toString());
+        }
     }
 }
