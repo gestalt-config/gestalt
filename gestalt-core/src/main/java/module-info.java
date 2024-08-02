@@ -11,6 +11,7 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.processor.result.ResultProcessor;
     uses org.github.gestalt.config.observations.ObservationRecorder;
     uses org.github.gestalt.config.processor.result.validation.ConfigValidator;
+    uses org.github.gestalt.config.source.factory.ConfigSourceFactory;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -30,10 +31,12 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.security.encrypted;
     exports org.github.gestalt.config.security.temporary;
     exports org.github.gestalt.config.source;
+    exports org.github.gestalt.config.source.factory;
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;
     exports org.github.gestalt.config.utils;
     exports org.github.gestalt.config.processor.config;
+    exports org.github.gestalt.config.processor.config.include;
     exports org.github.gestalt.config.processor.config.transform;
     exports org.github.gestalt.config.processor.config.transform.substitution;
     exports org.github.gestalt.config.processor.result;
@@ -87,7 +90,8 @@ module org.github.gestalt.core {
     provides org.github.gestalt.config.processor.config.ConfigNodeProcessor with
         org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor,
         org.github.gestalt.config.security.encrypted.EncryptedSecretConfigNodeProcessor,
-        org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor;
+        org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor,
+        org.github.gestalt.config.processor.config.include.ConfigNodeIncludeProcessor;
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with
         org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer,
@@ -101,6 +105,10 @@ module org.github.gestalt.core {
         org.github.gestalt.config.processor.config.transform.RandomTransformer,
         org.github.gestalt.config.processor.config.transform.URLDecoderTransformer,
         org.github.gestalt.config.processor.config.transform.URLEncoderTransformer;
+
+    provides org.github.gestalt.config.source.factory.ConfigSourceFactory with
+        org.github.gestalt.config.source.factory.ClassPathConfigSourceFactory,
+        org.github.gestalt.config.source.factory.FileConfigSourceFactory;
 }
 
 

@@ -35,6 +35,9 @@ import org.github.gestalt.config.security.encrypted.EncryptedSecretModule;
 import org.github.gestalt.config.security.temporary.TemporarySecretModule;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
+import org.github.gestalt.config.source.factory.ConfigSourceFactory;
+import org.github.gestalt.config.source.factory.ConfigSourceFactoryManager;
+import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
 import org.github.gestalt.config.utils.Pair;
@@ -80,6 +83,7 @@ public class GestaltBuilder {
     private ResultsProcessorService resultsProcessorService;
     private ConfigNodeProcessorService configNodeProcessorService;
     private ConfigNodeService configNodeService;
+    private ConfigSourceFactoryService configSourceFactoryService;
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
@@ -88,6 +92,7 @@ public class GestaltBuilder {
     private List<ObservationRecorder> observationRecorders = new ArrayList<>();
     private List<ConfigValidator> configValidators = new ArrayList<>();
     private List<ResultProcessor> resultProcessors = new ArrayList<>();
+    private List<ConfigSourceFactory> configSourceFactories = new ArrayList<>();
     private ConfigNodeTagResolutionStrategy configNodeTagResolutionStrategy;
     private TagMergingStrategy tagMergingStrategy;
     private boolean useCacheDecorator = true;
@@ -134,6 +139,9 @@ public class GestaltBuilder {
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = null;
+
+    // The keyword that is used to determine if a node is an import from a source
+    private String nodeImportKeyword = null;
 
     // Defines how the proxy decoder works. See the enum for details.
     private ProxyDecoderMode proxyDecoderMode = null;
@@ -240,6 +248,20 @@ public class GestaltBuilder {
     }
 
     /**
+     * Add default Config Source Factories to the builder. Uses the ServiceLoader to find all registered ConfigSourceFactory and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultConfigSourceFactory() {
+        List<ConfigSourceFactory> configSourceFactorySet = new ArrayList<>();
+        ServiceLoader<ConfigSourceFactory> loader = ServiceLoader.load(ConfigSourceFactory.class);
+        loader.forEach(configSourceFactorySet::add);
+
+        configSourceFactories.addAll(configSourceFactorySet);
+        return this;
+    }
+
+    /**
      * Add a single source to the builder.
      *
      * @param source add a single sources
@@ -273,7 +295,7 @@ public class GestaltBuilder {
      */
     public GestaltBuilder setSources(List<ConfigSourcePackage> configSourcePackage) {
         Objects.requireNonNull(configSourcePackage, "ConfigSourcePackage should not be null");
-        this.configSourcePackages = configSourcePackage;
+        this.configSourcePackages = new ArrayList<>(configSourcePackage);
         return this;
     }
 
@@ -368,7 +390,7 @@ public class GestaltBuilder {
         if (configLoaders == null || configLoaders.isEmpty()) {
             throw new GestaltConfigurationException("No config loader provided while setting config loaders");
         }
-        this.configLoaders = configLoaders;
+        this.configLoaders = new ArrayList<>(configLoaders);
         return this;
     }
 
@@ -412,7 +434,7 @@ public class GestaltBuilder {
         if (configNodeProcessors == null || configNodeProcessors.isEmpty()) {
             throw new GestaltConfigurationException("No ConfigNodeProcessor provided while setting");
         }
-        this.configNodeProcessors = configNodeProcessors;
+        this.configNodeProcessors = new ArrayList<>(configNodeProcessors);
 
         return this;
     }
@@ -513,7 +535,7 @@ public class GestaltBuilder {
      */
     public GestaltBuilder setObservationsRecorders(List<ObservationRecorder> observationRecorders) {
         Objects.requireNonNull(observationRecorders, "No ObservationRecorder provided while setting");
-        this.observationRecorders = observationRecorders;
+        this.observationRecorders = new ArrayList<>(observationRecorders);
 
         return this;
     }
@@ -552,7 +574,7 @@ public class GestaltBuilder {
      */
     public GestaltBuilder setValidators(List<ConfigValidator> configValidators) {
         Objects.requireNonNull(configValidators, "No Validators provided while setting");
-        this.configValidators = configValidators;
+        this.configValidators = new ArrayList<>(configValidators);
 
         return this;
     }
@@ -591,7 +613,7 @@ public class GestaltBuilder {
      */
     public GestaltBuilder setResultProcessor(List<ResultProcessor> resultProcessors) {
         Objects.requireNonNull(resultProcessors, "ResultProcessor should not be null");
-        this.resultProcessors = resultProcessors;
+        this.resultProcessors = new ArrayList<>(resultProcessors);
 
         return this;
     }
@@ -619,6 +641,57 @@ public class GestaltBuilder {
     public GestaltBuilder addResultProcessor(ResultProcessor resultProcessor) {
         Objects.requireNonNull(resultProcessor, "ResultProcessor should not be null");
         this.resultProcessors.add(resultProcessor);
+        return this;
+    }
+
+    /**
+     * Sets the ConfigSourceFactoryService if you want to provide your own. Otherwise, a default is provided.
+     *
+     * @param configSourceFactoryService the ConfigSourceFactoryService
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setConfigSourceFactoryService(ConfigSourceFactoryService configSourceFactoryService) {
+        Objects.requireNonNull(configSourceFactoryService, "ConfigSourceFactoryService should not be null");
+        this.configSourceFactoryService = configSourceFactoryService;
+        return this;
+    }
+
+    /**
+     * Sets the list of ConfigSourceFactory. Replaces any ConfigSourceFactory already set.
+     *
+     * @param configSourceFactories list of ConfigSourceFactory.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setConfigSourceFactories(List<ConfigSourceFactory> configSourceFactories) {
+        Objects.requireNonNull(configSourceFactories, "ConfigSourceFactory should not be null");
+        this.configSourceFactories = new ArrayList<>(configSourceFactories);
+
+        return this;
+    }
+
+    /**
+     * List of ConfigSourceFactory to add to the builder.
+     *
+     * @param configSourceFactorySet list of ConfigSourceFactory to add.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addConfigSourceFactories(List<ConfigSourceFactory> configSourceFactorySet) {
+        Objects.requireNonNull(configSourceFactorySet, "ConfigSourceFactory should not be null");
+
+        configSourceFactories.addAll(configSourceFactorySet);
+
+        return this;
+    }
+
+    /**
+     * Add a single ConfigSourceFactory to the builder.
+     *
+     * @param configSourceFactory add a single ConfigSourceFactory
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addConfigSourceFactory(ConfigSourceFactory configSourceFactory) {
+        Objects.requireNonNull(configSourceFactory, "ConfigSourceFactory should not be null");
+        this.configSourceFactories.add(configSourceFactory);
         return this;
     }
 
@@ -720,6 +793,7 @@ public class GestaltBuilder {
      * Set what secrets you want to be encrypted. If you already added any secrets to be encrypted this will overwrite them.
      *
      * @param encryptedSecrets what secrets to encrypt
+     * @return the builder
      */
     public GestaltBuilder setEncryptedSecrets(SecretChecker encryptedSecrets
     ) {
@@ -1201,6 +1275,16 @@ public class GestaltBuilder {
         return this;
     }
 
+    /**
+     * Set the keyword that is used to determine if a node is an import from a source.
+     *
+     * @param nodeImportKeyword the keyword that is used to determine if a node is an import from a source.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setNodeImportKeyword(String nodeImportKeyword) {
+        this.nodeImportKeyword = nodeImportKeyword;
+        return this;
+    }
 
     /**
      * Get the mode the for proxy decoder.
@@ -1334,6 +1418,7 @@ public class GestaltBuilder {
         configureCoreResultProcessors();
         configureResultProcessors();
         configureConfigLoaders();
+        configureConfigSourceFactory();
 
         configureTemporaryNodesModule();
         configureEncryptedSecretsNodesModule();
@@ -1381,7 +1466,9 @@ public class GestaltBuilder {
 
         configNodeProcessors = configNodeProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, configNodeService, sentenceLexer, secretConcealer);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, configNodeService, sentenceLexer,
+            secretConcealer, configSourceFactoryService, configLoaderService);
+
         configNodeProcessors.forEach(it -> it.applyConfig(config));
 
         configNodeProcessorService.addConfigNodeProcessors(configNodeProcessors);
@@ -1461,6 +1548,23 @@ public class GestaltBuilder {
             resultsProcessorService = new ResultsProcessorManager(resultProcessors);
         } else {
             resultsProcessorService.addResultProcessors(resultProcessors);
+        }
+    }
+
+    private void configureConfigSourceFactory() {
+        // setup the default configSourceFactories, if there are none add the default ones.
+        if (configSourceFactories.isEmpty()) {
+            logger.log(TRACE, "No configSourceFactories provided, using defaults");
+            addDefaultConfigSourceFactory();
+        }
+        configSourceFactories = configSourceFactories.stream().filter(Objects::nonNull).collect(Collectors.toList());
+
+        // if the ConfigSourceFactoryManager does not exist, create it.
+        // Otherwise, get all the factories from the ConfigSourceFactoryManager, combine them with the ones in the builder,
+        if (configSourceFactoryService == null) {
+            configSourceFactoryService = new ConfigSourceFactoryManager(configSourceFactories);
+        } else {
+            configSourceFactoryService.addConfigSourceFactories(configSourceFactories);
         }
     }
 
@@ -1578,6 +1682,9 @@ public class GestaltBuilder {
 
         newConfig.setSentenceLexer(Objects.requireNonNullElseGet(sentenceLexer,
             () -> gestaltConfig.getSentenceLexer()));
+
+        newConfig.setNodeImportKeyword(Objects.requireNonNullElseGet(nodeImportKeyword,
+            () -> gestaltConfig.getNodeImportKeyword()));
 
         return newConfig;
     }

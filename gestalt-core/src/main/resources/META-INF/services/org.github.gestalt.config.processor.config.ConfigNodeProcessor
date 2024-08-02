@@ -1,3 +1,4 @@
 org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor
 org.github.gestalt.config.security.encrypted.EncryptedSecretConfigNodeProcessor
 org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor
+org.github.gestalt.config.processor.config.include.ConfigNodeIncludeProcessor

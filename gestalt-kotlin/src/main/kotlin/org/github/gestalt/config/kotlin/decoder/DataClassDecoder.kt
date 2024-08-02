@@ -131,7 +131,8 @@ class DataClassDecoder : Decoder<Any> {
                                 if (defaultGResultOf.hasResults()) {
                                     resultValid = true
                                     results = defaultGResultOf.results()
-                                    errors.add(OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, decoderContext))
+                                    errors.add(
+                                        OptionalMissingValueDecoding(nextPath, node, name(), type.rawType.simpleName, decoderContext))
                                 } else {
                                     missingMembers.add(it.name ?: "null")
                                 }

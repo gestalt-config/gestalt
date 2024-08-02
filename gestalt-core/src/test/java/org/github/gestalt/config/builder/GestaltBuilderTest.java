@@ -37,6 +37,9 @@ import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.MapConfigSource;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
+import org.github.gestalt.config.source.factory.ClassPathConfigSourceFactory;
+import org.github.gestalt.config.source.factory.ConfigSourceFactoryManager;
+import org.github.gestalt.config.source.factory.FileConfigSourceFactory;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.github.gestalt.config.token.Token;
@@ -128,6 +131,10 @@ class GestaltBuilderTest {
             .addResultProcessors(List.of(new TestResultProcessor(true)))
             .setResultProcessor(List.of(new TestResultProcessor(true)))
             .setResultsProcessorService(new ResultsProcessorManager(new ArrayList<>()))
+            .setConfigSourceFactoryService(new ConfigSourceFactoryManager(List.of()))
+            .setConfigSourceFactories(List.of(new FileConfigSourceFactory()))
+            .addConfigSourceFactory(new ClassPathConfigSourceFactory())
+            .addConfigSourceFactories(List.of(new FileConfigSourceFactory()))
             .setAddCoreResultProcessors(true)
             .setTagMergingStrategy(new TagMergingStrategyFallback())
             .addValidator(new TestValidationProcessor(true))
@@ -146,6 +153,7 @@ class GestaltBuilderTest {
             .setTreatWarningsAsErrors(true)
             .setTreatMissingValuesAsErrors(true)
             .setTreatMissingDiscretionaryValuesAsErrors(true)
+            .setNodeImportKeyword("$import")
             .setProxyDecoderMode(ProxyDecoderMode.CACHE);
 
         Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());

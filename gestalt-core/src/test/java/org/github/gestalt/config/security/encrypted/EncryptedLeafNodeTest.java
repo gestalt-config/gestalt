@@ -32,10 +32,10 @@ class EncryptedLeafNodeTest {
 
         String originalText = "secretData";
 
-        byte[] ciphertext = null;
+        byte[] ciphertext;
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         byte[] initVector = new byte[GCM_IV_LENGTH];
-        (new SecureRandom()).nextBytes(initVector);
+        new SecureRandom().nextBytes(initVector);
         GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);
         byte[] encoded = originalText.getBytes(java.nio.charset.StandardCharsets.UTF_8);
