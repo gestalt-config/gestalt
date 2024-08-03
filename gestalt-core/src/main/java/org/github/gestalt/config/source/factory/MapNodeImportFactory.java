@@ -1,8 +1,15 @@
 package org.github.gestalt.config.source.factory;
 
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.loader.ConfigLoaderService;
+import org.github.gestalt.config.loader.ConfigLoaderUtils;
+import org.github.gestalt.config.node.ConfigNode;
+import org.github.gestalt.config.source.ConfigSourcePackage;
+import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.utils.GResultOf;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,8 +17,8 @@ import java.util.Map;
  * This class is not registered with the META-INF services, so it is not loaded by the service loader.
  * If you want to use this class you need to do it manually in the GestaltBuilder
  * Gestalt gestalt = new GestaltBuilder()
- *             .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
- *                 MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
+ * .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
+ * MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
  *
  * <p>The source must match the name of the source in your import statement.
  *
@@ -19,14 +26,20 @@ import java.util.Map;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class MapNodeImportFactory implements ConfigSourceFactory {
+public class MapNodeImportFactory implements ConfigNodeFactory {
 
     private final String source;
-    private final ConfigSource configSource;
+    private final Map<String, String> configMap;
 
-    public MapNodeImportFactory(String source, ConfigSource configSource) {
+    private ConfigLoaderService configLoaderService;
+
+    public MapNodeImportFactory(String source, Map<String, String> configMap) {
         this.source = source;
-        this.configSource = configSource;
+        this.configMap = configMap;
+    }
+
+    public void applyConfig(ConfigNodeFactoryConfig config) {
+        this.configLoaderService = config.getConfigLoaderService();
     }
 
     @Override
@@ -35,7 +48,13 @@ public class MapNodeImportFactory implements ConfigSourceFactory {
     }
 
     @Override
-    public GResultOf<ConfigSource> build(Map<String, String> parameters) {
-        return GResultOf.result(configSource);
+    public GResultOf<List<ConfigNode>> build(Map<String, String> parameters) {
+        try {
+            ConfigSourcePackage mapConfigSource = MapConfigSourceBuilder.builder().setCustomConfig(configMap).build();
+            return ConfigLoaderUtils.convertSourceToNodes(mapConfigSource.getConfigSource(), configLoaderService);
+
+        } catch (GestaltException e) {
+            return GResultOf.errors(new ValidationError.ConfigNodeImportException(e));
+        }
     }
 }

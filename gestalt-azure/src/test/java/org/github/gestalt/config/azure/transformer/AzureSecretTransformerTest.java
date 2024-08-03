@@ -59,7 +59,7 @@ class AzureSecretTransformerTest {
                     .build();
 
                 gestaltConfig.registerModuleConfig(azureModule);
-                ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+                ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
                 transform.applyConfig(config);
 
                 when(secretClient.getSecret("secret")).thenReturn(new KeyVaultSecret("secret", "hello world"));
@@ -80,7 +80,7 @@ class AzureSecretTransformerTest {
         AzureSecretTransformer transform = new AzureSecretTransformer();
         GestaltConfig gestaltConfig = new GestaltConfig();
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", "secret", "azureSecret:secret");
@@ -113,7 +113,7 @@ class AzureSecretTransformerTest {
                 .build();
 
             gestaltConfig.registerModuleConfig(azureModule);
-            ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+            ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
             transform.applyConfig(config);
 
             when(secretClient.getSecret("secret")).thenReturn(new KeyVaultSecret("secret", "hello world"));
@@ -145,7 +145,7 @@ class AzureSecretTransformerTest {
                 .build();
 
             gestaltConfig.registerModuleConfig(azureModule);
-            ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+            ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
             transform.applyConfig(config);
 
             when(secretClient.getSecret("secret")).thenReturn(new KeyVaultSecret("secret", "hello world"));
@@ -167,7 +167,7 @@ class AzureSecretTransformerTest {
         AzureModuleConfig azureModule = AzureModuleBuilder.builder().setSecretClient(secretClient).build();
 
         gestaltConfig.registerModuleConfig(azureModule);
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
         transform.applyConfig(config);
 
         when(secretClient.getSecret("secret")).thenReturn(new KeyVaultSecret("secret", "hello world"));
@@ -187,7 +187,7 @@ class AzureSecretTransformerTest {
         AzureModuleConfig azureModule = AzureModuleBuilder.builder().setSecretClient(secretClient).build();
 
         gestaltConfig.registerModuleConfig(azureModule);
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
         transform.applyConfig(config);
 
         var results = transform.process("test", null, "azureSecret:secret");
@@ -218,7 +218,7 @@ class AzureSecretTransformerTest {
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(azureModuleConfig);
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
         transform.applyConfig(config);
 
         when(secretClient.getSecret("secret")).thenReturn(new KeyVaultSecret("secret", "hello world"));
@@ -247,7 +247,7 @@ class AzureSecretTransformerTest {
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.registerModuleConfig(azureModuleConfig);
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
         transform.applyConfig(config);
 
         when(secretClient.getSecret("secret")).thenThrow(new RuntimeException("something bad happened"));

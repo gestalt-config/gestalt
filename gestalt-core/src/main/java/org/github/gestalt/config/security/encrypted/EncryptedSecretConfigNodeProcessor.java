@@ -41,7 +41,8 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
         return keyGenerator.generateKey();
     }
 
-    private byte[] encryptGcm(SecretKey skey, String plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+    private byte[] encryptGcm(SecretKey skey, String plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException,
+        InvalidAlgorithmParameterException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
         /* Precond: skey is valid and GCM mode is available in the JRE;
          * otherwise IllegalStateException will be thrown. */
         byte[] ciphertext;

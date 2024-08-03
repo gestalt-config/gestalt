@@ -1,7 +1,9 @@
 package org.github.gestalt.config.source.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.loader.ConfigLoaderService;
+import org.github.gestalt.config.loader.ConfigLoaderUtils;
+import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.FileConfigSourceBuilder;
 import org.github.gestalt.config.utils.GResultOf;
 
@@ -18,11 +20,17 @@ import java.util.Map;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class FileConfigSourceFactory implements ConfigSourceFactory {
+public class FileConfigSourceFactory implements ConfigNodeFactory {
 
     public static final String SOURCE_TYPE = "file";
     public static final String PARAMETER_PATH = "path";
     public static final String PARAMETER_FILE = "file";
+
+    private ConfigLoaderService configLoaderService;
+
+    public void applyConfig(ConfigNodeFactoryConfig config) {
+        this.configLoaderService = config.getConfigLoaderService();
+    }
 
     @Override
     public Boolean supportsSource(String sourceName) {
@@ -30,7 +38,7 @@ public class FileConfigSourceFactory implements ConfigSourceFactory {
     }
 
     @Override
-    public GResultOf<ConfigSource> build(Map<String, String> parameters) {
+    public GResultOf<List<ConfigNode>> build(Map<String, String> parameters) {
 
         var fileConfigSourceBuilder = FileConfigSourceBuilder.builder();
 
@@ -51,7 +59,12 @@ public class FileConfigSourceFactory implements ConfigSourceFactory {
                 }
             }
 
-            return GResultOf.resultOf(fileConfigSourceBuilder.build().getConfigSource(), errors);
+            var fileConfigSource = fileConfigSourceBuilder.build().getConfigSource();
+
+            GResultOf<List<ConfigNode>> loadedNodes = ConfigLoaderUtils.convertSourceToNodes(fileConfigSource, configLoaderService);
+            errors.addAll(loadedNodes.getErrors());
+
+            return GResultOf.resultOf(loadedNodes.results(), errors);
         } catch (Exception ex) {
             errors.add(new ValidationError.ConfigSourceFactoryException(SOURCE_TYPE, ex));
             return GResultOf.errors(errors);

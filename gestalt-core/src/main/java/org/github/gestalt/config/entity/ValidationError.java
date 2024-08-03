@@ -1919,6 +1919,12 @@ public abstract class ValidationError {
         private final String path;
         private final Exception ex;
 
+        public ConfigNodeImportException(Exception ex) {
+            super(ValidationLevel.ERROR);
+            this.path = null;
+            this.ex = ex;
+        }
+
         public ConfigNodeImportException(String path, Exception ex) {
             super(ValidationLevel.ERROR);
             this.path = path;
@@ -1927,7 +1933,11 @@ public abstract class ValidationError {
 
         @Override
         public String description() {
-            return "Exception while importing a Config Source on path : " + path + ", exception: " + ex.getMessage();
+            if (path != null) {
+                return "Exception while importing a Config Source on path : " + path + ", exception: " + ex.getMessage();
+            } else {
+                return "Exception while importing a Config Source exception: " + ex.getMessage();
+            }
         }
     }
 }

@@ -39,8 +39,7 @@ public class GestaltImportProcessorTest {
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
             .build();
 
         gestalt.loadConfigs();
@@ -64,8 +63,7 @@ public class GestaltImportProcessorTest {
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
             .build();
 
         gestalt.loadConfigs();
@@ -95,10 +93,8 @@ public class GestaltImportProcessorTest {
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode2",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs3).build().getConfigSource()))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode2", configs3))
             .build();
 
         gestalt.loadConfigs();
@@ -123,8 +119,7 @@ public class GestaltImportProcessorTest {
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
             .build();
 
         gestalt.loadConfigs();
@@ -155,10 +150,8 @@ public class GestaltImportProcessorTest {
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
-            .addConfigSourceFactory(new MapNodeImportFactory("mapNode2",
-                MapConfigSourceBuilder.builder().setCustomConfig(configs3).build().getConfigSource()))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode2", configs3))
             .build();
 
         gestalt.loadConfigs();

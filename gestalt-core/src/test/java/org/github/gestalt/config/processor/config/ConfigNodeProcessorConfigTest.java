@@ -2,7 +2,6 @@ package org.github.gestalt.config.processor.config;
 
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
@@ -17,7 +16,6 @@ class ConfigNodeProcessorConfigTest {
     private SentenceLexer lexer;
     private SecretConcealer secretConcealer;
     private ConfigSourceFactoryService configSourceFactoryService;
-    private ConfigLoaderService configLoaderService;
 
     @BeforeEach
     public void setup() {
@@ -26,14 +24,13 @@ class ConfigNodeProcessorConfigTest {
         lexer = Mockito.mock(SentenceLexer.class);
         secretConcealer = Mockito.mock();
         configSourceFactoryService = Mockito.mock();
-        configLoaderService = Mockito.mock();
     }
 
     @Test
     void getConfig() {
         ConfigNodeProcessorConfig ppConfig =
             new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-                configSourceFactoryService, configLoaderService);
+                configSourceFactoryService);
 
         Assertions.assertEquals(config, ppConfig.getConfig());
     }
@@ -42,7 +39,7 @@ class ConfigNodeProcessorConfigTest {
     void getConfigNodeService() {
         ConfigNodeProcessorConfig ppConfig =
             new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-                configSourceFactoryService, configLoaderService);
+                configSourceFactoryService);
 
         Assertions.assertEquals(configNodeService, ppConfig.getConfigNodeService());
     }
@@ -51,7 +48,7 @@ class ConfigNodeProcessorConfigTest {
     void getLexer() {
         ConfigNodeProcessorConfig ppConfig =
             new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-                configSourceFactoryService, configLoaderService);
+                configSourceFactoryService);
 
         Assertions.assertEquals(lexer, ppConfig.getLexer());
     }
@@ -60,7 +57,7 @@ class ConfigNodeProcessorConfigTest {
     void getConfigSourceFactoryService() {
         ConfigNodeProcessorConfig ppConfig =
             new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-                configSourceFactoryService, configLoaderService);
+                configSourceFactoryService);
 
         Assertions.assertEquals(configSourceFactoryService, ppConfig.getConfigSourceFactoryService());
     }
@@ -69,7 +66,7 @@ class ConfigNodeProcessorConfigTest {
     void getConfigLoaderService() {
         ConfigNodeProcessorConfig ppConfig =
             new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-                configSourceFactoryService, configLoaderService);
+                configSourceFactoryService);
 
         Assertions.assertEquals(configSourceFactoryService, ppConfig.getConfigSourceFactoryService());
     }

@@ -3,7 +3,6 @@ package org.github.gestalt.config.processor.config.transform;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
@@ -30,7 +29,6 @@ class NodeTransformerTest {
     private SentenceLexer lexer;
     private SecretConcealer secretConcealer;
     private ConfigSourceFactoryService configSourceFactoryService;
-    private ConfigLoaderService configLoaderService;
 
     @BeforeEach
     public void setup() {
@@ -39,7 +37,6 @@ class NodeTransformerTest {
         lexer = Mockito.mock(SentenceLexer.class);
         secretConcealer = Mockito.mock();
         configSourceFactoryService = Mockito.mock();
-        configLoaderService = Mockito.mock();
     }
 
     @Test
@@ -58,7 +55,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> resultsOf = transformer.process("hello", "test", "");
 
         Assertions.assertTrue(resultsOf.hasResults());
@@ -90,7 +87,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", null, "node:");
 
         Assertions.assertFalse(results.hasResults());
@@ -109,7 +106,7 @@ class NodeTransformerTest {
             .thenReturn(GResultOf.errors(new ValidationError.FailedToTokenizeElement("hello", "test")));
 
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(results.hasResults());
@@ -128,7 +125,7 @@ class NodeTransformerTest {
         Mockito.when(lexer.scan("test")).thenReturn(GResultOf.errors(new ValidationError.EmptyPath()));
 
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(results.hasResults());
@@ -150,7 +147,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(results.hasResults());
@@ -174,7 +171,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(results.hasResults());
@@ -196,7 +193,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(results.hasResults());
@@ -217,7 +214,7 @@ class NodeTransformerTest {
 
         NodeTransformer transformer = new NodeTransformer();
         transformer.applyConfig(new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-            configSourceFactoryService, configLoaderService));
+            configSourceFactoryService));
         GResultOf<String> results = transformer.process("hello", "test", "");
 
         Assertions.assertFalse(results.hasResults());

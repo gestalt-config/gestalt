@@ -1,21 +1,14 @@
 package org.github.gestalt.config.processor.config.include;
 
-import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
-import org.github.gestalt.config.loader.ConfigLoader;
-import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.node.MergeNodes;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
-import org.github.gestalt.config.source.ConfigSource;
-import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
-import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.StringUtils;
@@ -33,7 +26,6 @@ import java.util.stream.Collectors;
 public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
 
     private ConfigSourceFactoryService configSourceFactoryService;
-    private ConfigLoaderService configLoaderService;
     private String nodeImportKeyword;
     private SentenceLexer lexer;
 
@@ -53,6 +45,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
             .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("Indentation")
     private static Map<String, String> convertStringToParameters(String path, String paramtersString, List<ValidationError> errors) {
         return Arrays.stream(paramtersString.split(",")).map(it -> {
                 var parts = it.split("=");
@@ -71,13 +64,12 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
     public void applyConfig(ConfigNodeProcessorConfig config) {
         this.configSourceFactoryService = config.getConfigSourceFactoryService();
         this.nodeImportKeyword = config.getConfig().getNodeImportKeyword();
-        this.configLoaderService = config.getConfigLoaderService();
         this.lexer = config.getLexer();
     }
 
     @Override
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
-        if (configSourceFactoryService == null || configLoaderService == null || !(currentNode instanceof MapNode)) {
+        if (configSourceFactoryService == null || !(currentNode instanceof MapNode)) {
             return GResultOf.result(currentNode);
         }
 
@@ -122,32 +114,11 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
             Map<String, String> parameters = convertStringToParameters(path, paramtersString, errors);
 
             // from the parameters generate the config source.
-            GResultOf<ConfigSource> sourcesResult = configSourceFactoryService.build(parameters);
+            GResultOf<List<ConfigNode>> configNodesResult = configSourceFactoryService.build(parameters);
 
-            var loadedConfigNode = sourcesResult.mapWithError(source -> {
-                List<ConfigNode> configNodes = new ArrayList<>();
-                try {
-                    // find the config loader for this source's format.
-                    ConfigLoader configLoader = configLoaderService.getLoader(source.format());
-                    // use the loader to load the source and generate config nodes.
-                    var loadedSource = configLoader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
-
-                    errors.addAll(loadedSource.getErrors());
-                    if (loadedSource.hasResults()) {
-                        for (ConfigNodeContainer node : loadedSource.results()) {
-                            configNodes.add(node.getConfigNode());
-                        }
-                    }
-
-                } catch (GestaltException ex) {
-                    errors.add(new ValidationError.ConfigNodeImportException(path, ex));
-                }
-                return configNodes;
-            });
-
-            errors.addAll(loadedConfigNode.getErrors());
-            if (loadedConfigNode.hasResults()) {
-                var orderedImportNodes = buildOrderedImportNodes(importEntries.getKey(), loadedConfigNode);
+            errors.addAll(configNodesResult.getErrors());
+            if (configNodesResult.hasResults()) {
+                var orderedImportNodes = buildOrderedImportNodes(importEntries.getKey(), configNodesResult);
 
                 // add these new nodes to the list of all ordered nodes.
                 nodeAndOrderPair.addAll(orderedImportNodes);

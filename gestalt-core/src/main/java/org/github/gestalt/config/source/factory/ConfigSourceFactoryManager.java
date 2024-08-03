@@ -1,7 +1,7 @@
 package org.github.gestalt.config.source.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.ArrayList;
@@ -19,19 +19,19 @@ public class ConfigSourceFactoryManager implements ConfigSourceFactoryService {
 
     public static final String SOURCE = "source";
 
-    private final List<ConfigSourceFactory> configSourceFactories;
+    private final List<ConfigNodeFactory> configSourceFactories;
 
-    public ConfigSourceFactoryManager(List<ConfigSourceFactory> configSourceFactories) {
+    public ConfigSourceFactoryManager(List<ConfigNodeFactory> configSourceFactories) {
         this.configSourceFactories = new ArrayList<>(configSourceFactories);
     }
 
     @Override
-    public void addConfigSourceFactories(List<ConfigSourceFactory> configSourceFactories) {
+    public void addConfigSourceFactories(List<ConfigNodeFactory> configSourceFactories) {
         this.configSourceFactories.addAll(configSourceFactories);
     }
 
     @Override
-    public GResultOf<ConfigSource> build(Map<String, String> parameters) {
+    public GResultOf<List<ConfigNode>> build(Map<String, String> parameters) {
         var source = parameters.entrySet().stream()
             .filter(entry -> SOURCE.equalsIgnoreCase(entry.getKey()))
             .findFirst();
@@ -41,7 +41,7 @@ public class ConfigSourceFactoryManager implements ConfigSourceFactoryService {
         }
 
         String sourceName = source.get().getValue();
-        Optional<ConfigSourceFactory> factory = configSourceFactories.stream().filter(it -> it.supportsSource(sourceName)).findFirst();
+        Optional<ConfigNodeFactory> factory = configSourceFactories.stream().filter(it -> it.supportsSource(sourceName)).findFirst();
 
         if (factory.isEmpty()) {
             return GResultOf.errors(new ValidationError.ConfigSourceFactoryNotFound(sourceName));

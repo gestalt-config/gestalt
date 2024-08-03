@@ -44,7 +44,7 @@ class GCPSecretTransformerTest {
     void process() {
 
         GestaltConfig config = new GestaltConfig();
-        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null, null);
+        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null);
 
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
@@ -72,7 +72,7 @@ class GCPSecretTransformerTest {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(new GoogleModuleConfig());
-        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null, null);
+        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null);
 
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
@@ -106,7 +106,7 @@ class GCPSecretTransformerTest {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(googleModuleConfig);
-        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null, null);
+        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null);
 
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
@@ -136,7 +136,7 @@ class GCPSecretTransformerTest {
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(new GoogleModuleConfig());
-        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null, null);
+        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(config, null, null, null, null);
         try (MockedStatic<SecretManagerServiceClient> secretClient = Mockito.mockStatic(SecretManagerServiceClient.class);
              MockedStatic<ServiceOptions> serviceOptions = Mockito.mockStatic(ServiceOptions.class)) {
             secretClient.when(SecretManagerServiceClient::create).thenReturn(secretManagerServiceClient);

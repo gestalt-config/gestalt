@@ -1,6 +1,6 @@
 package org.github.gestalt.config.source.factory;
 
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.List;
@@ -18,7 +18,8 @@ public interface ConfigSourceFactoryService {
      *
      * @param configSourceFactories The list of configSourceFactories
      */
-    void addConfigSourceFactories(List<ConfigSourceFactory> configSourceFactories);
+    void addConfigSourceFactories(List<ConfigNodeFactory> configSourceFactories);
+
     /**
      * Takes in a map of parameters to then use a builder to generate a Config Source.
      * One of the parameters needs to be source. The source is the name of the sources such as source=file.
@@ -27,5 +28,5 @@ public interface ConfigSourceFactoryService {
      * @param parameters parameters used to define a configSource, such as file location, or url
      * @return Config Source
      */
-    GResultOf<ConfigSource> build(Map<String, String> parameters);
+    GResultOf<List<ConfigNode>> build(Map<String, String> parameters);
 }

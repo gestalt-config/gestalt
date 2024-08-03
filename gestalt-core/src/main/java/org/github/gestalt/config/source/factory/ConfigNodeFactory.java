@@ -1,8 +1,9 @@
 package org.github.gestalt.config.source.factory;
 
-import org.github.gestalt.config.source.ConfigSource;
+import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.GResultOf;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,7 +11,11 @@ import java.util.Map;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public interface ConfigSourceFactory {
+public interface ConfigNodeFactory {
+
+    default void applyConfig(ConfigNodeFactoryConfig config) {
+
+    }
 
     /**
      * Returns true if it supports a specific config source sourceName.
@@ -26,5 +31,5 @@ public interface ConfigSourceFactory {
      * @param parameters parameters used to define a configSource, such as file location, or url
      * @return Config Source
      */
-    GResultOf<ConfigSource> build(Map<String, String> parameters);
+    GResultOf<List<ConfigNode>> build(Map<String, String> parameters);
 }

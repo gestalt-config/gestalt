@@ -1,8 +1,10 @@
 package org.github.gestalt.config.source.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.loader.ConfigLoaderService;
+import org.github.gestalt.config.loader.ConfigLoaderUtils;
+import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.source.ClassPathConfigSourceBuilder;
-import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.ArrayList;
@@ -16,10 +18,16 @@ import java.util.Map;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class ClassPathConfigSourceFactory implements ConfigSourceFactory {
+public class ClassPathConfigSourceFactory implements ConfigNodeFactory {
 
     public static final String SOURCE_TYPE = "classPath";
     public static final String PARAMETER_RESOURCE = "resource";
+
+    private ConfigLoaderService configLoaderService;
+
+    public void applyConfig(ConfigNodeFactoryConfig config) {
+        this.configLoaderService = config.getConfigLoaderService();
+    }
 
     @Override
     public Boolean supportsSource(String sourceName) {
@@ -27,7 +35,7 @@ public class ClassPathConfigSourceFactory implements ConfigSourceFactory {
     }
 
     @Override
-    public GResultOf<ConfigSource> build(Map<String, String> parameters) {
+    public GResultOf<List<ConfigNode>> build(Map<String, String> parameters) {
 
         var classPathConfigSourceBuilder = ClassPathConfigSourceBuilder.builder();
 
@@ -41,11 +49,18 @@ public class ClassPathConfigSourceFactory implements ConfigSourceFactory {
                         new ValidationError.ConfigSourceFactoryUnknownParameter(SOURCE_TYPE, entry.getKey(), entry.getValue()));
                 }
             }
+            var source = classPathConfigSourceBuilder.build().getConfigSource();
 
-            return GResultOf.resultOf(classPathConfigSourceBuilder.build().getConfigSource(), errors);
+            GResultOf<List<ConfigNode>> loadedNodes = ConfigLoaderUtils.convertSourceToNodes(source, configLoaderService);
+            errors.addAll(loadedNodes.getErrors());
+
+            return GResultOf.resultOf(loadedNodes.results(), errors);
+
         } catch (Exception ex) {
             errors.add(new ValidationError.ConfigSourceFactoryException(SOURCE_TYPE, ex));
             return GResultOf.errors(errors);
         }
     }
+
+
 }

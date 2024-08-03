@@ -24,7 +24,7 @@ class TemporarySecretConfigNodeProcessorTest {
         GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
 
         TemporarySecretConfigNodeProcessor temporarySecretConfigNodeProcessor = new TemporarySecretConfigNodeProcessor();
         temporarySecretConfigNodeProcessor.applyConfig(config);
@@ -49,7 +49,7 @@ class TemporarySecretConfigNodeProcessorTest {
         GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
 
         TemporarySecretConfigNodeProcessor temporarySecretConfigNodeProcessor = new TemporarySecretConfigNodeProcessor();
         temporarySecretConfigNodeProcessor.applyConfig(config);
@@ -73,7 +73,7 @@ class TemporarySecretConfigNodeProcessorTest {
         GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
 
         TemporarySecretConfigNodeProcessor temporarySecretConfigNodeProcessor = new TemporarySecretConfigNodeProcessor();
         temporarySecretConfigNodeProcessor.applyConfig(config);
@@ -96,7 +96,7 @@ class TemporarySecretConfigNodeProcessorTest {
         GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
 
         TemporarySecretConfigNodeProcessor temporarySecretConfigNodeProcessor = new TemporarySecretConfigNodeProcessor();
         temporarySecretConfigNodeProcessor.applyConfig(config);
@@ -121,7 +121,7 @@ class TemporarySecretConfigNodeProcessorTest {
         GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
 
         TemporarySecretConfigNodeProcessor temporarySecretConfigNodeProcessor = new TemporarySecretConfigNodeProcessor();
         temporarySecretConfigNodeProcessor.applyConfig(config);
@@ -142,7 +142,7 @@ class TemporarySecretConfigNodeProcessorTest {
         GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(null);
 
-        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null, null);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
 
         TemporarySecretConfigNodeProcessor temporarySecretConfigNodeProcessor = new TemporarySecretConfigNodeProcessor();
         temporarySecretConfigNodeProcessor.applyConfig(config);

@@ -11,7 +11,7 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.processor.result.ResultProcessor;
     uses org.github.gestalt.config.observations.ObservationRecorder;
     uses org.github.gestalt.config.processor.result.validation.ConfigValidator;
-    uses org.github.gestalt.config.source.factory.ConfigSourceFactory;
+    uses org.github.gestalt.config.source.factory.ConfigNodeFactory;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -106,7 +106,7 @@ module org.github.gestalt.core {
         org.github.gestalt.config.processor.config.transform.URLDecoderTransformer,
         org.github.gestalt.config.processor.config.transform.URLEncoderTransformer;
 
-    provides org.github.gestalt.config.source.factory.ConfigSourceFactory with
+    provides org.github.gestalt.config.source.factory.ConfigNodeFactory with
         org.github.gestalt.config.source.factory.ClassPathConfigSourceFactory,
         org.github.gestalt.config.source.factory.FileConfigSourceFactory;
 }
