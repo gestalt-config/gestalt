@@ -108,7 +108,8 @@ module org.github.gestalt.core {
 
     provides org.github.gestalt.config.source.factory.ConfigNodeFactory with
         org.github.gestalt.config.source.factory.ClassPathConfigSourceFactory,
-        org.github.gestalt.config.source.factory.FileConfigSourceFactory;
+        org.github.gestalt.config.source.factory.FileConfigSourceFactory,
+        org.github.gestalt.config.source.factory.ConfigNodeImportFactory;
 }
 
 

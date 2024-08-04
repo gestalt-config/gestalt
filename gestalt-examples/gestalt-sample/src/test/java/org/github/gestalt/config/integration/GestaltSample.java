@@ -1981,6 +1981,52 @@ public class GestaltSample {
 
     }
 
+    @Test
+    public void testImportNodeClasspath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:-1", "source=classPath,resource=import.properties");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportFile() throws GestaltException {
+
+        // Load the default property files from resources.
+        URL fileNode = GestaltSample.class.getClassLoader().getResource("import.properties");
+        File devFile = new File(fileNode.getFile());
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:1", "source=file,file=" + devFile.getAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
     public enum Role {
         LEVEL0, LEVEL1
     }

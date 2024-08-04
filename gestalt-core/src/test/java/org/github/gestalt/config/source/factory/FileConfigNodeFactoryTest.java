@@ -58,7 +58,7 @@ public class FileConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());
@@ -82,7 +82,7 @@ public class FileConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());
@@ -106,7 +106,7 @@ public class FileConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());

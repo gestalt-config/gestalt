@@ -1,6 +1,7 @@
 package org.github.gestalt.config.integration;
 
 import org.github.gestalt.config.Gestalt;
+import org.github.gestalt.config.GestaltImportProcessorTest;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
 import org.github.gestalt.config.builder.GestaltBuilder;
@@ -1311,6 +1312,52 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("tags: Tags{[]} = MapNode{admin=ArrayNode{values=[EncryptedLeafNode{value='secret'}, " +
             "EncryptedLeafNode{value='secret'}]}, db=MapNode{password=EncryptedLeafNode{value='*****'}, " +
             "port=EncryptedLeafNode{value='secret'}, name=EncryptedLeafNode{value='secret'}}}", gestalt.debugPrint());
+    }
+
+    @Test
+    public void testImportNodeClasspath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:-1", "source=classPath,resource=import.properties");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportFile() throws GestaltException {
+
+        // Load the default property files from resources.
+        URL fileNode = GestaltImportProcessorTest.class.getClassLoader().getResource("import.properties");
+        File devFile = new File(fileNode.getFile());
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:1", "source=file,file=" + devFile.getAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
     }
 
 

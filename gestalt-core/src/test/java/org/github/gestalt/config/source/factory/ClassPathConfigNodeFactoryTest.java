@@ -56,7 +56,7 @@ public class ClassPathConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());
@@ -80,7 +80,7 @@ public class ClassPathConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
 
@@ -99,7 +99,7 @@ public class ClassPathConfigNodeFactoryTest {
     public void testBuildWithException() {
         Map<String, String> params = new HashMap<>();
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertFalse(result.hasResults());

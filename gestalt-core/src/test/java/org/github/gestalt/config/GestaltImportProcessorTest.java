@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.LogManager;
@@ -160,5 +162,142 @@ public class GestaltImportProcessorTest {
         Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
         Assertions.assertEquals("c changed", gestalt.getConfig("c", String.class));
         Assertions.assertEquals("d", gestalt.getConfig("d", String.class));
+    }
+
+    @Test
+    public void testImportNode() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:1", "source=node,path=path");
+
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportNodeUnder() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:-1", "source=node,path=path");
+
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportClasspath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:1", "source=classPath,resource=import.properties");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportNodeClasspath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:-1", "source=classPath,resource=import.properties");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportFile() throws GestaltException {
+
+        // Load the default property files from resources.
+        URL fileNode = GestaltImportProcessorTest.class.getClassLoader().getResource("import.properties");
+        File devFile = new File(fileNode.getFile());
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:1", "source=file,file=" + devFile.getAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportNodeFile() throws GestaltException {
+
+
+        // Load the default property files from resources.
+        URL fileNode = GestaltImportProcessorTest.class.getClassLoader().getResource("import.properties");
+        File devFile = new File(fileNode.getFile());
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$import:-1", "source=file,path=" + devFile.getAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
     }
 }

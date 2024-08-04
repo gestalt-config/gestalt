@@ -1558,7 +1558,8 @@ public class GestaltBuilder {
             logger.log(TRACE, "No configSourceFactories provided, using defaults");
             addDefaultConfigSourceFactory();
         }
-        ConfigNodeFactoryConfig configNodeFactoryConfig = new ConfigNodeFactoryConfig(configLoaderService);
+        ConfigNodeFactoryConfig configNodeFactoryConfig =
+            new ConfigNodeFactoryConfig(configLoaderService, configNodeService, sentenceLexer);
 
         configSourceFactories = configSourceFactories.stream().filter(Objects::nonNull).collect(Collectors.toList());
         configSourceFactories.forEach(it -> it.applyConfig(configNodeFactoryConfig));
