@@ -11,7 +11,7 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
-import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryService;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 @SuppressWarnings("VariableDeclarationUsageDistance")
 class ConfigNodeIncludeProcessorTest {
-    private ConfigSourceFactoryService configSourceFactoryService;
+    private ConfigNodeFactoryService configNodeFactoryService;
 
     private ConfigNodeProcessorConfig ppConfig;
 
@@ -34,11 +34,11 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNodeService configNodeService = Mockito.mock(ConfigNodeService.class);
         SentenceLexer lexer = new PathLexer();
         SecretConcealer secretConcealer = Mockito.mock();
-        configSourceFactoryService = Mockito.mock();
+        configNodeFactoryService = Mockito.mock();
 
         ppConfig =
             new ConfigNodeProcessorConfig(config, configNodeService, lexer, secretConcealer,
-                configSourceFactoryService);
+                configNodeFactoryService);
     }
 
     @Test
@@ -58,7 +58,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
 
         processor.applyConfig(ppConfig);
@@ -95,7 +95,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -131,7 +131,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -166,7 +166,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -268,7 +268,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -309,7 +309,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -350,7 +350,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -393,7 +393,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -435,7 +435,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -476,7 +476,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 
@@ -517,7 +517,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
 
-        Mockito.when(configSourceFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
         processor.applyConfig(ppConfig);
 

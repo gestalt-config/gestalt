@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class ConfigSourceFactoryManager implements ConfigSourceFactoryService {
+public class ConfigNodeFactoryManager implements ConfigNodeFactoryService {
 
     public static final String SOURCE = "source";
 
     private final List<ConfigNodeFactory> configSourceFactories;
 
-    public ConfigSourceFactoryManager(List<ConfigNodeFactory> configSourceFactories) {
+    public ConfigNodeFactoryManager(List<ConfigNodeFactory> configSourceFactories) {
         this.configSourceFactories = new ArrayList<>(configSourceFactories);
     }
 
@@ -41,7 +41,7 @@ public class ConfigSourceFactoryManager implements ConfigSourceFactoryService {
         }
 
         String sourceName = source.get().getValue();
-        Optional<ConfigNodeFactory> factory = configSourceFactories.stream().filter(it -> it.supportsSource(sourceName)).findFirst();
+        Optional<ConfigNodeFactory> factory = configSourceFactories.stream().filter(it -> it.supportsType(sourceName)).findFirst();
 
         if (factory.isEmpty()) {
             return GResultOf.errors(new ValidationError.ConfigSourceFactoryNotFound(sourceName));

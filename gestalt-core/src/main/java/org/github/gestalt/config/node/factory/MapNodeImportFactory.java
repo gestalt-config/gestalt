@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Factory for creating a Map Config Source from parameters.
+ * Factory for creating a Map Config Node from parameters.
  * This class is not registered with the META-INF services, so it is not loaded by the service loader.
  * If you want to use this class you need to do it manually in the GestaltBuilder
  * Gestalt gestalt = new GestaltBuilder()
@@ -21,8 +21,6 @@ import java.util.Map;
  * MapConfigSourceBuilder.builder().setCustomConfig(configs2).build().getConfigSource()))
  *
  * <p>The source must match the name of the source in your import statement.
- *
- * <p>Load a config source from a classpath resource using the getResourceAsStream method.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
@@ -43,8 +41,8 @@ public class MapNodeImportFactory implements ConfigNodeFactory {
     }
 
     @Override
-    public Boolean supportsSource(String sourceName) {
-        return sourceName.equals(source);
+    public Boolean supportsType(String type) {
+        return type.equals(source);
     }
 
     @Override

@@ -18,7 +18,7 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.*;
-import org.github.gestalt.config.source.factory.MapNodeImportFactory;
+import org.github.gestalt.config.node.factory.MapNodeImportFactory;
 import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;

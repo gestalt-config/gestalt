@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.utils.GResultOf;
@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Service that takes in the Config Source Parameters, extracts the source type, finds the factory for the source and builds it.
+ * Service that takes in the Config Node Parameters, extracts the node type, finds the factory for the node and builds it.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public interface ConfigSourceFactoryService {
+public interface ConfigNodeFactoryService {
 
     /**
      * Add a list of configSourceFactories to the factory service.

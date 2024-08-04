@@ -5,6 +5,8 @@ import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.node.factory.ConfigNodeFactory;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryManager;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,21 +26,21 @@ class ConfigNodeFactoryManagerTest {
     @Mock
     private ConfigNodeFactory mockFactory;
 
-    private ConfigSourceFactoryManager manager;
+    private ConfigNodeFactoryManager manager;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        manager = new ConfigSourceFactoryManager(List.of(mockFactory));
+        manager = new ConfigNodeFactoryManager(List.of(mockFactory));
     }
 
 
     @Test
     void testBuildSuccessful() {
-        Map<String, String> parameters = Map.of(ConfigSourceFactoryManager.SOURCE, "supportedSource", "param1", "value1");
+        Map<String, String> parameters = Map.of(ConfigNodeFactoryManager.SOURCE, "supportedSource", "param1", "value1");
         Map<String, ConfigNode> configNode = Map.of("path", new LeafNode("data"));
 
-        when(mockFactory.supportsSource(eq("supportedSource"))).thenReturn(true);
+        when(mockFactory.supportsType(eq("supportedSource"))).thenReturn(true);
         when(mockFactory.build(any())).thenReturn(GResultOf.result(List.of(new MapNode(configNode))));
 
         GResultOf<List<ConfigNode>> result = manager.build(parameters);
@@ -64,9 +66,9 @@ class ConfigNodeFactoryManagerTest {
 
     @Test
     void testBuildSourceNotSupported() {
-        Map<String, String> parameters = Map.of(ConfigSourceFactoryManager.SOURCE, "unsupportedSource");
+        Map<String, String> parameters = Map.of(ConfigNodeFactoryManager.SOURCE, "unsupportedSource");
 
-        when(mockFactory.supportsSource(eq("unsupportedSource"))).thenReturn(false);
+        when(mockFactory.supportsType(eq("unsupportedSource"))).thenReturn(false);
 
         GResultOf<List<ConfigNode>> result = manager.build(parameters);
 

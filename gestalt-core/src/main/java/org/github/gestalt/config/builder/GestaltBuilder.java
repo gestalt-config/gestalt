@@ -35,10 +35,10 @@ import org.github.gestalt.config.security.encrypted.EncryptedSecretModule;
 import org.github.gestalt.config.security.temporary.TemporarySecretModule;
 import org.github.gestalt.config.source.ConfigSource;
 import org.github.gestalt.config.source.ConfigSourcePackage;
-import org.github.gestalt.config.source.factory.ConfigNodeFactory;
-import org.github.gestalt.config.source.factory.ConfigNodeFactoryConfig;
-import org.github.gestalt.config.source.factory.ConfigSourceFactoryManager;
-import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
+import org.github.gestalt.config.node.factory.ConfigNodeFactory;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryManager;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryService;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.CollectionUtils;
 import org.github.gestalt.config.utils.Pair;
@@ -84,7 +84,7 @@ public class GestaltBuilder {
     private ResultsProcessorService resultsProcessorService;
     private ConfigNodeProcessorService configNodeProcessorService;
     private ConfigNodeService configNodeService;
-    private ConfigSourceFactoryService configSourceFactoryService;
+    private ConfigNodeFactoryService configNodeFactoryService;
     private List<ConfigSourcePackage> configSourcePackages = new ArrayList<>();
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
@@ -648,12 +648,12 @@ public class GestaltBuilder {
     /**
      * Sets the ConfigSourceFactoryService if you want to provide your own. Otherwise, a default is provided.
      *
-     * @param configSourceFactoryService the ConfigSourceFactoryService
+     * @param configNodeFactoryService the ConfigSourceFactoryService
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setConfigSourceFactoryService(ConfigSourceFactoryService configSourceFactoryService) {
-        Objects.requireNonNull(configSourceFactoryService, "ConfigSourceFactoryService should not be null");
-        this.configSourceFactoryService = configSourceFactoryService;
+    public GestaltBuilder setConfigSourceFactoryService(ConfigNodeFactoryService configNodeFactoryService) {
+        Objects.requireNonNull(configNodeFactoryService, "ConfigSourceFactoryService should not be null");
+        this.configNodeFactoryService = configNodeFactoryService;
         return this;
     }
 
@@ -1468,7 +1468,7 @@ public class GestaltBuilder {
         configNodeProcessors = configNodeProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, configNodeService, sentenceLexer,
-            secretConcealer, configSourceFactoryService);
+            secretConcealer, configNodeFactoryService);
 
         configNodeProcessors.forEach(it -> it.applyConfig(config));
 
@@ -1566,10 +1566,10 @@ public class GestaltBuilder {
 
         // if the ConfigSourceFactoryManager does not exist, create it.
         // Otherwise, get all the factories from the ConfigSourceFactoryManager, combine them with the ones in the builder,
-        if (configSourceFactoryService == null) {
-            configSourceFactoryService = new ConfigSourceFactoryManager(configSourceFactories);
+        if (configNodeFactoryService == null) {
+            configNodeFactoryService = new ConfigNodeFactoryManager(configSourceFactories);
         } else {
-            configSourceFactoryService.addConfigSourceFactories(configSourceFactories);
+            configNodeFactoryService.addConfigSourceFactories(configSourceFactories);
         }
     }
 

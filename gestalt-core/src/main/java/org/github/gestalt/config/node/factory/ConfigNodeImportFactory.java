@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -30,8 +30,8 @@ public class ConfigNodeImportFactory implements ConfigNodeFactory {
     }
 
     @Override
-    public Boolean supportsSource(String sourceName) {
-        return SOURCE_TYPE.equalsIgnoreCase(sourceName);
+    public Boolean supportsType(String type) {
+        return SOURCE_TYPE.equalsIgnoreCase(type);
     }
 
     @Override

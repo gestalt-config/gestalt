@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.node.MergeNodes;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
-import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryService;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
 import org.github.gestalt.config.utils.StringUtils;
@@ -17,15 +17,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Processor that scans map nodes looking for the import token. If found it will inject the loaded ConfigSource at that path.
- *
- * <p>Load a config source from a classpath resource using the getResourceAsStream method.
+ * Processor that scans map nodes looking for the import token. If found it will inject the loaded Config Node at that path.
+ * Supports loading nodes in order so you can load a node under an existing node to use as defaults, or over a node to use as overrides.
+ * You can inject a node at the root, or at any path within the nodes.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
 
-    private ConfigSourceFactoryService configSourceFactoryService;
+    private ConfigNodeFactoryService configNodeFactoryService;
     private String nodeImportKeyword;
     private SentenceLexer lexer;
 
@@ -62,14 +62,14 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
 
     @Override
     public void applyConfig(ConfigNodeProcessorConfig config) {
-        this.configSourceFactoryService = config.getConfigSourceFactoryService();
+        this.configNodeFactoryService = config.getConfigSourceFactoryService();
         this.nodeImportKeyword = config.getConfig().getNodeImportKeyword();
         this.lexer = config.getLexer();
     }
 
     @Override
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
-        if (configSourceFactoryService == null || !(currentNode instanceof MapNode)) {
+        if (configNodeFactoryService == null || !(currentNode instanceof MapNode)) {
             return GResultOf.result(currentNode);
         }
 
@@ -114,7 +114,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
             Map<String, String> parameters = convertStringToParameters(path, paramtersString, errors);
 
             // from the parameters generate the config source.
-            GResultOf<List<ConfigNode>> configNodesResult = configSourceFactoryService.build(parameters);
+            GResultOf<List<ConfigNode>> configNodesResult = configNodeFactoryService.build(parameters);
 
             errors.addAll(configNodesResult.getErrors());
             if (configNodesResult.hasResults()) {

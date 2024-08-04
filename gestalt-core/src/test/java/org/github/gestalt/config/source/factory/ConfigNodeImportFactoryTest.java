@@ -7,6 +7,8 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
+import org.github.gestalt.config.node.factory.ConfigNodeImportFactory;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -40,9 +42,9 @@ class ConfigNodeImportFactoryTest {
     }
 
     @Test
-    void testSupportsSource() {
-        assertTrue(factory.supportsSource("node"));
-        assertFalse(factory.supportsSource("other"));
+    void testSupportsType() {
+        assertTrue(factory.supportsType("node"));
+        assertFalse(factory.supportsType("other"));
     }
 
     @Test

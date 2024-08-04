@@ -9,6 +9,8 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
+import org.github.gestalt.config.node.factory.FileConfigNodeFactory;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
@@ -24,14 +26,14 @@ import java.util.Map;
 
 public class FileConfigNodeFactoryTest {
 
-    private FileConfigSourceFactory factory;
+    private FileConfigNodeFactory factory;
     private File file;
     private ConfigLoaderService configLoaderService;
     private ConfigLoader configLoader;
 
     @BeforeEach
     public void setUp() {
-        factory = new FileConfigSourceFactory();
+        factory = new FileConfigNodeFactory();
         configLoaderService = Mockito.mock();
         configLoader = Mockito.mock();
 
@@ -40,9 +42,9 @@ public class FileConfigNodeFactoryTest {
     }
 
     @Test
-    public void testSupportsSource() {
-        Assertions.assertTrue(factory.supportsSource("file"));
-        Assertions.assertFalse(factory.supportsSource("other"));
+    public void testSupportsType() {
+        Assertions.assertTrue(factory.supportsType("file"));
+        Assertions.assertFalse(factory.supportsType("other"));
     }
 
     @Test

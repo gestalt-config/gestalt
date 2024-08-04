@@ -9,6 +9,8 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
+import org.github.gestalt.config.node.factory.ClassPathConfigNodeFactory;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +24,7 @@ import java.util.Map;
 
 public class ClassPathConfigNodeFactoryTest {
 
-    private ClassPathConfigSourceFactory factory;
+    private ClassPathConfigNodeFactory factory;
     private String resource;
 
     private ConfigLoaderService configLoaderService;
@@ -30,7 +32,7 @@ public class ClassPathConfigNodeFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        factory = new ClassPathConfigSourceFactory();
+        factory = new ClassPathConfigNodeFactory();
         configLoaderService = Mockito.mock();
         configLoader = Mockito.mock();
 
@@ -38,9 +40,9 @@ public class ClassPathConfigNodeFactoryTest {
     }
 
     @Test
-    public void testSupportsSource() {
-        Assertions.assertTrue(factory.supportsSource("classPath"));
-        Assertions.assertFalse(factory.supportsSource("other"));
+    public void testSupportsType() {
+        Assertions.assertTrue(factory.supportsType("classPath"));
+        Assertions.assertFalse(factory.supportsType("other"));
     }
 
     @Test

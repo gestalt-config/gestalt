@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.loader.ConfigLoaderService;
@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Factory for creating a Classpath Config Source from parameters
+ * Factory for creating a Classpath Config Node from parameters
  *
- * <p>Load a config source from a classpath resource using the getResourceAsStream method.
+ * <p>Load a config source from a classpath then converts it to a config node
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class ClassPathConfigSourceFactory implements ConfigNodeFactory {
+public class ClassPathConfigNodeFactory implements ConfigNodeFactory {
 
     public static final String SOURCE_TYPE = "classPath";
     public static final String PARAMETER_RESOURCE = "resource";
@@ -30,8 +30,8 @@ public class ClassPathConfigSourceFactory implements ConfigNodeFactory {
     }
 
     @Override
-    public Boolean supportsSource(String sourceName) {
-        return SOURCE_TYPE.equalsIgnoreCase(sourceName);
+    public Boolean supportsType(String type) {
+        return SOURCE_TYPE.equalsIgnoreCase(type);
     }
 
     @Override

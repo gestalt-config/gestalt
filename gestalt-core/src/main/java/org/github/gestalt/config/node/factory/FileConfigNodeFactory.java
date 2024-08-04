@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.loader.ConfigLoaderService;
@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Factory for creating a File Config Source from parameters
+ * Factory for creating a File Config Node from parameters
  *
- * <p>Load a config source from a classpath resource using the getResourceAsStream method.
+ * <p>Load a config source from a File then converts it to a config node
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class FileConfigSourceFactory implements ConfigNodeFactory {
+public class FileConfigNodeFactory implements ConfigNodeFactory {
 
     public static final String SOURCE_TYPE = "file";
     public static final String PARAMETER_PATH = "path";
@@ -33,8 +33,8 @@ public class FileConfigSourceFactory implements ConfigNodeFactory {
     }
 
     @Override
-    public Boolean supportsSource(String sourceName) {
-        return SOURCE_TYPE.equalsIgnoreCase(sourceName);
+    public Boolean supportsType(String type) {
+        return SOURCE_TYPE.equalsIgnoreCase(type);
     }
 
     @Override

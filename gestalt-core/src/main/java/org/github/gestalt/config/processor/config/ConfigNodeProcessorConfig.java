@@ -4,7 +4,7 @@ import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
-import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryService;
 
 /**
  * Holds the configuration that is provided to the config node processors.
@@ -14,7 +14,7 @@ import org.github.gestalt.config.source.factory.ConfigSourceFactoryService;
 public final class ConfigNodeProcessorConfig {
     private final GestaltConfig config;
     private final ConfigNodeService configNodeService;
-    private final ConfigSourceFactoryService configSourceFactoryService;
+    private final ConfigNodeFactoryService configNodeFactoryService;
     private final SentenceLexer lexer;
     private final SecretConcealer secretConcealer;
 
@@ -25,15 +25,15 @@ public final class ConfigNodeProcessorConfig {
      * @param configNodeService          Config node service
      * @param lexer                      Lexer to parse paths
      * @param secretConcealer            utility to conceal secrets
-     * @param configSourceFactoryService the configSourceFactoryService
+     * @param configNodeFactoryService the configSourceFactoryService
      */
     public ConfigNodeProcessorConfig(GestaltConfig config, ConfigNodeService configNodeService, SentenceLexer lexer,
-                                     SecretConcealer secretConcealer, ConfigSourceFactoryService configSourceFactoryService) {
+                                     SecretConcealer secretConcealer, ConfigNodeFactoryService configNodeFactoryService) {
         this.config = config;
         this.configNodeService = configNodeService;
         this.lexer = lexer;
         this.secretConcealer = secretConcealer;
-        this.configSourceFactoryService = configSourceFactoryService;
+        this.configNodeFactoryService = configNodeFactoryService;
     }
 
     /**
@@ -77,7 +77,7 @@ public final class ConfigNodeProcessorConfig {
      *
      * @return the ConfigSourceFactoryService
      */
-    public ConfigSourceFactoryService getConfigSourceFactoryService() {
-        return configSourceFactoryService;
+    public ConfigNodeFactoryService getConfigSourceFactoryService() {
+        return configNodeFactoryService;
     }
 }
