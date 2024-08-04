@@ -214,8 +214,6 @@ public class GestaltImportProcessorTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("path.b", "b changed");
-        configs.put("path.c", "c");
         configs.put("$import:1", "source=classPath,resource=import.properties");
 
         Gestalt gestalt = new GestaltBuilder()
@@ -235,8 +233,6 @@ public class GestaltImportProcessorTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("path.b", "b changed");
-        configs.put("path.c", "c");
         configs.put("$import:-1", "source=classPath,resource=import.properties");
 
         Gestalt gestalt = new GestaltBuilder()
@@ -260,8 +256,6 @@ public class GestaltImportProcessorTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("path.b", "b changed");
-        configs.put("path.c", "c");
         configs.put("$import:1", "source=file,file=" + devFile.getAbsolutePath());
 
         Gestalt gestalt = new GestaltBuilder()
@@ -286,8 +280,6 @@ public class GestaltImportProcessorTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("path.b", "b changed");
-        configs.put("path.c", "c");
         configs.put("$import:-1", "source=file,path=" + devFile.getAbsolutePath());
 
         Gestalt gestalt = new GestaltBuilder()
