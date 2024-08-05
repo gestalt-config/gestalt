@@ -114,6 +114,7 @@ public class GestaltImportProcessorTest {
         configs.put("a", "a");
         configs.put("b", "b");
         configs.put("sub.$import:1", "source=mapNode1");
+        configs.put("sub.a", "a");
 
         Map<String, String> configs2 = new HashMap<>();
         configs2.put("b", "b changed");
@@ -128,6 +129,7 @@ public class GestaltImportProcessorTest {
 
         Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
         Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("a", gestalt.getConfig("sub.a", String.class));
         Assertions.assertEquals("c", gestalt.getConfig("sub.c", String.class));
         Assertions.assertEquals("b changed", gestalt.getConfig("sub.b", String.class));
     }

@@ -134,6 +134,10 @@ http.pool.maxPerRoute=50
 ```
 
 5. Retrieve configurations from Gestalt
+6. \
+7. 
+8. 
+9. 
 
    Using the Gestalt Interface you can load sub nodes with dot notation into a wide variety of classes.
    For non-generic classes you can pass in the class with `getConfig("db.port", Integer.class)` or for classes with generic types we need to use a special TypeCapture wrapper that captures the generic type at runtime. This allows us to construct generic classes with such as List<String> using  `new TypeCapture<List<String>>() {}`
@@ -687,6 +691,47 @@ Using the extension functions you don't need to specify the type if the return t
 | 0.9.0 to 0.9.3   | 1.5            |
 | 0.1.0 to 0.8.1   | 1.4            |
 
+# Node Substitution
+Using the `$import` keyword as part of a config path, you can import the referenced config node tree into the path provided. By default, the node is merged into the provided node under the current node. You can control the order of the nodes, by including a number where < 0 is imported below the current node and > 0 is imported above the current node. For example: `$import:-1` for importing under the current node, and `$import:1` for importing over the current node. 
+If you are importing multiple nodes each node must have an order. 
+
+You can import into the root or any sub node. It also supports nested imports. 
+
+The imported node must provide a source that is used to determine how to import the source. Each source accepts different parameters.  
+
+Example of Importing a classPath Node into a sub path. 
+````java
+Map<String, String> configs = new HashMap<>();
+configs.put("a", "a");
+configs.put("b", "b");
+configs.put("sub.$import:1", "source=classPath,resource=imports.properties");
+configs.put("sub.a", "a");
+
+Map<String, String> configs2 = new HashMap<>();
+configs2.put("b", "b changed");
+configs2.put("c", "c");
+
+Gestalt gestalt = new GestaltBuilder()
+  .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+  .build();
+
+gestalt.loadConfigs();
+
+Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+Assertions.assertEquals("a", gestalt.getConfig("sub.a", String.class));
+Assertions.assertEquals("c", gestalt.getConfig("sub.c", String.class));
+Assertions.assertEquals("b changed", gestalt.getConfig("sub.b", String.class));
+````
+
+Supported substitution sources:
+
+| Source Type   | Parameter | Description                                                    |
+|---------------|-----------|----------------------------------------------------------------|
+| classPath     | resource  | The name of the classpath resource to load.                    |
+| node          | path      | Load an node at the given path into the current node.          |
+| file          | file      | Load a file at a given location to the current node.           |
+| file          | path      | Load a file as a path at a given location to the current node. |
 
 # String Substitution
 Gestalt supports string substitutions at load time on configuration properties to dynamically modify configurations.

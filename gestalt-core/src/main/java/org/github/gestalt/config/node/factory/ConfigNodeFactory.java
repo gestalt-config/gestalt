@@ -31,6 +31,5 @@ public interface ConfigNodeFactory {
      * @param parameters parameters used to define a config Node, such as file location, or url
      * @return Config Node
      */
-    GResultOf<List<ConfigNode>> build(Map<String, String> parameter
-                                      s);
+    GResultOf<List<ConfigNode>> build(Map<String, String> parameters);
 }
