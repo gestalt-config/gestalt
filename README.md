@@ -25,6 +25,10 @@ Let's dive in and explore how Gestalt can streamline your configuration manageme
 
 - **Merge Multiple Sources:** Seamlessly merge configurations from different sources to create comprehensive settings.
 
+- **String Substitution:** Build a config value by injecting Environment Variables, System Properties or other nodes into your strings.
+
+- **node Substitution:** Include whole config nodes loaded from files or other places in the config tree anywhere in your config tree.
+
 - **Flexible and Configurable:** The library offers well-defined interfaces, allowing customization and extension.
 
 - **Easy-to-Use Builder:** Get started quickly with a user-friendly builder, or customize specific aspects of the library.
@@ -39,7 +43,7 @@ Let's dive in and explore how Gestalt can streamline your configuration manageme
 
 - **Java Modules:** Supports Java 9 modules with proper exports.
 
-- **Well Tested:** Our codebase boasts an impressive > 90% code coverage, validated by over 1700 meaningful tests.
+- **Well Tested:** Our codebase boasts an impressive > 91% code coverage, validated by over 1700 meaningful tests.
 
 
 
