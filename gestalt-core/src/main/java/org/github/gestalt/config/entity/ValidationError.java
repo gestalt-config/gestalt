@@ -9,6 +9,7 @@ import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.token.Token;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Validation errors for every possible error.
@@ -1776,5 +1777,169 @@ public abstract class ValidationError {
             return "Unable to encrypt node on path " + path + ", due to error " + ex.getMessage();
         }
     }
+
+    /**
+     * Config Source Factory has been provided an unknown parameter.
+     */
+    public static class ConfigSourceFactoryUnknownParameter extends ValidationError {
+        private final String factory;
+        private final String key;
+        private final String value;
+
+        public ConfigSourceFactoryUnknownParameter(String factory, String key, String value) {
+            super(ValidationLevel.DEBUG);
+            this.factory = factory;
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown Config Source Factory parameter for: " + factory + " Parameter key: " + key + ", value: " + value;
+        }
+    }
+
+    /**
+     * Exception while building a Config Source Factory.
+     */
+    public static class ConfigSourceFactoryException extends ValidationError {
+        private final String factory;
+        private final Exception ex;
+
+        public ConfigSourceFactoryException(String factory, Exception ex) {
+            super(ValidationLevel.ERROR);
+            this.factory = factory;
+            this.ex = ex;
+        }
+
+        @Override
+        public String description() {
+            return "Exception while building Config Source Factory: " + factory + ", exception: " + ex.getMessage();
+        }
+    }
+
+    /**
+     * Source name not provided while building Config Source Factory.
+     */
+    public static class ConfigSourceFactoryNoSource extends ValidationError {
+
+        private final Map<String, String> parameters;
+
+        public ConfigSourceFactoryNoSource(Map<String, String> parameters) {
+            super(ValidationLevel.ERROR);
+            this.parameters = parameters;
+        }
+
+        @Override
+        public String description() {
+            return "Source name not provided while building Config Source Factory for parameters: " + parameters;
+        }
+    }
+
+    /**
+     * A Config Source Factory has not been found.
+     */
+    public static class ConfigSourceFactoryNotFound extends ValidationError {
+        private final String source;
+
+        public ConfigSourceFactoryNotFound(String source) {
+            super(ValidationLevel.ERROR);
+            this.source = source;
+        }
+
+        @Override
+        public String description() {
+            return "A Config Source Factory has not be found for source: " + source;
+        }
+    }
+
+    /**
+     * A Config node import is the wrong node type.
+     */
+    public static class ConfigNodeImportWrongNodeType extends ValidationError {
+        private final String path;
+        private final ConfigNode configNode;
+
+        public ConfigNodeImportWrongNodeType(String path, ConfigNode configNode) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.configNode = configNode;
+        }
+
+        @Override
+        public String description() {
+            return "A Config node import is the wrong node type on path " + path + " expected a leaf received: " +
+                configNode.getClass().getSimpleName();
+        }
+    }
+
+    /**
+     * A Config node import node is empty.
+     */
+    public static class ConfigNodeImportNodeEmpty extends ValidationError {
+        private final String path;
+
+        public ConfigNodeImportNodeEmpty(String path) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "A Config node import is empty on path " + path;
+        }
+    }
+
+    /**
+     * A Config node import paramter has the wrong size.
+     */
+    public static class ConfigNodeImportParameterHasWrongSize extends ValidationError {
+        private final String path;
+        private final String parameters;
+        private final String parameter;
+
+        public ConfigNodeImportParameterHasWrongSize(String path, String parameters, String parameter) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.parameters = parameters;
+            this.parameter = parameter;
+        }
+
+        @Override
+        public String description() {
+            return "A Config node import parameter on path: " + path + " with parameters: " + parameters + ", has a invalid parameter " +
+                parameter + " with the wrong size " + parameter.split("=").length;
+        }
+    }
+
+    /**
+     * Exception while importing a Config Source.
+     */
+    public static class ConfigNodeImportException extends ValidationError {
+        private final String path;
+        private final Exception ex;
+
+        public ConfigNodeImportException(Exception ex) {
+            super(ValidationLevel.ERROR);
+            this.path = null;
+            this.ex = ex;
+        }
+
+        public ConfigNodeImportException(String path, Exception ex) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.ex = ex;
+        }
+
+        @Override
+        public String description() {
+            if (path != null) {
+                return "Exception while importing a Config Source on path : " + path + ", exception: " + ex.getMessage();
+            } else {
+                return "Exception while importing a Config Source exception: " + ex.getMessage();
+            }
+        }
+    }
+
 }
 

@@ -46,6 +46,8 @@ public class GestaltConfig {
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = StringSubstitutionConfigNodeProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
+    private String nodeIncludeKeyword = "$include";
+
     // if observations should be enabled
     private boolean observationsEnabled = false;
 
@@ -317,6 +319,24 @@ public class GestaltConfig {
      */
     public void setSubstitutionRegex(String substitutionRegex) {
         this.substitutionRegex = substitutionRegex;
+    }
+
+    /**
+     * Get the keyword that is used to determine if a node is an import from a source.
+     *
+     * @return the keyword that is used to determine if a node is an import from a source
+     */
+    public String getNodeIncludeKeyword() {
+        return nodeIncludeKeyword;
+    }
+
+    /**
+     * Set the keyword that is used to determine if a node is an import from a source.
+     *
+     * @param nodeImportKeyword the keyword that is used to determine if a node is an import from a source
+     */
+    public void setNodeIncludeKeyword(String nodeImportKeyword) {
+        this.nodeIncludeKeyword = nodeImportKeyword;
     }
 
     /**

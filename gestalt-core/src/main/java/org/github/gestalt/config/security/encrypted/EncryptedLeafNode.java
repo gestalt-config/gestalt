@@ -39,6 +39,25 @@ public class EncryptedLeafNode extends LeafNode {
         this.encryptedData = encryptedData;
     }
 
+    public static String decryptGcm(SecretKey skey, byte[] ciphertext)
+        throws BadPaddingException, IllegalBlockSizeException /* these indicate corrupt or malicious ciphertext */
+        /* Note that AEADBadTagException may be thrown in GCM mode; this is a subclass of BadPaddingException */ {
+        /* Precond: skey is valid and GCM mode is available in the JRE;
+         * otherwise IllegalStateException will be thrown. */
+        try {
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            byte[] initVector = Arrays.copyOfRange(ciphertext, 0, GCM_IV_LENGTH);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+            cipher.init(Cipher.DECRYPT_MODE, skey, spec);
+            byte[] plaintext = cipher.doFinal(ciphertext, GCM_IV_LENGTH, ciphertext.length - GCM_IV_LENGTH);
+            return new String(plaintext);
+        } catch (NoSuchPaddingException | InvalidAlgorithmParameterException |
+                 InvalidKeyException | NoSuchAlgorithmException e) {
+            /* None of these exceptions should be possible if precond is met. */
+            throw new IllegalStateException(e.toString());
+        }
+    }
+
     @Override
     public Optional<String> getValue() {
         try {
@@ -93,7 +112,7 @@ public class EncryptedLeafNode extends LeafNode {
 
     @Override
     public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
-        String nodeValue  = "secret";
+        String nodeValue = "secret";
 
         if (secretConcealer != null) {
             nodeValue = secretConcealer.concealSecret(path, nodeValue);
@@ -102,26 +121,5 @@ public class EncryptedLeafNode extends LeafNode {
         return "EncryptedLeafNode{" +
             "value='" + nodeValue + '\'' +
             "}";
-    }
-
-    public static String decryptGcm(SecretKey skey, byte[] ciphertext)
-        throws BadPaddingException, IllegalBlockSizeException /* these indicate corrupt or malicious ciphertext */
-        /* Note that AEADBadTagException may be thrown in GCM mode; this is a subclass of BadPaddingException */
-    {
-        /* Precond: skey is valid and GCM mode is available in the JRE;
-         * otherwise IllegalStateException will be thrown. */
-        try {
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            byte[] initVector = Arrays.copyOfRange(ciphertext, 0, GCM_IV_LENGTH);
-            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
-            cipher.init(Cipher.DECRYPT_MODE, skey, spec);
-            byte[] plaintext = cipher.doFinal(ciphertext, GCM_IV_LENGTH, ciphertext.length - GCM_IV_LENGTH);
-            return new String(plaintext);
-        } catch (NoSuchPaddingException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | NoSuchAlgorithmException e)
-        {
-            /* None of these exceptions should be possible if precond is met. */
-            throw new IllegalStateException(e.toString());
-        }
     }
 }

@@ -4,6 +4,7 @@ import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
+import org.github.gestalt.config.node.factory.ConfigNodeFactoryService;
 
 /**
  * Holds the configuration that is provided to the config node processors.
@@ -13,23 +14,26 @@ import org.github.gestalt.config.secret.rules.SecretConcealer;
 public final class ConfigNodeProcessorConfig {
     private final GestaltConfig config;
     private final ConfigNodeService configNodeService;
+    private final ConfigNodeFactoryService configNodeFactoryService;
     private final SentenceLexer lexer;
     private final SecretConcealer secretConcealer;
 
     /**
      * Constructor for the config node processor config.
      *
-     * @param config            Gestalt Config
-     * @param configNodeService Config node service
-     * @param lexer             Lexer to parse paths
-     * @param secretConcealer   utility to conceal secrets
+     * @param config                     Gestalt Config
+     * @param configNodeService          Config node service
+     * @param lexer                      Lexer to parse paths
+     * @param secretConcealer            utility to conceal secrets
+     * @param configNodeFactoryService the configSourceFactoryService
      */
     public ConfigNodeProcessorConfig(GestaltConfig config, ConfigNodeService configNodeService, SentenceLexer lexer,
-                                     SecretConcealer secretConcealer) {
+                                     SecretConcealer secretConcealer, ConfigNodeFactoryService configNodeFactoryService) {
         this.config = config;
         this.configNodeService = configNodeService;
         this.lexer = lexer;
         this.secretConcealer = secretConcealer;
+        this.configNodeFactoryService = configNodeFactoryService;
     }
 
     /**
@@ -66,5 +70,14 @@ public final class ConfigNodeProcessorConfig {
      */
     public SecretConcealer getSecretConcealer() {
         return secretConcealer;
+    }
+
+    /**
+     * Get the ConfigSourceFactoryService.
+     *
+     * @return the ConfigSourceFactoryService
+     */
+    public ConfigNodeFactoryService getConfigSourceFactoryService() {
+        return configNodeFactoryService;
     }
 }

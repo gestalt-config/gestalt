@@ -51,6 +51,7 @@ import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
 import org.github.gestalt.config.secret.rules.MD5SecretObfuscator;
 import org.github.gestalt.config.source.*;
+import org.github.gestalt.config.node.factory.MapNodeImportFactory;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.SystemWrapper;
 import org.github.gestalt.config.vault.config.VaultBuilder;
@@ -1978,7 +1979,127 @@ public class GestaltSample {
         Assertions.assertEquals("test", hostMethodAnnotations.getPassword());
         Assertions.assertNull(hostMethodAnnotations.getPort());
         Assertions.assertEquals("my.sql.com", hostMethodAnnotations.getUri());
+    }
 
+    @Test
+    public void testImportSubPath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("sub.$include:1", "source=mapNode1");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("b", "b changed");
+        configs2.put("c", "c");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("sub.c", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("sub.b", String.class));
+    }
+
+    @Test
+    public void testImportNested() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include", "source=mapNode1");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("b", "b changed");
+        configs2.put("c", "c");
+        configs2.put("$include:1", "source=mapNode2");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("c", "c changed");
+        configs3.put("d", "d");
+
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode1", configs2))
+            .addConfigSourceFactory(new MapNodeImportFactory("mapNode2", configs3))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c changed", gestalt.getConfig("c", String.class));
+        Assertions.assertEquals("d", gestalt.getConfig("d", String.class));
+    }
+
+    @Test
+    public void testImportNode() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("path.b", "b changed");
+        configs.put("path.c", "c");
+        configs.put("$include:1", "source=node,path=path");
+
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportNodeClasspath() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:-1", "source=classPath,resource=include.properties");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportFile() throws GestaltException {
+
+        // Load the default property files from resources.
+        URL fileNode = GestaltSample.class.getClassLoader().getResource("include.properties");
+        File devFile = new File(fileNode.getFile());
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:1", "source=file,file=" + devFile.getAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
     }
 
     public enum Role {
