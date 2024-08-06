@@ -113,7 +113,7 @@ public class GestaltImportProcessorTest {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("sub.$import:1", "source=mapNode1");
+        configs.put("sub.$import:1", "source = mapNode1");
         configs.put("sub.a", "a");
 
         Map<String, String> configs2 = new HashMap<>();
@@ -174,7 +174,7 @@ public class GestaltImportProcessorTest {
         configs.put("b", "b");
         configs.put("path.b", "b changed");
         configs.put("path.c", "c");
-        configs.put("$import:1", "source=node,path=path");
+        configs.put("$import:1", "source=node , path = path ");
 
 
         Gestalt gestalt = new GestaltBuilder()

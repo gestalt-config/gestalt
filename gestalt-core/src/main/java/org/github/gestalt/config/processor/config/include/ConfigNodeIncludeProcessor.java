@@ -34,7 +34,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
         int order;
         String[] importDetails = importKey.split(":");
         if (importDetails.length > 1 && StringUtils.isInteger(importDetails[1])) {
-            order = Integer.parseInt(importDetails[1]);
+            order = Integer.parseInt(importDetails[1].trim());
         } else {
             order = -1;
         }
@@ -53,7 +53,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
                     errors.add(new ValidationError.ConfigNodeImportParameterHasWrongSize(path, paramtersString, it));
                     return null;
                 } else {
-                    return new Pair<>(parts[0], parts[1]);
+                    return new Pair<>(parts[0].trim(), parts[1].trim());
                 }
             })
             .filter(Objects::nonNull)
