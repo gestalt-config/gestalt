@@ -134,10 +134,6 @@ http.pool.maxPerRoute=50
 ```
 
 5. Retrieve configurations from Gestalt
-6. \
-7. 
-8. 
-9. 
 
    Using the Gestalt Interface you can load sub nodes with dot notation into a wide variety of classes.
    For non-generic classes you can pass in the class with `getConfig("db.port", Integer.class)` or for classes with generic types we need to use a special TypeCapture wrapper that captures the generic type at runtime. This allows us to construct generic classes with such as List<String> using  `new TypeCapture<List<String>>() {}`
