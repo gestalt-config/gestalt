@@ -36,6 +36,7 @@ public class MapNodeImportFactory implements ConfigNodeFactory {
         this.configMap = configMap;
     }
 
+    @Override
     public void applyConfig(ConfigNodeFactoryConfig config) {
         this.configLoaderService = config.getConfigLoaderService();
     }

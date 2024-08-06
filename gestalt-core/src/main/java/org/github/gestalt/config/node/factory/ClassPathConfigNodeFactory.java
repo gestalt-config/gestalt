@@ -25,6 +25,7 @@ public class ClassPathConfigNodeFactory implements ConfigNodeFactory {
 
     private ConfigLoaderService configLoaderService;
 
+    @Override
     public void applyConfig(ConfigNodeFactoryConfig config) {
         this.configLoaderService = config.getConfigLoaderService();
     }

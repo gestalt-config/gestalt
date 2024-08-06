@@ -24,6 +24,7 @@ public class ConfigNodeImportFactory implements ConfigNodeFactory {
     private ConfigNodeService configNodeService;
     private SentenceLexer lexer;
 
+    @Override
     public void applyConfig(ConfigNodeFactoryConfig config) {
         this.configNodeService = config.getConfigNodeService();
         this.lexer = config.getLexer();
