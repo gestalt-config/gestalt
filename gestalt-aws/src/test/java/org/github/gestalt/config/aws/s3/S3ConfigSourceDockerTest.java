@@ -21,6 +21,7 @@ import java.io.*;
 import java.net.URI;
 import java.util.Collection;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static software.amazon.awssdk.http.SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES;
 
@@ -81,7 +82,7 @@ class S3ConfigSourceDockerTest {
         var allBytes = source.loadStream().readAllBytes();
 
         InputStream fileStream = new FileInputStream(uploadFile);
-        Assertions.assertEquals(new String(allBytes), new String(fileStream.readAllBytes()));
+        Assertions.assertEquals(new String(allBytes, UTF_8), new String(fileStream.readAllBytes(), UTF_8));
     }
 
     @Test

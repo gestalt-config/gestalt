@@ -48,6 +48,8 @@ public class GestaltConfig {
 
     private String nodeIncludeKeyword = "$include";
 
+    private Integer nodeNestedIncludeLimit = 5;
+
     // if observations should be enabled
     private boolean observationsEnabled = false;
 
@@ -337,6 +339,24 @@ public class GestaltConfig {
      */
     public void setNodeIncludeKeyword(String nodeImportKeyword) {
         this.nodeIncludeKeyword = nodeImportKeyword;
+    }
+
+    /**
+     * Gets how many nested recursions during including nodes we will check before failing.
+     *
+     * @return how many nested recursions during including nodes we will check before failing
+     */
+    public Integer getNodeNestedIncludeLimit() {
+        return nodeNestedIncludeLimit;
+    }
+
+    /**
+     * Sets how many nested recursions during including nodes we will check before failing.
+     *
+     * @param nodeNestedIncludeLimit how many nested recursions during including nodes we will check before failing
+     */
+    public void setNodeNestedIncludeLimit(Integer nodeNestedIncludeLimit) {
+        this.nodeNestedIncludeLimit = nodeNestedIncludeLimit;
     }
 
     /**

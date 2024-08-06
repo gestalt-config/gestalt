@@ -28,6 +28,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
     private ConfigNodeFactoryService configNodeFactoryService;
     private String nodeImportKeyword;
     private SentenceLexer lexer;
+    private Integer nodeNestedIncludeLimit;
 
     private List<Pair<Integer, ConfigNode>> buildOrderedIncludeNodes(String importKey, GResultOf<List<ConfigNode>> loadedConfigNode) {
         // you can order the imports by having $include:3, pull out the order variable.
@@ -46,7 +47,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
     }
 
     @SuppressWarnings("Indentation")
-    private static Map<String, String> convertStringToParameters(String path, String paramtersString, List<ValidationError> errors) {
+    private Map<String, String> convertStringToParameters(String path, String paramtersString, List<ValidationError> errors) {
         return Arrays.stream(paramtersString.split(",")).map(it -> {
                 var parts = it.split("=");
                 if (parts.length != 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
@@ -65,12 +66,21 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
         this.configNodeFactoryService = config.getConfigSourceFactoryService();
         this.nodeImportKeyword = config.getConfig().getNodeIncludeKeyword();
         this.lexer = config.getLexer();
+        this.nodeNestedIncludeLimit = config.getConfig().getNodeNestedIncludeLimit();
     }
 
     @Override
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
+        return process(path, currentNode, 0);
+    }
+
+    private GResultOf<ConfigNode> process(String path, ConfigNode currentNode, Integer nestedLevel) {
         if (configNodeFactoryService == null || !(currentNode instanceof MapNode)) {
             return GResultOf.result(currentNode);
+        }
+
+        if (nestedLevel >= nodeNestedIncludeLimit) {
+            return GResultOf.resultOf(currentNode, List.of(new ValidationError.ConfigNodeImportMaxNested(path, nodeNestedIncludeLimit)));
         }
 
         MapNode mapNode = (MapNode) currentNode;
@@ -140,7 +150,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
             // Merge the imported nodes along with the original config node minus the import entries.
             ConfigNode mergedNode = mergeOrderedNodes(path, nodeAndOrderPair, errors);
 
-            var nestedNodes = process(path, mergedNode);
+            var nestedNodes = process(path, mergedNode, nestedLevel + 1);
             errors.addAll(nestedNodes.getErrors());
 
             if (nestedNodes.hasResults()) {

@@ -5,7 +5,7 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeService;
 
 /**
- * Holds configuration applied to all ConfigNodeFactory
+ * Holds configuration applied to all ConfigNodeFactory.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */

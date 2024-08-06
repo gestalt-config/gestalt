@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Factory for creating a File Config Node from parameters
+ * Factory for creating a File Config Node from parameters.
  *
  * <p>Load a config source from a File then converts it to a config node
  *

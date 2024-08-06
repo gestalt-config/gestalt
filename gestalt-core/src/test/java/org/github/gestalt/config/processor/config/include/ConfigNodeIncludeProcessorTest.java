@@ -2,7 +2,6 @@ package org.github.gestalt.config.processor.config.include;
 
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
-import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
@@ -42,7 +41,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processOkImportUnder() throws GestaltException {
+    void processOkImportUnder() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -79,7 +78,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processOkImportUnderDefined() throws GestaltException {
+    void processOkImportUnderDefined() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -115,7 +114,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processOkImportOver() throws GestaltException {
+    void processOkImportOver() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -151,7 +150,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processSingleNode() throws GestaltException {
+    void processSingleNode() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("$include:1", new LeafNode("source=node"));
@@ -251,7 +250,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processOkImportNullKey() throws GestaltException {
+    void processOkImportNullKey() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -293,7 +292,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processErrorImportBadNodeType() throws GestaltException {
+    void processErrorImportBadNodeType() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -334,7 +333,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processErrorImportBadParametersLong() throws GestaltException {
+    void processErrorImportBadParametersLong() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -376,7 +375,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processErrorImportBadParametersShort() throws GestaltException {
+    void processErrorImportBadParametersShort() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -419,7 +418,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processErrorEmptyImportLeaf() throws GestaltException {
+    void processErrorEmptyImportLeaf() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -460,7 +459,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processErrorNullImportLeaf() throws GestaltException {
+    void processErrorNullImportLeaf() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -501,7 +500,7 @@ class ConfigNodeIncludeProcessorTest {
     }
 
     @Test
-    void processErrorImportLeafValueNull() throws GestaltException {
+    void processErrorImportLeafValueNull() {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -534,6 +533,51 @@ class ConfigNodeIncludeProcessorTest {
         Assertions.assertEquals("a", mapResults.getKey("a").get().getValue().get());
         Assertions.assertEquals("b", mapResults.getKey("b").get().getValue().get());
         Assertions.assertTrue(mapResults.getKey("$include").isEmpty());
+    }
+
+    @Test
+    void processErrorImportMaxNesting() {
+
+        Map<String, ConfigNode> originalNodeMap = new HashMap<>();
+        originalNodeMap.put("a", new LeafNode("a"));
+        originalNodeMap.put("b", new LeafNode("b"));
+        originalNodeMap.put("$include", new LeafNode("source=node"));
+
+        Map<String, ConfigNode> importNodeMap = new HashMap<>();
+        importNodeMap.put("b", new LeafNode("b changed"));
+        importNodeMap.put("c", new LeafNode("c"));
+        importNodeMap.put("$include", new LeafNode("source=node"));
+
+        ConfigNode originalRoot = new MapNode(originalNodeMap);
+        ConfigNode importRoot = new MapNode(importNodeMap);
+
+        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+
+        Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
+
+
+        processor.applyConfig(ppConfig);
+
+        var processedNodes = processor.process("test", originalRoot);
+
+        Assertions.assertTrue(processedNodes.hasResults());
+        Assertions.assertTrue(processedNodes.hasErrors());
+
+        Assertions.assertEquals(1, processedNodes.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, processedNodes.getErrors().get(0).level());
+        Assertions.assertEquals("Reached the maximum nested import depth of: 5, on path: test, " +
+                "if this is intended increase the limit using GestaltBuilder.setNodeNestedIncludeLimit(10)",
+            processedNodes.getErrors().get(0).description());
+
+        var results = processedNodes.results();
+
+        Assertions.assertInstanceOf(MapNode.class, results);
+        var mapResults = (MapNode) results;
+        Assertions.assertEquals(4, mapResults.size());
+        Assertions.assertEquals("a", mapResults.getKey("a").get().getValue().get());
+        Assertions.assertEquals("b", mapResults.getKey("b").get().getValue().get());
+        Assertions.assertEquals("c", mapResults.getKey("c").get().getValue().get());
+        Assertions.assertEquals("source=node", mapResults.getKey("$include").get().getValue().get());
     }
 }
 
