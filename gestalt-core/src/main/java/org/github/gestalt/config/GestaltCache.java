@@ -18,6 +18,7 @@ import java.util.*;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
+@SuppressWarnings("OverloadMethodsDeclarationOrder")
 public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());

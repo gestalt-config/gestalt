@@ -1941,5 +1941,24 @@ public abstract class ValidationError {
         }
     }
 
+    /**
+     * Exception while importing a Config Source.
+     */
+    public static class ConfigNodeImportMaxNested extends ValidationError {
+        private final String path;
+        private final Integer numberNested;
+
+        public ConfigNodeImportMaxNested(String path, Integer numberNested) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.numberNested = numberNested;
+        }
+
+        @Override
+        public String description() {
+            return "Reached the maximum nested import depth of: " + numberNested + ", on path: " + path +
+                ", if this is intended increase the limit using GestaltBuilder.setNodeNestedIncludeLimit(10)";
+        }
+    }
 }
 

@@ -144,6 +144,9 @@ public class GestaltBuilder {
     // The keyword that is used to determine if a node is an include from a source
     private String nodeIncludeKeyword = null;
 
+    // The keyword that is used to determine if a node is an include from a source
+    private Integer nodeNestedIncludeLimit = null;
+
     // Defines how the proxy decoder works. See the enum for details.
     private ProxyDecoderMode proxyDecoderMode = null;
 
@@ -1288,6 +1291,17 @@ public class GestaltBuilder {
     }
 
     /**
+     * Sets how many nested recursions during including nodes we will check before failing.
+     *
+     * @param nodeNestedIncludeLimit how many nested recursions during including nodes we will check before failing
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setNodeNestedIncludeLimit(Integer nodeNestedIncludeLimit) {
+        this.nodeNestedIncludeLimit = nodeNestedIncludeLimit;
+        return this;
+    }
+
+    /**
      * Get the mode the for proxy decoder.
      *
      * @return the mode the for proxy decoder
@@ -1690,6 +1704,9 @@ public class GestaltBuilder {
 
         newConfig.setNodeIncludeKeyword(Objects.requireNonNullElseGet(nodeIncludeKeyword,
             () -> gestaltConfig.getNodeIncludeKeyword()));
+
+        newConfig.setNodeNestedIncludeLimit(Objects.requireNonNullElseGet(nodeNestedIncludeLimit,
+            () -> gestaltConfig.getNodeNestedIncludeLimit()));
 
         return newConfig;
     }
