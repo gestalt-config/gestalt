@@ -1987,7 +1987,7 @@ public class GestaltSample {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("sub.$import:1", "source=mapNode1");
+        configs.put("sub.$include:1", "source=mapNode1");
 
         Map<String, String> configs2 = new HashMap<>();
         configs2.put("b", "b changed");
@@ -2012,12 +2012,12 @@ public class GestaltSample {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("$import", "source=mapNode1");
+        configs.put("$include", "source=mapNode1");
 
         Map<String, String> configs2 = new HashMap<>();
         configs2.put("b", "b changed");
         configs2.put("c", "c");
-        configs2.put("$import:1", "source=mapNode2");
+        configs2.put("$include:1", "source=mapNode2");
 
         Map<String, String> configs3 = new HashMap<>();
         configs3.put("c", "c changed");
@@ -2046,7 +2046,7 @@ public class GestaltSample {
         configs.put("b", "b");
         configs.put("path.b", "b changed");
         configs.put("path.c", "c");
-        configs.put("$import:1", "source=node,path=path");
+        configs.put("$include:1", "source=node,path=path");
 
 
         Gestalt gestalt = new GestaltBuilder()
@@ -2066,7 +2066,7 @@ public class GestaltSample {
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("$import:-1", "source=classPath,resource=import.properties");
+        configs.put("$include:-1", "source=classPath,resource=include.properties");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
@@ -2083,13 +2083,13 @@ public class GestaltSample {
     public void testImportFile() throws GestaltException {
 
         // Load the default property files from resources.
-        URL fileNode = GestaltSample.class.getClassLoader().getResource("import.properties");
+        URL fileNode = GestaltSample.class.getClassLoader().getResource("include.properties");
         File devFile = new File(fileNode.getFile());
 
         Map<String, String> configs = new HashMap<>();
         configs.put("a", "a");
         configs.put("b", "b");
-        configs.put("$import:1", "source=file,file=" + devFile.getAbsolutePath());
+        configs.put("$include:1", "source=file,file=" + devFile.getAbsolutePath());
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())

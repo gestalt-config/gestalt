@@ -153,7 +153,7 @@ class GestaltBuilderTest {
             .setTreatWarningsAsErrors(true)
             .setTreatMissingValuesAsErrors(true)
             .setTreatMissingDiscretionaryValuesAsErrors(true)
-            .setNodeImportKeyword("$import")
+            .setNodeIncludeKeyword("$include")
             .setProxyDecoderMode(ProxyDecoderMode.CACHE);
 
         Assertions.assertEquals(5, builder.getMaxSubstitutionNestedDepth());

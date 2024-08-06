@@ -141,8 +141,8 @@ public class GestaltBuilder {
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
     private String substitutionRegex = null;
 
-    // The keyword that is used to determine if a node is an import from a source
-    private String nodeImportKeyword = null;
+    // The keyword that is used to determine if a node is an include from a source
+    private String nodeIncludeKeyword = null;
 
     // Defines how the proxy decoder works. See the enum for details.
     private ProxyDecoderMode proxyDecoderMode = null;
@@ -1277,13 +1277,13 @@ public class GestaltBuilder {
     }
 
     /**
-     * Set the keyword that is used to determine if a node is an import from a source.
+     * Set the keyword that is used to determine if a node is an include from a source.
      *
-     * @param nodeImportKeyword the keyword that is used to determine if a node is an import from a source.
+     * @param nodeIncludeKeyword the keyword that is used to determine if a node is an include from a source.
      * @return GestaltBuilder builder
      */
-    public GestaltBuilder setNodeImportKeyword(String nodeImportKeyword) {
-        this.nodeImportKeyword = nodeImportKeyword;
+    public GestaltBuilder setNodeIncludeKeyword(String nodeIncludeKeyword) {
+        this.nodeIncludeKeyword = nodeIncludeKeyword;
         return this;
     }
 
@@ -1688,8 +1688,8 @@ public class GestaltBuilder {
         newConfig.setSentenceLexer(Objects.requireNonNullElseGet(sentenceLexer,
             () -> gestaltConfig.getSentenceLexer()));
 
-        newConfig.setNodeImportKeyword(Objects.requireNonNullElseGet(nodeImportKeyword,
-            () -> gestaltConfig.getNodeImportKeyword()));
+        newConfig.setNodeIncludeKeyword(Objects.requireNonNullElseGet(nodeIncludeKeyword,
+            () -> gestaltConfig.getNodeIncludeKeyword()));
 
         return newConfig;
     }

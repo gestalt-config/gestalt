@@ -29,8 +29,8 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
     private String nodeImportKeyword;
     private SentenceLexer lexer;
 
-    private static List<Pair<Integer, ConfigNode>> buildOrderedImportNodes(String importKey, GResultOf<List<ConfigNode>> loadedConfigNode) {
-        // you can order the imports by having $import:3, pull out the order variable.
+    private List<Pair<Integer, ConfigNode>> buildOrderedIncludeNodes(String importKey, GResultOf<List<ConfigNode>> loadedConfigNode) {
+        // you can order the imports by having $include:3, pull out the order variable.
         int order;
         String[] importDetails = importKey.split(":");
         if (importDetails.length > 1 && StringUtils.isInteger(importDetails[1])) {
@@ -63,7 +63,7 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
     @Override
     public void applyConfig(ConfigNodeProcessorConfig config) {
         this.configNodeFactoryService = config.getConfigSourceFactoryService();
-        this.nodeImportKeyword = config.getConfig().getNodeImportKeyword();
+        this.nodeImportKeyword = config.getConfig().getNodeIncludeKeyword();
         this.lexer = config.getLexer();
     }
 
@@ -94,14 +94,14 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
         Map<String, ConfigNode> originNodesNoImport = new HashMap<>(mapNode.getMapNode());
 
         // for each of the nodes we are importing
-        for (Map.Entry<String, ConfigNode> importEntries : importingNodes.entrySet()) {
+        for (Map.Entry<String, ConfigNode> includeEntries : importingNodes.entrySet()) {
             // ensure the node is a leaf node, so we can get its source parameters.
-            if (!(importEntries.getValue() instanceof LeafNode)) {
-                errors.add(new ValidationError.ConfigNodeImportWrongNodeType(path, importEntries.getValue()));
+            if (!(includeEntries.getValue() instanceof LeafNode)) {
+                errors.add(new ValidationError.ConfigNodeImportWrongNodeType(path, includeEntries.getValue()));
                 break;
             }
 
-            LeafNode importLeafParameters = (LeafNode) importEntries.getValue();
+            LeafNode importLeafParameters = (LeafNode) includeEntries.getValue();
 
             // ensure that the node has some parameters and is not empty
             if (importLeafParameters.getValue().isEmpty() || importLeafParameters.getValue().get().isEmpty()) {
@@ -118,13 +118,13 @@ public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
 
             errors.addAll(configNodesResult.getErrors());
             if (configNodesResult.hasResults()) {
-                var orderedImportNodes = buildOrderedImportNodes(importEntries.getKey(), configNodesResult);
+                var orderedImportNodes = buildOrderedIncludeNodes(includeEntries.getKey(), configNodesResult);
 
                 // add these new nodes to the list of all ordered nodes.
                 nodeAndOrderPair.addAll(orderedImportNodes);
 
                 // since we imported this node, remove it from the original map
-                originNodesNoImport.remove(importEntries.getKey());
+                originNodesNoImport.remove(includeEntries.getKey());
             }
 
         }

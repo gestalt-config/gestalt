@@ -47,7 +47,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new LeafNode("source=node"));
+        originalNodeMap.put("$include", new LeafNode("source=node"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -84,7 +84,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import:-2", new LeafNode("source=node"));
+        originalNodeMap.put("$include:-2", new LeafNode("source=node"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -120,7 +120,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import:1", new LeafNode("source=node"));
+        originalNodeMap.put("$include:1", new LeafNode("source=node"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -154,7 +154,7 @@ class ConfigNodeIncludeProcessorTest {
     void processSingleNode() throws GestaltException {
 
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
-        originalNodeMap.put("$import:1", new LeafNode("source=node"));
+        originalNodeMap.put("$include:1", new LeafNode("source=node"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
@@ -256,7 +256,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new LeafNode("source=node"));
+        originalNodeMap.put("$include", new LeafNode("source=node"));
         originalNodeMap.put(null, new LeafNode("source=node"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
@@ -298,7 +298,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new MapNode(Map.of("source", new LeafNode("node"))));
+        originalNodeMap.put("$include", new MapNode(Map.of("source", new LeafNode("node"))));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -330,7 +330,7 @@ class ConfigNodeIncludeProcessorTest {
         Assertions.assertEquals(3, mapResults.size());
         Assertions.assertEquals("a", mapResults.getKey("a").get().getValue().get());
         Assertions.assertEquals("b", mapResults.getKey("b").get().getValue().get());
-        Assertions.assertEquals("node", mapResults.getKey("$import").get().getKey("source").get().getValue().get());
+        Assertions.assertEquals("node", mapResults.getKey("$include").get().getKey("source").get().getValue().get());
     }
 
     @Test
@@ -339,7 +339,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new LeafNode("source=node=test"));
+        originalNodeMap.put("$include", new LeafNode("source=node=test"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -381,7 +381,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new LeafNode("source"));
+        originalNodeMap.put("$include", new LeafNode("source"));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -424,7 +424,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new LeafNode(""));
+        originalNodeMap.put("$include", new LeafNode(""));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -456,7 +456,7 @@ class ConfigNodeIncludeProcessorTest {
         Assertions.assertEquals(3, mapResults.size());
         Assertions.assertEquals("a", mapResults.getKey("a").get().getValue().get());
         Assertions.assertEquals("b", mapResults.getKey("b").get().getValue().get());
-        Assertions.assertTrue(mapResults.getKey("$import").get().hasValue());
+        Assertions.assertTrue(mapResults.getKey("$include").get().hasValue());
     }
 
     @Test
@@ -465,7 +465,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", new LeafNode(null));
+        originalNodeMap.put("$include", new LeafNode(null));
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -497,7 +497,7 @@ class ConfigNodeIncludeProcessorTest {
         Assertions.assertEquals(3, mapResults.size());
         Assertions.assertEquals("a", mapResults.getKey("a").get().getValue().get());
         Assertions.assertEquals("b", mapResults.getKey("b").get().getValue().get());
-        Assertions.assertFalse(mapResults.getKey("$import").get().hasValue());
+        Assertions.assertFalse(mapResults.getKey("$include").get().hasValue());
     }
 
     @Test
@@ -506,7 +506,7 @@ class ConfigNodeIncludeProcessorTest {
         Map<String, ConfigNode> originalNodeMap = new HashMap<>();
         originalNodeMap.put("a", new LeafNode("a"));
         originalNodeMap.put("b", new LeafNode("b"));
-        originalNodeMap.put("$import", null);
+        originalNodeMap.put("$include", null);
 
         Map<String, ConfigNode> importNodeMap = new HashMap<>();
         importNodeMap.put("b", new LeafNode("b changed"));
@@ -533,7 +533,7 @@ class ConfigNodeIncludeProcessorTest {
         Assertions.assertEquals(3, mapResults.size());
         Assertions.assertEquals("a", mapResults.getKey("a").get().getValue().get());
         Assertions.assertEquals("b", mapResults.getKey("b").get().getValue().get());
-        Assertions.assertTrue(mapResults.getKey("$import").isEmpty());
+        Assertions.assertTrue(mapResults.getKey("$include").isEmpty());
     }
 }
 
