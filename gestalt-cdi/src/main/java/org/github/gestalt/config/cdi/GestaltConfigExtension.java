@@ -86,11 +86,12 @@ public class GestaltConfigExtension implements Extension {
     }
 
     protected void processConfigInjectionPoints(@Observes ProcessInjectionPoint<?, ?> pip) {
-        if (pip.getInjectionPoint().getAnnotated().isAnnotationPresent(InjectConfig.class)) {
+        var annotated = pip.getInjectionPoint().getAnnotated();
+        if (annotated.isAnnotationPresent(InjectConfig.class)) {
             configPropertyInjectionPoints.add(pip.getInjectionPoint());
         }
 
-        if (pip.getInjectionPoint().getAnnotated().isAnnotationPresent(InjectConfigs.class)) {
+        if (annotated.isAnnotationPresent(InjectConfigs.class)) {
             ConfigClassWithPrefix properties = configClassWithPrefix((Class<?>) pip.getInjectionPoint().getType(),
                 pip.getInjectionPoint().getAnnotated().getAnnotation(InjectConfigs.class).prefix());
 

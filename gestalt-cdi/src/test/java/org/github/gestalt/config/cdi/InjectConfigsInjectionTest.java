@@ -36,6 +36,10 @@ class InjectConfigsInjectionTest {
     @InjectConfigs
     Server server;
     @Inject
+    @InjectConfigs(prefix = "")
+    Server server2;
+
+    @Inject
     @InjectConfigs(prefix = "cloud")
     Server serverCloud;
 
@@ -86,6 +90,13 @@ class InjectConfigsInjectionTest {
         assertEquals(2, serverCloud.array.length);
         assertEquals(2, serverCloud.list.size());
         assertEquals(2, serverCloud.set.size());
+
+        assertNotNull(server2);
+        assertEquals("localhost", server2.theHost);
+        assertEquals(8080, server2.port);
+        assertEquals(1, server2.array.length);
+        assertEquals(1, server2.list.size());
+        assertEquals(1, server2.set.size());
     }
 
     @Test

@@ -41,6 +41,7 @@ public final class ObjectDecoder implements Decoder<Object> {
         ignoreTypes = getIgnoreTypes();
     }
 
+
     private String getMethodName(Field field) {
         String methodName;
         if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.class)) {

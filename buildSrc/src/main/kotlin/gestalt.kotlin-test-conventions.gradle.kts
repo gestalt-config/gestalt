@@ -11,8 +11,8 @@ plugins {
 
 dependencies {
     //Testing dependencies
-    testImplementation(libs.junitAPI)
-    testRuntimeOnly(libs.junitEngine)
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
     testImplementation(libs.mockk)
     testImplementation(libs.koTestAssertions)
     testImplementation(libs.mockito)

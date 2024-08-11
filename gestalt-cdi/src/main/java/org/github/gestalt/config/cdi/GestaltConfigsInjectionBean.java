@@ -52,7 +52,7 @@ public final class GestaltConfigsInjectionBean<T> implements Bean<T> {
         try {
             return config.getConfig(prefix, getBeanClass());
         } catch (GestaltException e) {
-            throw new GestaltConfigException("unable to retrieve config for ", prefix, e);
+            throw new GestaltConfigException("unable to retrieve config for " + prefix, prefix, e);
         }
     }
 
