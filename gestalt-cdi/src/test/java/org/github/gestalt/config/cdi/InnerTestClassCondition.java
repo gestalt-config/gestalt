@@ -1,8 +1,12 @@
 package org.github.gestalt.config.cdi;
 
-public class InnerTestClassCondition {
+public final class InnerTestClassCondition {
 
     public static Boolean isDisabled = true;
+
+    private InnerTestClassCondition() {
+
+    }
 
     public static boolean isDisabled() {
         // Always disable unless running manually

@@ -60,8 +60,10 @@ public class ValidateInjectionTest {
     void missingPrefix() {
         InnerTestClassCondition.isDisabled = false;
         IllegalArgumentException  exception = (IllegalArgumentException) getException(MissingPrefix.class);
-        assertThat(exception).hasMessageStartingWith("WELD-001408: Unsatisfied dependencies for type String with qualifiers @InjectConfigs\n" +
-                "  at injection point [BackedAnnotatedField] @Inject @InjectConfigs org.github.gestalt.config.cdi.ValidateInjectionTest$MissingPrefix.missingProp");
+        assertThat(exception).hasMessageStartingWith(
+                "WELD-001408: Unsatisfied dependencies for type String with qualifiers @InjectConfigs\n" +
+                "  at injection point [BackedAnnotatedField] @Inject @InjectConfigs " +
+                        "org.github.gestalt.config.cdi.ValidateInjectionTest$MissingPrefix.missingProp");
 
         assertThat(exception.getCause()).isInstanceOf(DeploymentException.class);
     }
@@ -99,9 +101,7 @@ public class ValidateInjectionTest {
 
         assertThat(summary.getFailures()).hasSize(1);
 
-        Throwable exception = summary.getFailures().get(0).getException();
-
-        return exception;
+        return summary.getFailures().get(0).getException();
     }
 
     @DisabledIf("org.github.gestalt.config.cdi.InnerTestClassCondition#isDisabled")

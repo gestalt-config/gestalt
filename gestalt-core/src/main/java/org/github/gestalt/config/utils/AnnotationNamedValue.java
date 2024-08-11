@@ -4,7 +4,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class AnnotationNamedValue {
+/**
+ * Utility class for getting the value of a "named" annotation using reflection.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ */
+public final class AnnotationNamedValue {
+
+    private AnnotationNamedValue() {
+
+    }
 
     public static String getNamedValue(Annotation namedAnnotation) {
         try {
