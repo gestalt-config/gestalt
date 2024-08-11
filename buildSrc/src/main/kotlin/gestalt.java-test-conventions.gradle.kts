@@ -12,10 +12,10 @@ plugins {
 
 dependencies {
     // Use JUnit Jupiter API for testing.
-    testImplementation(libs.junitAPI)
+    testImplementation(libs.junit.api)
 
     // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly(libs.junitEngine)
+    testRuntimeOnly(libs.junit.engine)
 
     testImplementation(libs.assertJ)
 

@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.gestalt.vault)
     implementation(libs.gestalt.yaml)
 
-    implementation(libs.junitAPI)
+    implementation(libs.junit.api)
     implementation(libs.assertJ)
     implementation(libs.aws.mock)
     implementation(libs.guice)
@@ -39,7 +39,7 @@ dependencies {
     implementation(libs.hibernate.validator)
     implementation(libs.expressly)
 
-    testImplementation(libs.junitAPI)
+    testImplementation(libs.junit.api)
     testImplementation(libs.assertJ)
 }
 

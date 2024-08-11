@@ -12,6 +12,8 @@ dependencies {
         exclude(group = "javax.enterprise", module = "cdi-api")
     }
     testImplementation(libs.weld.core)
+    testImplementation(libs.junit.testkit)
+    testImplementation(libs.junit.commons)
 }
 
 tasks.jar {

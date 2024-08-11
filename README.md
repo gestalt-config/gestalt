@@ -1620,7 +1620,7 @@ Assertions.assertEquals("value2", configContainer.orElseThrow());
 ```
 
 ## Relaxed path parsing to support all case paths.
-By default, we expect all paths to be dot notation. So in a properties file dot notation would look like `db.uri=my-sql.dev.myCompany.com` and produce a config tree with a map node `db` that hsa a map node `uri` with a value node `my-sql.dev.myCompany.com`.
+By default, we expect all paths to be dot notation. So in a properties file dot notation would look like `db.uri=my-sql.dev.myCompany.com` and produce a config tree with a map node `db` that has a map node `uri` with a value node `my-sql.dev.myCompany.com`.
 
 For A properties file with `db.pool-size=10` the `db` path would translate into a map node, and the `pool-size` would also be a map node with a value node of `10`.  `pool-size` would not be translated into a path `pool` and `size`, but during decoding the [path mappers](#searching-for-path-while-decoding-objects) will attempt to map the variable `poolSize` to `pool-size`. 
 However, this only works for the nodes after the path we are looking for. It does not map nodes earlier in the path. 

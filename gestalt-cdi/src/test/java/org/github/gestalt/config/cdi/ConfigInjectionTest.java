@@ -2,6 +2,7 @@ package org.github.gestalt.config.cdi;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
@@ -45,6 +46,7 @@ class ConfigInjectionTest {
         configs.put("map.data1", "1,2,3,4,5");
         configs.put("map.data2", "6,7,8,9,0");
         configs.put("color.enum", "RED");
+        configs.put("", "empty");
 
 
         GestaltBuilder builder = new GestaltBuilder();
@@ -77,6 +79,10 @@ class ConfigInjectionTest {
         assertEquals(Map.of("data1", List.of(1, 2, 3, 4, 5), "data2", List.of(6, 7, 8, 9, 0)),
             configBean.getMapOfInt());
 
+        assertEquals(5, configBean.getArrayOfInt().length);
+        assertEquals(1, configBean.getArrayOfInt()[0]);
+        assertEquals(2, configBean.getArrayOfInt()[1]);
+
         assertEquals(List.of(1, 2, 3, 4, 5), configBean.getListOfInt());
         assertEquals(Set.of(1, 2, 3, 4, 5), configBean.getSetOfInt());
 
@@ -85,6 +91,7 @@ class ConfigInjectionTest {
         assertEquals(Optional.empty(), configBean.getEmptyOpt());
 
         assertEquals("steve", configBean.getSupplierMyProp().get());
+        assertEquals("steve", configBean.getSupplierMyProvider().get());
         assertEquals(Color.RED, configBean.getColorEnum());
     }
 
@@ -146,6 +153,10 @@ class ConfigInjectionTest {
 
         @Inject
         @InjectConfig(path = "map.data1")
+        Integer[] arrayOfInt;
+
+        @Inject
+        @InjectConfig(path = "map.data1")
         Set<Integer> setOfInt;
 
         @Inject
@@ -163,6 +174,10 @@ class ConfigInjectionTest {
         @Inject
         @InjectConfig(path = "color.enum")
         Color colorEnum;
+
+        @Inject
+        @InjectConfig(path = "my.prop.user")
+        Provider<String> supplierMyProvider;
 
         public ConfigBean() {
         }
@@ -215,6 +230,10 @@ class ConfigInjectionTest {
             return listOfInt;
         }
 
+        public Integer[] getArrayOfInt() {
+            return arrayOfInt;
+        }
+
         public Set<Integer> getSetOfInt() {
             return setOfInt;
         }
@@ -233,6 +252,10 @@ class ConfigInjectionTest {
 
         public Color getColorEnum() {
             return colorEnum;
+        }
+
+        public Provider<String> getSupplierMyProvider() {
+            return supplierMyProvider;
         }
     }
 }
