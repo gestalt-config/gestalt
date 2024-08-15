@@ -18,8 +18,8 @@ weldCore = "5.1.2.Final"
 jackson = "2.17.2"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.26.30"
-gcpLibraries = "26.43.0"
+awsBom = "2.27.5"
+gcpLibraries = "26.44.0"
 azure = "1.2.26"
 # vault
 vault = "6.2.0"
@@ -27,13 +27,13 @@ vault = "6.2.0"
 jgit = "6.10.0.202406032230-r"
 eddsa = "0.3.0"
 # metrics
-micrometer = "1.13.2"
+micrometer = "1.13.3"
 # validation
 hibernateValidator = "8.0.1.Final"
 expressly = "5.0.0"
 # testing
-junit5 = "5.10.3"
-junitTestkit = "1.10.3"
+junit5 = "5.11.0"
+junitTestkit = "1.11.0"
 assertJ = "3.26.3"
 mockito = "5.2.0"
 mockk = "1.13.12"
@@ -42,7 +42,7 @@ koTestAssertions = "5.9.1"
 awsMock = "2.17.0"
 testcontainers = "1.20.1"
 # static code analysis
-errorprone = "2.29.2"
+errorprone = "2.30.0"
 gradleErrorProne = "4.0.1"
 detekt = "1.23.6"
 checkStyle = "10.10.0"
@@ -162,4 +162,3 @@ jackson = [
 [plugins]
 jmh = { id = "me.champeau.jmh", version.ref = "gradleJmh" }
 gradle-ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
-
