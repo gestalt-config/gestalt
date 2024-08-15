@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Factory for creating a Classpath Config Node from parameters
+ * Factory for creating a Classpath Config Node from parameters.
  *
  * <p>Load a config source from a classpath then converts it to a config node
  *
