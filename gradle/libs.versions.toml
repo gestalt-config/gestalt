@@ -13,14 +13,14 @@ guice = "7.0.0"
 # @pin 4.1.0 requires java 17
 cdi = "4.0.1"
 weld = "4.0.3.Final"
-weldCore = "5.1.2.Final"
+weldCore = "5.1.3.Final"
 #encoding/decoding
 jackson = "2.17.2"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.27.5"
-gcpLibraries = "26.44.0"
-azure = "1.2.26"
+awsBom = "2.27.14"
+gcpLibraries = "26.45.0"
+azure = "1.2.27"
 # vault
 vault = "6.2.0"
 # Git support
