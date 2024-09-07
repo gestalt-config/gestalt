@@ -1,5 +1,7 @@
 package org.github.gestalt.config;
 
+import org.github.gestalt.config.decoder.DecoderContext;
+import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.node.TagMergingStrategy;
@@ -263,5 +265,24 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     @Override
     public void reload() {
         cache.clear();
+    }
+
+    /**
+     * Get the delegate for the cache.
+     *
+     * @return the delegate for the cache
+     */
+    public Gestalt getDelegate() {
+        return delegate;
+    }
+
+    @Override
+    public DecoderService getDecoderService() {
+        return delegate.getDecoderService();
+    }
+
+    @Override
+    public DecoderContext getDecoderContext() {
+        return delegate.getDecoderContext();
     }
 }

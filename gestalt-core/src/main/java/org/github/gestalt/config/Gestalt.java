@@ -1,5 +1,7 @@
 package org.github.gestalt.config;
 
+import org.github.gestalt.config.decoder.DecoderContext;
+import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -190,4 +192,19 @@ public interface Gestalt {
      * @return string results
      */
     String debugPrint();
+
+    /**
+     * Returns the decoder service, used for decoding strings or leaf nodes manually.
+     *
+     * @return the decoder service, used for decoding strings or leaf nodes manually.
+     */
+    DecoderService getDecoderService();
+
+    /**
+     * Returns the Decoder Context, which is used to pass into the decoder to do recursive decoding.
+     * Like a Record Decoder decoding a field.
+     *
+     * @return the Decoder Context
+     */
+    DecoderContext getDecoderContext();
 }

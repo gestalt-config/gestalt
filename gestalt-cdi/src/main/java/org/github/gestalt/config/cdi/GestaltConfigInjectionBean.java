@@ -23,10 +23,10 @@ import jakarta.enterprise.inject.spi.*;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Provider;
 import org.github.gestalt.config.Gestalt;
-import org.github.gestalt.config.GestaltCore;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -99,15 +99,24 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
                 }
             } else {
                 Class<?> annotatedTypeClass = (Class<?>) annotated.getBaseType();
-                if (defaultValue.isEmpty()) {
+                if (defaultValue == null || defaultValue.isEmpty()) {
                     return (T) gestalt.getConfig(key, annotatedTypeClass);
                 } else {
                     Optional<T> optionalValue = (Optional<T>) gestalt.getConfigOptional(key, annotatedTypeClass);
-                    return optionalValue.orElseGet(
-                        () -> (T) ((GestaltCore) gestalt).getDecoderService()
-                            .decodeNode(key, Tags.of(), defaultValue, TypeCapture.of(annotatedTypeClass),
-                                ((GestaltCore) gestalt).getDecoderContext())
-                    );
+
+                    if (optionalValue.isPresent()) {
+                        return optionalValue.get();
+                    }
+                    GResultOf<T> result = (GResultOf<T>) gestalt.getDecoderService()
+                        .decodeNode(key, Tags.of(), defaultValue, TypeCapture.of(annotatedTypeClass), gestalt.getDecoderContext());
+
+                    if (result.hasResults()) {
+                        return result.results();
+                    } else {
+                        throw new GestaltConfigException("Unable to find value for " + key +
+                            ", failed to get default value " + defaultValue, key);
+                    }
+
                 }
             }
         } catch (GestaltException e) {

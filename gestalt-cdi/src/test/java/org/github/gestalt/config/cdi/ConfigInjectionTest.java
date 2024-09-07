@@ -46,7 +46,8 @@ class ConfigInjectionTest {
         configs.put("map.data1", "1,2,3,4,5");
         configs.put("map.data2", "6,7,8,9,0");
         configs.put("color.enum", "RED");
-        configs.put("", "empty");
+        configs.put("org.github.gestalt.config.cdi.ConfigInjectionTest.ConfigBean.user", "jill");
+
 
 
         GestaltBuilder builder = new GestaltBuilder();
@@ -93,6 +94,11 @@ class ConfigInjectionTest {
         assertEquals("steve", configBean.getSupplierMyProp().get());
         assertEquals("steve", configBean.getSupplierMyProvider().get());
         assertEquals(Color.RED, configBean.getColorEnum());
+
+        assertEquals(true, configBean.getDefaultVal());
+        assertEquals(false, configBean.getMyPropProfileEnabledWithDefault());
+
+        assertEquals("jill", configBean.getUser());
     }
 
     enum Color {
@@ -179,6 +185,18 @@ class ConfigInjectionTest {
         @InjectConfig(path = "my.prop.user")
         Provider<String> supplierMyProvider;
 
+        @Inject
+        @InjectConfig(path = "my.prop.not.exist", defaultValue = "true")
+        Boolean defaultVal;
+
+        @Inject
+        @InjectConfig(path = "my.prop.enabled", defaultValue = "true")
+        Boolean myPropProfileEnabledWithDefault;
+
+        @Inject
+        @InjectConfig()
+        String user;
+
         public ConfigBean() {
         }
 
@@ -256,6 +274,18 @@ class ConfigInjectionTest {
 
         public Provider<String> getSupplierMyProvider() {
             return supplierMyProvider;
+        }
+
+        public Boolean getDefaultVal() {
+            return defaultVal;
+        }
+
+        public Boolean getMyPropProfileEnabledWithDefault() {
+            return myPropProfileEnabledWithDefault;
+        }
+
+        public String getUser() {
+            return user;
         }
     }
 }
