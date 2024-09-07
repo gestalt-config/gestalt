@@ -692,12 +692,17 @@ Using the extension functions you don't need to specify the type if the return t
 | 0.1.0 to 0.8.1   | 1.4            |
 
 # Node Substitution (include nodes)
-Using the `$include` keyword as part of a config path, you can include the referenced config node tree into the path provided. By default, the node is merged into the provided node under the current node. You can control the order of the nodes, by including a number where < 0 is included below the current node and > 0 is included above the current node. The root node is always 0. Having two nodes share the same order is undefined. For example: `$include:-1` for included under the current node, and `$include:1` for included over the current node. 
+Using the `$include` keyword as part of a config path, you can include the referenced config node tree into the path provided. By default, the node is merged into the provided node under the current node as defaults that will be overridden. You can control the order of the nodes, by including a number where < 0 is included below the current node and > 0 is included above the current node. The root node is always 0. Having two nodes share the same order is undefined. For example: `$include:-1` for included under the current node, and `$include:1` for included over the current node. 
 If you are included multiple nodes each node must have an order, or the results are undefined, and some includes may be lost. 
 
 You can include into the root or any sub node. It also supports nested include. 
 
-The include node must provide a source that is used to determine how to include the source. Each source accepts different parameters.  
+The include node must provide a source that is used to determine how to include the source. Each source accepts different parameters that can be provided in the form of a key value with a comma separated list. One of the key value pairs must be `source` that is used to determine the source type. 
+For example a classPath source with the resource `includes.properties` would look like:
+
+```properties
+$include=source=classPath,resource=includes.properties
+```
 
 Example of include a classPath Node into a sub path with properties file `imports.properties`. 
 ```properties
