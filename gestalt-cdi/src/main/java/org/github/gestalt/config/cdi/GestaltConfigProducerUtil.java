@@ -188,7 +188,7 @@ public final class GestaltConfigProducerUtil {
                 Class<?> rawType = rawTypeOf(injectionPoint.getType());
                 if (rawType.isPrimitive()) {
                     if (rawType == char.class) {
-                        return null;
+                        return "";
                     } else if (rawType == boolean.class) {
                         return "false";
                     } else {

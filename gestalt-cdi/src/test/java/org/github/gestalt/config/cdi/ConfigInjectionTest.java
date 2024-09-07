@@ -68,13 +68,16 @@ class ConfigInjectionTest {
     void inject() {
         assertEquals("steve", configBean.getMyPropUser());
         assertEquals(1234, configBean.getExpansion());
+        assertEquals(1234, configBean.getExpansion2());
         assertEquals(1234L, configBean.getExpansionL());
         assertEquals(12345.678F, configBean.getSecret());
         assertEquals(5678901234567890D, configBean.getMyPropProfile());
         assertEquals(false, configBean.getMyPropProfileEnabled());
+        assertEquals(false, configBean.isMyPropProfileEnabledBoolean());
         assertEquals((short) 23, configBean.getShortId());
         assertEquals((byte) 65, configBean.getByteId());
         assertEquals('Q', configBean.getCharId());
+        assertEquals('Q', configBean.getCharId2());
         assertEquals(Map.of("user", "steve", "id", "5678901234567890", "enabled", "false"),
             configBean.getMyPropMap());
         assertEquals(Map.of("data1", List.of(1, 2, 3, 4, 5), "data2", List.of(6, 7, 8, 9, 0)),
@@ -121,6 +124,11 @@ class ConfigInjectionTest {
         @Inject
         @InjectConfig(path = "expansion")
         Integer expansion;
+
+        @Inject
+        @InjectConfig(path = "expansion")
+        int expansion2;
+
         @Inject
         @InjectConfig(path = "secret")
         Float secret;
@@ -134,6 +142,11 @@ class ConfigInjectionTest {
         Boolean myPropProfileEnabled;
 
         @Inject
+        @InjectConfig(path = "my.prop.enabled")
+        boolean myPropProfileEnabledBoolean;
+
+
+        @Inject
         @InjectConfig(path = "shortId")
         Short shortId;
 
@@ -144,6 +157,10 @@ class ConfigInjectionTest {
         @Inject
         @InjectConfig(path = "charId")
         Character charId;
+
+        @Inject
+        @InjectConfig(path = "charId")
+        char charId2;
 
         @Inject
         @InjectConfig(path = "my.prop")
@@ -212,6 +229,10 @@ class ConfigInjectionTest {
             return expansion;
         }
 
+        public int getExpansion2() {
+            return expansion2;
+        }
+
         public Float getSecret() {
             return secret;
         }
@@ -234,6 +255,10 @@ class ConfigInjectionTest {
 
         public Character getCharId() {
             return charId;
+        }
+
+        public char getCharId2() {
+            return charId2;
         }
 
         public Map<String, String> getMyPropMap() {
@@ -286,6 +311,10 @@ class ConfigInjectionTest {
 
         public String getUser() {
             return user;
+        }
+
+        public boolean isMyPropProfileEnabledBoolean() {
+            return myPropProfileEnabledBoolean;
         }
     }
 }
