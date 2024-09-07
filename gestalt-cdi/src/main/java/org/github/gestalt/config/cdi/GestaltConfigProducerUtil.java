@@ -9,6 +9,8 @@ import jakarta.inject.Provider;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
+import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -36,8 +38,8 @@ public final class GestaltConfigProducerUtil {
      * Retrieves a converted configuration value from {@link InjectConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
-     * @param config the current {@link InjectConfig} instance.
-     * @param <T> type of class to get.
+     * @param config         the current {@link InjectConfig} instance.
+     * @param <T>            type of class to get.
      * @return the converted configuration value.
      */
     public static <T> T getValue(InjectionPoint injectionPoint, Gestalt config) {
@@ -47,16 +49,36 @@ public final class GestaltConfigProducerUtil {
     /**
      * Retrieves a converted configuration value from {@link Gestalt}.
      *
-     * @param name the name of the configuration property.
-     * @param type the {@link Type} of the configuration value to convert.
+     * @param name         the name of the configuration property.
+     * @param type         the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
-     * @param config the current {@link Gestalt} instance.
-     * @param <T> type of class to get.
+     * @param config       the current {@link Gestalt} instance.
+     * @param <T>          type of class to get.
      * @return the converted configuration value.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getValue(String name, Type type, String defaultValue, Gestalt config) {
         try {
-            return config.getConfig(name, TypeCapture.of(type));
+            if (defaultValue == null || defaultValue.isEmpty()) {
+                return config.getConfig(name, TypeCapture.of(type));
+            } else {
+                Optional<T> optionalValue = config.getConfigOptional(name, TypeCapture.of(type));
+
+                if (optionalValue.isPresent()) {
+                    return optionalValue.get();
+                }
+
+                GResultOf<T> result = config.getDecoderService()
+                    .decodeNode(name, Tags.of(), defaultValue, TypeCapture.of(type), config.getDecoderContext());
+
+                if (result.hasResults()) {
+                    return result.results();
+                } else {
+                    throw new GestaltConfigException("Unable to find value for " + name +
+                        ", failed to get default value " + defaultValue, name);
+                }
+            }
+
         } catch (GestaltException e) {
             throw new GestaltConfigException("Exception getting configuration for " + name + " type " + type, e);
         }
@@ -66,8 +88,8 @@ public final class GestaltConfigProducerUtil {
      * Retrieves a converted configuration value from {@link InjectConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
-     * @param config the current {@link InjectConfig} instance.
-     * @param <T> type of class to get.
+     * @param config         the current {@link InjectConfig} instance.
+     * @param <T>            type of class to get.
      * @return the converted configuration value.
      */
     public static <T> Optional<T> getOptionalValue(InjectionPoint injectionPoint, Gestalt config) {
@@ -77,11 +99,11 @@ public final class GestaltConfigProducerUtil {
     /**
      * Retrieves a converted configuration value from {@link Gestalt}.
      *
-     * @param name the name of the configuration property.
-     * @param type the {@link Type} of the configuration value to convert.
+     * @param name         the name of the configuration property.
+     * @param type         the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
-     * @param config the current {@link Gestalt} instance.
-     * @param <T> type of class to get.
+     * @param config       the current {@link Gestalt} instance.
+     * @param <T>          type of class to get.
      * @return the converted configuration value.
      */
     @SuppressWarnings("unchecked")
@@ -94,8 +116,8 @@ public final class GestaltConfigProducerUtil {
      * Retrieves a converted configuration value from {@link InjectConfig}.
      *
      * @param injectionPoint the {@link InjectionPoint} where the configuration value will be injected
-     * @param config the current {@link Gestalt} instance.
-     * @param <T> type of class to get.
+     * @param config         the current {@link Gestalt} instance.
+     * @param <T>            type of class to get.
      * @return the converted configuration value.
      */
     public static <T> T getSupplierValue(InjectionPoint injectionPoint, Gestalt config) {
@@ -105,11 +127,11 @@ public final class GestaltConfigProducerUtil {
     /**
      * Retrieves a converted configuration value from {@link Gestalt}.
      *
-     * @param name the name of the configuration property.
-     * @param type the {@link Type} of the configuration value to convert.
+     * @param name         the name of the configuration property.
+     * @param type         the {@link Type} of the configuration value to convert.
      * @param defaultValue the default value to use if no configuration value is found.
-     * @param config the current {@link Gestalt} instance.
-     * @param <T> type of class to get.
+     * @param config       the current {@link Gestalt} instance.
+     * @param <T>          type of class to get.
      * @return the converted configuration value.
      */
     @SuppressWarnings("unchecked")
