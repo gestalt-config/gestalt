@@ -10,6 +10,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -89,7 +90,6 @@ class GitConfigSourceTest {
     }
 
     @Test
-    @Disabled
     void hasStreamWithPassword() throws GestaltException, IOException {
         Path configDirectory = Files.createTempDirectory("gitConfigTest");
         configDirectory.toFile().deleteOnExit();
@@ -98,10 +98,38 @@ class GitConfigSourceTest {
         String userName = System.getenv("GIT_GESTALT_USER");
         String password = System.getenv("GIT_GESTALT_PASSWORD");
 
+        Assumptions.assumeTrue(userName != null, "must have GIT_GESTALT_USER defined");
+        Assumptions.assumeTrue(password != null, "must have GIT_GESTALT_PASSWORD defined");
+
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
             .setCredentials(new UsernamePasswordCredentialsProvider(userName, password))
+            .setLocalRepoDirectory(configDirectory);
+        ConfigSourcePackage source = builder.build();
+
+        Assertions.assertTrue(source.getConfigSource().hasStream());
+        byte[] data = new byte[256];
+        source.getConfigSource().loadStream().read(data);
+
+        String configData = new String(data, StandardCharsets.UTF_8);
+
+        Assertions.assertTrue(configData.startsWith("hello=world"));
+    }
+
+    @Test
+    void hasStreamWithGithubToken() throws GestaltException, IOException {
+        Path configDirectory = Files.createTempDirectory("gitConfigTest");
+        configDirectory.toFile().deleteOnExit();
+
+        // Must set the git user and password in Env Vars
+        String githubToken = System.getenv("GITHUB_TOKEN");
+        Assumptions.assumeTrue(githubToken != null, "must have GITHUB_TOKEN defined");
+
+        GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
+            .setRepoURI("https://github.com/gestalt-config/gestalt.git")
+            .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
+            .setCredentials(new UsernamePasswordCredentialsProvider(githubToken, ""))
             .setLocalRepoDirectory(configDirectory);
         ConfigSourcePackage source = builder.build();
 
@@ -123,6 +151,7 @@ class GitConfigSourceTest {
         // Must set the git user and password in Env Vars
         //String certLocation = System.getenv("GIT_GESTALT_SSH_LOCATION");
         String password = System.getenv("GIT_GESTALT_SSH_PASSWORD");
+        Assumptions.assumeTrue(password != null, "must have GIT_GESTALT_SSH_PASSWORD defined");
 
         Path sshDir = FS.DETECTED.userHome().toPath().resolve(".ssh");
 
@@ -271,11 +300,11 @@ class GitConfigSourceTest {
         ConfigSourcePackage source = builder.build();
         ConfigSourcePackage source2 = builder.build();
 
-        Assertions.assertEquals(source, source);
-        Assertions.assertNotEquals(source, source2);
-        Assertions.assertNotEquals(source, null);
+        Assertions.assertEquals(source.getConfigSource(), source.getConfigSource());
+        Assertions.assertNotEquals(source.getConfigSource(), source2.getConfigSource());
+        Assertions.assertNotEquals(source.getConfigSource(), null);
 
-        Assertions.assertNotEquals(source, 4);
+        Assertions.assertNotEquals(source.getConfigSource(), 4);
 
     }
 
@@ -291,7 +320,7 @@ class GitConfigSourceTest {
             .setLocalRepoDirectory(configDirectory);
         ConfigSourcePackage source = builder.build();
 
-        Assertions.assertTrue(source.hashCode() != 0);
+        Assertions.assertTrue(source.getConfigSource().hashCode() != 0);
     }
 
     @Test
