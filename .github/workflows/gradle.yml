@@ -48,6 +48,7 @@ jobs:
           SUBSERVICE_BOOKING_ISENABLED: true
           SUBSERVICE_BOOKING_SERVICE_HOST: https://dev.booking.host.name
           SUBSERVICE_BOOKING_SERVICE_PORT: 443
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Coverage
         if: success()
