@@ -74,6 +74,7 @@ class ConfigInjectionTest {
         assertEquals(5678901234567890D, configBean.getMyPropProfile());
         assertEquals(false, configBean.getMyPropProfileEnabled());
         assertEquals(false, configBean.isMyPropProfileEnabledBoolean());
+        assertEquals(true, configBean.isMyPropProfileEnabledDefault());
         assertEquals((short) 23, configBean.getShortId());
         assertEquals((byte) 65, configBean.getByteId());
         assertEquals('Q', configBean.getCharId());
@@ -97,6 +98,8 @@ class ConfigInjectionTest {
         assertEquals("steve", configBean.getSupplierMyProp().get());
         assertEquals("steve", configBean.getSupplierMyProvider().get());
         assertEquals(Color.RED, configBean.getColorEnum());
+        assertEquals(Color.RED, configBean.getColorEnumDefaultExists());
+        assertEquals(Color.GREEN, configBean.getColorEnumDefault());
 
         assertEquals(true, configBean.getDefaultVal());
         assertEquals(false, configBean.getMyPropProfileEnabledWithDefault());
@@ -144,6 +147,10 @@ class ConfigInjectionTest {
         @Inject
         @InjectConfig(path = "my.prop.enabled")
         boolean myPropProfileEnabledBoolean;
+
+        @Inject
+        @InjectConfig(path = "does.not.exist", defaultValue = "true")
+        boolean myPropProfileEnabledDefault;
 
 
         @Inject
@@ -197,6 +204,14 @@ class ConfigInjectionTest {
         @Inject
         @InjectConfig(path = "color.enum")
         Color colorEnum;
+
+        @Inject
+        @InjectConfig(path = "color.enum", defaultValue = "GREEN")
+        Color colorEnumDefaultExists;
+
+        @Inject
+        @InjectConfig(path = "does.not.exist", defaultValue = "GREEN")
+        Color colorEnumDefault;
 
         @Inject
         @InjectConfig(path = "my.prop.user")
@@ -297,6 +312,14 @@ class ConfigInjectionTest {
             return colorEnum;
         }
 
+        public Color getColorEnumDefaultExists() {
+            return colorEnumDefaultExists;
+        }
+
+        public Color getColorEnumDefault() {
+            return colorEnumDefault;
+        }
+
         public Provider<String> getSupplierMyProvider() {
             return supplierMyProvider;
         }
@@ -315,6 +338,10 @@ class ConfigInjectionTest {
 
         public boolean isMyPropProfileEnabledBoolean() {
             return myPropProfileEnabledBoolean;
+        }
+
+        public boolean isMyPropProfileEnabledDefault() {
+            return myPropProfileEnabledDefault;
         }
     }
 }
