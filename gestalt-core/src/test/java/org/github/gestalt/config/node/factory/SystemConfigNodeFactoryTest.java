@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
@@ -9,8 +9,6 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
-import org.github.gestalt.config.node.factory.ClassPathConfigNodeFactory;
-import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
@@ -22,33 +20,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ClassPathConfigNodeFactoryTest {
+public class SystemConfigNodeFactoryTest {
 
-    private ClassPathConfigNodeFactory factory;
-    private String resource;
-
+    private SystemConfigNodeFactory factory;
     private ConfigLoaderService configLoaderService;
     private ConfigLoader configLoader;
 
     @BeforeEach
     public void setUp() {
-        factory = new ClassPathConfigNodeFactory();
+        factory = new SystemConfigNodeFactory();
         configLoaderService = Mockito.mock();
         configLoader = Mockito.mock();
-
-        resource = "test.properties";
     }
 
     @Test
     public void testSupportsType() {
-        Assertions.assertTrue(factory.supportsType("classPath"));
+        Assertions.assertTrue(factory.supportsType("system"));
         Assertions.assertFalse(factory.supportsType("other"));
     }
 
     @Test
     public void testBuildWithValidPath() throws GestaltException {
         Map<String, String> params = new HashMap<>();
-        params.put("resource", resource);
+        params.put("failOnErrors", "true");
 
         Map<String, ConfigNode> node = new HashMap<>();
         node.put("path", new LeafNode("data"));
@@ -58,7 +52,7 @@ public class ClassPathConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());
@@ -72,7 +66,7 @@ public class ClassPathConfigNodeFactoryTest {
     public void testBuildWithUnknownParameter() throws GestaltException {
         Map<String, String> params = new HashMap<>();
         params.put("unknown", "value");
-        params.put("resource", resource);
+        params.put("failOnErrors", "true");
 
         Map<String, ConfigNode> node = new HashMap<>();
         node.put("path", new LeafNode("data"));
@@ -82,9 +76,8 @@ public class ClassPathConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
-
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
@@ -93,25 +86,8 @@ public class ClassPathConfigNodeFactoryTest {
         Assertions.assertInstanceOf(ValidationError.ConfigSourceFactoryUnknownParameter.class, result.getErrors().get(0));
 
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
-        Assertions.assertEquals("Unknown Config Source Factory parameter for: classPath Parameter key: unknown, value: value",
+        Assertions.assertEquals("Unknown Config Source Factory parameter for: system Parameter key: unknown, value: value",
             result.getErrors().get(0).description());
-    }
-
-    @Test
-    public void testBuildWithException() {
-        Map<String, String> params = new HashMap<>();
-
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
-        GResultOf<List<ConfigNode>> result = factory.build(params);
-
-        Assertions.assertFalse(result.hasResults());
-        Assertions.assertTrue(result.hasErrors());
-        Assertions.assertNotNull(result.getErrors());
-        Assertions.assertInstanceOf(ValidationError.ConfigSourceFactoryException.class, result.getErrors().get(0));
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Exception while building Config Source Factory: classPath, " +
-            "exception: Class path resource cannot be null", result.getErrors().get(0).description());
     }
 }
 

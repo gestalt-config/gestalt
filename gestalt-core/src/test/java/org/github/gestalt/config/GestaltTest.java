@@ -41,6 +41,10 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.LogManager;
@@ -2102,6 +2106,25 @@ class GestaltTest {
         Assertions.assertEquals("789", gestalt.getConfig("db.port", String.class, Tags.profile("two")));
         Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class, Tags.profile("two")));
 
+    }
+
+    @Test
+    public void testK8secrets() throws GestaltException, URISyntaxException {
+
+        // Load the default property files from resources.
+        URL testFileURL = GestaltImportProcessorTest.class.getClassLoader().getResource("test.properties");
+        Path testFileDir = Paths.get(testFileURL.toURI());
+        Path kubernetesPath = testFileDir.getParent().resolve("kubernetes");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(KubernetesSecretConfigSourceBuilder.builder().setPath(kubernetesPath).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("abcdef", gestalt.getConfig("db.host.password", String.class));
+        Assertions.assertEquals("jdbc:postgresql://localhost:5432/mydb1", gestalt.getConfig("db.host.uri", String.class));
+        Assertions.assertEquals(111222333, gestalt.getConfig("subservice.booking.token", Integer.class));
     }
 
 

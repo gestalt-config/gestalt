@@ -100,7 +100,7 @@ class KubernetesSecretConfigSourceTest {
     @Test
     void format() throws GestaltException {
         KubernetesSecretConfigSource source = new KubernetesSecretConfigSource(kubernetesPath);
-        Assertions.assertEquals(KubernetesSecretConfigSource.K8_SECRET_CONFIG, source.format());
+        Assertions.assertEquals("mapConfig", source.format());
     }
 
     @Test

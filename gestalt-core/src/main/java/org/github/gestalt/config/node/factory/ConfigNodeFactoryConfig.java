@@ -1,5 +1,6 @@
 package org.github.gestalt.config.node.factory;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNodeService;
@@ -13,11 +14,14 @@ public class ConfigNodeFactoryConfig {
     private final ConfigLoaderService configLoaderService;
     private final ConfigNodeService configNodeService;
     private final SentenceLexer lexer;
+    private final GestaltConfig config;
 
-    public ConfigNodeFactoryConfig(ConfigLoaderService configLoaderService, ConfigNodeService configNodeService, SentenceLexer lexer) {
+    public ConfigNodeFactoryConfig(ConfigLoaderService configLoaderService, ConfigNodeService configNodeService, SentenceLexer lexer,
+                                   GestaltConfig config) {
         this.configLoaderService = configLoaderService;
         this.configNodeService = configNodeService;
         this.lexer = lexer;
+        this.config = config;
     }
 
     public ConfigLoaderService getConfigLoaderService() {
@@ -30,5 +34,9 @@ public class ConfigNodeFactoryConfig {
 
     public SentenceLexer getLexer() {
         return lexer;
+    }
+
+    public GestaltConfig getConfig() {
+        return config;
     }
 }

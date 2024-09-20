@@ -76,9 +76,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.LogManager;
@@ -569,6 +571,25 @@ public class GestaltSample {
         Assertions.assertEquals("booking", booking.getService().getPath());
     }
 
+    @Test
+    public void testK8secrets() throws GestaltException, URISyntaxException {
+
+        // Load the default property files from resources.
+        URL testFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
+        Path testFileDir = Paths.get(testFileURL.toURI());
+        Path kubernetesPath = testFileDir.getParent().resolve("kubernetes");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(KubernetesSecretConfigSourceBuilder.builder().setPath(kubernetesPath).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("abcdef", gestalt.getConfig("db.host.password", String.class));
+        Assertions.assertEquals("jdbc:postgresql://localhost:5432/mydb1", gestalt.getConfig("db.host.uri", String.class));
+        Assertions.assertEquals(111222333, gestalt.getConfig("subservice.booking.token", Integer.class));
+    }
+
     // This example shows a how multiple string substitutions can work from diffrent loacations in the same config file.
     @Test
     public void integrationTestPostProcessorMulti() throws GestaltException {
@@ -805,6 +826,38 @@ public class GestaltSample {
                 .build())
             .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        validateResults(gestalt);
+    }
+
+    // This example shows a how to load a source from an S3 bucket.
+    @Test
+    public void integrationS3NodeSubstitutionTest() throws GestaltException {
+        final File uploadFile = new File(UPLOAD_FILE_NAME);
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.hosts[0].password", "1234");
+        configs.put("db.hosts[1].password", "5678");
+        configs.put("db.hosts[2].password", "9012");
+        configs.put("db.idleTimeout", "123");
+        configs.put("$include", "source=s3,bucket=" + BUCKET_NAME + ",key=" + uploadFile.getName());
+
+        s3Client.putObject(
+            PutObjectRequest.builder().bucket(BUCKET_NAME).key(uploadFile.getName()).build(),
+            RequestBody.fromFile(uploadFile));
+
+        URL devFileURL = GestaltSample.class.getClassLoader().getResource("dev.properties");
+        File devFile = new File(devFileURL.getFile());
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(FileConfigSourceBuilder.builder().setFile(devFile).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addModuleConfig(AWSBuilder.builder().setS3Client(s3Client).build())
             .build();
 
         gestalt.loadConfigs();
