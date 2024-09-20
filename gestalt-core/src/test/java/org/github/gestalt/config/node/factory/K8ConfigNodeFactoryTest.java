@@ -123,7 +123,7 @@ public class K8ConfigNodeFactoryTest {
     @Test
     public void testBuildWithException() {
         Map<String, String> params = new HashMap<>();
-        params.put("path", "/invalid/path");
+        params.put("path", "----");
 
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
@@ -134,7 +134,7 @@ public class K8ConfigNodeFactoryTest {
 
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertTrue(result.getErrors().get(0).description().startsWith("Exception while building Config Source Factory: " +
-            "k8Secret, exception: Kubernetes Secret path does not exist at: \\invalid\\path"));
+            "k8Secret, exception: Kubernetes Secret path does not exist at: ----"));
     }
 }
 

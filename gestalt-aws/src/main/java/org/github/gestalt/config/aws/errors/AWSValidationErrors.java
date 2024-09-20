@@ -96,6 +96,25 @@ public final class AWSValidationErrors {
                 ", with message: " + ex.getMessage();
         }
     }
+
+    public static class AWSS3ClientConfigNotSet extends ValidationError {
+        private final String path;
+        private final String rawSubstitution;
+
+        public AWSS3ClientConfigNotSet(String path, String rawSubstitution) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.rawSubstitution = rawSubstitution;
+        }
+
+        @Override
+        public String description() {
+            return "AWSModuleConfig has not been registered and or the S3 Client was not set. Register by creating a AWSBuilder " +
+                "then registering the AWSBuilder.build() results with the Gestalt Builder.addModuleConfig(). " +
+                "If you wish to use the aws module with node substitution/include " +
+                rawSubstitution + " on the path: " + path;
+        }
+    }
 }
 
 

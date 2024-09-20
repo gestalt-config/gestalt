@@ -17,5 +17,8 @@ module org.github.gestalt.aws {
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with
         org.github.gestalt.config.aws.transformer.AWSSecretTransformer;
+
+    provides org.github.gestalt.config.node.factory.ConfigNodeFactory with
+        org.github.gestalt.config.aws.node.factory.S3ConfigNodeFactory;
 }
 

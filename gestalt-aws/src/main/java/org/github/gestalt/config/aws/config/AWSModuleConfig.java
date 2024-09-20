@@ -1,6 +1,7 @@
 package org.github.gestalt.config.aws.config;
 
 import org.github.gestalt.config.entity.GestaltModuleConfig;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 /**
@@ -15,6 +16,8 @@ public final class AWSModuleConfig implements GestaltModuleConfig {
     private String region;
 
     private SecretsManagerClient secretsClient;
+
+    private S3Client s3Client;
 
     AWSModuleConfig() {
     }
@@ -68,5 +71,31 @@ public final class AWSModuleConfig implements GestaltModuleConfig {
      */
     public void setSecretsClient(SecretsManagerClient secretsClient) {
         this.secretsClient = secretsClient;
+    }
+
+    /**
+     * If the AWS Module Config has an S3 client registered.
+     *
+     * @return If the AWS Module Config has an S3 client registered.
+     */
+    public boolean hasS3Client() {
+        return s3Client != null;
+    }
+    /**
+     * Get the S3 Client.
+     *
+     * @return the S3 Client.
+     */
+    public S3Client getS3Client() {
+        return s3Client;
+    }
+
+    /**
+     * Set the S3 Client.
+     *
+     * @param s3Client the S4 Client used to interact with S3
+     */
+    public void setS3Client(S3Client s3Client) {
+        this.s3Client = s3Client;
     }
 }

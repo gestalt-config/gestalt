@@ -1,6 +1,7 @@
 package org.github.gestalt.config.aws.config;
 
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 /**
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 public final class AWSBuilder {
     private String region;
     private SecretsManagerClient secretsClient;
+    private S3Client s3Client;
 
     private AWSBuilder() {
 
@@ -49,14 +51,10 @@ public final class AWSBuilder {
     }
 
     public AWSModuleConfig build() throws GestaltConfigurationException {
-        if (region == null && secretsClient == null) {
-            throw new GestaltConfigurationException("AWSModuleConfig was built but one of the secret client " +
-                "or the region must be provided");
-        }
-
         AWSModuleConfig awsModuleConfig = new AWSModuleConfig();
         awsModuleConfig.setRegion(region);
         awsModuleConfig.setSecretsClient(secretsClient);
+        awsModuleConfig.setS3Client(s3Client);
 
         return awsModuleConfig;
     }
@@ -80,6 +78,26 @@ public final class AWSBuilder {
      */
     public AWSBuilder setSecretsClient(SecretsManagerClient secretsClient) {
         this.secretsClient = secretsClient;
+        return this;
+    }
+
+    /**
+     * Get the S3 Client.
+     *
+     * @return the S3 Client.
+     */
+    public S3Client getS3Client() {
+        return s3Client;
+    }
+
+    /**
+     * Set the S3 Client.
+     *
+     * @param s3Client the S3 Client
+     * @return the builder
+     */
+    public AWSBuilder setS3Client(S3Client s3Client) {
+        this.s3Client = s3Client;
         return this;
     }
 }

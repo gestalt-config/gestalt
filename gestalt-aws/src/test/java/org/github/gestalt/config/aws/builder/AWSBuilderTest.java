@@ -33,16 +33,4 @@ class AWSBuilderTest {
         Assertions.assertNull(builder.build().getRegion());
         Assertions.assertNotNull(builder.build().getSecretsClient());
     }
-
-    @Test
-    public void createAWSConfigEmpty() {
-
-        AWSBuilder builder = AWSBuilder.builder();
-
-        GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, builder::build);
-        Assertions.assertEquals("AWSModuleConfig was built but one of the secret client or the region must be provided",
-            e.getMessage());
-    }
-
-
 }
