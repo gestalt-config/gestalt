@@ -3,7 +3,6 @@ package org.github.gestalt.config.aws.node.factory;
 import org.github.gestalt.config.aws.config.AWSModuleConfig;
 import org.github.gestalt.config.aws.errors.AWSValidationErrors;
 import org.github.gestalt.config.aws.s3.S3ConfigSourceBuilder;
-import org.github.gestalt.config.aws.transformer.AWSSecretTransformer;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.loader.ConfigLoaderUtils;
@@ -28,7 +27,7 @@ public class S3ConfigNodeFactory implements ConfigNodeFactory {
     public static final String SOURCE_TYPE = "s3";
     public static final String PARAMETER_BUCKET = "bucket";
     public static final String PARAMETER_KEY = "key";
-    private static final System.Logger logger = System.getLogger(AWSSecretTransformer.class.getName());
+    private static final System.Logger logger = System.getLogger(S3ConfigNodeFactory.class.getName());
     private ConfigLoaderService configLoaderService;
     private S3Client s3Client;
 

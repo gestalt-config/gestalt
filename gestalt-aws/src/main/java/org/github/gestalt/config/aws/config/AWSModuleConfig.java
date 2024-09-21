@@ -81,6 +81,7 @@ public final class AWSModuleConfig implements GestaltModuleConfig {
     public boolean hasS3Client() {
         return s3Client != null;
     }
+
     /**
      * Get the S3 Client.
      *

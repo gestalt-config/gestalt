@@ -2,6 +2,8 @@ package org.github.gestalt.config.azure.config;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 
 /**
@@ -15,6 +17,8 @@ public final class AzureModuleBuilder {
     private String keyVaultUri;
     private SecretClient secretClient;
     private TokenCredential credential;
+    private BlobClient blobClient;
+    private StorageSharedKeyCredential storageSharedKeyCredential;
 
     private AzureModuleBuilder() {
 
@@ -93,18 +97,54 @@ public final class AzureModuleBuilder {
         return this;
     }
 
-    public AzureModuleConfig build() throws GestaltConfigurationException {
-        if (keyVaultUri == null && secretClient == null) {
-            throw new GestaltConfigurationException("AzureModuleConfig was built but one of the secret client " +
-                "or the vault endpoint must be provided");
-        }
+    /**
+     * Get the Blob Client.
+     *
+     * @return the Blob Client.
+     */
+    public BlobClient getBlobClient() {
+        return blobClient;
+    }
 
+    /**
+     * Set the Blob Client.
+     *
+     * @param blobClient the Blob Client
+     * @return the builder
+     */
+    public AzureModuleBuilder setBlobClient(BlobClient blobClient) {
+        this.blobClient = blobClient;
+        return this;
+    }
+
+    /**
+     * Get the StorageSharedKeyCredential for blob storage.
+     *
+     * @return the StorageSharedKeyCredential for blob storage
+     */
+    public StorageSharedKeyCredential getStorageSharedKeyCredential() {
+        return storageSharedKeyCredential;
+    }
+
+    /**
+     * Set the StorageSharedKeyCredential for blob storage.
+     *
+     * @param storageSharedKeyCredential the StorageSharedKeyCredential for blob storage.
+     * @return the builder
+     */
+    public AzureModuleBuilder setStorageSharedKeyCredential(StorageSharedKeyCredential storageSharedKeyCredential) {
+        this.storageSharedKeyCredential = storageSharedKeyCredential;
+        return this;
+    }
+
+    public AzureModuleConfig build() throws GestaltConfigurationException {
         AzureModuleConfig azureModuleConfig = new AzureModuleConfig();
         azureModuleConfig.setKeyVaultUri(keyVaultUri);
         azureModuleConfig.setCredential(credential);
         azureModuleConfig.setSecretsClient(secretClient);
+        azureModuleConfig.setBlobClient(blobClient);
+        azureModuleConfig.setStorageSharedKeyCredential(storageSharedKeyCredential);
 
         return azureModuleConfig;
     }
-
 }
