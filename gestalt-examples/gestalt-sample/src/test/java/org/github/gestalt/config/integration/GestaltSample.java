@@ -7,6 +7,7 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.storage.blob.*;
 import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import com.github.gestalt.config.validation.hibernate.builder.HibernateModuleBuilder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -58,8 +59,10 @@ import org.github.gestalt.config.vault.config.VaultBuilder;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.vault.VaultContainer;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -72,9 +75,7 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -106,6 +107,19 @@ public class GestaltSample {
 
     private S3Client s3Client;
 
+    private static final String BLOB_UPLOAD_FILE_NAME = "src/test/resources/include.properties";
+    private static final String connectionString = "AccountName=devstoreaccount1;" +
+        "AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;" +
+        "DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;" +
+        "QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+    @Container
+    private static final GenericContainer<?> azureStorage =
+        new GenericContainer<>(DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:3.32.0"))
+            .withExposedPorts(10000, 10001, 10002);
+    private static final String testContainer = "testcontainer";
+    private static final String testBlobName = "testBlobName.properties";
+    private static BlobClient blobClient;
+
     @Container
     private static final S3MockContainer s3Mock =
         new S3MockContainer(S3MOCK_VERSION)
@@ -121,7 +135,7 @@ public class GestaltSample {
     private static Vault vault;
 
     @BeforeAll
-    public static void setupVault() throws VaultException {
+    public static void setupVault() throws VaultException, FileNotFoundException {
         vaultContainer.start();
 
         final VaultConfig config = new VaultConfig()
@@ -140,6 +154,29 @@ public class GestaltSample {
         // Write operation
         final LogicalResponse writeResponse = vault.logical().write("secret/path", secrets);
         Assertions.assertEquals(200, writeResponse.getRestResponse().getStatus());
+
+        // setup Azure Storage
+        azureStorage.start();
+
+        StorageSharedKeyCredential credential = StorageSharedKeyCredential.fromConnectionString(connectionString);
+
+        BlobContainerClient container = new BlobServiceClientBuilder()
+            .endpoint("http://127.0.0.1:" + azureStorage.getFirstMappedPort() + "/devstoreaccount1")
+            .credential(credential)
+            .buildClient()
+            .getBlobContainerClient(testContainer);
+
+        if (!container.exists()) {
+            container.create();
+        }
+
+        blobClient = container.getBlobClient(testBlobName);
+
+        final File uploadFile = new File(BLOB_UPLOAD_FILE_NAME);
+
+        Assertions.assertTrue(uploadFile.exists());
+        InputStream fileStream = new FileInputStream(uploadFile);
+        blobClient.upload(fileStream);
     }
 
     @BeforeEach
@@ -1084,6 +1121,26 @@ public class GestaltSample {
         Assertions.assertEquals("https://dev.booking.host.name", booking.getService().getHost());
         Assertions.assertEquals(443, booking.getService().getPort());
         Assertions.assertEquals("booking", booking.getService().getPath());
+    }
+
+    @Test
+    void integrationIncludeAzureTest() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:1", "source=blob");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addModuleConfig(AzureModuleBuilder.builder().setBlobClient(blobClient).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
     }
 
     private void validateResults(Gestalt gestalt) throws GestaltException {
