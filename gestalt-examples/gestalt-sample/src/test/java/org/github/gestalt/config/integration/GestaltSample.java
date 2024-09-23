@@ -130,7 +130,7 @@ public class GestaltSample {
 
     @SuppressWarnings("rawtypes")
     @Container
-    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.13.0").withVaultToken(VAULT_TOKEN);
+    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.17.0").withVaultToken(VAULT_TOKEN);
 
     private static Vault vault;
 

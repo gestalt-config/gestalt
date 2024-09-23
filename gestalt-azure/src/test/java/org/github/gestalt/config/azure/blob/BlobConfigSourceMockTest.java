@@ -7,14 +7,12 @@ import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
 import static org.mockito.Mockito.when;
 
-@Testcontainers
 class BlobConfigSourceMockTest {
 
     private final BlobClient blobClient = Mockito.mock();
