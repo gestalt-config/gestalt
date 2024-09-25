@@ -17,7 +17,6 @@ import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.eclipse.jgit.transport.CredentialsProvider;
