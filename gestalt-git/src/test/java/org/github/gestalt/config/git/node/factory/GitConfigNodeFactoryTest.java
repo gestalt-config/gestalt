@@ -22,9 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.SshSessionFactory;
-import org.mockito.Mockito;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -227,8 +225,8 @@ class GitConfigNodeFactoryTest {
 
         gestalt.loadConfigs();
 
-        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
-        Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
-        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+        assertEquals("a", gestalt.getConfig("a", String.class));
+        assertEquals("b changed", gestalt.getConfig("b", String.class));
+        assertEquals("c", gestalt.getConfig("c", String.class));
     }
 }
