@@ -45,6 +45,20 @@ class GCSConfigSourceTest {
     }
 
     @Test
+    void loadFile2() throws GestaltException, IOException {
+
+        final File uploadFile = new File(UPLOAD_FILE_NAME);
+        byte[] bytes = Files.readAllBytes(uploadFile.toPath());
+
+        Mockito.when(storage.get(BlobId.of(BUCKET_NAME, uploadFile.getName()))).thenReturn(blob);
+        Mockito.when(blob.getContent()).thenReturn(bytes);
+
+        GCSConfigSource source = new GCSConfigSource(BUCKET_NAME, uploadFile.getName());
+
+        Assertions.assertNotNull(source);
+    }
+
+    @Test
     void loadFileException() throws GestaltException {
 
         final File uploadFile = new File(UPLOAD_FILE_NAME);

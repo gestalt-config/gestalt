@@ -2,6 +2,8 @@ package org.github.gestalt.config.azure.config;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.github.gestalt.config.entity.GestaltModuleConfig;
 
 /**
@@ -18,6 +20,11 @@ public final class AzureModuleConfig implements GestaltModuleConfig {
     private TokenCredential credential;
 
     private SecretClient secretClient;
+
+    private BlobClient blobClient;
+
+    private StorageSharedKeyCredential storageSharedKeyCredential;
+
 
     AzureModuleConfig() {
     }
@@ -43,6 +50,16 @@ public final class AzureModuleConfig implements GestaltModuleConfig {
      */
     public void setKeyVaultUri(String keyVaultUri) {
         this.keyVaultUri = keyVaultUri;
+    }
+
+
+    /**
+     * If the module config has the credentials.
+     *
+     * @return If the module config has the credentials.
+     */
+    public boolean hasCredential() {
+        return credential != null;
     }
 
     /**
@@ -90,5 +107,59 @@ public final class AzureModuleConfig implements GestaltModuleConfig {
      */
     public void setSecretsClient(SecretClient secretsClient) {
         this.secretClient = secretsClient;
+    }
+
+    /**
+     * Return if the blobClient has been set.
+     *
+     * @return if the blobClient has been set
+     */
+    public boolean hasBlobClient() {
+        return blobClient != null;
+    }
+
+    /**
+     * Get the Blob Client.
+     *
+     * @return the Blob Client
+     */
+    public BlobClient getBlobClient() {
+        return blobClient;
+    }
+
+    /**
+     * Set the Blob Client.
+     *
+     * @param blobClient the Blob Client.
+     */
+    public void setBlobClient(BlobClient blobClient) {
+        this.blobClient = blobClient;
+    }
+
+    /**
+     * If the module has the storageSharedKeyCredential.
+     *
+     * @return If the module has the storageSharedKeyCredential.
+     */
+    public boolean hasStorageSharedKeyCredential() {
+        return storageSharedKeyCredential != null;
+    }
+
+    /**
+     * Get the StorageSharedKeyCredential for blob storage.
+     *
+     * @return the StorageSharedKeyCredential for blob storage
+     */
+    public StorageSharedKeyCredential getStorageSharedKeyCredential() {
+        return storageSharedKeyCredential;
+    }
+
+    /**
+     * Set the StorageSharedKeyCredential for blob storage.
+     *
+     * @param storageSharedKeyCredential the StorageSharedKeyCredential for blob storage.
+     */
+    public void setStorageSharedKeyCredential(StorageSharedKeyCredential storageSharedKeyCredential) {
+        this.storageSharedKeyCredential = storageSharedKeyCredential;
     }
 }

@@ -101,6 +101,7 @@ class GCPSecretTransformerTest {
     void processConfigProjectSet() {
         GoogleModuleConfig googleModuleConfig = new GoogleModuleConfig("myProject");
         googleModuleConfig.setProjectId("myProject");
+        googleModuleConfig.setStorage(null);
 
         Assertions.assertEquals("google", googleModuleConfig.name());
 

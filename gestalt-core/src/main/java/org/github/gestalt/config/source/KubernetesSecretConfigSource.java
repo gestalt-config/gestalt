@@ -139,7 +139,7 @@ public final class KubernetesSecretConfigSource implements ConfigSource {
 
     @Override
     public String format() {
-        return K8_SECRET_CONFIG;
+        return MapConfigSource.MAP_CONFIG;
     }
 
     @Override

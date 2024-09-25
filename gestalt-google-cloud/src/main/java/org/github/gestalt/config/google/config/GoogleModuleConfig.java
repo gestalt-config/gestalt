@@ -1,5 +1,6 @@
 package org.github.gestalt.config.google.config;
 
+import com.google.cloud.storage.Storage;
 import org.github.gestalt.config.entity.GestaltModuleConfig;
 
 /**
@@ -11,12 +12,18 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
 public final class GoogleModuleConfig implements GestaltModuleConfig {
 
     private String projectId;
+    private Storage storage;
 
     public GoogleModuleConfig() {
     }
 
     public GoogleModuleConfig(String projectId) {
+        this(projectId, null);
+    }
+
+    public GoogleModuleConfig(String projectId, Storage storage) {
         this.projectId = projectId;
+        this.storage = storage;
     }
 
     @Override
@@ -40,6 +47,32 @@ public final class GoogleModuleConfig implements GestaltModuleConfig {
      */
     public void setProjectId(String projectId) {
         this.projectId = projectId;
+    }
+
+    /**
+     * If the storage client has been set.
+     *
+     * @return If the storage client has been set.
+     */
+    public boolean hasStorage() {
+        return storage != null;
+    }
+    /**
+     * Get the storage client.
+     *
+     * @return the storage client.
+     */
+    public Storage getStorage() {
+        return storage;
+    }
+
+    /**
+     * Set the storage client.
+     *
+     * @param storage the storage client
+     */
+    public void setStorage(Storage storage) {
+        this.storage = storage;
     }
 
 }

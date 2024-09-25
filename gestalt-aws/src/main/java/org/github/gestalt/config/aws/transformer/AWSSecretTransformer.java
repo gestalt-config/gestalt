@@ -57,8 +57,12 @@ public final class AWSSecretTransformer implements Transformer {
 
     @Override
     public GResultOf<String> process(String path, String secretNameKey, String rawValue) {
-        if (secretNameKey != null) {
+        if (secretNameKey != null && !secretNameKey.isEmpty()) {
             try {
+                if (secretsClient == null) {
+                    return GResultOf.errors(new AWSValidationErrors.AWSModuleConfigNotSet(path, rawValue));
+                }
+
                 String[] secretParts = secretNameKey.split(":");
 
                 if (secretParts.length != 2) {
@@ -67,10 +71,6 @@ public final class AWSSecretTransformer implements Transformer {
 
                 String secretName = secretParts[0];
                 String secretKey = secretParts[1];
-
-                if (secretsClient == null) {
-                    return GResultOf.errors(new AWSValidationErrors.AWSModuleConfigNotSet(path, rawValue));
-                }
 
                 GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
                                                                           .secretId(secretName)

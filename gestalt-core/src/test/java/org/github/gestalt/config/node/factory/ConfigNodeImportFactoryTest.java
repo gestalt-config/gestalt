@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
@@ -7,8 +7,6 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
-import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
-import org.github.gestalt.config.node.factory.ConfigNodeImportFactory;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.token.ObjectToken;
 import org.github.gestalt.config.token.Token;
@@ -20,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ConfigNodeImportFactoryTest {
 
@@ -75,7 +74,7 @@ class ConfigNodeImportFactoryTest {
         assertTrue(result.hasErrors());
 
         ValidationError error = result.getErrors().get(0);
-        assertTrue(error instanceof ValidationError.ConfigSourceFactoryUnknownParameter);
+        assertInstanceOf(ValidationError.ConfigSourceFactoryUnknownParameter.class, error);
         assertEquals(ValidationLevel.DEBUG, error.level());
         assertEquals("Unknown Config Source Factory parameter for: node Parameter key: unknown, value: value", error.description());
     }
@@ -90,7 +89,7 @@ class ConfigNodeImportFactoryTest {
         assertTrue(result.hasErrors());
 
         ValidationError error = result.getErrors().get(0);
-        assertTrue(error instanceof ValidationError.ConfigNodeImportNodeEmpty);
+        assertInstanceOf(ValidationError.ConfigNodeImportNodeEmpty.class, error);
     }
 
     @Test
@@ -105,6 +104,6 @@ class ConfigNodeImportFactoryTest {
         assertTrue(result.hasErrors());
 
         ValidationError error = result.getErrors().get(0);
-        assertTrue(error instanceof ValidationError.ConfigSourceFactoryException);
+        assertInstanceOf(ValidationError.ConfigSourceFactoryException.class, error);
     }
 }

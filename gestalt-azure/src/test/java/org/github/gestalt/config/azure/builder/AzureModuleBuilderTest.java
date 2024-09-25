@@ -3,6 +3,8 @@ package org.github.gestalt.config.azure.builder;
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.github.gestalt.config.azure.config.AzureModuleBuilder;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.junit.jupiter.api.Assertions;
@@ -70,21 +72,50 @@ class AzureModuleBuilderTest {
             .setKeyVaultUri("test")
             .setCredential(tokenCredential);
 
-        Assertions.assertNotNull(builder.build().getCredential());
-        Assertions.assertNotNull(builder.build().getSecretsClient());
-        Assertions.assertTrue(builder.build().hasSecretsClient());
-        Assertions.assertNotNull(builder.build().getCredential());
-        Assertions.assertEquals("azure", builder.build().name());
+        var built = builder.build();
+        Assertions.assertNotNull(built.getCredential());
+        Assertions.assertNotNull(built.getSecretsClient());
+        Assertions.assertTrue(built.hasSecretsClient());
+        Assertions.assertTrue(built.hasCredential());
+        Assertions.assertNotNull(built.getCredential());
+        Assertions.assertEquals("azure", built.name());
     }
 
     @Test
-    public void createAWSConfigEmpty() {
+    public void createAzureBuildBlobClient() throws GestaltConfigurationException {
+        BlobClient blobClient = Mockito.mock();
 
-        AzureModuleBuilder builder = AzureModuleBuilder.builder();
+        AzureModuleBuilder builder = AzureModuleBuilder.builder()
+            .setBlobClient(blobClient);
 
-        GestaltConfigurationException e = Assertions.assertThrows(GestaltConfigurationException.class, builder::build);
-        Assertions.assertEquals("AzureModuleConfig was built but one of the secret client or the vault endpoint must be provided",
-            e.getMessage());
+        var built = builder.build();
+        Assertions.assertNull(built.getCredential());
+        Assertions.assertNotNull(built.getBlobClient());
+        Assertions.assertNull(built.getSecretsClient());
+        Assertions.assertFalse(built.hasSecretsClient());
+        Assertions.assertFalse(built.hasCredential());
+        Assertions.assertEquals("azure", built.name());
+        Assertions.assertEquals(blobClient, built.getBlobClient());
+        Assertions.assertNull(builder.getStorageSharedKeyCredential());
+        Assertions.assertNotNull(builder.getBlobClient());
     }
 
+    @Test
+    public void createAzureBuildStorageSharedKeyCredential() throws GestaltConfigurationException {
+        StorageSharedKeyCredential storageSharedKeyCredential  = Mockito.mock();
+
+        AzureModuleBuilder builder = AzureModuleBuilder.builder()
+                .setStorageSharedKeyCredential(storageSharedKeyCredential);
+
+        var built = builder.build();
+        Assertions.assertNull(built.getCredential());
+        Assertions.assertNull(built.getBlobClient());
+        Assertions.assertNull(built.getSecretsClient());
+        Assertions.assertNotNull(built.getStorageSharedKeyCredential());
+        Assertions.assertFalse(built.hasSecretsClient());
+        Assertions.assertEquals("azure", built.name());
+        Assertions.assertEquals(storageSharedKeyCredential, built.getStorageSharedKeyCredential());
+        Assertions.assertNotNull(builder.getStorageSharedKeyCredential());
+        Assertions.assertNull(builder.getBlobClient());
+    }
 }

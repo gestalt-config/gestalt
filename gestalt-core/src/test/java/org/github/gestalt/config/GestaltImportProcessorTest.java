@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.LogManager;
@@ -283,6 +286,96 @@ public class GestaltImportProcessorTest {
         configs.put("a", "a");
         configs.put("b", "b");
         configs.put("$include:-1", "source=file,path=" + devFile.getAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportSystem() throws GestaltException {
+        System.setProperty("b", "b changed");
+        System.setProperty("c", "c");
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:-1", "source=system");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportEnv() throws GestaltException {
+        System.setProperty("b", "b changed");
+        System.setProperty("c", "c");
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:-1", "source=env,prefix=subservice,ignoreCaseOnPrefix=true,removePrefix=false");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("true", gestalt.getConfig("subservice.booking.isenabled", String.class));
+        Assertions.assertEquals("https://dev.booking.host.name", gestalt.getConfig("subservice.booking.service.host", String.class));
+        Assertions.assertEquals(443, gestalt.getConfig("subservice.booking.service.port", Integer.class));
+    }
+
+    @Test
+    public void testImportNodeK8s() throws GestaltException, URISyntaxException {
+
+        // Load the default property files from resources.
+        URL testFileURL = GestaltImportProcessorTest.class.getClassLoader().getResource("test.properties");
+        Path testFileDir = Paths.get(testFileURL.toURI());
+        Path kubernetesPath = testFileDir.getParent().resolve("kubernetes");
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:-1", "source=k8Secret,path=" + kubernetesPath.toAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
+        Assertions.assertEquals("b", gestalt.getConfig("b", String.class));
+        Assertions.assertEquals("abcdef", gestalt.getConfig("db.host.password", String.class));
+        Assertions.assertEquals("jdbc:postgresql://localhost:5432/mydb1", gestalt.getConfig("db.host.uri", String.class));
+        Assertions.assertEquals(111222333, gestalt.getConfig("subservice.booking.token", Integer.class));
+    }
+
+    @Test
+    public void testImportNodeURL() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:-1", "source=url,url=" +
+            "https://raw.githubusercontent.com/gestalt-config/gestalt/refs/heads/main/gestalt-core/src/test/resources/include.properties");
 
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())

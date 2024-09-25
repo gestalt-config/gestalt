@@ -1,4 +1,4 @@
-package org.github.gestalt.config.source.factory;
+package org.github.gestalt.config.node.factory;
 
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.ValidationError;
@@ -9,8 +9,6 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
-import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
-import org.github.gestalt.config.node.factory.FileConfigNodeFactory;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
@@ -60,7 +58,7 @@ public class FileConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());
@@ -84,7 +82,7 @@ public class FileConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());
@@ -108,7 +106,7 @@ public class FileConfigNodeFactoryTest {
         Mockito.when(configLoaderService.getLoader(Mockito.any())).thenReturn(configLoader);
         Mockito.when(configLoader.loadSource(Mockito.any())).thenReturn(GResultOf.result(configNodes));
 
-        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null));
+        factory.applyConfig(new ConfigNodeFactoryConfig(configLoaderService, null, null, null));
         GResultOf<List<ConfigNode>> result = factory.build(params);
 
         Assertions.assertTrue(result.hasResults());

@@ -1,8 +1,3 @@
-import org.github.gestalt.config.node.factory.ClassPathConfigNodeFactory;
-import org.github.gestalt.config.node.factory.ConfigNodeFactory;
-import org.github.gestalt.config.node.factory.ConfigNodeImportFactory;
-import org.github.gestalt.config.node.factory.FileConfigNodeFactory;
-
 /*
  * Module info definition for gestalt core
  */
@@ -15,7 +10,7 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.processor.result.ResultProcessor;
     uses org.github.gestalt.config.observations.ObservationRecorder;
     uses org.github.gestalt.config.processor.result.validation.ConfigValidator;
-    uses ConfigNodeFactory;
+    uses org.github.gestalt.config.node.factory.ConfigNodeFactory;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -110,10 +105,14 @@ module org.github.gestalt.core {
         org.github.gestalt.config.processor.config.transform.URLDecoderTransformer,
         org.github.gestalt.config.processor.config.transform.URLEncoderTransformer;
 
-    provides ConfigNodeFactory with
-        ClassPathConfigNodeFactory,
-        FileConfigNodeFactory,
-        ConfigNodeImportFactory;
+    provides org.github.gestalt.config.node.factory.ConfigNodeFactory with
+        org.github.gestalt.config.node.factory.ClassPathConfigNodeFactory,
+        org.github.gestalt.config.node.factory.ConfigNodeImportFactory,
+        org.github.gestalt.config.node.factory.EnvVarsConfigNodeFactory,
+        org.github.gestalt.config.node.factory.FileConfigNodeFactory,
+        org.github.gestalt.config.node.factory.KubernetesSecretConfigNodeFactory,
+        org.github.gestalt.config.node.factory.SystemConfigNodeFactory,
+        org.github.gestalt.config.node.factory.UrlConfigNodeFactory;
 }
 
 

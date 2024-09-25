@@ -1,6 +1,5 @@
 package org.github.gestalt.config.azure.blob;
 
-
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;

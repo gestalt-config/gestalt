@@ -1,5 +1,6 @@
 package org.github.gestalt.config.google.builder;
 
+import com.google.cloud.storage.Storage;
 import org.github.gestalt.config.google.config.GoogleModuleConfig;
 
 /**
@@ -10,11 +11,11 @@ import org.github.gestalt.config.google.config.GoogleModuleConfig;
  */
 public final class GoogleModuleConfigBuilder {
     private String projectId;
+    private Storage storage;
 
     private GoogleModuleConfigBuilder() {
 
     }
-
 
     /**
      * Create a builder to create the Google config.
@@ -45,7 +46,27 @@ public final class GoogleModuleConfigBuilder {
         return this;
     }
 
+    /**
+     * Get the storage client.
+     *
+     * @return the storage client.
+     */
+    public Storage getStorage() {
+        return storage;
+    }
+
+    /**
+     * Set the storage client.
+     *
+     * @param storage the storage client
+     * @return the builder
+     */
+    public GoogleModuleConfigBuilder setStorage(Storage storage) {
+        this.storage = storage;
+        return this;
+    }
+
     public GoogleModuleConfig build() {
-        return new GoogleModuleConfig(projectId);
+        return new GoogleModuleConfig(projectId, storage);
     }
 }

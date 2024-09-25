@@ -238,4 +238,74 @@ class AWSSecretTransformerTest {
         Assertions.assertEquals("usa", awsModuleConfig.getRegion());
         Assertions.assertEquals("aws", awsModuleConfig.name());
     }
+
+    @Test
+    void processWithBadConfig() throws GestaltConfigurationException {
+
+        AWSBuilder awsConfigExtension = AWSBuilder.builder();
+        AWSModuleConfig awsModuleConfig = awsConfigExtension.build();
+
+        AWSSecretTransformer transform = new AWSSecretTransformer();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.registerModuleConfig(awsModuleConfig);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
+        transform.applyConfig(config);
+
+        var results = transform.process("test", "secret:mySecret", "awsSecret:secret:mySecret");
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("AWSModuleConfig has not been registered. Register by creating a AWSBuilder then registering " +
+            "the AWSBuilder.build() results with the Gestalt Builder.addModuleConfig(). If you wish to use the aws module with string " +
+            "substitution ${awsSecret:secret:mySecret} on the path: test", results.getErrors().get(0).description());
+    }
+
+    @Test
+    void processWithNullSecret() throws GestaltConfigurationException {
+
+        AWSBuilder awsConfigExtension = AWSBuilder.builder();
+        AWSModuleConfig awsModuleConfig = awsConfigExtension.build();
+
+        AWSSecretTransformer transform = new AWSSecretTransformer();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.registerModuleConfig(awsModuleConfig);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
+        transform.applyConfig(config);
+
+        var results = transform.process("test", null, null);
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("Invalid string: null, on path: test in transformer: awsSecret",
+            results.getErrors().get(0).description());
+    }
+
+    @Test
+    void processWithEmptySecret() throws GestaltConfigurationException {
+
+        AWSBuilder awsConfigExtension = AWSBuilder.builder();
+        AWSModuleConfig awsModuleConfig = awsConfigExtension.build();
+
+        AWSSecretTransformer transform = new AWSSecretTransformer();
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.registerModuleConfig(awsModuleConfig);
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
+        transform.applyConfig(config);
+
+        var results = transform.process("test", "", "");
+
+        Assertions.assertFalse(results.hasResults());
+        Assertions.assertTrue(results.hasErrors());
+
+        Assertions.assertEquals(1, results.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
+        Assertions.assertEquals("Invalid string: , on path: test in transformer: awsSecret",
+            results.getErrors().get(0).description());
+    }
 }

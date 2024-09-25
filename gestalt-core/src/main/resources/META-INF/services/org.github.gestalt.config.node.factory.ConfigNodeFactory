@@ -1,3 +1,7 @@
 org.github.gestalt.config.node.factory.ClassPathConfigNodeFactory
-org.github.gestalt.config.node.factory.FileConfigNodeFactory
 org.github.gestalt.config.node.factory.ConfigNodeImportFactory
+org.github.gestalt.config.node.factory.EnvVarsConfigNodeFactory
+org.github.gestalt.config.node.factory.FileConfigNodeFactory
+org.github.gestalt.config.node.factory.KubernetesSecretConfigNodeFactory
+org.github.gestalt.config.node.factory.SystemConfigNodeFactory
+org.github.gestalt.config.node.factory.UrlConfigNodeFactory
