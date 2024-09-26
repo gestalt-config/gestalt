@@ -36,6 +36,7 @@ import org.github.gestalt.config.utils.SystemWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -53,6 +54,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
 import static org.mockito.Mockito.mockStatic;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GestaltTest {
 
     @BeforeAll

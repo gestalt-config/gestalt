@@ -6,22 +6,29 @@ import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TemporarySecretConfigNodeProcessorTest {
+
+    private final GestaltConfig gestalt = Mockito.mock();
+
+    @BeforeEach
+    public void setup() {
+        Mockito.reset(gestalt);
+    }
 
     @Test
     public void temporarySecretConfigNodeProcessor() {
-
         TemporarySecretModuleBuilder builder = TemporarySecretModuleBuilder.builder().addSecretWithCount("secret", 1);
 
-        GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
@@ -43,10 +50,8 @@ class TemporarySecretConfigNodeProcessorTest {
 
     @Test
     public void nonSecret() {
-
         TemporarySecretModuleBuilder builder = TemporarySecretModuleBuilder.builder().addSecretWithCount("secret", 1);
 
-        GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
@@ -67,10 +72,8 @@ class TemporarySecretConfigNodeProcessorTest {
 
     @Test
     public void emptyLeaf() {
-
         TemporarySecretModuleBuilder builder = TemporarySecretModuleBuilder.builder().addSecretWithCount("secret", 1);
 
-        GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
@@ -90,10 +93,8 @@ class TemporarySecretConfigNodeProcessorTest {
 
     @Test
     public void nonLeafNode() {
-
         TemporarySecretModuleBuilder builder = TemporarySecretModuleBuilder.builder().addSecretWithCount("secret", 1);
 
-        GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
@@ -115,10 +116,8 @@ class TemporarySecretConfigNodeProcessorTest {
 
     @Test
     public void nonSecretSetup() {
-
         TemporarySecretModuleBuilder builder = TemporarySecretModuleBuilder.builder();
 
-        GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(builder.build());
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);
@@ -139,7 +138,6 @@ class TemporarySecretConfigNodeProcessorTest {
 
     @Test
     public void nonModuleSet() {
-        GestaltConfig gestalt = Mockito.mock();
         Mockito.when(gestalt.getModuleConfig(any())).thenReturn(null);
 
         ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestalt, null, null, null, null);

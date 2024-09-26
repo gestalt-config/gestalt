@@ -9,24 +9,25 @@ import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GCSConfigSourceTest {
 
     private static final String BUCKET_NAME = "testbucket";
     private static final String UPLOAD_FILE_NAME = "src/test/resources/default.properties";
 
-    private Storage storage;
-    private Blob blob;
+    private final Storage storage = Mockito.mock();
+    private final Blob blob = Mockito.mock();
 
     @BeforeEach
     void setup() {
-        storage = Mockito.mock();
-        blob = Mockito.mock();
+        Mockito.reset(storage, blob);
     }
 
     @Test

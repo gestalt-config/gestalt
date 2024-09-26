@@ -14,6 +14,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.net.MalformedURLException;
@@ -21,19 +22,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UrlConfigNodeFactoryTest {
 
     private UrlConfigNodeFactory factory;
     private static final String url =
         "https://raw.githubusercontent.com/gestalt-config/gestalt/refs/heads/main/gestalt-core/src/test/resources/include.properties";
-    private ConfigLoaderService configLoaderService;
-    private ConfigLoader configLoader;
+    private final ConfigLoaderService configLoaderService = Mockito.mock();
+    private final ConfigLoader configLoader = Mockito.mock();
 
     @BeforeEach
     public void setUp() throws MalformedURLException {
         factory = new UrlConfigNodeFactory();
-        configLoaderService = Mockito.mock();
-        configLoader = Mockito.mock();
+        Mockito.reset(configLoaderService, configLoader);
     }
 
     @Test

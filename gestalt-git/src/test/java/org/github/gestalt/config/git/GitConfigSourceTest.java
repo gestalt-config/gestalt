@@ -9,10 +9,7 @@ import org.eclipse.jgit.util.FS;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +18,16 @@ import java.nio.file.Path;
 
 // cicd isn't setup to run this test.
 @SuppressWarnings("resource")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GitConfigSourceTest {
+
+    private Path configDirectory;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        configDirectory = Files.createTempDirectory("gitConfigTest");
+        configDirectory.toFile().deleteOnExit();
+    }
 
     @Test
     void noURI() throws IOException {
@@ -39,9 +45,6 @@ class GitConfigSourceTest {
 
     @Test
     void noConfigFilePath() throws IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath(null)
@@ -64,9 +67,6 @@ class GitConfigSourceTest {
 
     @Test
     void idTest() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
@@ -77,9 +77,6 @@ class GitConfigSourceTest {
 
     @Test
     void hasStream() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
@@ -91,9 +88,6 @@ class GitConfigSourceTest {
 
     @Test
     void hasStreamWithPassword() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         // Must set the git user and password in Env Vars
         String userName = System.getenv("GIT_GESTALT_USER");
         String password = System.getenv("GIT_GESTALT_PASSWORD");
@@ -119,9 +113,6 @@ class GitConfigSourceTest {
 
     @Test
     void hasStreamWithGithubToken() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         // Must set the git user and password in Env Vars
         String githubToken = System.getenv("GITHUB_TOKEN");
         Assumptions.assumeTrue(githubToken != null, "must have GITHUB_TOKEN defined");
@@ -145,15 +136,14 @@ class GitConfigSourceTest {
     @Test
     @Disabled
     void hasStreamSSHWithPassword() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         // Must set the git user and password in Env Vars
         //String certLocation = System.getenv("GIT_GESTALT_SSH_LOCATION");
         String password = System.getenv("GIT_GESTALT_SSH_PASSWORD");
         Assumptions.assumeTrue(password != null, "must have GIT_GESTALT_SSH_PASSWORD defined");
 
         Path sshDir = FS.DETECTED.userHome().toPath().resolve(".ssh");
+
+        Assumptions.assumeTrue(sshDir.toFile().exists());
 
         SshdSessionFactoryBuilder sshdBuilder = new SshdSessionFactoryBuilder()
             .setKeyPasswordProvider((cp) -> new KeyPasswordProvider() {
@@ -194,9 +184,6 @@ class GitConfigSourceTest {
 
     @Test
     void loadStream() throws IOException, GestaltException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
@@ -214,8 +201,6 @@ class GitConfigSourceTest {
 
     @Test
     void hasList() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
 
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
@@ -228,9 +213,6 @@ class GitConfigSourceTest {
 
     @Test
     void loadList() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
@@ -246,8 +228,6 @@ class GitConfigSourceTest {
 
     @Test
     void format() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
 
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
@@ -260,8 +240,6 @@ class GitConfigSourceTest {
 
     @Test
     void formatEmpty() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
 
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
@@ -274,9 +252,6 @@ class GitConfigSourceTest {
 
     @Test
     void name() throws GestaltException, IOException {
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
@@ -289,9 +264,6 @@ class GitConfigSourceTest {
 
     @Test
     void testEquals() throws IOException, GestaltException {
-
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
 
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
@@ -311,9 +283,6 @@ class GitConfigSourceTest {
     @Test
     void testHashCode() throws IOException, GestaltException {
 
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")
             .setConfigFilePath("gestalt-git/src/test/resources/default.properties")
@@ -325,9 +294,6 @@ class GitConfigSourceTest {
 
     @Test
     void testTags() throws IOException, GestaltException {
-
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
 
         GitConfigSourceBuilder builder = GitConfigSourceBuilder.builder()
             .setRepoURI("https://github.com/gestalt-config/gestalt.git")

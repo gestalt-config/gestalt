@@ -19,6 +19,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
@@ -27,26 +28,21 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlobConfigNodeFactoryTest {
 
     private BlobConfigNodeFactory factory;
-    private ConfigLoaderService configLoaderService;
-    private ConfigLoader configLoader;
-    private GestaltConfig gestaltConfig;
-    private AzureModuleConfig azureModuleConfig;
-    private BlobClient blobClient;
-    private StorageSharedKeyCredential storageSharedKeyCredential;
+    private final ConfigLoaderService configLoaderService = Mockito.mock();
+    private final ConfigLoader configLoader = Mockito.mock();
+    private final GestaltConfig gestaltConfig = Mockito.mock();
+    private final AzureModuleConfig azureModuleConfig = Mockito.mock();
+    private final BlobClient blobClient = Mockito.mock();
+    private final StorageSharedKeyCredential storageSharedKeyCredential = Mockito.mock();
 
     @BeforeEach
     public void setUp() {
         factory = new BlobConfigNodeFactory();
-        configLoaderService = Mockito.mock();
-        configLoader = Mockito.mock();
-
-        gestaltConfig = Mockito.mock();
-        azureModuleConfig = Mockito.mock();
-        blobClient = Mockito.mock();
-        storageSharedKeyCredential = Mockito.mock();
+        Mockito.reset(configLoaderService, configLoader, gestaltConfig, azureModuleConfig, blobClient, storageSharedKeyCredential);
     }
 
     @Test

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 public class AnnotationTest {
 
     @Test
-
     public void testAnnotation() throws NoSuchFieldException {
         TestClass test = new TestClass();
         Assertions.assertEquals(100, test.myVal);

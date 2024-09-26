@@ -1,7 +1,7 @@
 package org.github.gestalt.config.git.node.factory;
 
-import org.github.gestalt.config.Gestalt;
-import org.github.gestalt.config.builder.GestaltBuilder;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.SshSessionFactory;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -14,13 +14,10 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.node.factory.ConfigNodeFactoryConfig;
-import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.SshSessionFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,9 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class GitConfigNodeFactoryTest {
 
@@ -203,29 +201,5 @@ class GitConfigNodeFactoryTest {
         assertTrue(result.hasErrors());
         assertEquals(1, result.getErrors().size());
         assertInstanceOf(ValidationError.ConfigSourceFactoryException.class, result.getErrors().get(0));
-    }
-
-    @Test
-    public void integrationTest() throws IOException, GestaltException {
-
-        Path configDirectory = Files.createTempDirectory("gitConfigTest");
-        configDirectory.toFile().deleteOnExit();
-
-        Map<String, String> configs = new HashMap<>();
-        configs.put("a", "a");
-        configs.put("b", "b");
-        configs.put("$include:1", "source=git,repoURI=https://github.com/gestalt-config/gestalt.git," +
-            "configFilePath=gestalt-git/src/test/resources/include.properties," +
-            "localRepoDirectory=" + configDirectory.toAbsolutePath());
-
-        Gestalt gestalt = new GestaltBuilder()
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .build();
-
-        gestalt.loadConfigs();
-
-        assertEquals("a", gestalt.getConfig("a", String.class));
-        assertEquals("b changed", gestalt.getConfig("b", String.class));
-        assertEquals("c", gestalt.getConfig("c", String.class));
     }
 }

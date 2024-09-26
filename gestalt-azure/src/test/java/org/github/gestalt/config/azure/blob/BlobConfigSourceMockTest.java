@@ -5,7 +5,9 @@ import com.azure.storage.blob.specialized.BlobInputStream;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.tag.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -13,9 +15,15 @@ import java.nio.charset.Charset;
 
 import static org.mockito.Mockito.when;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlobConfigSourceMockTest {
 
     private final BlobClient blobClient = Mockito.mock();
+
+    @BeforeEach
+    public void setup() {
+        Mockito.reset(blobClient);
+    }
 
     @Test
     void idTest() {
