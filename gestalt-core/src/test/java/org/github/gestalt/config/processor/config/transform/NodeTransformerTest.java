@@ -16,27 +16,26 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NodeTransformerTest {
 
     private GestaltConfig config;
-    private ConfigNodeService configNodeService;
-    private SentenceLexer lexer;
-    private SecretConcealer secretConcealer;
-    private ConfigNodeFactoryService configNodeFactoryService;
+    private final ConfigNodeService configNodeService = Mockito.mock();
+    private final SentenceLexer lexer = Mockito.mock();
+    private final SecretConcealer secretConcealer = Mockito.mock();
+    private final ConfigNodeFactoryService configNodeFactoryService = Mockito.mock();
 
     @BeforeEach
     public void setup() {
         config = new GestaltConfig();
-        configNodeService = Mockito.mock(ConfigNodeService.class);
-        lexer = Mockito.mock(SentenceLexer.class);
-        secretConcealer = Mockito.mock();
-        configNodeFactoryService = Mockito.mock();
+        Mockito.reset(configNodeService, lexer, secretConcealer, configNodeFactoryService);
     }
 
     @Test

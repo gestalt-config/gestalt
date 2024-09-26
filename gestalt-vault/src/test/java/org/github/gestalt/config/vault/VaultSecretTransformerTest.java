@@ -10,10 +10,7 @@ import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.github.gestalt.config.vault.config.VaultBuilder;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.vault.VaultContainer;
@@ -24,6 +21,7 @@ import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VaultSecretTransformerTest {
 
     private static final String VAULT_TOKEN = "my-root-token";

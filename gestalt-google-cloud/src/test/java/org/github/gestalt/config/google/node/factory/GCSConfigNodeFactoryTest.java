@@ -24,6 +24,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -35,30 +36,23 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GCSConfigNodeFactoryTest {
     private static final String BUCKET_NAME = "testbucket";
     private static final String UPLOAD_FILE_NAME = "src/test/resources/include.properties";
-
+    private final ConfigLoaderService configLoaderService = Mockito.mock();
+    private final ConfigLoader configLoader = Mockito.mock();
+    private final GestaltConfig gestaltConfig = Mockito.mock();
+    private final Storage storage = Mockito.mock();
+    private final GoogleModuleConfig gcsModuleConfig = Mockito.mock();
+    private final Blob blob = Mockito.mock();
     private GCSConfigNodeFactory factory;
-    private ConfigLoaderService configLoaderService;
-    private ConfigLoader configLoader;
-    private GestaltConfig gestaltConfig;
-    private Storage storage;
-    private GoogleModuleConfig gcsModuleConfig;
-
-    private Blob blob;
 
     @BeforeEach
     public void setUp() {
         factory = new GCSConfigNodeFactory();
-        configLoaderService = Mockito.mock();
-        configLoader = Mockito.mock();
 
-        gestaltConfig = Mockito.mock();
-        storage = Mockito.mock();
-        gcsModuleConfig = Mockito.mock();
-        blob = Mockito.mock();
+        Mockito.reset(configLoaderService, configLoader, gestaltConfig, storage, gcsModuleConfig, blob);
     }
 
     @Test

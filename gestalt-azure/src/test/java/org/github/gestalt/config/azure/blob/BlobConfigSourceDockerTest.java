@@ -8,6 +8,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -19,6 +20,7 @@ import java.nio.charset.Charset;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlobConfigSourceDockerTest {
 
     private static final String UPLOAD_FILE_NAME = "src/test/resources/default.properties";

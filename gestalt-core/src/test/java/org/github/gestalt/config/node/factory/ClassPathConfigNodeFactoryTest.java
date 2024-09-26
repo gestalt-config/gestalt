@@ -14,25 +14,26 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ClassPathConfigNodeFactoryTest {
 
+    private final ConfigLoaderService configLoaderService = Mockito.mock();
+    private final ConfigLoader configLoader = Mockito.mock();
     private ClassPathConfigNodeFactory factory;
     private String resource;
-
-    private ConfigLoaderService configLoaderService;
-    private ConfigLoader configLoader;
 
     @BeforeEach
     public void setUp() {
         factory = new ClassPathConfigNodeFactory();
-        configLoaderService = Mockito.mock();
-        configLoader = Mockito.mock();
+
+        Mockito.reset(configLoaderService, configLoader);
 
         resource = "test.properties";
     }

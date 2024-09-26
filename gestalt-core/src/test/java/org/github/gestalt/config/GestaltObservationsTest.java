@@ -14,6 +14,7 @@ import org.github.gestalt.config.processor.TestResultProcessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GestaltObservationsTest {
 
     @BeforeAll

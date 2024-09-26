@@ -24,6 +24,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.github.gestalt.config.Gestalt;
 import org.github.gestalt.config.annotations.Config;
 import org.github.gestalt.config.annotations.ConfigPrefix;
@@ -35,6 +36,7 @@ import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.git.GitConfigSourceBuilder;
+import org.github.gestalt.config.git.builder.GitModuleConfigBuilder;
 import org.github.gestalt.config.google.storage.GCSConfigSourceBuilder;
 import org.github.gestalt.config.guice.GestaltModule;
 import org.github.gestalt.config.guice.InjectConfig;
@@ -89,10 +91,12 @@ import java.util.logging.LogManager;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.github.gestalt.config.lexer.PathLexer.DEFAULT_EVALUATOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mockStatic;
 import static software.amazon.awssdk.http.SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES;
 
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GestaltSample {
 
     private static final String BUCKET_NAME = "testbucket";
@@ -2210,6 +2214,60 @@ public class GestaltSample {
         Assertions.assertEquals("a", gestalt.getConfig("a", String.class));
         Assertions.assertEquals("b changed", gestalt.getConfig("b", String.class));
         Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    public void testImportFileFromGit() throws IOException, GestaltException {
+        Path configDirectory = Files.createTempDirectory("gitConfigTest");
+        configDirectory.toFile().deleteOnExit();
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:1", "source=git,repoURI=https://github.com/gestalt-config/gestalt.git," +
+            "configFilePath=gestalt-git/src/test/resources/include.properties," +
+            "localRepoDirectory=" + configDirectory.toAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        assertEquals("a", gestalt.getConfig("a", String.class));
+        assertEquals("b changed", gestalt.getConfig("b", String.class));
+        assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    void includeWithGithubToken() throws GestaltException, IOException {
+
+        Path configDirectory = Files.createTempDirectory("gitConfigTest");
+        configDirectory.toFile().deleteOnExit();
+
+        // Must set the git user and password in Env Vars
+        String githubToken = System.getenv("GITHUB_TOKEN");
+        Assumptions.assumeTrue(githubToken != null, "must have GITHUB_TOKEN defined");
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "a");
+        configs.put("b", "b");
+        configs.put("$include:1", "source=git,repoURI=https://github.com/gestalt-config/gestalt.git," +
+            "configFilePath=gestalt-git/src/test/resources/include.properties," +
+            "localRepoDirectory=" + configDirectory.toAbsolutePath());
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addModuleConfig(GitModuleConfigBuilder.builder()
+                .setCredentials(new UsernamePasswordCredentialsProvider(githubToken, ""))
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        assertEquals("a", gestalt.getConfig("a", String.class));
+        assertEquals("b changed", gestalt.getConfig("b", String.class));
+        assertEquals("c", gestalt.getConfig("c", String.class));
     }
 
     public enum Role {

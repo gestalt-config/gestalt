@@ -18,6 +18,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -27,25 +28,20 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class S3ConfigNodeFactoryTest {
 
     private S3ConfigNodeFactory factory;
-    private ConfigLoaderService configLoaderService;
-    private ConfigLoader configLoader;
-    private GestaltConfig gestaltConfig;
-    private AWSModuleConfig awsModuleConfig;
-    private S3Client s3Client;
+    private final ConfigLoaderService configLoaderService = Mockito.mock();
+    private final ConfigLoader configLoader = Mockito.mock();
+    private final GestaltConfig gestaltConfig = Mockito.mock();
+    private final AWSModuleConfig awsModuleConfig = Mockito.mock();
+    private final S3Client s3Client = Mockito.mock();
 
     @BeforeEach
     public void setUp() {
         factory = new S3ConfigNodeFactory();
-        configLoaderService = Mockito.mock();
-        configLoader = Mockito.mock();
-
-        gestaltConfig = Mockito.mock();
-        awsModuleConfig = Mockito.mock();
-        s3Client = Mockito.mock();
+        Mockito.reset(configLoaderService, configLoader, gestaltConfig, awsModuleConfig, s3Client);
     }
 
     @Test

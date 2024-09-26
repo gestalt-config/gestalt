@@ -14,6 +14,7 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -22,18 +23,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class K8ConfigNodeFactoryTest {
 
     private KubernetesSecretConfigNodeFactory factory;
     private File file;
-    private ConfigLoaderService configLoaderService;
-    private ConfigLoader configLoader;
+    private final ConfigLoaderService configLoaderService = Mockito.mock();
+    private final ConfigLoader configLoader = Mockito.mock();
 
     @BeforeEach
     public void setUp() {
         factory = new KubernetesSecretConfigNodeFactory();
-        configLoaderService = Mockito.mock();
-        configLoader = Mockito.mock();
+
+        Mockito.reset(configLoaderService, configLoader);
 
         URL testFileURL = K8ConfigNodeFactoryTest.class.getClassLoader().getResource("test.properties");
         file = new File(testFileURL.getFile());
