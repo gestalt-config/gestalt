@@ -10,7 +10,7 @@ on:
 defaults:
   run:
     shell: bash
-    working-directory: ./docs/gestalt-docs
+    working-directory: ./docs/gestalt-static
 
 jobs:
   build:
