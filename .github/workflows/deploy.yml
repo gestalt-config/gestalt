@@ -12,7 +12,6 @@ defaults:
     shell: bash
     working-directory: ./docs/gestalt-docs
 
-
 jobs:
   build:
     name: Build Docusaurus
@@ -23,7 +22,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
