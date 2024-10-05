@@ -34,7 +34,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: docs/gestalt-static/build
 
   deploy:
     name: Deploy to GitHub Pages
