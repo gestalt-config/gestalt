@@ -6,11 +6,6 @@ on:
       - main
     # Review gh actions docs if you want to further define triggers, paths, etc
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
-    
-defaults:
-  run:
-    shell: bash
-    working-directory: ./docs/gestalt-static
 
 jobs:
   build:
@@ -27,13 +22,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./docs/gestalt-static
       - name: Build website
         run: npm run build
+        working-directory: ./docs/gestalt-static
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: ./docs/gestalt-static/build
 
   deploy:
     name: Deploy to GitHub Pages
