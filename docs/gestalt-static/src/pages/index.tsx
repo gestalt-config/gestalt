@@ -19,7 +19,7 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/getting-started">
+            to="/docs/tutorial/getting-started">
             Gestalt Configuration Getting Started - 5min ⏱️
           </Link>
         </div>
