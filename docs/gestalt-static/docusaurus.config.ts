@@ -85,7 +85,13 @@ const config: Config = {
           position: 'left',
           label: 'Tutorial',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {
+          type: 'docSidebar',
+          sidebarId: 'advancedSidebar',
+
+          position: 'left',
+          label: 'Advanced Features',
+        },
         {
           href: 'https://github.com/gestalt-config/gestalt',
           label: 'GitHub',
