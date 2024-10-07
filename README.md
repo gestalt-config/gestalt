@@ -5,6 +5,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gestalt-config_gestalt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gestalt-config_gestalt)
 
 Visit the official documentation: https://gestalt-config.github.io/gestalt/
+
 All documentation is being migrated to the official documentation site. 
 
 Gestalt is a powerful Java configuration library designed to simplify the way you handle and manage configurations in your software projects. In the rapidly evolving landscape of software development, having a flexible and reliable configuration management system is essential for ensuring the smooth operation of your applications.
