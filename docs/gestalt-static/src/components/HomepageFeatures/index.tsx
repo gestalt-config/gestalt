@@ -10,32 +10,29 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Easy Multi-Source Config Management',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Gestalt enables easy merging of configurations from multiple sources (files, environment variables, maps) into a unified structure, simplifying how you manage application settings.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Type-Safe Automatic Decoding',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        It automatically decodes configurations into Java objects, including beans, records, and lists, supporting Java and Kotlin, while providing error feedback for missing or invalid configs.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Modular and Lightweight',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        With zero core dependencies, Gestalt allows you to include only the necessary features, keeping your application lightweight and configurable for various environments or profiles.
       </>
     ),
   },
