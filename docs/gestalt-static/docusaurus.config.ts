@@ -72,7 +72,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Gestalt Config',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -83,9 +83,15 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
 
           position: 'left',
-          label: 'Tutorial',
+          label: 'Tutorial - Basics',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {
+          type: 'docSidebar',
+          sidebarId: 'advancedSidebar',
+
+          position: 'left',
+          label: 'Tutorial - Advanced',
+        },
         {
           href: 'https://github.com/gestalt-config/gestalt',
           label: 'GitHub',
