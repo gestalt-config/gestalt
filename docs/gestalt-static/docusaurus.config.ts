@@ -83,14 +83,14 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
 
           position: 'left',
-          label: 'Tutorial',
+          label: 'Tutorial - Basics',
         },
         {
           type: 'docSidebar',
           sidebarId: 'advancedSidebar',
 
           position: 'left',
-          label: 'Advanced Features',
+          label: 'Tutorial - Advanced',
         },
         {
           href: 'https://github.com/gestalt-config/gestalt',
