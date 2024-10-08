@@ -92,6 +92,27 @@ const config: Config = {
           label: 'Tutorial - Advanced',
         },
         {
+          type: 'docSidebar',
+          sidebarId: 'modulesSidebar',
+
+          position: 'left',
+          label: 'Modules',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'usecaseSidebar',
+
+          position: 'left',
+          label: 'Use Cases',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'architectureSidebar',
+
+          position: 'left',
+          label: 'Architecture',
+        },
+        {
           href: 'https://github.com/gestalt-config/gestalt',
           label: 'GitHub',
           position: 'right',
