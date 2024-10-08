@@ -39,7 +39,7 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          // editUrl: 'https://github.com/gestalt-config/gestalt/tree/main/docs/gestalt-static',
+          editUrl: 'https://github.com/gestalt-config/gestalt/tree/main/docs/gestalt-static',
         },
         blog: {
           showReadingTime: true,
