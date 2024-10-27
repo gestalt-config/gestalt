@@ -2,13 +2,11 @@ package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.utils.PathUtil;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -17,7 +15,7 @@ import java.util.stream.IntStream;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public final class ArrayNode implements ConfigNode {
+public final class ArrayNode extends AbstractConfigNode {
 
     private final List<ConfigNode> values;
 
@@ -27,22 +25,17 @@ public final class ArrayNode implements ConfigNode {
      * @param values list of nodes
      */
     public ArrayNode(List<ConfigNode> values) {
+        this(values, Map.of());
+    }
+
+    public ArrayNode(List<ConfigNode> values, Map<String, List<MetaDataValue<?>>> metadata) {
+        super(metadata);
         this.values = Collections.unmodifiableList(Objects.requireNonNullElse(values, Collections.emptyList()));
     }
 
     @Override
     public NodeType getNodeType() {
         return NodeType.ARRAY;
-    }
-
-    @Override
-    public Optional<String> getValue() {
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean hasValue() {
-        return false;
     }
 
     @Override
@@ -64,13 +57,36 @@ public final class ArrayNode implements ConfigNode {
     }
 
     @Override
-    public Optional<ConfigNode> getKey(String key) {
-        return Optional.empty();
+    public int size() {
+        return values.size();
     }
 
     @Override
-    public int size() {
-        return values.size();
+    public Map<String, List<MetaDataValue<?>>> getRolledUpMetadata() {
+
+        // for each entry in the map, try and roll it up. It will return the rolled up map.
+        // Then we continue for each entry passing the previously rolled up map into the next metadata.
+        Map<String, List<MetaDataValue<?>>> rolledUpMetadata = new HashMap<>();
+        for (ConfigNode configNode : values) {
+            if (configNode != null) {
+                Map<String, List<MetaDataValue<?>>> nodeMetadata = configNode.getRolledUpMetadata();
+                for (Map.Entry<String, List<MetaDataValue<?>>> entry : nodeMetadata.entrySet()) {
+                    for (MetaDataValue<?> metadata : entry.getValue()) {
+                        rolledUpMetadata = metadata.rollup(rolledUpMetadata);
+                    }
+                }
+            }
+        }
+
+        //now rollup the array nodes metadata
+        for (Map.Entry<String, List<MetaDataValue<?>>> entry : metadata.entrySet()) {
+            for (MetaDataValue<?> metadata : entry.getValue()) {
+                rolledUpMetadata = metadata.rollup(rolledUpMetadata);
+
+            }
+        }
+
+        return rolledUpMetadata;
     }
 
     @Override

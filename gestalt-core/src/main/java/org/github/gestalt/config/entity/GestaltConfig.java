@@ -3,6 +3,7 @@ package org.github.gestalt.config.entity;
 import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 
 import java.time.format.DateTimeFormatter;
@@ -40,6 +41,13 @@ public class GestaltConfig {
     private String substitutionOpeningToken = "${";
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = "}";
+    // Token that represents the opening of an annotation.
+    private String annotationOpeningToken = "@{";
+    // Token that represents the closing of an annotation.
+    private String annotationClosingToken = "}";
+    // the regex used to parse annotations.
+    // Must have a named capture group annotation, and parameter, where the annotation is required and the parameter is optional.
+    private String annotationRegex = AnnotationConfigNodeProcessor.DEFAULT_ANNOTATION_REGEX;
     // the maximum nested substitution depth.
     private int maxSubstitutionNestedDepth = 5;
     // the regex used to parse string substitutions.
@@ -280,6 +288,60 @@ public class GestaltConfig {
      */
     public void setSubstitutionClosingToken(String substitutionClosingToken) {
         this.substitutionClosingToken = substitutionClosingToken;
+    }
+
+    /**
+     * Get the token that represents the opening of an annotation.
+     *
+     * @return Token that represents the opening of an annotation
+     */
+    public String getAnnotationOpeningToken() {
+        return annotationOpeningToken;
+    }
+
+    /**
+     * Set the token that represents the opening of an annotation.
+     *
+     * @param annotationOpeningToken token that represents the opening of an annotation.
+     */
+    public void setAnnotationOpeningToken(String annotationOpeningToken) {
+        this.annotationOpeningToken = annotationOpeningToken;
+    }
+
+    /**
+     * Get the token that represents the closing of an annotation.
+     *
+     * @return Token that represents the closing of an annotation.
+     */
+    public String getAnnotationClosingToken() {
+        return annotationClosingToken;
+    }
+
+    /**
+     * Set the token that represents the opening of an annotation.
+     *
+     * @param annotationClosingToken Token that represents the closing of an annotation.
+     */
+    public void setAnnotationClosingToken(String annotationClosingToken) {
+        this.annotationClosingToken = annotationClosingToken;
+    }
+
+    /**
+     * Get the regex for annotation processing.
+     *
+     * @return the regex for annotation processing
+     */
+    public String getAnnotationRegex() {
+        return annotationRegex;
+    }
+
+    /**
+     * Set the regex for annotation processing.
+     *
+     * @param annotationRegex the regex for annotation processing.
+     */
+    public void setAnnotationRegex(String annotationRegex) {
+        this.annotationRegex = annotationRegex;
     }
 
     /**

@@ -12,11 +12,13 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderService;
-import org.github.gestalt.config.node.TagMergingStrategy;
-import org.github.gestalt.config.observations.ObservationMarker;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.node.TagMergingStrategy;
+import org.github.gestalt.config.observations.ObservationMarker;
 import org.github.gestalt.config.observations.ObservationService;
+import org.github.gestalt.config.processor.result.ResultsProcessorService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -31,7 +33,6 @@ import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.processor.result.ResultsProcessorService;
 
 import java.util.*;
 
@@ -72,19 +73,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     /**
      * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
      *
-     * @param configLoaderService  configLoaderService to hold all config loaders
-     * @param configSourcePackages sources we wish to load the configs from. We load the sources in the order they are provided.
-     *                             Overriding older values with new one where needed
-     * @param decoderService       decoderService to hold all decoders
-     * @param sentenceLexer        sentenceLexer to parse the configuration paths when doing searches.
-     * @param gestaltConfig        configuration for the Gestalt
-     * @param configNodeService    configNodeService core functionality to manage nodes
-     * @param reloadStrategy       reloadStrategy holds all reload listeners
-     * @param secretConcealer      Utility for concealing secrets
-     * @param observationService       Manages reporting of observations
-     * @param resultsProcessorService    Validation Manager, for validating configuration objects
-     * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
-     * @param tagMergingStrategy   Strategy for how to merge tags
+     * @param configLoaderService     configLoaderService to hold all config loaders
+     * @param configSourcePackages    sources we wish to load the configs from. We load the sources in the order they are provided.
+     *                                Overriding older values with new one where needed
+     * @param decoderService          decoderService to hold all decoders
+     * @param sentenceLexer           sentenceLexer to parse the configuration paths when doing searches.
+     * @param gestaltConfig           configuration for the Gestalt
+     * @param configNodeService       configNodeService core functionality to manage nodes
+     * @param reloadStrategy          reloadStrategy holds all reload listeners
+     * @param secretConcealer         Utility for concealing secrets
+     * @param observationService      Manages reporting of observations
+     * @param resultsProcessorService Validation Manager, for validating configuration objects
+     * @param defaultTags             Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     * @param tagMergingStrategy      Strategy for how to merge tags
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
@@ -468,6 +469,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
             GResultOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
+            Map<String, List<MetaDataValue<?>>> metadata;
+            if (node.results() != null) {
+                metadata = node.results().getRolledUpMetadata();
+            } else {
+                metadata = Map.of();
+            }
 
             // if we don't have a result and we received missing node errors.
             // return the errors from the call to navigate to node.
@@ -482,7 +489,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 errors.addAll(decodedResults.getErrors());
             }
 
-            return GResultOf.resultOf(decodedResults.results(), errors);
+            return GResultOf.resultOf(decodedResults.results(), errors, metadata);
         } else {
 
             // if we have errors other than the missing values,

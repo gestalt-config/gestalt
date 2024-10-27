@@ -7,7 +7,7 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 
 /**
- * Decodes a generic optional type.
+ * Decodes a generic Config Container type.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */

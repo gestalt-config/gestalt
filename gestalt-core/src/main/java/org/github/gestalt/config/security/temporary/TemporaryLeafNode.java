@@ -2,11 +2,14 @@ package org.github.gestalt.config.security.temporary;
 
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,13 +87,17 @@ public class TemporaryLeafNode extends LeafNode {
     @Override
     public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
         String nodeValue;
+        Map<String, List<MetaDataValue<?>>> nodeMetadata;
+
         if (decoratedNode != null) {
             nodeValue = decoratedNode.getValue().orElse("");
+            nodeMetadata = decoratedNode.getMetadata();
         } else {
             nodeValue = "";
+            nodeMetadata = Map.of();
         }
         if (secretConcealer != null) {
-            nodeValue = secretConcealer.concealSecret(path, nodeValue);
+            nodeValue = secretConcealer.concealSecret(path, nodeValue, nodeMetadata);
         }
         return "TemporaryLeafNode{" +
             "value='" + nodeValue + '\'' +

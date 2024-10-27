@@ -99,7 +99,7 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
             var secretKey = generateKey(128);
             var encryptedData = encryptGcm(secretKey, optionalLeafNodeValue.orElse(""));
 
-            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey));
+            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey, currentNode.getMetadata()));
 
         } catch (NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException |
                  InvalidAlgorithmParameterException | InvalidKeyException | ShortBufferException ex) {

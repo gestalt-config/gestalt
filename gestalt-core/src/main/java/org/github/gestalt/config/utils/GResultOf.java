@@ -2,10 +2,9 @@ package org.github.gestalt.config.utils;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
+import org.github.gestalt.config.metadata.MetaDataValue;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -20,11 +19,13 @@ public final class GResultOf<T> {
     private final T results;
     private final List<ValidationError> errors;
     private final boolean isDefault;
+    private final Map<String, List<MetaDataValue<?>>> metadata;
 
-    private GResultOf(T results, List<ValidationError> errors, boolean isDefault) {
+    private GResultOf(T results, List<ValidationError> errors, boolean isDefault, Map<String, List<MetaDataValue<?>>> metadata) {
         this.results = results;
         this.errors = Objects.requireNonNullElse(errors, Collections.emptyList());
         this.isDefault = isDefault;
+        this.metadata = metadata;
     }
 
     /**
@@ -35,7 +36,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> result(T answer) {
-        return new GResultOf<>(answer, Collections.emptyList(), false);
+        return new GResultOf<>(answer, Collections.emptyList(), false, Map.of());
     }
 
     /**
@@ -47,7 +48,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> result(T answer, boolean isDefault) {
-        return new GResultOf<>(answer, Collections.emptyList(), isDefault);
+        return new GResultOf<>(answer, Collections.emptyList(), isDefault, Map.of());
     }
 
     /**
@@ -58,7 +59,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> errors(List<ValidationError> errors) {
-        return new GResultOf<>(null, errors, false);
+        return new GResultOf<>(null, errors, false, Map.of());
     }
 
     /**
@@ -69,7 +70,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> errors(ValidationError errors) {
-        return new GResultOf<>(null, Collections.singletonList(errors), false);
+        return new GResultOf<>(null, Collections.singletonList(errors), false, Map.of());
     }
 
     /**
@@ -81,7 +82,7 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> resultOf(T answer, ValidationError errors) {
-        return new GResultOf<>(answer, List.of(errors), false);
+        return new GResultOf<>(answer, List.of(errors), false, Map.of());
     }
 
     /**
@@ -93,7 +94,35 @@ public final class GResultOf<T> {
      * @return GResultOf
      */
     public static <T> GResultOf<T> resultOf(T answer, List<ValidationError> errors) {
-        return new GResultOf<>(answer, errors, false);
+        return new GResultOf<>(answer, errors, false, Map.of());
+    }
+
+    /**
+     * Create a GResultOf with a results and an error.
+     *
+     * @param answer valid results
+     * @param errors list of ValidationError
+     * @param metadata metadata associated with the result
+     * @param <T>    type of GResultOf
+     * @return GResultOf
+     */
+    public static <T> GResultOf<T> resultOf(T answer, List<ValidationError> errors, Map<String, List<MetaDataValue<?>>> metadata) {
+        return new GResultOf<>(answer, errors, false, metadata);
+    }
+
+    /**
+     * Create a GResultOf with a results and an error.
+     *
+     * @param answer valid results
+     * @param errors list of ValidationError
+     * @param isDefault if this is a default result.
+     * @param metadata metadata associated with the result.
+     * @param <T>    type of GResultOf
+     * @return GResultOf
+     */
+    public static <T> GResultOf<T> resultOf(T answer, List<ValidationError> errors, boolean isDefault,
+                                            Map<String, List<MetaDataValue<?>>> metadata) {
+        return new GResultOf<>(answer, errors, isDefault, metadata);
     }
 
     /**
@@ -198,7 +227,7 @@ public final class GResultOf<T> {
             return GResultOf.errors(errors);
         }
 
-        return GResultOf.resultOf(resultFunction.apply(results), errors);
+        return GResultOf.resultOf(resultFunction.apply(results), errors, isDefault, metadata);
     }
 
     /**
@@ -219,6 +248,36 @@ public final class GResultOf<T> {
             }
         }
 
-        return GResultOf.resultOf(resultFunction.apply(results), errors);
+        return GResultOf.resultOf(resultFunction.apply(results), errors, isDefault, metadata);
+    }
+
+    /**
+     * Get the metadata associate with this key.
+     *
+     * @param key the metadata associate with this key.
+     * @return the metadata associate with this key.
+     */
+    public List<MetaDataValue<?>> getMetadata(String key) {
+        return metadata.get(key);
+    }
+
+    /**
+     * Get the metadata map.
+     *
+     * @return the metadata map
+     */
+    public Map<String, List<MetaDataValue<?>>> getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * Check if the metadata has a value for a key.
+     *
+     * @param key key to check in the metadata.
+     *
+     * @return if the metadata has a value for a key
+     */
+    public boolean hasMetadata(String key) {
+        return metadata.containsKey(key);
     }
 }

@@ -1,5 +1,10 @@
 package org.github.gestalt.config.secret.rules;
 
+import org.github.gestalt.config.metadata.IsSecretMetadata;
+import org.github.gestalt.config.metadata.MetaDataValue;
+
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,13 +38,16 @@ public class SecretConcealerManager implements SecretConcealer {
     /**
      * returns the value that is concealed if it is a secret. Otherwise, returns the value.
      *
-     * @param path path of the value
+     * @param path  path of the value
      * @param value value we are checking if we need to conceal.
      * @return the value that is concealed if it is a secret.
      */
     @Override
-    public String concealSecret(String path, String value) {
-        if (secretChecker.isSecret(path)) {
+    public String concealSecret(String path, String value, Map<String, List<MetaDataValue<?>>> metadata) {
+        if (secretChecker.isSecret(path) ||
+            (metadata.containsKey(IsSecretMetadata.IS_SECRET_METADATA) &&  //NOPMD
+                metadata.get(IsSecretMetadata.IS_SECRET_METADATA).stream().anyMatch(it -> (boolean) it.getMetadata()))) {
+
             return obfuscator.obfuscator(value);
         } else {
             return value;

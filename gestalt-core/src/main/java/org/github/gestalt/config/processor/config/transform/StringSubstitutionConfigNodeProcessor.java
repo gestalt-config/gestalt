@@ -107,7 +107,7 @@ public final class StringSubstitutionConfigNodeProcessor implements ConfigNodePr
         if (substitutionNodes.hasResults()) {
             var results = buildSubstitutedStringList(path, currentNode, substitutionNodes.results(), 0);
 
-            return results.mapWithError(LeafNode::new);
+            return results.mapWithError(it -> new LeafNode(it, currentNode.getMetadata()));
 
         } else {
             return GResultOf.errors(substitutionNodes.getErrors());

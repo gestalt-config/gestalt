@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("VariableDeclarationUsageDistance")
-class ConfigNodeIncludeProcessorTest {
+class IncludeConfigNodeProcessorTest {
     private ConfigNodeFactoryService configNodeFactoryService;
 
     private ConfigNodeProcessorConfig ppConfig;
@@ -55,7 +55,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -92,7 +92,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -128,7 +128,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -163,7 +163,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -193,7 +193,7 @@ class ConfigNodeIncludeProcessorTest {
 
         ConfigNode originalRoot = new MapNode(originalNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         processor.applyConfig(ppConfig);
 
@@ -215,7 +215,7 @@ class ConfigNodeIncludeProcessorTest {
     void processOkLeaf() {
         ConfigNode originalRoot = new LeafNode("test");
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         processor.applyConfig(ppConfig);
 
@@ -235,7 +235,7 @@ class ConfigNodeIncludeProcessorTest {
     void processNotSetup() {
         ConfigNode originalRoot = new LeafNode("test");
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         var processedNodes = processor.process("test", originalRoot);
 
@@ -265,7 +265,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -306,7 +306,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -347,7 +347,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -389,7 +389,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
@@ -432,7 +432,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -473,7 +473,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -514,7 +514,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 
@@ -551,7 +551,7 @@ class ConfigNodeIncludeProcessorTest {
         ConfigNode originalRoot = new MapNode(originalNodeMap);
         ConfigNode importRoot = new MapNode(importNodeMap);
 
-        ConfigNodeIncludeProcessor processor = new ConfigNodeIncludeProcessor();
+        IncludeConfigNodeProcessor processor = new IncludeConfigNodeProcessor();
 
         Mockito.when(configNodeFactoryService.build(Mockito.any())).thenReturn(GResultOf.result(List.of(importRoot)));
 

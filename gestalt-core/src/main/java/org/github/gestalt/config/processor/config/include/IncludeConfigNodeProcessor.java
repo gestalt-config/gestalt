@@ -1,5 +1,6 @@
 package org.github.gestalt.config.processor.config.include;
 
+import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
@@ -23,7 +24,8 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public class ConfigNodeIncludeProcessor implements ConfigNodeProcessor {
+@ConfigPriority(500)
+public class IncludeConfigNodeProcessor implements ConfigNodeProcessor {
 
     private ConfigNodeFactoryService configNodeFactoryService;
     private String nodeImportKeyword;

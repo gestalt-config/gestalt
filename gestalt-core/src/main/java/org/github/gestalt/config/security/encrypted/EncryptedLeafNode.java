@@ -2,6 +2,7 @@ package org.github.gestalt.config.security.encrypted;
 
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.NodeType;
@@ -9,12 +10,11 @@ import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
+import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Temporary leaf node that holds a decorated leaf node.
@@ -32,8 +32,9 @@ public class EncryptedLeafNode extends LeafNode {
 
     private final byte[] encryptedData;
 
-    public EncryptedLeafNode(byte[] encryptedData, SecretKey skey) throws IllegalBlockSizeException, BadPaddingException {
-        super("");
+    public EncryptedLeafNode(byte[] encryptedData, SecretKey skey, Map<String, List<MetaDataValue<?>>> metaData)
+        throws IllegalBlockSizeException, BadPaddingException {
+        super("", metaData);
 
         this.skey = skey;
         this.encryptedData = encryptedData;
@@ -50,7 +51,7 @@ public class EncryptedLeafNode extends LeafNode {
             GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
             cipher.init(Cipher.DECRYPT_MODE, skey, spec);
             byte[] plaintext = cipher.doFinal(ciphertext, GCM_IV_LENGTH, ciphertext.length - GCM_IV_LENGTH);
-            return new String(plaintext);
+            return new String(plaintext, Charset.defaultCharset());
         } catch (NoSuchPaddingException | InvalidAlgorithmParameterException |
                  InvalidKeyException | NoSuchAlgorithmException e) {
             /* None of these exceptions should be possible if precond is met. */
@@ -115,7 +116,7 @@ public class EncryptedLeafNode extends LeafNode {
         String nodeValue = "secret";
 
         if (secretConcealer != null) {
-            nodeValue = secretConcealer.concealSecret(path, nodeValue);
+            nodeValue = secretConcealer.concealSecret(path, nodeValue, metadata);
         }
 
         return "EncryptedLeafNode{" +

@@ -13,6 +13,8 @@ import java.util.Optional;
  * Allows users to get the config value.
  *
  * @param <T> Type of the Config Container
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class ConfigContainer<T> implements CoreReloadListener {
 

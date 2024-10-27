@@ -5,6 +5,7 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
@@ -2138,7 +2139,11 @@ class ConfigNodeManagerTest {
         }
     }
 
-    public static class TestNode implements ConfigNode {
+    public static class TestNode extends AbstractConfigNode {
+
+        public TestNode() {
+            super(Map.of());
+        }
 
         @Override
         public NodeType getNodeType() {
@@ -2168,6 +2173,12 @@ class ConfigNodeManagerTest {
         @Override
         public int size() {
             return 0;
+        }
+
+        @Override
+        public
+        Map<String, List<MetaDataValue<?>>> getRolledUpMetadata() {
+            return Map.of();
         }
 
         @Override

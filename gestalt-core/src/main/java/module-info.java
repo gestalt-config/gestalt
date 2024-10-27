@@ -11,6 +11,7 @@ module org.github.gestalt.core {
     uses org.github.gestalt.config.observations.ObservationRecorder;
     uses org.github.gestalt.config.processor.result.validation.ConfigValidator;
     uses org.github.gestalt.config.node.factory.ConfigNodeFactory;
+    uses org.github.gestalt.config.processor.config.annotation.AnnotationMetadataTransform;
 
     exports org.github.gestalt.config;
     exports org.github.gestalt.config.annotations;
@@ -40,6 +41,7 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.processor.config.transform.substitution;
     exports org.github.gestalt.config.processor.result;
     exports org.github.gestalt.config.processor.result.validation;
+    exports org.github.gestalt.config.metadata;
 
     provides org.github.gestalt.config.decoder.Decoder with
         org.github.gestalt.config.decoder.ArrayDecoder,
@@ -90,7 +92,8 @@ module org.github.gestalt.core {
         org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor,
         org.github.gestalt.config.security.encrypted.EncryptedSecretConfigNodeProcessor,
         org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor,
-        org.github.gestalt.config.processor.config.include.ConfigNodeIncludeProcessor;
+        org.github.gestalt.config.processor.config.include.IncludeConfigNodeProcessor,
+        org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor;
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with
         org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer,
@@ -113,6 +116,9 @@ module org.github.gestalt.core {
         org.github.gestalt.config.node.factory.KubernetesSecretConfigNodeFactory,
         org.github.gestalt.config.node.factory.SystemConfigNodeFactory,
         org.github.gestalt.config.node.factory.UrlConfigNodeFactory;
+
+    provides org.github.gestalt.config.processor.config.annotation.AnnotationMetadataTransform with
+        org.github.gestalt.config.processor.config.annotation.SecretAnnotationMetadataTransform;
 }
 
 
