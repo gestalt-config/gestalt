@@ -1998,5 +1998,24 @@ public abstract class ValidationError {
             return "Unable to extract annotation using regex " + element + " for path: " + path;
         }
     }
+
+    /**
+     * Failed to extract annotation using regex.
+     */
+    public static class UnknownAnnotation extends ValidationError {
+        private final String annotation;
+        private final String path;
+
+        public UnknownAnnotation(String path, String annotation) {
+            super(ValidationLevel.WARN);
+            this.annotation = annotation;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown annotation: " + annotation + " for path: " + path;
+        }
+    }
 }
 

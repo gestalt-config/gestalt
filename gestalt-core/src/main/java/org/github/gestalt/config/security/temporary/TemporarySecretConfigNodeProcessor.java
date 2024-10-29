@@ -1,6 +1,7 @@
 package org.github.gestalt.config.security.temporary;
 
 import org.github.gestalt.config.annotations.ConfigPriority;
+import org.github.gestalt.config.metadata.IsTemporaryMetadata;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
@@ -11,6 +12,7 @@ import org.github.gestalt.config.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Checks if the node is a leaf and a temporary secret. if it is, replaces the leaf node with a TemporaryLeafNode that can only be accessed
@@ -49,12 +51,29 @@ public class TemporarySecretConfigNodeProcessor implements ConfigNodeProcessor {
             .filter(it -> it.getFirst().isSecret(path))
             .findFirst();
 
+        var metadata = currentNode.getMetadata();
+
         // if this is not a temporary secret node, return the original node.
-        if (isTemporarySecret.isEmpty()) {
+        if (isTemporarySecret.isEmpty() && !metadata.containsKey(IsTemporaryMetadata.TEMPORARY)) {
             return GResultOf.result(currentNode);
         }
 
-        Integer accessCount = isTemporarySecret.get().getSecond();
+        // get the largest access count from either registered temporary secrets, or metadata.
+        Integer accessCount = 0;
+        if (isTemporarySecret.isPresent() ) {
+            accessCount = isTemporarySecret.get().getSecond();
+        }
+
+        // if this node has metadata, get the maximum metadata, then use the max of the metadata or the registered value.
+        if (metadata.containsKey(IsTemporaryMetadata.TEMPORARY)) {
+            Optional<Integer> optionalAccessCount = metadata.get(IsTemporaryMetadata.TEMPORARY).stream()
+                .map(it -> (Integer) it.getMetadata())
+                .max(Integer::compareTo);
+
+            if(optionalAccessCount.isPresent()) {
+                accessCount = Math.max(accessCount, optionalAccessCount.get());
+            }
+        }
 
         return GResultOf.result(new TemporaryLeafNode((LeafNode) currentNode, accessCount));
     }

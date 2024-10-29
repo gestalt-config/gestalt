@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class IsNoCacheMetadata extends MetaDataValue<Boolean> {
-    public static String NO_CACHE_METADATA = "noCacheMetadata";
+    public static String NO_CACHE = "noCache";
 
     public IsNoCacheMetadata(Boolean value) {
         super(value);
@@ -13,7 +13,7 @@ public class IsNoCacheMetadata extends MetaDataValue<Boolean> {
 
     @Override
     public String keyValue() {
-        return NO_CACHE_METADATA;
+        return NO_CACHE;
     }
 
     @Override
@@ -22,10 +22,10 @@ public class IsNoCacheMetadata extends MetaDataValue<Boolean> {
         // if the metadata doesnt already have the noCacheMetadata or the current noCacheMetadata is false
         // then we can update the metadata, by copying and updating with a new value.
         // We want to rollup the true up, but override a false.
-        if (value && (!metadata.containsKey(NO_CACHE_METADATA) || metadata.get(NO_CACHE_METADATA).stream()
+        if (value && (!metadata.containsKey(NO_CACHE) || metadata.get(NO_CACHE).stream()
             .noneMatch(it -> (boolean) it.getMetadata()))) {
             Map<String, List<MetaDataValue<?>>> newMetadata = new HashMap<>(metadata);
-            newMetadata.put(NO_CACHE_METADATA, List.of(new IsNoCacheMetadata(true)));
+            newMetadata.put(NO_CACHE, List.of(new IsNoCacheMetadata(true)));
             return newMetadata;
         }
 

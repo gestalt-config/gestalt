@@ -1,6 +1,8 @@
 package org.github.gestalt.config.security.encrypted;
 
 import org.github.gestalt.config.entity.GestaltConfig;
+import org.github.gestalt.config.metadata.IsEncryptedMetadata;
+import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.MapNode;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,6 +42,22 @@ class EncryptedSecretConfigNodeProcessorTest {
 
         processor.applyConfig(configMock);
         var result = processor.process("secret", new LeafNode("test"));
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Assertions.assertInstanceOf(EncryptedLeafNode.class, result.results());
+        Assertions.assertEquals("test", result.results().getValue().get());
+    }
+
+    @Test
+    void testApplyConfigWithMetadata() {
+        when(configMock.getConfig()).thenReturn(gestaltConfigMock);
+        when(gestaltConfigMock.getModuleConfig(EncryptedSecretModule.class)).thenReturn(encryptedSecretModule);
+
+        processor.applyConfig(configMock);
+        var result = processor.process("my.data",
+            new LeafNode("test", Map.of(IsEncryptedMetadata.ENCRYPTED, List.of(new IsEncryptedMetadata(true)))));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
@@ -77,6 +97,38 @@ class EncryptedSecretConfigNodeProcessorTest {
 
         processor.applyConfig(configMock);
         var result = processor.process("my.data", new LeafNode("test"));
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Assertions.assertInstanceOf(LeafNode.class, result.results());
+        Assertions.assertEquals("test", result.results().getValue().get());
+    }
+
+    @Test
+    void testProcessLeafNodeWithoutSecretOrMetadata() {
+        when(configMock.getConfig()).thenReturn(gestaltConfigMock);
+        when(gestaltConfigMock.getModuleConfig(EncryptedSecretModule.class)).thenReturn(encryptedSecretModule);
+
+        processor.applyConfig(configMock);
+        var result = processor.process("my.data",
+            new LeafNode("test", Map.of(IsSecretMetadata.SECRET, List.of(new IsSecretMetadata(true)))));
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+
+        Assertions.assertInstanceOf(LeafNode.class, result.results());
+        Assertions.assertEquals("test", result.results().getValue().get());
+    }
+
+    @Test
+    void testProcessLeafNodeWithoutSecretOrMetadataFalse() {
+        when(configMock.getConfig()).thenReturn(gestaltConfigMock);
+        when(gestaltConfigMock.getModuleConfig(EncryptedSecretModule.class)).thenReturn(encryptedSecretModule);
+
+        processor.applyConfig(configMock);
+        var result = processor.process("my.data",
+            new LeafNode("test", Map.of(IsEncryptedMetadata.ENCRYPTED, List.of(new IsEncryptedMetadata(false)))));
 
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());

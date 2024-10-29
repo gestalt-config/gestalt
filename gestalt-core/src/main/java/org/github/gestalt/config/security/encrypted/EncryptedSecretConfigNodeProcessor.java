@@ -2,6 +2,7 @@ package org.github.gestalt.config.security.encrypted;
 
 import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.metadata.IsEncryptedMetadata;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
@@ -80,9 +81,11 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
         }
 
         // if this is not a temporary secret node, return the original node.
-        if (!encryptedSecret.isSecret(path)) {
+        if (!encryptedSecret.isSecret(path) && (!currentNode.getMetadata().containsKey(IsEncryptedMetadata.ENCRYPTED) || //NOPMD
+            currentNode.getMetadata().get(IsEncryptedMetadata.ENCRYPTED).stream().noneMatch(it -> (boolean) it.getMetadata()))) {
             return GResultOf.result(currentNode);
         }
+
         Optional<String> optionalLeafNodeValue = currentNode.getValue();
 
         // if the leaf node doesn't have a value, we don't need to encrypt it.

@@ -1,15 +1,16 @@
 package org.github.gestalt.config.processor.config.annotation;
 
+import org.github.gestalt.config.metadata.IsNoCacheMetadata;
 import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.metadata.MetaDataValue;
 
 import java.util.List;
 import java.util.Map;
 
-public class SecretAnnotationMetadataTransform implements AnnotationMetadataTransform {
+public class NoCacheAnnotationMetadataTransform implements AnnotationMetadataTransform {
     @Override
     public String name() {
-        return "secret";
+        return "nocache";
     }
 
     @Override
@@ -19,6 +20,6 @@ public class SecretAnnotationMetadataTransform implements AnnotationMetadataTran
             value = Boolean.parseBoolean(parameter);
         }
 
-        return Map.of(IsSecretMetadata.SECRET, List.of(new IsSecretMetadata(value)));
+        return Map.of(IsNoCacheMetadata.NO_CACHE, List.of(new IsNoCacheMetadata(value)));
     }
 }

@@ -96,7 +96,7 @@ class SecretConcealerManagerTest {
         String path = "path.to.data";
         String value = "this is a secret value";
         assertEquals("***", secretConcealer.concealSecret(path, value,
-            Map.of(IsSecretMetadata.IS_SECRET_METADATA, List.of(new IsSecretMetadata(true)))));
+            Map.of(IsSecretMetadata.SECRET, List.of(new IsSecretMetadata(true)))));
     }
 
     @Test
@@ -104,7 +104,7 @@ class SecretConcealerManagerTest {
         String path = "path.to.data";
         String value = "this is a secret value";
         assertEquals("this is a secret value", secretConcealer.concealSecret(path, value,
-            Map.of(IsSecretMetadata.IS_SECRET_METADATA, List.of(new IsSecretMetadata(false)))));
+            Map.of(IsSecretMetadata.SECRET, List.of(new IsSecretMetadata(false)))));
     }
 
     @Test
@@ -112,6 +112,6 @@ class SecretConcealerManagerTest {
         String path = "path.to.data";
         String value = "this is a secret value";
         assertEquals("***", secretConcealer.concealSecret(path, value,
-            Map.of(IsSecretMetadata.IS_SECRET_METADATA, List.of(new IsSecretMetadata(false), new IsSecretMetadata(true)))));
+            Map.of(IsSecretMetadata.SECRET, List.of(new IsSecretMetadata(false), new IsSecretMetadata(true)))));
     }
 }

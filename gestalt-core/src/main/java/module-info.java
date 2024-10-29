@@ -118,6 +118,7 @@ module org.github.gestalt.core {
         org.github.gestalt.config.node.factory.UrlConfigNodeFactory;
 
     provides org.github.gestalt.config.processor.config.annotation.AnnotationMetadataTransform with
+        org.github.gestalt.config.processor.config.annotation.NoCacheAnnotationMetadataTransform,
         org.github.gestalt.config.processor.config.annotation.SecretAnnotationMetadataTransform;
 }
 

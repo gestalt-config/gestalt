@@ -3,16 +3,16 @@ package org.github.gestalt.config.metadata;
 import java.util.List;
 import java.util.Map;
 
-public class IsSecretMetadata extends MetaDataValue<Boolean> {
-    public static String SECRET = "secret";
+public class IsEncryptedMetadata extends MetaDataValue<Boolean> {
+    public static String ENCRYPTED = "encrypted";
 
-    public IsSecretMetadata(Boolean value) {
+    public IsEncryptedMetadata(Boolean value) {
         super(value);
     }
 
     @Override
     public String keyValue() {
-        return SECRET;
+        return ENCRYPTED;
     }
 
     // We do not want to rollup the IsSecretMetadata to the calling metadata
@@ -20,7 +20,4 @@ public class IsSecretMetadata extends MetaDataValue<Boolean> {
     public Map<String, List<MetaDataValue<?>>> rollup(Map<String, List<MetaDataValue<?>>> metadata) {
         return metadata;
     }
-
-
-
 }

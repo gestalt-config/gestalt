@@ -45,8 +45,8 @@ public class SecretConcealerManager implements SecretConcealer {
     @Override
     public String concealSecret(String path, String value, Map<String, List<MetaDataValue<?>>> metadata) {
         if (secretChecker.isSecret(path) ||
-            (metadata.containsKey(IsSecretMetadata.IS_SECRET_METADATA) &&  //NOPMD
-                metadata.get(IsSecretMetadata.IS_SECRET_METADATA).stream().anyMatch(it -> (boolean) it.getMetadata()))) {
+            (metadata.containsKey(IsSecretMetadata.SECRET) &&  //NOPMD
+                metadata.get(IsSecretMetadata.SECRET).stream().anyMatch(it -> (boolean) it.getMetadata()))) {
 
             return obfuscator.obfuscator(value);
         } else {

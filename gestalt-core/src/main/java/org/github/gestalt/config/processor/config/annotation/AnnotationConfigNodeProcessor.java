@@ -71,44 +71,48 @@ public class AnnotationConfigNodeProcessor implements ConfigNodeProcessor {
         List<ValidationError> errors = new ArrayList<>();
 
         // if there is at least one annotation
-        List<String> annotations = new ArrayList<>();
+        Map<String, List<MetaDataValue<?>>> metadataMap = new HashMap<>();
 
         while (annotationLocation >= 0) {
+            boolean foundAnnotation = false;
             int annotationClosing = leafValue.indexOf(closingToken, annotationLocation);
 
             // if there is a full annotation
             if (annotationClosing > 0) {
-                annotations.add(leafValue.substring(annotationLocation + openingTokenSize, annotationClosing));
-                // remove the found annotation
-                leafValue = leafValue.substring(0, annotationLocation) + leafValue.substring(annotationClosing + closingTokenSize);
-                annotationLocation = leafValue.indexOf(openingToken);
+                String annotation = leafValue.substring(annotationLocation + openingTokenSize, annotationClosing);
+
+                Matcher matcher = pattern.matcher(annotation);
+
+                if (!matcher.find()) {
+                    errors.add(new ValidationError.FailedToExtractAnnotation(annotation, path));
+                } else {
+
+                    String annotationName = matcher.group("annotation");
+                    String parameter = matcher.group("parameter");
+
+                    if (annotationMetadataTransforms.containsKey(annotationName.toLowerCase(Locale.ROOT))) {
+                        var metadata = annotationMetadataTransforms
+                            .get(annotationName.toLowerCase(Locale.ROOT))
+                            .annotationTransform(annotationName, parameter);
+                        metadataMap.putAll(metadata);
+                        // remove the found annotation
+                        leafValue = leafValue.substring(0, annotationLocation) + leafValue.substring(annotationClosing + closingTokenSize);
+                        foundAnnotation = true;
+                    } else {
+                        errors.add(new ValidationError.UnknownAnnotation(path, annotation));
+                    }
+                }
+                if (!foundAnnotation) {
+                    annotationLocation = annotationLocation + openingTokenSize;
+                }
+                // Scan for the next annotation starting from the last one.
+                annotationLocation = leafValue.indexOf(openingToken, annotationLocation);
             } else {
                 errors.add(new ValidationError.NoAnnotationClosingToken(path, leafValue));
                 break;
             }
         }
 
-        Map<String, List<MetaDataValue<?>>> metadataMap = new HashMap<>();
-
-        for (String annotation : annotations) {
-            Matcher matcher = pattern.matcher(annotation);
-
-            if (!matcher.find()) {
-                errors.add(new ValidationError.FailedToExtractAnnotation(annotation, path));
-            } else {
-
-                String annotationName = matcher.group("annotation");
-                String parameter = matcher.group("parameter");
-
-                if (annotationMetadataTransforms.containsKey(annotationName)) {
-                    var metadata = annotationMetadataTransforms
-                        .get(annotationName)
-                        .annotationTransform(parameter, annotationName);
-                    metadataMap.putAll(metadata);
-                }
-            }
-        }
-
-        return GResultOf.resultOf(new LeafNode(leafValue, metadataMap), List.of());
+        return GResultOf.resultOf(new LeafNode(leafValue, metadataMap), errors);
     }
 }
