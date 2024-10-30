@@ -136,6 +136,18 @@ public interface Gestalt {
     <T> T getConfig(String path, T defaultVal, TypeCapture<T> klass, Tags tags);
 
     /**
+     * Get a config for a path and a given TypeCapture.
+     *
+     * @param path       path to get the config for. The path is not case sensitive.
+     * @param defaultVal the default value to return if the config is invalid.
+     * @param klass      TypeCapture to get the class for.
+     * @param tags       the tags to match while searching for configs
+     * @param <T>        type of class to get.
+     * @return the configuration.
+     */
+    <T> GResultOf<T> getConfigResult(String path, T defaultVal, TypeCapture<T> klass, Tags tags);
+
+    /**
      * Get a config Optional for a path and a given class. If there are any exceptions or errors it will return an Optional.empty()
      *
      * @param path  path to get the config for. The path is not case sensitive.

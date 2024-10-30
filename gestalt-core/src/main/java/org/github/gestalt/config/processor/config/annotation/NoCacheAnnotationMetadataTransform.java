@@ -1,7 +1,6 @@
 package org.github.gestalt.config.processor.config.annotation;
 
 import org.github.gestalt.config.metadata.IsNoCacheMetadata;
-import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.metadata.MetaDataValue;
 
 import java.util.List;

@@ -17,7 +17,7 @@ public final class AnnotationNamedValue {
 
     public static String getNamedValue(Annotation namedAnnotation) {
         try {
-            Method valueMethod =  namedAnnotation.annotationType().getMethod("value");
+            Method valueMethod = namedAnnotation.annotationType().getMethod("value");
             return (String) valueMethod.invoke(namedAnnotation);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             return "";

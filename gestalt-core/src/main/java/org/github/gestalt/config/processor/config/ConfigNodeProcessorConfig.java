@@ -3,8 +3,8 @@ package org.github.gestalt.config.processor.config;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNodeService;
-import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.node.factory.ConfigNodeFactoryService;
+import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 /**
  * Holds the configuration that is provided to the config node processors.
@@ -21,10 +21,10 @@ public final class ConfigNodeProcessorConfig {
     /**
      * Constructor for the config node processor config.
      *
-     * @param config                     Gestalt Config
-     * @param configNodeService          Config node service
-     * @param lexer                      Lexer to parse paths
-     * @param secretConcealer            utility to conceal secrets
+     * @param config                   Gestalt Config
+     * @param configNodeService        Config node service
+     * @param lexer                    Lexer to parse paths
+     * @param secretConcealer          utility to conceal secrets
      * @param configNodeFactoryService the configSourceFactoryService
      */
     public ConfigNodeProcessorConfig(GestaltConfig config, ConfigNodeService configNodeService, SentenceLexer lexer,

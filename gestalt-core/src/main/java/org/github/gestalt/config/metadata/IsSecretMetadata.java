@@ -22,5 +22,4 @@ public class IsSecretMetadata extends MetaDataValue<Boolean> {
     }
 
 
-
 }

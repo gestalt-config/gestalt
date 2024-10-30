@@ -7,7 +7,8 @@ package org.github.gestalt.config.utils;
  */
 public final class StringUtils {
 
-    private StringUtils() { }
+    private StringUtils() {
+    }
 
     /**
      * Returns true if a string is an integer.

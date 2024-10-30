@@ -17,7 +17,7 @@ public interface AnnotationMetadataTransform {
     /**
      * Takes in the name of the annotation along with any parameters then returns a MetaDataValue.
      *
-     * @param name name of the annotation
+     * @param name      name of the annotation
      * @param parameter parameters for the annotation
      * @return a annotation converted into a MetaDataValue
      */

@@ -18,14 +18,13 @@ import java.util.Optional;
  * Checks if the node is a leaf and a temporary secret. if it is, replaces the leaf node with a TemporaryLeafNode that can only be accessed
  * a limited number of times. After the limited number of times, the value is released to be GC'ed.
  *
- *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 @ConfigPriority(500)
 public class TemporarySecretConfigNodeProcessor implements ConfigNodeProcessor {
 
-    private final List<Pair<SecretChecker, Integer>> secretCounts = new ArrayList<>();
-
     private static final System.Logger logger = System.getLogger(TemporarySecretConfigNodeProcessor.class.getName());
+    private final List<Pair<SecretChecker, Integer>> secretCounts = new ArrayList<>();
 
     @Override
     public void applyConfig(ConfigNodeProcessorConfig config) {
@@ -60,7 +59,7 @@ public class TemporarySecretConfigNodeProcessor implements ConfigNodeProcessor {
 
         // get the largest access count from either registered temporary secrets, or metadata.
         Integer accessCount = 0;
-        if (isTemporarySecret.isPresent() ) {
+        if (isTemporarySecret.isPresent()) {
             accessCount = isTemporarySecret.get().getSecond();
         }
 
@@ -70,7 +69,7 @@ public class TemporarySecretConfigNodeProcessor implements ConfigNodeProcessor {
                 .map(it -> (Integer) it.getMetadata())
                 .max(Integer::compareTo);
 
-            if(optionalAccessCount.isPresent()) {
+            if (optionalAccessCount.isPresent()) {
                 accessCount = Math.max(accessCount, optionalAccessCount.get());
             }
         }

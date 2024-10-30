@@ -20,7 +20,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testAnnotationSingle() {
         LeafNode node = new LeafNode("hello@{test}");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -35,7 +36,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testAnnotationSingleBefore() {
         LeafNode node = new LeafNode("@{test}hello");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -50,7 +52,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testAnnotationSingleMiddle() {
         LeafNode node = new LeafNode("hel@{test}lo");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -65,7 +68,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testAnnotationSingleParameter() {
         LeafNode node = new LeafNode("hello@{test:true}");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -80,7 +84,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testAnnotationSingleParameterFalse() {
         LeafNode node = new LeafNode("hello@{test:false}");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -95,7 +100,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testNoAnnotation() {
         LeafNode node = new LeafNode("hello");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -109,7 +115,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testAnnotationErrorNoClosingTag() {
         LeafNode node = new LeafNode("hello@{test");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -130,7 +137,8 @@ class AnnotationConfigNodeProcessorTest {
         LeafNode node = new LeafNode("hello");
         ArrayNode arrayNode = new ArrayNode(List.of(node));
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", arrayNode);
         Assertions.assertTrue(result.hasResults());
@@ -145,7 +153,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testLeafEmptyNode() {
         LeafNode node = new LeafNode("");
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -159,7 +168,8 @@ class AnnotationConfigNodeProcessorTest {
     public void testLeafNullNode() {
         LeafNode node = new LeafNode(null);
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         var result = annotationConfigNodeProcessor.process("my.data", node);
         Assertions.assertTrue(result.hasResults());
@@ -175,9 +185,11 @@ class AnnotationConfigNodeProcessorTest {
         gestaltConfig.setAnnotationOpeningToken("^[");
         gestaltConfig.setAnnotationClosingToken("]");
 
-        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
+        ConfigNodeProcessorConfig configNodeProcessorConfig =
+            new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         annotationConfigNodeProcessor.applyConfig(configNodeProcessorConfig);
 
@@ -204,9 +216,11 @@ class AnnotationConfigNodeProcessorTest {
         GestaltConfig gestaltConfig = new GestaltConfig();
         gestaltConfig.setAnnotationRegex("testtest");
 
-        ConfigNodeProcessorConfig configNodeProcessorConfig = new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
+        ConfigNodeProcessorConfig configNodeProcessorConfig =
+            new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
 
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         annotationConfigNodeProcessor.applyConfig(configNodeProcessorConfig);
 
@@ -227,7 +241,8 @@ class AnnotationConfigNodeProcessorTest {
 
     @Test
     public void testUnknownToken() {
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         LeafNode node = new LeafNode("hello@{abcdef}");
         var result = annotationConfigNodeProcessor.process("my.data", node);
@@ -246,7 +261,8 @@ class AnnotationConfigNodeProcessorTest {
 
     @Test
     public void testGoodFollowedByUnknownToken() {
-        AnnotationConfigNodeProcessor annotationConfigNodeProcessor = new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
 
         LeafNode node = new LeafNode("hello@{test}@{abcdef}");
         var result = annotationConfigNodeProcessor.process("my.data", node);

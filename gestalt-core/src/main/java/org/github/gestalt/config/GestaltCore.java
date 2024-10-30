@@ -367,6 +367,15 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return getConfigCommon(path, defaultVal, klass, tags).results();
     }
 
+    @Override
+    public <T> GResultOf<T> getConfigResult(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
+        return getConfigCommon(path, defaultVal, klass, tags);
+    }
+
     private <T> GResultOf<T> getConfigCommon(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
         try {
             Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);

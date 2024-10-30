@@ -4,6 +4,8 @@ import org.github.gestalt.config.decoder.DecoderContext;
 import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.metadata.IsNoCacheMetadata;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.TagMergingStrategy;
 import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -34,11 +36,11 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     /**
      * Constructor for the GestaltCache that accepts a delegate.
      *
-     * @param delegate           real Gestalt to call for configs to cache.
-     * @param defaultTags        Default set of tags to apply to all calls to get a configuration where tags are not provided.
-     * @param observationService Observations service for submitting Observations
-     * @param gestaltConfig      Gestalt Configuration
-     * @param tagMergingStrategy The strategy to merge tags
+     * @param delegate            real Gestalt to call for configs to cache.
+     * @param defaultTags         Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     * @param observationService  Observations service for submitting Observations
+     * @param gestaltConfig       Gestalt Configuration
+     * @param tagMergingStrategy  The strategy to merge tags
      * @param nonCacheableSecrets secrets that we should not be caching.
      */
     public GestaltCache(Gestalt delegate, Tags defaultTags, ObservationService observationService, GestaltConfig gestaltConfig,
@@ -108,7 +110,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
 
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
-        if (cache.get(key) != null) {
+        if (cache.get(key) != null && cache.get(key).hasResults()) {
             if (gestaltConfig.isObservationsEnabled() && observationService != null) {
                 observationService.recordObservation("cache.hit", 1, Tags.of());
             }
@@ -122,7 +124,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
 
     @SuppressWarnings("unchecked")
     private <T> void updateCache(String path, Triple<String, TypeCapture<?>, Tags> key, GResultOf<T> result) {
-        if (shouldCacheValue(path)) {
+        if (shouldCacheValue(path, result != null ? result.getMetadata() : Map.of())) {
             cache.put(key, (GResultOf<Object>) result);
         }
     }
@@ -144,6 +146,15 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
         return getConfigInternal(path, defaultVal, typeCapture, tags).results();
+    }
+
+    @Override
+    public <T> GResultOf<T> getConfigResult(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
+        return getConfigInternal(path, defaultVal, klass, tags);
     }
 
 
@@ -171,8 +182,8 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
         if (cache.containsKey(key)) {
             GResultOf<T> result = (GResultOf<T>) cache.get(key);
-            if (result == null) {
-                result = GResultOf.result(defaultVal);
+            if (result == null || !result.hasResults()) {
+                result = GResultOf.result(defaultVal, true);
             }
 
             if (gestaltConfig.isObservationsEnabled() && observationService != null) {
@@ -182,11 +193,12 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
             return result;
 
         } else {
-            Optional<GResultOf<T>> resultOptional = delegate.getConfigOptionalResult(path, klass, resolvedTags);
-            GResultOf<T> result = resultOptional.orElse(null);
-            updateCache(path, key, result);
-            if (result != null) {
-                return result;
+            Optional<GResultOf<T>> result = delegate.getConfigOptionalResult(path, klass, resolvedTags);
+
+            updateCache(path, key, result.orElse(null));
+
+            if (result.isPresent() && result.get().hasResults()) {
+                return result.get();
             } else {
                 return GResultOf.result(defaultVal);
             }
@@ -258,8 +270,15 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         }
     }
 
-    private boolean shouldCacheValue(String path) {
-        return nonCacheableSecrets.stream().noneMatch(it -> it.isSecret(path));
+    private boolean shouldCacheValue(String path, Map<String, List<MetaDataValue<?>>> metadata) {
+        boolean notIsSecret = nonCacheableSecrets.stream().noneMatch(it -> it.isSecret(path));
+        boolean noCacheMetadata = metadata.containsKey(IsNoCacheMetadata.NO_CACHE) &&
+            metadata.get(IsNoCacheMetadata.NO_CACHE).stream()
+            .map(it -> it instanceof IsNoCacheMetadata && ((IsNoCacheMetadata) it).getMetadata())
+            .filter(it -> it)
+            .findFirst().orElse(false);
+
+        return notIsSecret && !noCacheMetadata;
     }
 
     @Override

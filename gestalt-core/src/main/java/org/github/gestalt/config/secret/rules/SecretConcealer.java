@@ -15,8 +15,8 @@ public interface SecretConcealer {
     /**
      * returns the value that is concealed if it is a secret. Otherwise, returns the value.
      *
-     * @param path path of the value
-     * @param value value we are checking if we need to conceal.
+     * @param path     path of the value
+     * @param value    value we are checking if we need to conceal.
      * @param metadata metadata used to decide if this is a secret.
      * @return the value that is concealed if it is a secret.
      */

@@ -3,12 +3,7 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.observations.TestObservationRecorder;
-import org.github.gestalt.config.processor.TestResultProcessor;
-import org.github.gestalt.config.processor.TestValidationProcessor;
-import org.github.gestalt.config.processor.result.ResultProcessor;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
-import org.github.gestalt.config.tag.Tags;
-import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,7 +11,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +66,7 @@ public class GestaltAnnotationProcessorTest {
 
         Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
         Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
-        Assertions.assertEquals(2, metricsRecorder.metrics.get("test"));
+        // there should be no cache hits.
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
     }
 }

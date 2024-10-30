@@ -1,7 +1,7 @@
 package org.github.gestalt.config.node;
 
-import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
 import java.util.*;

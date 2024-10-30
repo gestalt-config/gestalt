@@ -4,7 +4,10 @@ import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.metadata.MetaDataValue;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -42,9 +45,9 @@ public final class GResultOf<T> {
     /**
      * Create a GResultOf with a valid result.
      *
-     * @param answer valid results
+     * @param answer    valid results
      * @param isDefault if this is a default value
-     * @param <T>    type of GResultOf
+     * @param <T>       type of GResultOf
      * @return GResultOf
      */
     public static <T> GResultOf<T> result(T answer, boolean isDefault) {
@@ -100,10 +103,10 @@ public final class GResultOf<T> {
     /**
      * Create a GResultOf with a results and an error.
      *
-     * @param answer valid results
-     * @param errors list of ValidationError
+     * @param answer   valid results
+     * @param errors   list of ValidationError
      * @param metadata metadata associated with the result
-     * @param <T>    type of GResultOf
+     * @param <T>      type of GResultOf
      * @return GResultOf
      */
     public static <T> GResultOf<T> resultOf(T answer, List<ValidationError> errors, Map<String, List<MetaDataValue<?>>> metadata) {
@@ -113,11 +116,11 @@ public final class GResultOf<T> {
     /**
      * Create a GResultOf with a results and an error.
      *
-     * @param answer valid results
-     * @param errors list of ValidationError
+     * @param answer    valid results
+     * @param errors    list of ValidationError
      * @param isDefault if this is a default result.
-     * @param metadata metadata associated with the result.
-     * @param <T>    type of GResultOf
+     * @param metadata  metadata associated with the result.
+     * @param <T>       type of GResultOf
      * @return GResultOf
      */
     public static <T> GResultOf<T> resultOf(T answer, List<ValidationError> errors, boolean isDefault,
@@ -274,7 +277,6 @@ public final class GResultOf<T> {
      * Check if the metadata has a value for a key.
      *
      * @param key key to check in the metadata.
-     *
      * @return if the metadata has a value for a key
      */
     public boolean hasMetadata(String key) {

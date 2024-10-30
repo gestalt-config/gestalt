@@ -3,7 +3,8 @@ package org.github.gestalt.config.security.encrypted;
 import org.github.gestalt.config.secret.rules.RegexSecretChecker;
 import org.github.gestalt.config.secret.rules.SecretChecker;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Build a module to manage temporary node access rules. If a path matches the regex, it will be limited to the number of access counts.

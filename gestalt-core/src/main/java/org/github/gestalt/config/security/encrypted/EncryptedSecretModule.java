@@ -2,6 +2,7 @@ package org.github.gestalt.config.security.encrypted;
 
 import org.github.gestalt.config.entity.GestaltModuleConfig;
 import org.github.gestalt.config.secret.rules.SecretChecker;
+
 import java.util.Set;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Set;
  * Eventually the secret node should be garbage collected. but while waiting for GC it may still be found in memory.
  * These values will not be cached in the Gestalt Cache and should not be cached by the caller
  *
- *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
 public class EncryptedSecretModule implements GestaltModuleConfig {
 

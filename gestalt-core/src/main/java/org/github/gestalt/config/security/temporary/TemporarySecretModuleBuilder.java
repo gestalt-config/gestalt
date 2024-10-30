@@ -98,7 +98,7 @@ public final class TemporarySecretModuleBuilder {
      * These values will not be cached in the Gestalt Cache and should not be cached by the caller
      *
      * @param secretChecker the secretChecker used to identify the secret, this is the path of the secret.
-     * @param count the number of times the secret matching the regex can be accessed
+     * @param count         the number of times the secret matching the regex can be accessed
      * @return the builder
      */
     public TemporarySecretModuleBuilder addSecretWithCount(SecretChecker secretChecker, Integer count) {
