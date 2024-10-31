@@ -105,6 +105,7 @@ class GestaltBuilderTest {
             .setAnnotationOpeningToken("@{")
             .setAnnotationClosingToken("}")
             .setAnnotationRegex("^(?<annotation>\\w+):?(?<key>.+?)?$")
+            .setAnnotationTrimWhiteSpace(true)
             .setMaxSubstitutionNestedDepth(5)
             .setSubstitutionRegex("")
             .setGestaltConfig(new GestaltConfig())

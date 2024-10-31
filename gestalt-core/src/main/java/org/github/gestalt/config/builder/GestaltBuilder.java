@@ -140,7 +140,11 @@ public class GestaltBuilder {
     // Token that represents the closing of a string substitution.
     private String annotationClosingToken = null;
 
+    // regex used to extract the annotation
     private String annotationRegex = null;
+
+    // trim the white space before and after an annotation.
+    private Boolean annotationTrimWhiteSpace = null;
 
     // the maximum nested substitution depth.
     private Integer maxSubstitutionNestedDepth = null;
@@ -1277,6 +1281,17 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set if we trim the white space before and after an annotation.
+     *
+     * @param annotationTrimWhiteSpace trim the white space before and after an annotation.
+     * @return the builder
+     */
+    public GestaltBuilder setAnnotationTrimWhiteSpace(Boolean annotationTrimWhiteSpace) {
+        this.annotationTrimWhiteSpace = annotationTrimWhiteSpace;
+        return this;
+    }
+
+    /**
      * Get the maximum string substitution nested depth.
      * If you have nested or recursive substitutions that go deeper than this it will fail.
      *
@@ -1733,6 +1748,9 @@ public class GestaltBuilder {
 
         newConfig.setAnnotationClosingToken(Objects.requireNonNullElseGet(annotationClosingToken,
             () -> gestaltConfig.getAnnotationClosingToken()));
+
+        newConfig.setAnnotationTrimWhiteSpace(Objects.requireNonNullElseGet(annotationTrimWhiteSpace,
+            () -> gestaltConfig.getAnnotationTrimWhiteSpace()));
 
         newConfig.setAnnotationRegex(Objects.requireNonNullElseGet(annotationRegex,
             () -> gestaltConfig.getAnnotationRegex()));

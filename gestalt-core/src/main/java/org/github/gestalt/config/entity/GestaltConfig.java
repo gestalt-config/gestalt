@@ -45,6 +45,8 @@ public class GestaltConfig {
     private String annotationOpeningToken = "@{";
     // Token that represents the closing of an annotation.
     private String annotationClosingToken = "}";
+    // trim the white space before and after an annotation.
+    private Boolean annotationTrimWhiteSpace = true;
     // the regex used to parse annotations.
     // Must have a named capture group annotation, and parameter, where the annotation is required and the parameter is optional.
     private String annotationRegex = AnnotationConfigNodeProcessor.DEFAULT_ANNOTATION_REGEX;
@@ -324,6 +326,24 @@ public class GestaltConfig {
      */
     public void setAnnotationClosingToken(String annotationClosingToken) {
         this.annotationClosingToken = annotationClosingToken;
+    }
+
+    /**
+     * trim the white space before and after an annotation.
+     *
+     * @return trim the white space before and after an annotation.
+     */
+    public Boolean getAnnotationTrimWhiteSpace() {
+        return annotationTrimWhiteSpace;
+    }
+
+    /**
+     * Set if we trim the white space before and after an annotation.
+     *
+     * @param annotationTrimWhiteSpace trim the white space before and after an annotation.
+     */
+    public void setAnnotationTrimWhiteSpace(Boolean annotationTrimWhiteSpace) {
+        this.annotationTrimWhiteSpace = annotationTrimWhiteSpace;
     }
 
     /**

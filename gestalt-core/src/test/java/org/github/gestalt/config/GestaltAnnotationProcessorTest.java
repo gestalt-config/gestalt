@@ -72,6 +72,58 @@ public class GestaltAnnotationProcessorTest {
     }
 
     @Test
+    public void testNoCacheAnnotationTrim() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql @{noCache} .com");
+
+        var metricsRecorder = new TestObservationRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .setAnnotationTrimWhiteSpace(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals("my.sql.com", gestalt.getConfig("db", DBInfo.class).getUri());
+        // there should be no cache hits.
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+    }
+
+    @Test
+    public void testNoCacheAnnotationNoTrim() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql @{noCache} .com");
+
+        var metricsRecorder = new TestObservationRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .setAnnotationTrimWhiteSpace(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        Assertions.assertEquals("my.sql  .com", gestalt.getConfig("db", DBInfo.class).getUri());
+        Assertions.assertEquals("my.sql  .com", gestalt.getConfig("db", DBInfo.class).getUri());
+        // there should be no cache hits.
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+    }
+
+    @Test
     public void testNoCacheAnnotationObjectViaObservability() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();

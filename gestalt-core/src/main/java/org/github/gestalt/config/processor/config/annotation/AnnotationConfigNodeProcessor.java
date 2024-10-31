@@ -31,6 +31,7 @@ public class AnnotationConfigNodeProcessor implements ConfigNodeProcessor {
     private int openingTokenSize = openingToken.length();
     private int closingTokenSize = closingToken.length();
     private Pattern pattern = Pattern.compile(DEFAULT_ANNOTATION_REGEX);
+    private boolean annotationTrimWhiteSpace = true;
 
     public AnnotationConfigNodeProcessor() {
         ServiceLoader<AnnotationMetadataTransform> loader = ServiceLoader.load(AnnotationMetadataTransform.class);
@@ -51,6 +52,8 @@ public class AnnotationConfigNodeProcessor implements ConfigNodeProcessor {
         this.closingTokenSize = closingToken.length();
 
         this.pattern = Pattern.compile(config.getConfig().getAnnotationRegex());
+
+        this.annotationTrimWhiteSpace = config.getConfig().getAnnotationTrimWhiteSpace();
     }
 
     @Override
@@ -98,7 +101,13 @@ public class AnnotationConfigNodeProcessor implements ConfigNodeProcessor {
                         errors.addAll(metadata.getErrors());
                         metadataMap.putAll(metadata.results());
                         // remove the found annotation
-                        leafValue = leafValue.substring(0, annotationLocation) + leafValue.substring(annotationClosing + closingTokenSize);
+                        if (annotationTrimWhiteSpace) {
+                            leafValue = leafValue.substring(0, annotationLocation).stripTrailing() +
+                                leafValue.substring(annotationClosing + closingTokenSize).stripLeading();
+                        } else {
+                            leafValue = leafValue.substring(0, annotationLocation) +
+                                leafValue.substring(annotationClosing + closingTokenSize);
+                        }
                         foundAnnotation = true;
                     } else {
                         errors.add(new ValidationError.UnknownAnnotation(path, annotation));

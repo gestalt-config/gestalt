@@ -66,6 +66,46 @@ class AnnotationConfigNodeProcessorTest {
     }
 
     @Test
+    public void testAnnotationSingleMiddleWhitespace() {
+        LeafNode node = new LeafNode("hel @{test} lo");
+
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+
+        var result = annotationConfigNodeProcessor.process("my.data", node);
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals("hello", result.results().getValue().get());
+
+        Assertions.assertTrue(result.results().getMetadata().containsKey(IsNoCacheMetadata.NO_CACHE));
+        Assertions.assertTrue((boolean) result.results().getMetadata().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
+    }
+
+    @Test
+    public void testAnnotationSingleMiddleDontTrimWhitespace() {
+        LeafNode node = new LeafNode("hel @{test}  lo");
+
+        GestaltConfig gestaltConfig = new GestaltConfig();
+        gestaltConfig.setAnnotationTrimWhiteSpace(false);
+
+        ConfigNodeProcessorConfig configNodeProcessorConfig =
+            new ConfigNodeProcessorConfig(gestaltConfig, null, null, null, null);
+
+        AnnotationConfigNodeProcessor annotationConfigNodeProcessor =
+            new AnnotationConfigNodeProcessor(List.of(new TestAnnotationMetadataTransform()));
+
+        annotationConfigNodeProcessor.applyConfig(configNodeProcessorConfig);
+
+        var result = annotationConfigNodeProcessor.process("my.data", node);
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals("hel   lo", result.results().getValue().get());
+
+        Assertions.assertTrue(result.results().getMetadata().containsKey(IsNoCacheMetadata.NO_CACHE));
+        Assertions.assertTrue((boolean) result.results().getMetadata().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
+    }
+
+    @Test
     public void testAnnotationSingleParameter() {
         LeafNode node = new LeafNode("hello@{test:true}");
 
