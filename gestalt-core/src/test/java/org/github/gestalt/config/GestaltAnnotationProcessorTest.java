@@ -4,6 +4,7 @@ import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
+import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -68,5 +69,87 @@ public class GestaltAnnotationProcessorTest {
         Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
         // there should be no cache hits.
         Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+    }
+
+    @Test
+    public void testNoCacheAnnotationObjectViaObservability() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123@{noCache}");
+        configs.put("db.uri", "my.sql.com");
+
+        var metricsRecorder = new TestObservationRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfo.class).getPort());
+        // there should be no cache hits.
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+    }
+
+    @Test
+    public void testTempAnnotationObjectViaObservability() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123@{temp:2}");
+        configs.put("db.uri", "my.sql.com");
+
+        var metricsRecorder = new TestObservationRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfo.class).getPort());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.port", Integer.class).isEmpty());
+        // there should be no cache hits.
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+
+        Assertions.assertEquals("tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='*****'}, " +
+            "port=TemporaryLeafNode{value='*****'}, uri=LeafNode{value='my.sql.com'}}}", gestalt.debugPrint());
+    }
+
+    @Test
+    public void testEncryptedAnnotationObjectViaObservability() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123@{encrypt}");
+        configs.put("db.uri", "my.sql.com");
+
+        var metricsRecorder = new TestObservationRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+
+        Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(123, gestalt.getConfig("db", DBInfo.class).getPort());
+        // there should be no cache hits.
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+
+        Assertions.assertEquals("tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='*****'}, " +
+            "port=EncryptedLeafNode{value='*****'}, uri=LeafNode{value='my.sql.com'}}}", gestalt.debugPrint());
     }
 }

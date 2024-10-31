@@ -1,6 +1,7 @@
 package org.github.gestalt.config.processor.config.annotation;
 
 import org.github.gestalt.config.metadata.MetaDataValue;
+import org.github.gestalt.config.utils.GResultOf;
 
 import java.util.List;
 import java.util.Map;
@@ -21,5 +22,5 @@ public interface AnnotationMetadataTransform {
      * @param parameter parameters for the annotation
      * @return a annotation converted into a MetaDataValue
      */
-    Map<String, List<MetaDataValue<?>>> annotationTransform(String name, String parameter);
+    GResultOf<Map<String, List<MetaDataValue<?>>>> annotationTransform(String name, String parameter);
 }

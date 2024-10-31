@@ -94,7 +94,9 @@ public class AnnotationConfigNodeProcessor implements ConfigNodeProcessor {
                         var metadata = annotationMetadataTransforms
                             .get(annotationName.toLowerCase(Locale.ROOT))
                             .annotationTransform(annotationName, parameter);
-                        metadataMap.putAll(metadata);
+
+                        errors.addAll(metadata.getErrors());
+                        metadataMap.putAll(metadata.results());
                         // remove the found annotation
                         leafValue = leafValue.substring(0, annotationLocation) + leafValue.substring(annotationClosing + closingTokenSize);
                         foundAnnotation = true;

@@ -7,6 +7,7 @@ import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ArrayNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -287,12 +288,12 @@ class AnnotationConfigNodeProcessorTest {
         }
 
         @Override
-        public Map<String, List<MetaDataValue<?>>> annotationTransform(String name, String parameter) {
+        public GResultOf<Map<String, List<MetaDataValue<?>>>> annotationTransform(String name, String parameter) {
             boolean value = true;
             if (parameter != null && !parameter.isEmpty()) {
                 value = Boolean.parseBoolean(parameter);
             }
-            return Map.of(IsNoCacheMetadata.NO_CACHE, List.of(new IsNoCacheMetadata(value)));
+            return GResultOf.result(Map.of(IsNoCacheMetadata.NO_CACHE, List.of(new IsNoCacheMetadata(value))));
         }
     }
 }

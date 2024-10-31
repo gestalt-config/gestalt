@@ -18,9 +18,12 @@ class NoCacheAnnotationMetadataTransformTest {
         NoCacheAnnotationMetadataTransform transform = new NoCacheAnnotationMetadataTransform();
         var results = transform.annotationTransform("nocache", "");
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(1, results.get(IsNoCacheMetadata.NO_CACHE).size());
-        Assertions.assertEquals(true, results.get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(1, results.results().get(IsNoCacheMetadata.NO_CACHE).size());
+        Assertions.assertEquals(true, results.results().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
     }
 
     @Test
@@ -28,9 +31,12 @@ class NoCacheAnnotationMetadataTransformTest {
         NoCacheAnnotationMetadataTransform transform = new NoCacheAnnotationMetadataTransform();
         var results = transform.annotationTransform("nocache", "true");
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(1, results.get(IsNoCacheMetadata.NO_CACHE).size());
-        Assertions.assertEquals(true, results.get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(1, results.results().get(IsNoCacheMetadata.NO_CACHE).size());
+        Assertions.assertEquals(true, results.results().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
     }
 
 
@@ -39,8 +45,11 @@ class NoCacheAnnotationMetadataTransformTest {
         NoCacheAnnotationMetadataTransform transform = new NoCacheAnnotationMetadataTransform();
         var results = transform.annotationTransform("nocache", "false");
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(1, results.get(IsNoCacheMetadata.NO_CACHE).size());
-        Assertions.assertEquals(false, results.get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(1, results.results().get(IsNoCacheMetadata.NO_CACHE).size());
+        Assertions.assertEquals(false, results.results().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
     }
 }

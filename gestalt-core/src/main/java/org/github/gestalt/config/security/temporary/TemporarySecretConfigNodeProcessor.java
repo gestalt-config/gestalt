@@ -74,6 +74,6 @@ public class TemporarySecretConfigNodeProcessor implements ConfigNodeProcessor {
             }
         }
 
-        return GResultOf.result(new TemporaryLeafNode((LeafNode) currentNode, accessCount));
+        return GResultOf.result(new TemporaryLeafNode((LeafNode) currentNode, accessCount, metadata));
     }
 }

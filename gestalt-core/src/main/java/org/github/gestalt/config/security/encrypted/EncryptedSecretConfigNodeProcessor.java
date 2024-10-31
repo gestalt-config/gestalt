@@ -80,9 +80,11 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
             return GResultOf.result(currentNode);
         }
 
+        var metadata = currentNode.getMetadata();
+
         // if this is not a temporary secret node, return the original node.
-        if (!encryptedSecret.isSecret(path) && (!currentNode.getMetadata().containsKey(IsEncryptedMetadata.ENCRYPTED) || //NOPMD
-            currentNode.getMetadata().get(IsEncryptedMetadata.ENCRYPTED).stream().noneMatch(it -> (boolean) it.getMetadata()))) {
+        if (!encryptedSecret.isSecret(path) && (!metadata.containsKey(IsEncryptedMetadata.ENCRYPTED) || //NOPMD
+            metadata.get(IsEncryptedMetadata.ENCRYPTED).stream().noneMatch(it -> (boolean) it.getMetadata()))) {
             return GResultOf.result(currentNode);
         }
 
@@ -98,11 +100,10 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
         // We use the encryption cipher to encrypt the data and pass the encrypted data along with the
         // decryption cipher to the leaf.
         try {
-
             var secretKey = generateKey(128);
             var encryptedData = encryptGcm(secretKey, optionalLeafNodeValue.orElse(""));
 
-            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey, currentNode.getMetadata()));
+            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey, metadata));
 
         } catch (NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException |
                  InvalidAlgorithmParameterException | InvalidKeyException | ShortBufferException ex) {

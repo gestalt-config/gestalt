@@ -18,9 +18,12 @@ class SecretAnnotationMetadataTransformTest {
         SecretAnnotationMetadataTransform secretAnnotationMetadataTransform = new SecretAnnotationMetadataTransform();
         var results = secretAnnotationMetadataTransform.annotationTransform("secret", "");
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(1, results.get(IsSecretMetadata.SECRET).size());
-        Assertions.assertEquals(true, results.get(IsSecretMetadata.SECRET).get(0).getMetadata());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(1, results.results().get(IsSecretMetadata.SECRET).size());
+        Assertions.assertEquals(true, results.results().get(IsSecretMetadata.SECRET).get(0).getMetadata());
     }
 
     @Test
@@ -28,9 +31,12 @@ class SecretAnnotationMetadataTransformTest {
         SecretAnnotationMetadataTransform secretAnnotationMetadataTransform = new SecretAnnotationMetadataTransform();
         var results = secretAnnotationMetadataTransform.annotationTransform("secret", "true");
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(1, results.get(IsSecretMetadata.SECRET).size());
-        Assertions.assertEquals(true, results.get(IsSecretMetadata.SECRET).get(0).getMetadata());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(1, results.results().get(IsSecretMetadata.SECRET).size());
+        Assertions.assertEquals(true, results.results().get(IsSecretMetadata.SECRET).get(0).getMetadata());
     }
 
 
@@ -39,8 +45,11 @@ class SecretAnnotationMetadataTransformTest {
         SecretAnnotationMetadataTransform secretAnnotationMetadataTransform = new SecretAnnotationMetadataTransform();
         var results = secretAnnotationMetadataTransform.annotationTransform("secret", "false");
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(1, results.get(IsSecretMetadata.SECRET).size());
-        Assertions.assertEquals(false, results.get(IsSecretMetadata.SECRET).get(0).getMetadata());
+        Assertions.assertTrue(results.hasResults());
+        Assertions.assertFalse(results.hasErrors());
+
+        Assertions.assertEquals(1, results.results().size());
+        Assertions.assertEquals(1, results.results().get(IsSecretMetadata.SECRET).size());
+        Assertions.assertEquals(false, results.results().get(IsSecretMetadata.SECRET).get(0).getMetadata());
     }
 }

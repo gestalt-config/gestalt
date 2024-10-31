@@ -1,3 +1,5 @@
+org.github.gestalt.config.processor.config.annotation.EncryptionAnnotationMetadataTransform
+org.github.gestalt.config.processor.config.annotation.TemporaryAnnotationMetadataTransform
 org.github.gestalt.config.processor.config.annotation.NoCacheAnnotationMetadataTransform
 org.github.gestalt.config.processor.config.annotation.SecretAnnotationMetadataTransform
 
