@@ -3,7 +3,6 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.metadata.IsNoCacheMetadata;
-import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;

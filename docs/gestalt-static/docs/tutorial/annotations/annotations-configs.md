@@ -18,3 +18,16 @@ my.password=abcdef@{temp:1}
 | nocache    | (boolean) if we should apply to this node        | Will not cache the node. If a node is part of a object the whole object will not be cached.  |
 | secret     | (boolean) if we should apply to this node        | Treats the node as a secret, so it will not print it out in errors or the debug print.       |
 
+## Trim Whitespace
+
+By default, white spaces before and after the annotation are trimmed. You can disable this feature using the gestalt builder and setting `setAnnotationTrimWhiteSpace(false)`
+
+```java
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .build())
+  .setAnnotationTrimWhiteSpace(false)
+  .build();
+```
