@@ -606,6 +606,35 @@ So if the base path from gestalt.getConfig is `db.connection` and the annotation
 
 The default accepts a string type and will be decoded into the property type using the gestalt decoders. For example if the property is an Integer and the default is "100" the integer value will be 100.
 
+# Annotations Configurations
+
+Certain annotations can be applied to a configuration using `@{annotation}`, this will covert the annotation to metadata that can be applied to the node. Then the metadata is used to apply the intended behaviour to the node.
+
+For example, we can apply the temporary node feature on a node by using the annotation `@{temp:1}`
+```properties
+my.password=abcdef@{temp:1}
+```
+
+| annotation | parameter                                        | description                                                                                  |
+|------------|--------------------------------------------------|----------------------------------------------------------------------------------------------|
+| temp       | (int) Number of times this temp node can be read | restrict the number of times a value can be read before it is released                       |
+| encrypt    | (boolean) if we should apply to this node        | Encrypts the node in memory.                                                                 |
+| nocache    | (boolean) if we should apply to this node        | Will not cache the node. If a node is part of a object the whole object will not be cached.  |
+| secret     | (boolean) if we should apply to this node        | Treats the node as a secret, so it will not print it out in errors or the debug print.       |
+
+## Trim Whitespace
+
+By default, white spaces before and after the annotation are trimmed. You can disable this feature using the gestalt builder and setting `setAnnotationTrimWhiteSpace(false)`
+
+```java
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .build())
+  .setAnnotationTrimWhiteSpace(false)
+  .build();
+```
 
 # Searching for path while Decoding Objects
 When decoding a class, we need to know what configuration to lookup for each field. To generate the name of the configuration to lookup, we first find the path as defined in the call to `gestalt.getConfig("book.service", HttpPool.class)` where the path is `book.service`. We do not apply the path mappers to the path, only the config tree notes from the path. Once at the path we check class for any annotations. If there are no annotations, then we search for the fields by exact match. So we look for a config value with the same name as the field. If it is unable to find the exact match, it will attempt to map it to a path based on camel case. Where the camel case words will be separated and converted to Kebab case, Snake case and Dot Notation, then used to search for the configuration.
@@ -1202,8 +1231,31 @@ Once the leaf value has been read the accessCount times, it will release the sec
 Eventually the secret node should be garbage collected. However, while waiting for GC it may still be found in memory.
 These values will not be cached in the Gestalt Cache and should not be cached by the caller. Since they are not cached there a performance cost since each request has to be looked up.
 
-To protect values you can either use the `addTemporaryNodeAccessCount` methods in the `GestaltBuilder` or register a `TemporarySecretModule` by using the `TemporarySecretModuleBuilder`.   
+To protect values you can either annotate a configuration with `@{temp:int}` or use the `addTemporaryNodeAccessCount` methods in the `GestaltBuilder`, register a `TemporarySecretModule` by using the `TemporarySecretModuleBuilder`.
 
+Using the annotation `@{temp:int}`:
+
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("my.password", "abcdef@{temp:1}");
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+
+// the first call will get the node and reduce the access cound for the node to 0.
+Assertions.assertEquals("abcdef", gestalt.getConfig("my.password", String.class));
+
+// The second time we get the node the value has been released and will have no result.
+Assertions.assertTrue(gestalt.getConfigOptional("some.value", String.class).isEmpty());
+```
+
+Or using the method `addTemporaryNodeAccessCount` in the gestalt builder:
 ```java
 Map<String, String> configs = new HashMap<>();
 configs.put("my.password", "abcdef");
@@ -1243,7 +1295,28 @@ The configuration will be read from its source, and an encryption cipher with iv
 These values will not be cached in the Gestalt Cache and should not be cached by the caller. Since they are not cached there a performance cost since each request has to be decrypted.
 This makes it harder to access your secrets, but a persist attacker will be able to find the cipher, and iv in memory can decrypt the value. 
 
-To encrypt values you can either use the `addEncryptedSecret` methods in the `GestaltBuilder` or register a `EncryptedSecretModule` by using the `EncryptedSecretModuleBuilder`.
+To encrypt values you can either annotate a configuration with `@{encrypt}`, use the `addEncryptedSecret` methods in the `GestaltBuilder`, register a `EncryptedSecretModule` by using the `EncryptedSecretModuleBuilder`.
+
+Using the annotation `@{encrypt}`:
+
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("my.password", "abcdef@{encrypt}");
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+
+// the call will get the encrypted node but will return the decrypted results. 
+Assertions.assertEquals("abcdef", gestalt.getConfig("my.password", String.class));
+```
+
+Or using the `addEncryptedSecret` method on the builder:
 
 ```java
 Map<String, String> configs = new HashMap<>();
