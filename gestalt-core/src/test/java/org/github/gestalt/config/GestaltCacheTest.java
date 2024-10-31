@@ -63,11 +63,17 @@ class GestaltCacheTest {
         Integer port2 = cache.getConfig("db.port", Integer.class);
         Integer port3 = cache.getConfig("db.port", 200, Integer.class);
         Optional<Integer> port4 = cache.getConfigOptional("db.port", Integer.class);
+        GResultOf<Integer> port5 = cache.getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
+        GResultOf<Integer> port6 = cache.getConfigResult("db.port", 200, TypeCapture.of(Integer.class), Tags.of());
+        Optional<GResultOf<Integer>> port7 = cache.getConfigOptionalResult("db.port", TypeCapture.of(Integer.class), Tags.of());
 
         Assertions.assertEquals(100, port);
         Assertions.assertEquals(100, port2);
         Assertions.assertEquals(100, port3);
         Assertions.assertEquals(100, port4.get());
+        Assertions.assertEquals(100, port5.results());
+        Assertions.assertEquals(100, port6.results());
+        Assertions.assertEquals(100, port7.get().results());
 
         Mockito.verify(mockGestalt, Mockito.times(1)).getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
@@ -424,5 +430,7 @@ class GestaltCacheTest {
         Assertions.assertEquals("dev", cache.debugPrint(Tags.environment("dev")));
     }
 }
+
+
 
 

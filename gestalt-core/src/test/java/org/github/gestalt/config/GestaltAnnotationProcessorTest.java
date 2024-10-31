@@ -2,8 +2,12 @@ package org.github.gestalt.config;
 
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
+import org.github.gestalt.config.metadata.IsNoCacheMetadata;
+import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.observations.TestObservationRecorder;
+import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
+import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -201,5 +205,27 @@ public class GestaltAnnotationProcessorTest {
 
         Assertions.assertEquals("tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='*****'}, " +
             "port=EncryptedLeafNode{value='*****'}, uri=LeafNode{value='my.sql.com'}}}", gestalt.debugPrint());
+    }
+
+    @Test
+    public void testSecretAnnotationGetConfigResult() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123@{noCache}");
+        configs.put("db.uri", "my.sql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        var results = gestalt.getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
+
+        Assertions.assertEquals(123, results.results());
+        Assertions.assertEquals(1, results.getMetadata().size());
+        Assertions.assertTrue(results.getMetadata().containsKey(IsNoCacheMetadata.NO_CACHE));
+        Assertions.assertTrue((boolean) results.getMetadata().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
     }
 }
