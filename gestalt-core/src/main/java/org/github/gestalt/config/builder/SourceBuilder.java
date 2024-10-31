@@ -7,7 +7,9 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Base class for all source builders.

@@ -1,6 +1,7 @@
 package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.lexer.PathLexer;
+import org.github.gestalt.config.metadata.IsNoCacheMetadata;
 import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -256,6 +257,29 @@ class ConfigNodeTest {
         Assertions.assertEquals("MapNode{abc=LeafNode{value='null'}, def=ArrayNode{values=[LeafNode{value='a'}, " +
                 "LeafNode{value='b'}, LeafNode{value='null'}]}, hij='null'}",
             objectNode.printer("", new SecretConcealerManager(Set.of("aaa"), it -> "*****"), new PathLexer()));
+    }
+
+    @Test
+    void arrayMetadata() {
+        ArrayNode arrayNode = new ArrayNode(List.of(new LeafNode("a"), new LeafNode("b"), new LeafNode(null)),
+            Map.of("test1", List.of(new IsNoCacheMetadata(true))));
+
+        Assertions.assertTrue(arrayNode.hasMetadata("test1"));
+        Assertions.assertFalse(arrayNode.getMetadata("test1").isEmpty());
+        Assertions.assertEquals(true, ((IsNoCacheMetadata) arrayNode.getMetadata("test1").get(0)).getMetadata());
+    }
+
+    @Test
+    void mapMetadata() {
+        Map<String, ConfigNode> mapNode = new HashMap<>();
+        mapNode.put("abc", new LeafNode("hello"));
+        mapNode.put("def", new LeafNode("test"));
+        mapNode.put("hij", null);
+        MapNode objectNode = new MapNode(mapNode, Map.of("test1", List.of(new IsNoCacheMetadata(true))));
+
+        Assertions.assertTrue(objectNode.hasMetadata("test1"));
+        Assertions.assertFalse(objectNode.getMetadata("test1").isEmpty());
+        Assertions.assertEquals(true, ((IsNoCacheMetadata) objectNode.getMetadata("test1").get(0)).getMetadata());
     }
 }
 

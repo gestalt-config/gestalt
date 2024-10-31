@@ -1960,5 +1960,62 @@ public abstract class ValidationError {
                 ", if this is intended increase the limit using GestaltBuilder.setNodeNestedIncludeLimit(10)";
         }
     }
+
+    /**
+     * Failed to extract annotation using regex.
+     */
+    public static class NoAnnotationClosingToken extends ValidationError {
+        private final String element;
+        private final String path;
+
+        public NoAnnotationClosingToken(String path, String element) {
+            super(ValidationLevel.WARN);
+            this.element = element;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Found annotation opening token but not a closing one: " + element + " for path: " + path;
+        }
+    }
+
+    /**
+     * Failed to extract annotation using regex.
+     */
+    public static class FailedToExtractAnnotation extends ValidationError {
+        private final String element;
+        private final String path;
+
+        public FailedToExtractAnnotation(String path, String element) {
+            super(ValidationLevel.WARN);
+            this.element = element;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to extract annotation using regex " + element + " for path: " + path;
+        }
+    }
+
+    /**
+     * Failed to extract annotation using regex.
+     */
+    public static class UnknownAnnotation extends ValidationError {
+        private final String annotation;
+        private final String path;
+
+        public UnknownAnnotation(String path, String annotation) {
+            super(ValidationLevel.WARN);
+            this.annotation = annotation;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "Unknown annotation: " + annotation + " for path: " + path;
+        }
+    }
 }
 

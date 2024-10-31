@@ -20,7 +20,7 @@ public class EqualTagsWithDefaultTagResolutionStrategy implements ConfigNodeTagR
      * Only return the roots if they exist.
      *
      * @param roots roots to search.
-     * @param tags the tags we wish to search for.
+     * @param tags  the tags we wish to search for.
      * @return list of roots to search for.
      */
     @Override

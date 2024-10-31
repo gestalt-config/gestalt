@@ -40,7 +40,7 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
         } else if (value.length() > 1) {
             results = GResultOf.resultOf(value.getBytes(Charset.defaultCharset())[0],
                 new ValidationError.DecodingByteTooLong(path, node, decoderContext));
-        } else  {
+        } else {
             results = GResultOf.errors(new ValidationError.DecodingEmptyByte(path, node, decoderContext));
         }
 

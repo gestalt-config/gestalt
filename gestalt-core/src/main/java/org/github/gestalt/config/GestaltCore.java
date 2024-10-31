@@ -12,11 +12,13 @@ import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderService;
-import org.github.gestalt.config.node.TagMergingStrategy;
-import org.github.gestalt.config.observations.ObservationMarker;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.node.TagMergingStrategy;
+import org.github.gestalt.config.observations.ObservationMarker;
 import org.github.gestalt.config.observations.ObservationService;
+import org.github.gestalt.config.processor.result.ResultsProcessorService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
 import org.github.gestalt.config.reload.CoreReloadListener;
@@ -31,7 +33,6 @@ import org.github.gestalt.config.utils.ClassUtils;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Pair;
-import org.github.gestalt.config.processor.result.ResultsProcessorService;
 
 import java.util.*;
 
@@ -72,19 +73,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     /**
      * Constructor for Gestalt,you can call it manually but the best way to use this is though the GestaltBuilder.
      *
-     * @param configLoaderService  configLoaderService to hold all config loaders
-     * @param configSourcePackages sources we wish to load the configs from. We load the sources in the order they are provided.
-     *                             Overriding older values with new one where needed
-     * @param decoderService       decoderService to hold all decoders
-     * @param sentenceLexer        sentenceLexer to parse the configuration paths when doing searches.
-     * @param gestaltConfig        configuration for the Gestalt
-     * @param configNodeService    configNodeService core functionality to manage nodes
-     * @param reloadStrategy       reloadStrategy holds all reload listeners
-     * @param secretConcealer      Utility for concealing secrets
-     * @param observationService       Manages reporting of observations
-     * @param resultsProcessorService    Validation Manager, for validating configuration objects
-     * @param defaultTags          Default set of tags to apply to all calls to get a configuration where tags are not provided.
-     * @param tagMergingStrategy   Strategy for how to merge tags
+     * @param configLoaderService     configLoaderService to hold all config loaders
+     * @param configSourcePackages    sources we wish to load the configs from. We load the sources in the order they are provided.
+     *                                Overriding older values with new one where needed
+     * @param decoderService          decoderService to hold all decoders
+     * @param sentenceLexer           sentenceLexer to parse the configuration paths when doing searches.
+     * @param gestaltConfig           configuration for the Gestalt
+     * @param configNodeService       configNodeService core functionality to manage nodes
+     * @param reloadStrategy          reloadStrategy holds all reload listeners
+     * @param secretConcealer         Utility for concealing secrets
+     * @param observationService      Manages reporting of observations
+     * @param resultsProcessorService Validation Manager, for validating configuration objects
+     * @param defaultTags             Default set of tags to apply to all calls to get a configuration where tags are not provided.
+     * @param tagMergingStrategy      Strategy for how to merge tags
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
                        DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
@@ -282,7 +283,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfig2(path, TypeCapture.of(klass), null);
+        return getConfigCommon(path, TypeCapture.of(klass), null).results();
     }
 
     @Override
@@ -291,7 +292,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfig2(path, TypeCapture.of(klass), tags);
+        return getConfigCommon(path, TypeCapture.of(klass), tags).results();
     }
 
     @Override
@@ -299,7 +300,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfig2(path, klass, null);
+        return getConfigCommon(path, klass, null).results();
     }
 
     @Override
@@ -308,10 +309,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfig2(path, klass, tags);
+        return getConfigCommon(path, klass, tags).results();
     }
 
-    private <T> T getConfig2(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
+    @Override
+    public <T> GResultOf<T> getConfigResult(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
+        return getConfigCommon(path, klass, tags);
+    }
+
+    private <T> GResultOf<T> getConfigCommon(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
 
         // fail on errors if this is not an optional type.
         // get the default value used if this is an optional type
@@ -327,7 +337,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfig2(path, defaultVal, TypeCapture.of(klass), null);
+        return getConfigCommon(path, defaultVal, TypeCapture.of(klass), null).results();
     }
 
     @Override
@@ -336,7 +346,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfig2(path, defaultVal, TypeCapture.of(klass), null);
+        return getConfigCommon(path, defaultVal, TypeCapture.of(klass), null).results();
 
     }
 
@@ -345,7 +355,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfig2(path, defaultVal, klass, null);
+        return getConfigCommon(path, defaultVal, klass, null).results();
     }
 
     @Override
@@ -354,10 +364,19 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfig2(path, defaultVal, klass, tags);
+        return getConfigCommon(path, defaultVal, klass, tags).results();
     }
 
-    private <T> T getConfig2(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+    @Override
+    public <T> GResultOf<T> getConfigResult(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
+        return getConfigCommon(path, defaultVal, klass, tags);
+    }
+
+    private <T> GResultOf<T> getConfigCommon(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
         try {
             Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
             return getConfigurationInternal(path, false, defaultVal, klass, resolvedTags);
@@ -365,7 +384,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             logger.log(WARNING, e.getMessage());
         }
 
-        return defaultVal;
+        return GResultOf.result(defaultVal);
     }
 
     @Override
@@ -373,7 +392,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfigOptional2(path, TypeCapture.of(klass), defaultTags);
+        return getConfigOptionalCommon(path, TypeCapture.of(klass), defaultTags).map(GResultOf::results);
     }
 
     @Override
@@ -382,7 +401,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigOptional2(path, TypeCapture.of(klass), tags);
+        return getConfigOptionalCommon(path, TypeCapture.of(klass), tags).map(GResultOf::results);
     }
 
     @Override
@@ -390,7 +409,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfigOptional2(path, klass, defaultTags);
+        return getConfigOptionalCommon(path, klass, defaultTags).map(GResultOf::results);
     }
 
     @Override
@@ -399,10 +418,18 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigOptional2(path, klass, tags);
+        return getConfigOptionalCommon(path, klass, tags).map(GResultOf::results);
     }
 
-    private <T> Optional<T> getConfigOptional2(String path, TypeCapture<T> klass, Tags tags) {
+    public <T> Optional<GResultOf<T>> getConfigOptionalResult(String path, TypeCapture<T> klass, Tags tags) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(klass);
+        Objects.requireNonNull(tags);
+
+        return getConfigOptionalCommon(path, klass, tags);
+    }
+
+    private <T> Optional<GResultOf<T>> getConfigOptionalCommon(String path, TypeCapture<T> klass, Tags tags) {
         try {
             Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
             var results = getConfigurationInternal(path, false, null, klass, resolvedTags);
@@ -414,7 +441,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return Optional.empty();
     }
 
-    private <T> T getConfigurationInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags)
+    private <T> GResultOf<T> getConfigurationInternal(String path, boolean failOnErrors, T defaultVal, TypeCapture<T> klass, Tags tags)
         throws GestaltException {
 
         ObservationMarker getConfigMarker = null;
@@ -437,7 +464,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 var processedResults = resultsProcessorService.processResults(results, path, !failOnErrors, defaultVal, klass, tags);
 
                 defaultReturned = processedResults.isDefault();
-                return processedResults.results();
+                return processedResults;
             }
         } catch (Exception ex) {
             exceptionThrown = ex;
@@ -468,6 +495,12 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
             GResultOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
+            Map<String, List<MetaDataValue<?>>> metadata;
+            if (node.results() != null) {
+                metadata = node.results().getRolledUpMetadata();
+            } else {
+                metadata = Map.of();
+            }
 
             // if we don't have a result and we received missing node errors.
             // return the errors from the call to navigate to node.
@@ -482,7 +515,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
                 errors.addAll(decodedResults.getErrors());
             }
 
-            return GResultOf.resultOf(decodedResults.results(), errors);
+            return GResultOf.resultOf(decodedResults.results(), errors, metadata);
         } else {
 
             // if we have errors other than the missing values,

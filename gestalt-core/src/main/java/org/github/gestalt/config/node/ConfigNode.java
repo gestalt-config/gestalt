@@ -1,8 +1,11 @@
 package org.github.gestalt.config.node;
 
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -55,6 +58,38 @@ public interface ConfigNode {
      * @return side of the node
      */
     int size();
+
+    /**
+     * Get the metadata for a specific key.
+     *
+     * @param key the key to search for.
+     * @return the optional metadata for the key
+     */
+    List<MetaDataValue<?>> getMetadata(String key);
+
+    /**
+     * Get the backing map of metadata.
+     *
+     * @return the backing map of metadata.
+     */
+    Map<String, List<MetaDataValue<?>>> getMetadata();
+
+
+    /**
+     * Test if the metadata has a specific key.
+     *
+     * @param key key to check if it exists.
+     * @return true if the key exists.
+     */
+    boolean hasMetadata(String key);
+
+    /**
+     * We are rolling up a metadata from a child node to the parent.
+     * This will return any metadata that the parent should inherit.
+     *
+     * @return This will return any metadata that the parent should inherit.
+     */
+    Map<String, List<MetaDataValue<?>>> getRolledUpMetadata();
 
     /**
      * Safely prints out the config tree at this path.

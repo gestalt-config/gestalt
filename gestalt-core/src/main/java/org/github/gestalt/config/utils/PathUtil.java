@@ -22,7 +22,7 @@ public final class PathUtil {
     /**
      * Returns the path for a list of tokens.
      *
-     * @param lexer lexer used to get the delimiter to build the path
+     * @param lexer  lexer used to get the delimiter to build the path
      * @param tokens list of tokens on the path.
      * @return the path built from the tokens
      */
@@ -52,8 +52,8 @@ public final class PathUtil {
      * used to generate a path with the next key in the format path.key .
      *
      * @param lexer lexer used to get the delimiter to build the path
-     * @param path current path
-     * @param key  current key
+     * @param path  current path
+     * @param key   current key
      * @return path for key
      */
     public static String pathForKey(SentenceLexer lexer, String path, String key) {
@@ -63,8 +63,8 @@ public final class PathUtil {
     /**
      * used to generate a path with the next key in the format path.v1.v2 for a list of keys.
      *
-     * @param lexer lexer used to get the delimiter to build the path
-     * @param path current path
+     * @param lexer     lexer used to get the delimiter to build the path
+     * @param path      current path
      * @param pathParts parts of the path to append to the root path.
      * @return combined path.
      */
@@ -94,7 +94,7 @@ public final class PathUtil {
      * @return path for index
      */
     public static String forIndex(SentenceLexer lexer, int index) {
-        return  lexer.getNormalizedArrayOpenTag() + index + lexer.getNormalizedArrayCloseTag();
+        return lexer.getNormalizedArrayOpenTag() + index + lexer.getNormalizedArrayCloseTag();
     }
 }
 

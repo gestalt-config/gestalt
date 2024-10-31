@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Annotations
+# Annotations Code
 When decoding a Java Bean style class, a record, an interface or a Kotlin Data Class you can provide a custom annotation to override the path for the field as well as provide a default.
 The field annotation `@Config` takes priority if both the field and method are annotated.
 The class annotation `@ConfigPrefix` allows the user to define the prefix for the config object as part of the class instead of the `getConfig()` call. If you provide both the resulting prefix is first the path in getConfig then the prefix in the `@ConfigPrefix` annotation.

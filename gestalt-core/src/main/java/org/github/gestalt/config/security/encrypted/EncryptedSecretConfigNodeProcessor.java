@@ -2,6 +2,7 @@ package org.github.gestalt.config.security.encrypted;
 
 import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.metadata.IsEncryptedMetadata;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
@@ -79,10 +80,14 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
             return GResultOf.result(currentNode);
         }
 
+        var metadata = currentNode.getMetadata();
+
         // if this is not a temporary secret node, return the original node.
-        if (!encryptedSecret.isSecret(path)) {
+        if (!encryptedSecret.isSecret(path) && (!metadata.containsKey(IsEncryptedMetadata.ENCRYPTED) || //NOPMD
+            metadata.get(IsEncryptedMetadata.ENCRYPTED).stream().noneMatch(it -> (boolean) it.getMetadata()))) {
             return GResultOf.result(currentNode);
         }
+
         Optional<String> optionalLeafNodeValue = currentNode.getValue();
 
         // if the leaf node doesn't have a value, we don't need to encrypt it.
@@ -95,11 +100,10 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
         // We use the encryption cipher to encrypt the data and pass the encrypted data along with the
         // decryption cipher to the leaf.
         try {
-
             var secretKey = generateKey(128);
             var encryptedData = encryptGcm(secretKey, optionalLeafNodeValue.orElse(""));
 
-            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey));
+            return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey, metadata));
 
         } catch (NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException |
                  InvalidAlgorithmParameterException | InvalidKeyException | ShortBufferException ex) {

@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-public abstract class ConfigReloadStrategy {  ///NOPMD
+public abstract class ConfigReloadStrategy {    ///NOPMD
 
     private static final System.Logger logger = System.getLogger(ConfigReloadStrategy.class.getName());
 
@@ -49,7 +49,6 @@ public abstract class ConfigReloadStrategy {  ///NOPMD
 
     /**
      * Get the source this reload strategy should apply to.
-     *
      *
      * @return the source this reload strategy should apply to.
      */

@@ -134,6 +134,18 @@ public class GestaltBuilder {
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = null;
 
+    // Token that represents the opening of a string substitution.
+    private String annotationOpeningToken = null;
+
+    // Token that represents the closing of a string substitution.
+    private String annotationClosingToken = null;
+
+    // regex used to extract the annotation
+    private String annotationRegex = null;
+
+    // trim the white space before and after an annotation.
+    private Boolean annotationTrimWhiteSpace = null;
+
     // the maximum nested substitution depth.
     private Integer maxSubstitutionNestedDepth = null;
 
@@ -1236,6 +1248,50 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set a Token that represents the opening of an annotation.
+     *
+     * @param annotationOpeningToken Token that represents the opening of an annotation.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setAnnotationOpeningToken(String annotationOpeningToken) {
+        this.annotationOpeningToken = annotationOpeningToken;
+        return this;
+    }
+
+    /**
+     * Token that represents the closing of an annotation.
+     *
+     * @param annotationClosingToken a token that represents the closing of an annotation.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setAnnotationClosingToken(String annotationClosingToken) {
+        this.annotationClosingToken = annotationClosingToken;
+        return this;
+    }
+
+    /**
+     * Set the annotation regex for processing.
+     *
+     * @param annotationRegex the annotation regex for processing.
+     * @return the builder
+     */
+    public GestaltBuilder setAnnotationRegex(String annotationRegex) {
+        this.annotationRegex = annotationRegex;
+        return this;
+    }
+
+    /**
+     * Set if we trim the white space before and after an annotation.
+     *
+     * @param annotationTrimWhiteSpace trim the white space before and after an annotation.
+     * @return the builder
+     */
+    public GestaltBuilder setAnnotationTrimWhiteSpace(Boolean annotationTrimWhiteSpace) {
+        this.annotationTrimWhiteSpace = annotationTrimWhiteSpace;
+        return this;
+    }
+
+    /**
      * Get the maximum string substitution nested depth.
      * If you have nested or recursive substitutions that go deeper than this it will fail.
      *
@@ -1686,6 +1742,18 @@ public class GestaltBuilder {
 
         newConfig.setSubstitutionClosingToken(Objects.requireNonNullElseGet(substitutionClosingToken,
             () -> gestaltConfig.getSubstitutionClosingToken()));
+
+        newConfig.setAnnotationOpeningToken(Objects.requireNonNullElseGet(annotationOpeningToken,
+            () -> gestaltConfig.getAnnotationOpeningToken()));
+
+        newConfig.setAnnotationClosingToken(Objects.requireNonNullElseGet(annotationClosingToken,
+            () -> gestaltConfig.getAnnotationClosingToken()));
+
+        newConfig.setAnnotationTrimWhiteSpace(Objects.requireNonNullElseGet(annotationTrimWhiteSpace,
+            () -> gestaltConfig.getAnnotationTrimWhiteSpace()));
+
+        newConfig.setAnnotationRegex(Objects.requireNonNullElseGet(annotationRegex,
+            () -> gestaltConfig.getAnnotationRegex()));
 
         newConfig.setMaxSubstitutionNestedDepth(Objects.requireNonNullElseGet(maxSubstitutionNestedDepth,
             () -> gestaltConfig.getMaxSubstitutionNestedDepth()));

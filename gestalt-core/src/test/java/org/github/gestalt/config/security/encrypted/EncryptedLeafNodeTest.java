@@ -10,6 +10,7 @@ import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,7 @@ class EncryptedLeafNodeTest {
 
     @Test
     void testGetValue() throws Exception {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals(Optional.of("secretData"), encryptedLeafNode.getValue());
     }
 
@@ -58,38 +59,38 @@ class EncryptedLeafNodeTest {
         keyGenerator.init(128);
         var newSecretKey = keyGenerator.generateKey();
 
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, newSecretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, newSecretKey, Map.of());
         assertEquals(Optional.empty(), encryptedLeafNode.getValue());
     }
 
     @Test
     void testGetNodeType() throws IllegalBlockSizeException, BadPaddingException {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals(NodeType.LEAF, encryptedLeafNode.getNodeType());
     }
 
     @Test
     void testGetIndex() throws IllegalBlockSizeException, BadPaddingException {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals(Optional.empty(), encryptedLeafNode.getIndex(0));
     }
 
     @Test
     void testGetKey() throws IllegalBlockSizeException, BadPaddingException {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals(Optional.empty(), encryptedLeafNode.getKey("key"));
     }
 
     @Test
     void testSize() throws IllegalBlockSizeException, BadPaddingException {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals(1, encryptedLeafNode.size());
     }
 
     @Test
     void testEquals() throws Exception {
-        EncryptedLeafNode encryptedLeafNode1 = new EncryptedLeafNode(encryptedData, secretKey);
-        EncryptedLeafNode encryptedLeafNode2 = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode1 = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
+        EncryptedLeafNode encryptedLeafNode2 = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
 
         assertEquals(encryptedLeafNode1, encryptedLeafNode1);
         assertEquals(encryptedLeafNode1, encryptedLeafNode2);
@@ -98,21 +99,21 @@ class EncryptedLeafNodeTest {
 
     @Test
     void testHashCode() throws Exception {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals(Arrays.hashCode(encryptedData), encryptedLeafNode.hashCode());
     }
 
     @Test
     void testPrinter() throws Exception {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
-        SecretConcealer secretConcealer = (path, value) -> "concealedSecret";
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
+        SecretConcealer secretConcealer = (path, value, metaData) -> "concealedSecret";
 
         assertEquals("EncryptedLeafNode{value='concealedSecret'}", encryptedLeafNode.printer("", secretConcealer, new PathLexer()));
     }
 
     @Test
     void testToString() throws Exception {
-        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey);
+        EncryptedLeafNode encryptedLeafNode = new EncryptedLeafNode(encryptedData, secretKey, Map.of());
         assertEquals("EncryptedLeafNode{value='secret'}", encryptedLeafNode.toString());
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.Set;
 
 class TemporaryLeafNodeTest {
@@ -17,7 +18,7 @@ class TemporaryLeafNodeTest {
     public void temporaryLeafNodeAccessCount() {
         LeafNode tempNode = new LeafNode("secret");
         WeakReference<LeafNode> internalNode = new WeakReference<>(tempNode);
-        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2, Map.of());
 
         // clear temp node so it can be cleaned up once released from the TemporaryLeafNode
         tempNode = null;
@@ -37,7 +38,7 @@ class TemporaryLeafNodeTest {
     @Test
     public void temporaryLeafNodeToString() {
         LeafNode tempNode = new LeafNode("secret");
-        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 1);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 1, Map.of());
 
         Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.toString());
         Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.toString());
@@ -52,7 +53,7 @@ class TemporaryLeafNodeTest {
     @Test
     public void temporaryLeafNodePrintWithSecretConcealer() {
         LeafNode tempNode = new LeafNode("secret");
-        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2, Map.of());
 
         SecretConcealer secretConcealer = new SecretConcealerManager(Set.of("secret"), it -> "");
         Assertions.assertEquals("TemporaryLeafNode{value=''}", leaf.printer("secret", secretConcealer, null));
@@ -66,7 +67,7 @@ class TemporaryLeafNodeTest {
     @Test
     public void temporaryLeafNodePrintWithSecretConcealerNull() {
         LeafNode tempNode = new LeafNode("secret");
-        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(tempNode, 2, Map.of());
 
         Assertions.assertEquals("TemporaryLeafNode{value='secret'}", leaf.printer("secret", null, null));
         Assertions.assertEquals("secret", leaf.getValue().get());
@@ -78,7 +79,7 @@ class TemporaryLeafNodeTest {
 
     @Test
     public void temporaryLeafNode() {
-        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2, Map.of());
 
         Assertions.assertEquals(NodeType.LEAF, leaf.getNodeType());
         Assertions.assertTrue(leaf.getKey("test").isEmpty());
@@ -87,9 +88,9 @@ class TemporaryLeafNodeTest {
 
     @Test
     public void temporaryLeafNodeEquals() {
-        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2);
-        TemporaryLeafNode leaf2 = new TemporaryLeafNode(new LeafNode("secret"), 1);
-        TemporaryLeafNode leaf3 = new TemporaryLeafNode(new LeafNode("cert"), 1);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2, Map.of());
+        TemporaryLeafNode leaf2 = new TemporaryLeafNode(new LeafNode("secret"), 1, Map.of());
+        TemporaryLeafNode leaf3 = new TemporaryLeafNode(new LeafNode("cert"), 1, Map.of());
 
         Assertions.assertEquals(leaf, leaf);
         Assertions.assertEquals(leaf, leaf2);
@@ -100,14 +101,14 @@ class TemporaryLeafNodeTest {
 
     @Test
     public void temporaryLeafNodeHash() {
-        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2, Map.of());
 
         Assertions.assertTrue(leaf.hashCode() != 0);
     }
 
     @Test
     public void temporaryLeafNodeESize() {
-        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2);
+        TemporaryLeafNode leaf = new TemporaryLeafNode(new LeafNode("secret"), 2, Map.of());
 
         Assertions.assertEquals(1, leaf.size());
     }

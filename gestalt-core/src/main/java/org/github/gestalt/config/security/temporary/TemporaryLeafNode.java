@@ -2,11 +2,14 @@ package org.github.gestalt.config.security.temporary;
 
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
+import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.NodeType;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,8 +25,8 @@ public class TemporaryLeafNode extends LeafNode {
     private final AtomicInteger accessCount;
     private LeafNode decoratedNode;
 
-    public TemporaryLeafNode(LeafNode decoratedNode, int accessCount) {
-        super("");
+    public TemporaryLeafNode(LeafNode decoratedNode, int accessCount, Map<String, List<MetaDataValue<?>>> metadata) {
+        super("", metadata);
         this.accessCount = new AtomicInteger(accessCount);
         this.decoratedNode = decoratedNode;
     }
@@ -33,7 +36,7 @@ public class TemporaryLeafNode extends LeafNode {
         if (accessCount.get() > 0 && accessCount.getAndDecrement() > 0) {
             return decoratedNode.getValue();
         } else {
-            decoratedNode = null;
+            decoratedNode = new LeafNode("", this.metadata);
             return Optional.empty();
         }
     }
@@ -84,13 +87,13 @@ public class TemporaryLeafNode extends LeafNode {
     @Override
     public String printer(String path, SecretConcealer secretConcealer, SentenceLexer lexer) {
         String nodeValue;
-        if (decoratedNode != null) {
-            nodeValue = decoratedNode.getValue().orElse("");
-        } else {
-            nodeValue = "";
-        }
+        Map<String, List<MetaDataValue<?>>> nodeMetadata;
+
+        nodeValue = decoratedNode.getValue().orElse("");
+        nodeMetadata = decoratedNode.getMetadata();
+
         if (secretConcealer != null) {
-            nodeValue = secretConcealer.concealSecret(path, nodeValue);
+            nodeValue = secretConcealer.concealSecret(path, nodeValue, nodeMetadata);
         }
         return "TemporaryLeafNode{" +
             "value='" + nodeValue + '\'' +

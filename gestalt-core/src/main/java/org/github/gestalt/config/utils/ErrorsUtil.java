@@ -42,9 +42,9 @@ public final class ErrorsUtil {
     /**
      * Check if a result has errors that we should fail on.
      *
-     * @param results results to check for an error.
+     * @param results       results to check for an error.
      * @param gestaltConfig configuration on which errors should fail.
-     * @param <T> type of the result.
+     * @param <T>           type of the result.
      * @return if we should fails on the results.
      */
     public static <T> boolean checkErrorsShouldFail(GResultOf<T> results, GestaltConfig gestaltConfig) {
@@ -58,7 +58,7 @@ public final class ErrorsUtil {
     /**
      * If we should ignore a specific error.
      *
-     * @param error the error to check if we should ignore.
+     * @param error         the error to check if we should ignore.
      * @param gestaltConfig configuration on which errors should fail.
      * @return if we should fail on this error.
      */

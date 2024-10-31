@@ -19,7 +19,7 @@ public interface ConfigParser {
     /**
      * Takes in a tokenized config and returns a config node tree.
      *
-     * @param lexer lexer used to get the delimiter to build the path
+     * @param lexer        lexer used to get the delimiter to build the path
      * @param configs      configs to parse
      * @param failOnErrors if we want to fail on errors while parsing or try and recover. Results can be unpredictable if it continues
      * @return the config node built

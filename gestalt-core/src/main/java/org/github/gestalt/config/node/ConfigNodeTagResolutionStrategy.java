@@ -23,7 +23,7 @@ public interface ConfigNodeTagResolutionStrategy {
      *              DO NOT MODIFY THE ROOTS.
      *              The roots are protected by a read lock here, not a write lock.
      *              Modifying the roots here would not be thread safe.
-     * @param tags the tags to search for.
+     * @param tags  the tags to search for.
      * @return list of roots to search.
      */
     @SuppressWarnings("NonApiType")
