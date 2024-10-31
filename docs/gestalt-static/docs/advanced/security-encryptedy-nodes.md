@@ -11,7 +11,28 @@ The configuration will be read from its source, and an encryption cipher with iv
 These values will not be cached in the Gestalt Cache and should not be cached by the caller. Since they are not cached there a performance cost since each request has to be decrypted.
 This makes it harder to access your secrets, but a persist attacker will be able to find the cipher, and iv in memory can decrypt the value.
 
-To encrypt values you can either use the `addEncryptedSecret` methods in the `GestaltBuilder`, register a `EncryptedSecretModule` by using the `EncryptedSecretModuleBuilder` or annotate a configuration with `@{encrypt}`.
+To encrypt values you can either annotate a configuration with `@{encrypt}`, use the `addEncryptedSecret` methods in the `GestaltBuilder`, register a `EncryptedSecretModule` by using the `EncryptedSecretModuleBuilder`.
+
+Using the annotation `@{encrypt}`:
+
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("my.password", "abcdef@{encrypt}");
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+  .addSource(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs)
+    .build())
+  .build();
+
+gestalt.loadConfigs();
+
+// the call will get the encrypted node but will return the decrypted results. 
+Assertions.assertEquals("abcdef", gestalt.getConfig("my.password", String.class));
+```
+
+Or using the `addEncryptedSecret` method on the builder:
 
 ```java
 Map<String, String> configs = new HashMap<>();
@@ -23,24 +44,6 @@ Gestalt gestalt = builder
     .setCustomConfig(configs)
     .build())
   .addEncryptedSecret("password")
-  .build();
-
-gestalt.loadConfigs();
-
-// the call will get the encrypted node but will return the decrypted results. 
-Assertions.assertEquals("abcdef", gestalt.getConfig("my.password", String.class));
-```
-Or using the annotation
-
-```java
-Map<String, String> configs = new HashMap<>();
-configs.put("my.password", "abcdef@{encrypt}");
-
-GestaltBuilder builder = new GestaltBuilder();
-Gestalt gestalt = builder
-  .addSource(MapConfigSourceBuilder.builder()
-    .setCustomConfig(configs)
-    .build())
   .build();
 
 gestalt.loadConfigs();
