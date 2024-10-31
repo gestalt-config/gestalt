@@ -20,6 +20,4 @@ public class IsSecretMetadata extends MetaDataValue<Boolean> {
     public Map<String, List<MetaDataValue<?>>> rollup(Map<String, List<MetaDataValue<?>>> metadata) {
         return metadata;
     }
-
-
 }

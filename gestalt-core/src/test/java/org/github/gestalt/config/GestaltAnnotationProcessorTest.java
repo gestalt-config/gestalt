@@ -90,7 +90,6 @@ public class GestaltAnnotationProcessorTest {
 
         gestalt.loadConfigs();
 
-
         Assertions.assertEquals("my.sql.com", gestalt.getConfig("db", DBInfo.class).getUri());
         Assertions.assertEquals("my.sql.com", gestalt.getConfig("db", DBInfo.class).getUri());
         // there should be no cache hits.
@@ -115,7 +114,6 @@ public class GestaltAnnotationProcessorTest {
             .build();
 
         gestalt.loadConfigs();
-
 
         Assertions.assertEquals("my.sql  .com", gestalt.getConfig("db", DBInfo.class).getUri());
         Assertions.assertEquals("my.sql  .com", gestalt.getConfig("db", DBInfo.class).getUri());
