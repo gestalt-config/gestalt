@@ -46,6 +46,7 @@ testcontainers = "1.20.3"
 # @pin last version to support JDK 11
 errorprone = "2.31.0"
 gradleErrorProne = "4.1.0"
+gradlePublish = "0.30.0"
 detekt = "1.23.7"
 checkStyle = "10.10.0"
 # benchmarking
@@ -133,6 +134,7 @@ gradle-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", v
 gradle-ben-manes-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleVersions" }
 gradle-versions-update = { module = "nl.littlerobots.vcu:plugin", version.ref = "gradleVersionsUpdate" }
 gradle-error-prone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
+gradle-publish = { module = "com.vanniktech:gradle-maven-publish-plugin",  version.ref = "gradlePublish"}
 # Gestalt for integration tests
 gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
 gestalt-azure = { module = "com.github.gestalt-config:gestalt-azure", version.ref = "gestalt" }

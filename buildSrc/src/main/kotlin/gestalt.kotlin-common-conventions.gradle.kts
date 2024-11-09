@@ -16,8 +16,8 @@ kotlin {
 }
 
 java {
-    withSourcesJar()
-    withJavadocJar()
+    //withSourcesJar() // part of the publisher plugin
+    //withJavadocJar()
 }
 
 dependencies {
