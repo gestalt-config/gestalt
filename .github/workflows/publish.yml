@@ -36,7 +36,7 @@ jobs:
 
       - name: Publish package
         # wraped the signing.password with single quotes as the password could contain special characters
-        run: ./gradlew publishToMavenCentral -Psigning.keyId=${{secrets.OSSRH_GPG_SECRET_KEY_ID}} -Psigning.password='${{secrets.OSSRH_GPG_SECRET_KEY_PASSWORD}}' -Psigning.secretKeyRingFile=$(echo ~/.gradle/secring.gpg) -PmavenCentralUsername='${{secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME}}' -PmavenCentralPassword='${{secrets.ORG_GRADLE_PROJECT_MAVENCENTRALPASSWORD}} --warn --stacktrace
+        run: ./gradlew publishToMavenCentral -Psigning.keyId=${{secrets.OSSRH_GPG_SECRET_KEY_ID}} -Psigning.password='${{secrets.OSSRH_GPG_SECRET_KEY_PASSWORD}}' -Psigning.secretKeyRingFile=$(echo ~/.gradle/secring.gpg) -PmavenCentralUsername=${{secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME}} -PmavenCentralPassword='${{secrets.ORG_GRADLE_PROJECT_MAVENCENTRALPASSWORD}}' --warn --stacktrace
 
       - name: Publish Coverage
         if: success()
