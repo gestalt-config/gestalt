@@ -89,7 +89,7 @@ module org.github.gestalt.core {
         org.github.gestalt.config.path.mapper.SnakeCasePathMapper;
 
     provides org.github.gestalt.config.processor.config.ConfigNodeProcessor with
-        org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor,
+        org.github.gestalt.config.processor.config.transform.LoadtimeStringSubstitutionConfigNodeProcessor,
         org.github.gestalt.config.security.encrypted.EncryptedSecretConfigNodeProcessor,
         org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor,
         org.github.gestalt.config.processor.config.include.IncludeConfigNodeProcessor,

@@ -24,7 +24,7 @@ import org.github.gestalt.config.processor.TestValidationProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer;
-import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.transform.LoadtimeStringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.processor.result.DefaultResultProcessor;
 import org.github.gestalt.config.processor.result.ErrorResultProcessor;
 import org.github.gestalt.config.processor.result.ResultsProcessorManager;
@@ -120,9 +120,9 @@ class GestaltBuilderTest {
             .addCoreReloadListener(coreReloadListener)
             .addCoreReloadListener(List.of())
             .addConfigNodeProcessors(Collections.singletonList(
-                new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                new LoadtimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .setConfigNodeProcessors(Collections.singletonList(
-                new StringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+                new LoadtimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))

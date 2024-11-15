@@ -4,7 +4,7 @@ import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor;
-import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionProcessor;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public class GestaltConfig {
     private int maxSubstitutionNestedDepth = 5;
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
-    private String substitutionRegex = StringSubstitutionConfigNodeProcessor.DEFAULT_SUBSTITUTION_REGEX;
+    private String substitutionRegex = StringSubstitutionProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
     private String nodeIncludeKeyword = "$include";
 

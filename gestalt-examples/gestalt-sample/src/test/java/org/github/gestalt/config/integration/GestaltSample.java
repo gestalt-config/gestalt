@@ -46,9 +46,9 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.EnvironmentVarsLoaderModuleConfigBuilder;
 import org.github.gestalt.config.micrometer.builder.MicrometerModuleConfigBuilder;
 import org.github.gestalt.config.node.TagMergingStrategyCombine;
+import org.github.gestalt.config.processor.config.transform.LoadtimeStringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.transform.RandomTransformer;
 import org.github.gestalt.config.processor.config.transform.SystemPropertiesTransformer;
-import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.reload.FileChangeReloadStrategy;
@@ -1482,7 +1482,7 @@ public class GestaltSample {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigNodeProcessor(new StringSubstitutionConfigNodeProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
+            .addConfigNodeProcessor(new LoadtimeStringSubstitutionConfigNodeProcessor(List.of(new SystemPropertiesTransformer(), new RandomTransformer())))
             .build();
 
         gestalt.loadConfigs();
