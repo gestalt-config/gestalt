@@ -35,8 +35,22 @@ public class LeafNode extends AbstractConfigNode {
         this.value = value;
     }
 
+    /**
+     * Returns a duplicate of the current leaf with a new value.
+     *
+     * @param value new value for leaf
+     * @return duplicated leaf node
+     */
+    public LeafNode duplicate(String value) {
+        return new LeafNode(value, metadata);
+    }
+
     @Override
     public Optional<String> getValue() {
+        return Optional.ofNullable(value);
+    }
+
+    public Optional<String> getValueInternal() {
         return Optional.ofNullable(value);
     }
 

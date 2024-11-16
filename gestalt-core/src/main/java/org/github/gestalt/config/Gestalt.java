@@ -190,7 +190,8 @@ public interface Gestalt {
     <T> Optional<T> getConfigOptional(String path, TypeCapture<T> klass, Tags tags);
 
     /**
-     * Get a config Optional wrapped in the GResultOf for a path and a given TypeCapture. If there are any exceptions or errors it will return an Optional.empty()
+     * Get a config Optional wrapped in the GResultOf for a path and a given TypeCapture.
+     * If there are any exceptions or errors it will return an Optional.empty()
      *
      * @param path  path to get the config for. The path is not case sensitive.
      * @param klass TypeCapture to get the class for.

@@ -8,6 +8,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
+import org.github.gestalt.config.processor.config.RunTimeConfigNodeProcessor;
 import org.github.gestalt.config.secret.rules.SecretConcealer;
 import org.github.gestalt.config.secret.rules.SecretConcealerManager;
 import org.github.gestalt.config.source.ConfigSource;
@@ -1834,7 +1835,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
             new ConfigNodeProcessorManager(Arrays.asList(new TestConfigNodeProcessor("abc"),
-                new TestConfigNodeProcessor("def")), new PathLexer()), new PathLexer());
+                new TestConfigNodeProcessor("def")), List.of(), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
@@ -1857,6 +1858,50 @@ class ConfigNodeManagerTest {
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
                 .results().getValue().get());
         Assertions.assertEquals("Steve abc def",
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
+                .results().getValue().get());
+    }
+
+    @Test
+    public void testRuntimePostProcessor() throws GestaltException {
+        ConfigNode[] arrayNode = new ConfigNode[2];
+        arrayNode[0] = new LeafNode("John");
+        arrayNode[1] = new LeafNode("Steve");
+
+        Map<String, ConfigNode> dbNode = new HashMap<>();
+        dbNode.put("name", new LeafNode("test"));
+        dbNode.put("port", new LeafNode("3306"));
+
+        Map<String, ConfigNode> root1Node = new HashMap<>();
+        root1Node.put("db", new MapNode(dbNode));
+        root1Node.put("admin", new ArrayNode(Arrays.asList(arrayNode)));
+        ConfigNode root1 = new MapNode(root1Node);
+
+        ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(List.of(), Arrays.asList(new TestRuntimeConfigNodeProcessor("abc"),
+                new TestRuntimeConfigNodeProcessor("def")), new PathLexer()), new PathLexer());
+        configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
+
+        GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
+        Assertions.assertFalse(resultsOf.hasErrors());
+        Assertions.assertTrue(resultsOf.hasResults());
+        Assertions.assertNotNull(resultsOf.results());
+
+        Boolean results = resultsOf.results();
+
+        Assertions.assertTrue(results);
+
+        Assertions.assertEquals("test",
+            configNodeManager.navigateToNode("db.name", Arrays.asList(new ObjectToken("db"), new ObjectToken("name")), Tags.of())
+                .results().getValue().get());
+        Assertions.assertEquals("3306",
+            configNodeManager.navigateToNode("db.port", Arrays.asList(new ObjectToken("db"), new ObjectToken("port")), Tags.of())
+                .results().getValue().get());
+
+        Assertions.assertEquals("John",
+            configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(0)), Tags.of())
+                .results().getValue().get());
+        Assertions.assertEquals("Steve",
             configNodeManager.navigateToNode("admin", Arrays.asList(new ObjectToken("admin"), new ArrayToken(1)), Tags.of())
                 .results().getValue().get());
     }
@@ -1920,7 +1965,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
             new ConfigNodeProcessorManager(Arrays.asList(new TestConfigNodeProcessorErrors(),
-                new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
+                new TestConfigNodeProcessor("abc")), List.of(), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
@@ -1968,7 +2013,7 @@ class ConfigNodeManagerTest {
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
             new ConfigNodeProcessorManager(Arrays.asList(new TestConfigNodeProcessorNoResults(),
-                new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
+                new TestConfigNodeProcessor("abc")), List.of(), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
@@ -2000,7 +2045,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
-            new ConfigNodeProcessorManager(List.of(new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
+            new ConfigNodeProcessorManager(List.of(new TestConfigNodeProcessor("abc")), List.of(), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
@@ -2047,7 +2092,7 @@ class ConfigNodeManagerTest {
         ConfigNode root1 = new MapNode(root1Node);
 
         ConfigNodeManager configNodeManager = new ConfigNodeManager(new EqualTagsWithDefaultTagResolutionStrategy(),
-            new ConfigNodeProcessorManager(List.of(new TestConfigNodeProcessor("abc")), new PathLexer()), new PathLexer());
+            new ConfigNodeProcessorManager(List.of(new TestConfigNodeProcessor("abc")), List.of(), new PathLexer()), new PathLexer());
         configNodeManager.addNode(new ConfigNodeContainer(root1, new TestSource(), Tags.of()));
 
         GResultOf<Boolean> resultsOf = configNodeManager.processConfigNodes();
@@ -2176,8 +2221,7 @@ class ConfigNodeManagerTest {
         }
 
         @Override
-        public
-        Map<String, List<MetaDataValue<?>>> getRolledUpMetadata() {
+        public Map<String, List<MetaDataValue<?>>> getRolledUpMetadata() {
             return Map.of();
         }
 
@@ -2191,6 +2235,22 @@ class ConfigNodeManagerTest {
         private final String add;
 
         public TestConfigNodeProcessor(String add) {
+            this.add = add;
+        }
+
+        @Override
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            if (currentNode instanceof LeafNode) {
+                return GResultOf.result(new LeafNode(currentNode.getValue().get() + " " + add));
+            }
+            return GResultOf.result(currentNode);
+        }
+    }
+
+    public static class TestRuntimeConfigNodeProcessor implements RunTimeConfigNodeProcessor {
+        private final String add;
+
+        public TestRuntimeConfigNodeProcessor(String add) {
             this.add = add;
         }
 

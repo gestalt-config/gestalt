@@ -15,9 +15,11 @@ import org.github.gestalt.config.loader.ConfigLoaderService;
 import org.github.gestalt.config.metadata.MetaDataValue;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.ConfigNodeService;
+import org.github.gestalt.config.node.LeafNode;
 import org.github.gestalt.config.node.TagMergingStrategy;
 import org.github.gestalt.config.observations.ObservationMarker;
 import org.github.gestalt.config.observations.ObservationService;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorService;
 import org.github.gestalt.config.processor.result.ResultsProcessorService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ConfigReloadListener;
@@ -54,6 +56,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
     private final SentenceLexer sentenceLexer;
     private final GestaltConfig gestaltConfig;
     private final ConfigNodeService configNodeService;
+    private final ConfigNodeProcessorService configNodeProcessorService;
     private final CoreReloadListenersContainer coreReloadListenersContainer;
 
     private final SecretConcealer secretConcealer;
@@ -88,10 +91,15 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param tagMergingStrategy      Strategy for how to merge tags
      */
     public GestaltCore(ConfigLoaderService configLoaderService, List<ConfigSourcePackage> configSourcePackages,
-                       DecoderService decoderService, SentenceLexer sentenceLexer, GestaltConfig gestaltConfig,
-                       ConfigNodeService configNodeService, CoreReloadListenersContainer reloadStrategy,
+                       DecoderService decoderService,
+                       SentenceLexer sentenceLexer,
+                       GestaltConfig gestaltConfig,
+                       ConfigNodeService configNodeService,
+                       ConfigNodeProcessorService configNodeProcessorService,
+                       CoreReloadListenersContainer reloadStrategy,
                        SecretConcealer secretConcealer,
-                       ObservationService observationService, ResultsProcessorService resultsProcessorService,
+                       ObservationService observationService,
+                       ResultsProcessorService resultsProcessorService,
                        Tags defaultTags, TagMergingStrategy tagMergingStrategy) {
         this.configLoaderService = configLoaderService;
         this.sourcePackages = configSourcePackages;
@@ -99,6 +107,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.sentenceLexer = sentenceLexer;
         this.gestaltConfig = gestaltConfig;
         this.configNodeService = configNodeService;
+        this.configNodeProcessorService = configNodeProcessorService;
         this.coreReloadListenersContainer = reloadStrategy;
         this.secretConcealer = secretConcealer;
         this.observationService = observationService;
@@ -492,12 +501,27 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         GResultOf<ConfigNode> node = configNodeService.navigateToNode(path, tokens, tags);
 
         if (!node.hasErrors() || node.hasErrors(ValidationLevel.MISSING_VALUE)) {
+
+            // apply any run time config node processors to the found node.
+            GResultOf<ConfigNode> processedResult = configNodeProcessorService.runTimeProcessConfigNodes(path, node.results());
+
+            if (processedResult.hasErrors() && !processedResult.getErrorsNotLevel(ValidationLevel.MISSING_VALUE).isEmpty()) {
+                return GResultOf.errors(processedResult.getErrors());
+            }
+
+            ConfigNode processedNode = processedResult.results();
+
             // if we have no errors or the error is from a missing value, lets try and decode the node.
             // for missing values some decoders like optional decoders will handle the errors.
-            GResultOf<T> decodedResults = decoderService.decodeNode(path, tags, node.results(), klass, decoderContext);
+            GResultOf<T> decodedResults = decoderService.decodeNode(path, tags, processedNode, klass, decoderContext);
             Map<String, List<MetaDataValue<?>>> metadata;
             if (node.results() != null) {
-                metadata = node.results().getRolledUpMetadata();
+                // If this is a leaf node, get all metadata, otherwise rollup the metadata
+                if (node.results() instanceof LeafNode) {
+                    metadata = node.results().getMetadata();
+                } else {
+                    metadata = node.results().getRolledUpMetadata();
+                }
             } else {
                 metadata = Map.of();
             }

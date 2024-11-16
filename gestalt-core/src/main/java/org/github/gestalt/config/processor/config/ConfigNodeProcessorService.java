@@ -19,6 +19,13 @@ public interface ConfigNodeProcessorService {
     void addConfigNodeProcessors(List<ConfigNodeProcessor> configNodeProcessorsToAdd);
 
     /**
+     * Add a list of RunTimeConfigNodeProcessor.
+     *
+     * @param runTimeConfigNodeProcessor list of RunTimeConfigNodeProcessor
+     */
+    void addRuntimeConfigNodeProcessor(List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessor);
+
+    /**
      * Apply the list of ConfigNodeProcessor to a specific node on a path.
      *
      * @param path the current path
@@ -26,4 +33,13 @@ public interface ConfigNodeProcessorService {
      * @return the result node that is either the same or modified.
      */
     GResultOf<ConfigNode> processConfigNodes(String path, ConfigNode node);
+
+    /**
+     * Apply the list of runTimeConfigNodeProcessor to a specific node on a path while getting the configuration.
+     *
+     * @param path the current path
+     * @param node the node we want to process
+     * @return the result node that is either the same or modified.
+     */
+    GResultOf<ConfigNode> runTimeProcessConfigNodes(String path, ConfigNode node);
 }

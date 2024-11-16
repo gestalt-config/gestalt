@@ -20,10 +20,7 @@ import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.path.mapper.PathMapper;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessorService;
+import org.github.gestalt.config.processor.config.*;
 import org.github.gestalt.config.processor.result.*;
 import org.github.gestalt.config.processor.result.validation.ConfigValidator;
 import org.github.gestalt.config.processor.result.validation.ValidationResultProcessor;
@@ -89,6 +86,7 @@ public class GestaltBuilder {
     private List<Decoder<?>> decoders = new ArrayList<>();
     private List<ConfigLoader> configLoaders = new ArrayList<>();
     private List<ConfigNodeProcessor> configNodeProcessors = new ArrayList<>();
+    private List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessors = new ArrayList<>();
     private List<PathMapper> pathMappers = new ArrayList<>();
     private List<ObservationRecorder> observationRecorders = new ArrayList<>();
     private List<ConfigValidator> configValidators = new ArrayList<>();
@@ -130,9 +128,13 @@ public class GestaltBuilder {
 
     // Token that represents the opening of a string substitution.
     private String substitutionOpeningToken = null;
-
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = null;
+
+    // Token that represents the opening of a string substitution.
+    private String runTimeSubstitutionOpeningToken = "#{";
+    // Token that represents the closing of a string substitution.
+    private String runTimeSubstitutionClosingToken = "}";
 
     // Token that represents the opening of a string substitution.
     private String annotationOpeningToken = null;
@@ -204,6 +206,19 @@ public class GestaltBuilder {
         ServiceLoader<ConfigNodeProcessor> loader = ServiceLoader.load(ConfigNodeProcessor.class);
         loader.forEach(configNodeProcessorsSet::add);
         configNodeProcessors.addAll(configNodeProcessorsSet);
+        return this;
+    }
+
+    /**
+     * Add default post processors to the builder. Uses the ServiceLoader to find all registered post processors and adds them
+     *
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addDefaultRunTimeConfigNodeProcessor() {
+        List<RunTimeConfigNodeProcessor> configNodeProcessorsSet = new ArrayList<>();
+        ServiceLoader<RunTimeConfigNodeProcessor> loader = ServiceLoader.load(RunTimeConfigNodeProcessor.class);
+        loader.forEach(configNodeProcessorsSet::add);
+        runTimeConfigNodeProcessors.addAll(configNodeProcessorsSet);
         return this;
     }
 
@@ -482,6 +497,56 @@ public class GestaltBuilder {
         this.configNodeProcessors.add(configNodeProcessor);
         return this;
     }
+
+    // ---------------------------------------
+
+    /**
+     * Sets the list of RunTimeConfigNodeProcessor. Replaces any RunTimeConfigNodeProcessor already set.
+     *
+     * @param runTimeConfigNodeProcessors list of RunTimeConfigNodeProcessor to run.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException exception if there are no ConfigNodeProcessor
+     */
+    public GestaltBuilder setRunTimeConfigNodeProcessors(List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessors)
+        throws GestaltConfigurationException {
+        if (runTimeConfigNodeProcessors == null || runTimeConfigNodeProcessors.isEmpty()) {
+            throw new GestaltConfigurationException("No ConfigNodeProcessor provided while setting");
+        }
+        this.runTimeConfigNodeProcessors = new ArrayList<>(runTimeConfigNodeProcessors);
+
+        return this;
+    }
+
+    /**
+     * List of RunTimeConfigNodeProcessor to add to the builder.
+     *
+     * @param runTimeConfigNodeProcessors list of RunTimeConfigNodeProcessor to add.
+     * @return GestaltBuilder builder
+     * @throws GestaltConfigurationException no ConfigNodeProcessor provided
+     */
+    public GestaltBuilder addRunTimeConfigNodeProcessors(List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessors)
+        throws GestaltConfigurationException {
+        if (runTimeConfigNodeProcessors == null || runTimeConfigNodeProcessors.isEmpty()) {
+            throw new GestaltConfigurationException("No ConfigNodeProcessor provided while adding");
+        }
+        this.runTimeConfigNodeProcessors.addAll(runTimeConfigNodeProcessors);
+
+        return this;
+    }
+
+    /**
+     * Add a single RunTimeConfigNodeProcessor to the builder.
+     *
+     * @param runTimeConfigNodeProcessor add a single RunTimeConfigNodeProcessor
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder addRunTimeConfigNodeProcessor(RunTimeConfigNodeProcessor runTimeConfigNodeProcessor) {
+        Objects.requireNonNull(runTimeConfigNodeProcessor, "ConfigNodeProcessor should not be null");
+        this.runTimeConfigNodeProcessors.add(runTimeConfigNodeProcessor);
+        return this;
+    }
+
+    // -----------------------------------------
 
     /**
      * Sets the list of PathMappers. Replaces any PathMappers already set.
@@ -1248,6 +1313,28 @@ public class GestaltBuilder {
     }
 
     /**
+     * Set a Token that represents the opening of a  run time string substitution.
+     *
+     * @param runtTimeSubstitutionClosingToken Token that represents the opening of a  run time string substitution.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setRunTimeSubstitutionClosingToken(String runtTimeSubstitutionClosingToken) {
+        this.runTimeSubstitutionClosingToken = runtTimeSubstitutionClosingToken;
+        return this;
+    }
+
+    /**
+     * Token that represents the closing of a  run time string substitution.
+     *
+     * @param runtTimeSubstitutionOpeningToken a token that represents the closing of a  run time string substitution.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setRunTimeSubstitutionOpeningToken(String runtTimeSubstitutionOpeningToken) {
+        this.runTimeSubstitutionOpeningToken = runtTimeSubstitutionOpeningToken;
+        return this;
+    }
+
+    /**
      * Set a Token that represents the opening of an annotation.
      *
      * @param annotationOpeningToken Token that represents the opening of an annotation.
@@ -1471,7 +1558,7 @@ public class GestaltBuilder {
 
         if (configNodeProcessorService == null) {
             // initialize the ConfigNodeProcessorManager dont provide configNodeProcessors yet, they will be added below.
-            configNodeProcessorService = new ConfigNodeProcessorManager(List.of(), sentenceLexer);
+            configNodeProcessorService = new ConfigNodeProcessorManager(List.of(), List.of(), sentenceLexer);
         }
 
         if (configNodeService == null) {
@@ -1494,11 +1581,12 @@ public class GestaltBuilder {
         configureTemporaryNodesModule();
         configureEncryptedSecretsNodesModule();
         configureConfigNodeProcessor();
+        configureRunTimeConfigNodeProcessor();
 
         // create a new GestaltCoreReloadStrategy to listen for Gestalt Core Reloads.
         CoreReloadListenersContainer coreReloadListenersContainer = new CoreReloadListenersContainer();
         final GestaltCore gestaltCore = new GestaltCore(configLoaderService, configSourcePackages, decoderService, sentenceLexer,
-            gestaltConfig, configNodeService, coreReloadListenersContainer, secretConcealer, observationService,
+            gestaltConfig, configNodeService, configNodeProcessorService, coreReloadListenersContainer, secretConcealer, observationService,
             resultsProcessorService, defaultTags, tagMergingStrategy);
 
         // register gestaltCore with all the source reload strategies.
@@ -1543,6 +1631,22 @@ public class GestaltBuilder {
         configNodeProcessors.forEach(it -> it.applyConfig(config));
 
         configNodeProcessorService.addConfigNodeProcessors(configNodeProcessors);
+    }
+
+    private void configureRunTimeConfigNodeProcessor() {
+        if (runTimeConfigNodeProcessors.isEmpty()) {
+            logger.log(TRACE, "No Runtime Config Node Processors provided, using defaults");
+            addDefaultRunTimeConfigNodeProcessor();
+        }
+
+        runTimeConfigNodeProcessors = runTimeConfigNodeProcessors.stream().filter(Objects::nonNull).collect(Collectors.toList());
+
+        ConfigNodeProcessorConfig config = new ConfigNodeProcessorConfig(gestaltConfig, configNodeService, sentenceLexer,
+            secretConcealer, configNodeFactoryService);
+
+        runTimeConfigNodeProcessors.forEach(it -> it.applyConfig(config));
+
+        configNodeProcessorService.addRuntimeConfigNodeProcessor(runTimeConfigNodeProcessors);
     }
 
     private void configureConfigLoaders() {
@@ -1742,6 +1846,12 @@ public class GestaltBuilder {
 
         newConfig.setSubstitutionClosingToken(Objects.requireNonNullElseGet(substitutionClosingToken,
             () -> gestaltConfig.getSubstitutionClosingToken()));
+
+        newConfig.setRunTimeSubstitutionOpeningToken(Objects.requireNonNullElseGet(runTimeSubstitutionOpeningToken,
+            () -> gestaltConfig.getRunTimeSubstitutionOpeningToken()));
+
+        newConfig.setRunTimeSubstitutionClosingToken(Objects.requireNonNullElseGet(runTimeSubstitutionClosingToken,
+            () -> gestaltConfig.getRunTimeSubstitutionClosingToken()));
 
         newConfig.setAnnotationOpeningToken(Objects.requireNonNullElseGet(annotationOpeningToken,
             () -> gestaltConfig.getAnnotationOpeningToken()));

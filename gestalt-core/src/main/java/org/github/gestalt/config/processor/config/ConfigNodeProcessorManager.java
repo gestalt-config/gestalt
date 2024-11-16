@@ -11,24 +11,27 @@ import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static org.github.gestalt.config.utils.GResultOf.resultOf;
 
 public final class ConfigNodeProcessorManager implements ConfigNodeProcessorService {
 
-    private List<ConfigNodeProcessor> configNodeProcessors;
     // Sentence Lexer used to build a normalized path.
     private final SentenceLexer lexer;
+    private List<ConfigNodeProcessor> configNodeProcessors;
+    private List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessors;
 
-    public ConfigNodeProcessorManager(List<ConfigNodeProcessor> configNodeProcessors, SentenceLexer lexer) {
+    public ConfigNodeProcessorManager(List<ConfigNodeProcessor> configNodeProcessors,
+                                      List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessors, SentenceLexer lexer) {
         Objects.requireNonNull(lexer, "Lexer provided to the ConfigNodeProcessorManager should not be null");
         Objects.requireNonNull(configNodeProcessors,
             "configNodeProcessors provided to the ConfigNodeProcessorManager should not be null");
 
         this.lexer = lexer;
-        this.configNodeProcessors = new ArrayList<>(configNodeProcessors);
-        this.configNodeProcessors = orderedConfigNodeProcessor();
+        this.configNodeProcessors = orderedConfigNodeProcessor(new ArrayList<>(configNodeProcessors));
+        this.runTimeConfigNodeProcessors = orderedConfigNodeProcessor(new ArrayList<>(runTimeConfigNodeProcessors));
     }
 
     @Override
@@ -37,7 +40,16 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
             "configNodeProcessors added to the ConfigNodeProcessorManager should not be null");
 
         this.configNodeProcessors.addAll(configNodeProcessorsToAdd);
-        this.configNodeProcessors = orderedConfigNodeProcessor();
+        this.configNodeProcessors = orderedConfigNodeProcessor(configNodeProcessors);
+    }
+
+    @Override
+    public void addRuntimeConfigNodeProcessor(List<RunTimeConfigNodeProcessor> runTimeConfigNodeProcessor) {
+        Objects.requireNonNull(runTimeConfigNodeProcessor,
+            "runTimeConfigNodeProcessor added to the ConfigNodeProcessorManager should not be null");
+
+        this.runTimeConfigNodeProcessors.addAll(runTimeConfigNodeProcessor);
+        this.runTimeConfigNodeProcessors = orderedConfigNodeProcessor(runTimeConfigNodeProcessor);
     }
 
     /**
@@ -45,8 +57,8 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
      *
      * @return the result processors in order.
      */
-    private List<ConfigNodeProcessor> orderedConfigNodeProcessor() {
-        return configNodeProcessors.stream().sorted((to, from) -> {
+    private <T> List<T> orderedConfigNodeProcessor(List<T> processor) {
+        return processor.stream().sorted((to, from) -> {
             var toAnnotation = to.getClass().getAnnotationsByType(ConfigPriority.class);
             var toValue = toAnnotation.length > 0 ? toAnnotation[0].value() : 1000;
             var fromAnnotation = from.getClass().getAnnotationsByType(ConfigPriority.class);
@@ -58,7 +70,26 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
 
     @Override
     public GResultOf<ConfigNode> processConfigNodes(String path, ConfigNode node) {
-        if (configNodeProcessors.isEmpty()) {
+        return commonProcessConfigNodes(path, node, configNodeProcessors, this::processConfigNodes);
+    }
+
+    @Override
+    public GResultOf<ConfigNode> runTimeProcessConfigNodes(String path, ConfigNode node) {
+        // at runtime it is possible to have null nodes, as the decoder may decide to return an empty optional.
+        // if it is null, return a null node.
+        if (node == null) {
+            return GResultOf.result(node);
+        }
+
+        return commonProcessConfigNodes(path, node, runTimeConfigNodeProcessors, this::runTimeProcessConfigNodes);
+    }
+
+    public <T extends BaseConfigNodeProcessor> GResultOf<ConfigNode> commonProcessConfigNodes(
+        String path, ConfigNode node,
+        List<T> processor,
+        BiFunction<String, ConfigNode, GResultOf<ConfigNode>> processConfigNodes
+    ) {
+        if (processor.isEmpty()) {
             return GResultOf.result(node);
         }
 
@@ -68,7 +99,7 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
         // apply the post processors to the node.
         // If there are multiple post processors, apply them in order, each post processor operates on the result node from the
         // last post processor.
-        for (ConfigNodeProcessor it : configNodeProcessors) {
+        for (T it : processor) {
             GResultOf<ConfigNode> processedNode = it.process(path, currentNode);
 
             errors.addAll(processedNode.getErrors());
@@ -81,9 +112,9 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
 
         // recursively apply post processing to children nodes. If this is a leaf, we can return.
         if (currentNode instanceof ArrayNode) {
-            return postProcessArray(path, (ArrayNode) currentNode);
+            return postProcessArray(path, (ArrayNode) currentNode, processConfigNodes);
         } else if (currentNode instanceof MapNode) {
-            return postProcessMap(path, (MapNode) currentNode);
+            return postProcessMap(path, (MapNode) currentNode, processConfigNodes);
         } else if (currentNode instanceof LeafNode) {
             return resultOf(currentNode, errors);
         } else {
@@ -91,7 +122,8 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
         }
     }
 
-    private GResultOf<ConfigNode> postProcessArray(String path, ArrayNode node) {
+    private GResultOf<ConfigNode> postProcessArray(String path, ArrayNode node,
+                                                   BiFunction<String, ConfigNode, GResultOf<ConfigNode>> processConfigNodes) {
         int size = node.size();
         List<ValidationError> errors = new ArrayList<>();
         ConfigNode[] processedNode = new ConfigNode[size];
@@ -100,7 +132,7 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
             Optional<ConfigNode> currentNodeOption = node.getIndex(i);
             if (currentNodeOption.isPresent()) {
                 String nextPath = PathUtil.pathForIndex(lexer, path, i);
-                GResultOf<ConfigNode> newNode = processConfigNodes(nextPath, currentNodeOption.get());
+                GResultOf<ConfigNode> newNode = processConfigNodes.apply(nextPath, currentNodeOption.get());
 
                 errors.addAll(newNode.getErrors());
                 if (newNode.hasResults()) {
@@ -114,14 +146,15 @@ public final class ConfigNodeProcessorManager implements ConfigNodeProcessorServ
         return resultOf(new ArrayNode(Arrays.asList(processedNode)), errors);
     }
 
-    private GResultOf<ConfigNode> postProcessMap(String path, MapNode node) {
+    private GResultOf<ConfigNode> postProcessMap(String path, MapNode node,
+                                                 BiFunction<String, ConfigNode, GResultOf<ConfigNode>> processConfigNodes) {
         Map<String, ConfigNode> processedNode = new HashMap<>();
         List<ValidationError> errors = new ArrayList<>();
 
         for (Map.Entry<String, ConfigNode> entry : node.getMapNode().entrySet()) {
             String key = entry.getKey();
             String nextPath = PathUtil.pathForKey(lexer, path, key);
-            GResultOf<ConfigNode> newNode = processConfigNodes(nextPath, entry.getValue());
+            GResultOf<ConfigNode> newNode = processConfigNodes.apply(nextPath, entry.getValue());
 
             errors.addAll(newNode.getErrors());
             if (newNode.hasResults()) {

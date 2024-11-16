@@ -3,6 +3,7 @@ package org.github.gestalt.config;
 import org.github.gestalt.config.builder.GestaltBuilder;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.metadata.IsNoCacheMetadata;
+import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
@@ -48,6 +49,11 @@ public class GestaltAnnotationProcessorTest {
 
         Assertions.assertEquals("tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='*****'}, " +
             "port=LeafNode{value='*****'}, uri=LeafNode{value='my.sql.com'}}}", gestalt.debugPrint());
+
+        var result = gestalt.getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
+        Assertions.assertEquals(123, result.results());
+        Assertions.assertEquals(1, result.getMetadata().size());
+        Assertions.assertEquals(true, result.getMetadata().containsKey(IsSecretMetadata.SECRET));
     }
 
     @Test
@@ -227,4 +233,40 @@ public class GestaltAnnotationProcessorTest {
         Assertions.assertTrue(results.getMetadata().containsKey(IsNoCacheMetadata.NO_CACHE));
         Assertions.assertTrue((boolean) results.getMetadata().get(IsNoCacheMetadata.NO_CACHE).get(0).getMetadata());
     }
+
+    @Test
+    public void testSecretRollup() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test@{noCache}");
+        configs.put("db.port", "123@{secret}");
+        configs.put("db.uri", "my.sql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("tags: Tags{[]} = MapNode{db=MapNode{password=LeafNode{value='*****'}, " +
+            "port=LeafNode{value='*****'}, uri=LeafNode{value='my.sql.com'}}}", gestalt.debugPrint());
+
+        var result = gestalt.getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
+        Assertions.assertEquals(123, result.results());
+        Assertions.assertEquals(1, result.getMetadata().size());
+        Assertions.assertEquals(true, result.getMetadata().containsKey(IsSecretMetadata.SECRET));
+
+        var resultPassword = gestalt.getConfigResult("db.password", TypeCapture.of(String.class), Tags.of());
+        Assertions.assertEquals("test", resultPassword.results());
+        Assertions.assertEquals(1, resultPassword.getMetadata().size());
+        Assertions.assertEquals(true, resultPassword.getMetadata().containsKey(IsNoCacheMetadata.NO_CACHE));
+
+        var resultDB = gestalt.getConfigResult("db", TypeCapture.of(DBInfo.class), Tags.of());
+        Assertions.assertEquals("test", resultDB.results().getPassword());
+        Assertions.assertEquals(123, resultDB.results().getPort());
+        Assertions.assertEquals(1, resultDB.getMetadata().size());
+        Assertions.assertEquals(true, resultDB.getMetadata().containsKey(IsNoCacheMetadata.NO_CACHE));
+    }
+
+
 }

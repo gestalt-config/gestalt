@@ -4,7 +4,7 @@ import org.github.gestalt.config.decoder.ProxyDecoderMode;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor;
-import org.github.gestalt.config.processor.config.transform.StringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.transform.StringSubstitutionProcessor;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -41,6 +41,10 @@ public class GestaltConfig {
     private String substitutionOpeningToken = "${";
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = "}";
+    // Token that represents the opening of a string substitution.
+    private String runTimeSubstitutionOpeningToken = "#{";
+    // Token that represents the closing of a string substitution.
+    private String runTimeSubstitutionClosingToken = "}";
     // Token that represents the opening of an annotation.
     private String annotationOpeningToken = "@{";
     // Token that represents the closing of an annotation.
@@ -54,7 +58,7 @@ public class GestaltConfig {
     private int maxSubstitutionNestedDepth = 5;
     // the regex used to parse string substitutions.
     // Must have a named capture group transform, key, and default, where the key is required and the transform and default are optional.
-    private String substitutionRegex = StringSubstitutionConfigNodeProcessor.DEFAULT_SUBSTITUTION_REGEX;
+    private String substitutionRegex = StringSubstitutionProcessor.DEFAULT_SUBSTITUTION_REGEX;
 
     private String nodeIncludeKeyword = "$include";
 
@@ -290,6 +294,42 @@ public class GestaltConfig {
      */
     public void setSubstitutionClosingToken(String substitutionClosingToken) {
         this.substitutionClosingToken = substitutionClosingToken;
+    }
+
+    /**
+     * Get the token that represents the opening of a run time string substitution.
+     *
+     * @return Token that represents the opening of a run time string substitution.
+     */
+    public String getRunTimeSubstitutionOpeningToken() {
+        return runTimeSubstitutionOpeningToken;
+    }
+
+    /**
+     * Set the token that represents the opening of a  run time string substitution.
+     *
+     * @param runtTimeSubstitutionOpeningToken Token that represents the opening of a  run time string substitution.
+     */
+    public void setRunTimeSubstitutionOpeningToken(String runtTimeSubstitutionOpeningToken) {
+        this.runTimeSubstitutionOpeningToken = runtTimeSubstitutionOpeningToken;
+    }
+
+    /**
+     * Get the token that represents the closing of a  run time string substitution.
+     *
+     * @return Token that represents the closing of a  run time string substitution.
+     */
+    public String getRunTimeSubstitutionClosingToken() {
+        return runTimeSubstitutionClosingToken;
+    }
+
+    /**
+     * Set the token that represents the opening of a  run time string substitution.
+     *
+     * @param runTimeSubstitutionClosingToken Token that represents the closing of a  run time string substitution.
+     */
+    public void setRunTimeSubstitutionClosingToken(String runTimeSubstitutionClosingToken) {
+        this.runTimeSubstitutionClosingToken = runTimeSubstitutionClosingToken;
     }
 
     /**

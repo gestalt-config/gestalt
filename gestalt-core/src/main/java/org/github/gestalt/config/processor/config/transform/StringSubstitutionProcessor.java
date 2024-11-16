@@ -1,11 +1,10 @@
 package org.github.gestalt.config.processor.config.transform;
 
-import org.github.gestalt.config.annotations.ConfigPriority;
 import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
-import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
 import org.github.gestalt.config.processor.config.transform.substitution.SubstitutionNode;
 import org.github.gestalt.config.processor.config.transform.substitution.SubstitutionTreeBuilder;
@@ -34,23 +33,21 @@ import static org.github.gestalt.config.utils.CollectionUtils.buildOrderedConfig
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
  */
-@ConfigPriority(200)
-public final class StringSubstitutionConfigNodeProcessor implements ConfigNodeProcessor {
+public final class StringSubstitutionProcessor {
 
     public static final String DEFAULT_SUBSTITUTION_REGEX =
         "^((?<transform>\\w+):(?!=))?(?<key>.+?)(:=(?<default>.*))?$";
     private final Map<String, Transformer> transformers;
     private final List<Transformer> orderedDefaultTransformers;
-    private Pattern pattern;
-    private int maxRecursionDepth = 5;
-    private SubstitutionTreeBuilder substitutionTreeBuilder;
+    private final Pattern pattern;
+    private final SubstitutionTreeBuilder substitutionTreeBuilder;
+    private final SentenceLexer lexer;
+    private final int maxRecursionDepth;
     private SecretConcealer secretConcealer;
-    private SentenceLexer lexer;
 
-    /**
-     * By default, use the service loader to load all Transformer classes.
-     */
-    public StringSubstitutionConfigNodeProcessor() {
+
+    public StringSubstitutionProcessor(ConfigNodeProcessorConfig config, String openingToken, String closingToken) {
+
         transformers = new HashMap<>();
         List<Transformer> transformersList = new ArrayList<>();
         ServiceLoader<Transformer> loader = ServiceLoader.load(Transformer.class);
@@ -60,7 +57,15 @@ public final class StringSubstitutionConfigNodeProcessor implements ConfigNodePr
         });
 
         this.orderedDefaultTransformers = buildOrderedConfigPriorities(transformersList, false);
-        this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
+
+        this.transformers.values().forEach(it -> it.applyConfig(config));
+
+        this.substitutionTreeBuilder = new SubstitutionTreeBuilder(openingToken, closingToken);
+
+        this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
+        this.pattern = Pattern.compile(config.getConfig().getSubstitutionRegex());
+        this.secretConcealer = config.getSecretConcealer();
+        this.lexer = config.getLexer();
     }
 
     /**
@@ -68,7 +73,7 @@ public final class StringSubstitutionConfigNodeProcessor implements ConfigNodePr
      *
      * @param transformers list of transformers to use
      */
-    public StringSubstitutionConfigNodeProcessor(List<Transformer> transformers) {
+    public StringSubstitutionProcessor(List<Transformer> transformers) {
         if (transformers == null) {
             this.transformers = Collections.emptyMap();
             this.orderedDefaultTransformers = List.of();
@@ -79,25 +84,18 @@ public final class StringSubstitutionConfigNodeProcessor implements ConfigNodePr
 
         this.substitutionTreeBuilder = new SubstitutionTreeBuilder("${", "}");
         this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
+        this.lexer = new PathLexer();
+        this.maxRecursionDepth = 5;
     }
 
-    @Override
-    public void applyConfig(ConfigNodeProcessorConfig config) {
-        this.transformers.values().forEach(it -> it.applyConfig(config));
 
-        substitutionTreeBuilder = new SubstitutionTreeBuilder(config.getConfig().getSubstitutionOpeningToken(),
-            config.getConfig().getSubstitutionClosingToken());
-
-        this.maxRecursionDepth = config.getConfig().getMaxSubstitutionNestedDepth();
-        this.pattern = Pattern.compile(DEFAULT_SUBSTITUTION_REGEX);
-        this.secretConcealer = config.getSecretConcealer();
-        this.lexer = config.getLexer();
-    }
-
-    @Override
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
-        var valueOptional = currentNode.getValue();
-        if (transformers.isEmpty() || !(currentNode instanceof LeafNode) || valueOptional.isEmpty()) {
+        if (transformers.isEmpty() || !(currentNode instanceof LeafNode)) {
+            return GResultOf.result(currentNode);
+        }
+
+        var valueOptional = ((LeafNode)currentNode).getValueInternal();
+        if (valueOptional.isEmpty()) {
             return GResultOf.result(currentNode);
         }
 
@@ -107,7 +105,7 @@ public final class StringSubstitutionConfigNodeProcessor implements ConfigNodePr
         if (substitutionNodes.hasResults()) {
             var results = buildSubstitutedStringList(path, currentNode, substitutionNodes.results(), 0);
 
-            return results.mapWithError(it -> new LeafNode(it, currentNode.getMetadata()));
+            return results.mapWithError(it -> ((LeafNode) currentNode).duplicate(it));
 
         } else {
             return GResultOf.errors(substitutionNodes.getErrors());

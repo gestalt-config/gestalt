@@ -12,11 +12,9 @@ import org.github.gestalt.config.secret.rules.SecretChecker;
 import org.github.gestalt.config.utils.GResultOf;
 
 import javax.crypto.*;
-import javax.crypto.spec.GCMParameterSpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,36 +27,8 @@ import java.util.Set;
 @ConfigPriority(400)
 public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
 
-    public static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
-    public static final int GCM_TAG_LENGTH = 16;
-    public static final int GCM_IV_LENGTH = 12;
-
     private static final System.Logger logger = System.getLogger(EncryptedSecretConfigNodeProcessor.class.getName());
     private SecretChecker encryptedSecret = new RegexSecretChecker(Set.of());
-
-    private static SecretKey generateKey(int n) throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(n);
-        return keyGenerator.generateKey();
-    }
-
-    private byte[] encryptGcm(SecretKey skey, String plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException,
-        InvalidAlgorithmParameterException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
-        /* Precond: skey is valid and GCM mode is available in the JRE;
-         * otherwise IllegalStateException will be thrown. */
-        byte[] ciphertext;
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        byte[] initVector = new byte[GCM_IV_LENGTH];
-        new SecureRandom().nextBytes(initVector);
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
-        cipher.init(Cipher.ENCRYPT_MODE, skey, spec);
-        byte[] encoded = plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        ciphertext = new byte[initVector.length + cipher.getOutputSize(encoded.length)];
-        System.arraycopy(initVector, 0, ciphertext, 0, initVector.length);
-        // Perform encryption
-        cipher.doFinal(encoded, 0, encoded.length, ciphertext, initVector.length);
-        return ciphertext;
-    }
 
     @Override
     public void applyConfig(ConfigNodeProcessorConfig config) {
@@ -82,13 +52,13 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
 
         var metadata = currentNode.getMetadata();
 
-        // if this is not a temporary secret node, return the original node.
+        // if this is not an encrypted secret node, return the original node.
         if (!encryptedSecret.isSecret(path) && (!metadata.containsKey(IsEncryptedMetadata.ENCRYPTED) || //NOPMD
             metadata.get(IsEncryptedMetadata.ENCRYPTED).stream().noneMatch(it -> (boolean) it.getMetadata()))) {
             return GResultOf.result(currentNode);
         }
 
-        Optional<String> optionalLeafNodeValue = currentNode.getValue();
+        Optional<String> optionalLeafNodeValue = ((LeafNode) currentNode).getValueInternal();
 
         // if the leaf node doesn't have a value, we don't need to encrypt it.
         if (optionalLeafNodeValue.isEmpty()) {
@@ -100,8 +70,8 @@ public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {
         // We use the encryption cipher to encrypt the data and pass the encrypted data along with the
         // decryption cipher to the leaf.
         try {
-            var secretKey = generateKey(128);
-            var encryptedData = encryptGcm(secretKey, optionalLeafNodeValue.orElse(""));
+            var secretKey = EncryptionUtils.generateKey(128);
+            var encryptedData = EncryptionUtils.encryptGcm(secretKey, optionalLeafNodeValue.orElse(""));
 
             return GResultOf.result(new EncryptedLeafNode(encryptedData, secretKey, metadata));
 
