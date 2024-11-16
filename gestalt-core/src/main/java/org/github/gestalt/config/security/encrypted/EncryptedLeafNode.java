@@ -25,6 +25,8 @@ import java.util.*;
  */
 public class EncryptedLeafNode extends LeafNode {
 
+    private static final System.Logger logger = System.getLogger(EncryptedSecretConfigNodeProcessor.class.getName());
+
     public static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
     public static final int GCM_TAG_LENGTH = 16;
     public static final int GCM_IV_LENGTH = 12;
@@ -38,6 +40,27 @@ public class EncryptedLeafNode extends LeafNode {
 
         this.skey = skey;
         this.encryptedData = encryptedData;
+    }
+
+    /**
+     * Duplicate the encrypted node and generate a new encrypted node with the new value.
+     *
+     * @param value new value for leaf
+     * @return new non-encrypted leaf.
+     */
+    public LeafNode duplicate(String value) {
+        try {
+            var secretKey = EncryptionUtils.generateKey(128);
+            var encryptedData = EncryptionUtils.encryptGcm(secretKey, value);
+
+            return new EncryptedLeafNode(encryptedData, secretKey, metadata);
+        } catch (NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException |
+                 InvalidAlgorithmParameterException | InvalidKeyException | ShortBufferException ex) {
+            logger.log(System.Logger.Level.ERROR, "Exception duplicating EncryptedLeafNode with error " + ex.getMessage() +
+                " returning normal leaf");
+
+            return new LeafNode(value, metadata);
+        }
     }
 
     public static String decryptGcm(SecretKey skey, byte[] ciphertext)
@@ -66,6 +89,15 @@ public class EncryptedLeafNode extends LeafNode {
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Since we need to decrypt the data, still go through the standard getValue.
+     *
+     * @return the value for the node decrypted.
+     */
+    public Optional<String> getValueInternal() {
+        return getValue();
     }
 
     @Override

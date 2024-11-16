@@ -31,6 +31,10 @@ public class TemporaryLeafNode extends LeafNode {
         this.decoratedNode = decoratedNode;
     }
 
+    public LeafNode duplicate(String value) {
+        return new TemporaryLeafNode(new LeafNode(value, metadata), accessCount.get(), metadata);
+    }
+
     @Override
     public Optional<String> getValue() {
         if (accessCount.get() > 0 && accessCount.getAndDecrement() > 0) {

@@ -41,6 +41,10 @@ public class GestaltConfig {
     private String substitutionOpeningToken = "${";
     // Token that represents the closing of a string substitution.
     private String substitutionClosingToken = "}";
+    // Token that represents the opening of a string substitution.
+    private String runTimeSubstitutionOpeningToken = "#{";
+    // Token that represents the closing of a string substitution.
+    private String runTimeSubstitutionClosingToken = "}";
     // Token that represents the opening of an annotation.
     private String annotationOpeningToken = "@{";
     // Token that represents the closing of an annotation.
@@ -290,6 +294,42 @@ public class GestaltConfig {
      */
     public void setSubstitutionClosingToken(String substitutionClosingToken) {
         this.substitutionClosingToken = substitutionClosingToken;
+    }
+
+    /**
+     * Get the token that represents the opening of a run time string substitution.
+     *
+     * @return Token that represents the opening of a run time string substitution.
+     */
+    public String getRunTimeSubstitutionOpeningToken() {
+        return runTimeSubstitutionOpeningToken;
+    }
+
+    /**
+     * Set the token that represents the opening of a  run time string substitution.
+     *
+     * @param runtTimeSubstitutionOpeningToken Token that represents the opening of a  run time string substitution.
+     */
+    public void setRunTimeSubstitutionOpeningToken(String runtTimeSubstitutionOpeningToken) {
+        this.runTimeSubstitutionOpeningToken = runtTimeSubstitutionOpeningToken;
+    }
+
+    /**
+     * Get the token that represents the closing of a  run time string substitution.
+     *
+     * @return Token that represents the closing of a  run time string substitution.
+     */
+    public String getRunTimeSubstitutionClosingToken() {
+        return runTimeSubstitutionClosingToken;
+    }
+
+    /**
+     * Set the token that represents the opening of a  run time string substitution.
+     *
+     * @param runTimeSubstitutionClosingToken Token that represents the closing of a  run time string substitution.
+     */
+    public void setRunTimeSubstitutionClosingToken(String runTimeSubstitutionClosingToken) {
+        this.runTimeSubstitutionClosingToken = runTimeSubstitutionClosingToken;
     }
 
     /**

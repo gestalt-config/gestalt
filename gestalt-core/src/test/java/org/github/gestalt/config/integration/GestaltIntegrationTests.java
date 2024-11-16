@@ -480,7 +480,8 @@ public class GestaltIntegrationTests {
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("/defaultPPSys.properties").build())
             .addSource(ClassPathConfigSourceBuilder.builder().setResource("integration.properties").build())
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .addConfigNodeProcessor(new LoadtimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
+            .addConfigNodeProcessor(
+                new LoadtimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new SystemPropertiesTransformer())))
             .build();
 
         gestalt.loadConfigs();
@@ -870,65 +871,6 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals(1234, connection.getDbPort());
         Assertions.assertEquals("usersTable", connection.getDbPath());
     }
-
-    @Test
-    public void testSubstitution() throws GestaltException {
-        Map<String, String> customMap = new HashMap<>();
-        customMap.put("place", "world");
-        customMap.put("weather", "sunny");
-        customMap.put("message", "hello ${place} it is ${weather} today");
-
-        GestaltBuilder builder = new GestaltBuilder();
-        Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
-
-        gestalt.loadConfigs();
-
-        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
-
-        Assertions.assertEquals("hello world it is sunny today", message);
-    }
-
-    @Test
-    public void testNestedSubstitution() throws GestaltException {
-        Map<String, String> customMap = new HashMap<>();
-        customMap.put("variable", "place");
-        customMap.put("place", "world");
-        customMap.put("weather", "sunny");
-        customMap.put("message", "hello ${${variable}} it is ${weather} today");
-
-        GestaltBuilder builder = new GestaltBuilder();
-        Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
-
-        gestalt.loadConfigs();
-
-        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
-
-        Assertions.assertEquals("hello world it is sunny today", message);
-    }
-
-    @Test
-    public void testEscapedSubstitution() throws GestaltException {
-        Map<String, String> customMap = new HashMap<>();
-        customMap.put("place", "world");
-        customMap.put("weather", "sunny");
-        customMap.put("message", "hello \\${place} it is ${weather} today");
-
-        GestaltBuilder builder = new GestaltBuilder();
-        Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
-
-        gestalt.loadConfigs();
-
-        String message = gestalt.getConfig("message", TypeCapture.of(String.class));
-
-        Assertions.assertEquals("hello ${place} it is sunny today", message);
-    }
-
 
     @Test
     public void testMapTypes() throws GestaltException {

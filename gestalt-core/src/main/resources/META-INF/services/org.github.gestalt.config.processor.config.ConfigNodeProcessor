@@ -1,5 +1,6 @@
+org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor
+org.github.gestalt.config.processor.config.include.IncludeConfigNodeProcessor
 org.github.gestalt.config.processor.config.transform.LoadtimeStringSubstitutionConfigNodeProcessor
+org.github.gestalt.config.processor.config.transform.RunTimeMetadataConfigNodeProcessor
 org.github.gestalt.config.security.encrypted.EncryptedSecretConfigNodeProcessor
 org.github.gestalt.config.security.temporary.TemporarySecretConfigNodeProcessor
-org.github.gestalt.config.processor.config.include.IncludeConfigNodeProcessor
-org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor

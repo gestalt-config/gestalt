@@ -11,6 +11,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.loader.ConfigLoader;
 import org.github.gestalt.config.loader.ConfigLoaderRegistry;
 import org.github.gestalt.config.loader.MapConfigLoader;
+import org.github.gestalt.config.metadata.IsSecretMetadata;
 import org.github.gestalt.config.node.TagMergingStrategyFallback;
 import org.github.gestalt.config.observations.ObservationManager;
 import org.github.gestalt.config.observations.TestObservationRecorder;
@@ -23,8 +24,11 @@ import org.github.gestalt.config.path.mapper.StandardPathMapper;
 import org.github.gestalt.config.processor.TestValidationProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.ConfigNodeProcessorConfig;
+import org.github.gestalt.config.processor.config.ConfigNodeProcessorManager;
+import org.github.gestalt.config.processor.config.RunTimeConfigNodeProcessor;
 import org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer;
 import org.github.gestalt.config.processor.config.transform.LoadtimeStringSubstitutionConfigNodeProcessor;
+import org.github.gestalt.config.processor.config.transform.RunTimeStringSubstitutionConfigNodeProcessor;
 import org.github.gestalt.config.processor.result.DefaultResultProcessor;
 import org.github.gestalt.config.processor.result.ErrorResultProcessor;
 import org.github.gestalt.config.processor.result.ResultsProcessorManager;
@@ -102,6 +106,8 @@ class GestaltBuilderTest {
             .setLogLevelForMissingValuesWhenDefaultOrOptional(System.Logger.Level.DEBUG)
             .setSubstitutionOpeningToken("${")
             .setSubstitutionClosingToken("}")
+            .setRunTimeSubstitutionOpeningToken("${")
+            .setRunTimeSubstitutionClosingToken("}")
             .setAnnotationOpeningToken("@{")
             .setAnnotationClosingToken("}")
             .setAnnotationRegex("^(?<annotation>\\w+):?(?<key>.+?)?$")
@@ -123,6 +129,12 @@ class GestaltBuilderTest {
                 new LoadtimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
             .setConfigNodeProcessors(Collections.singletonList(
                 new LoadtimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+            .addRunTimeConfigNodeProcessors(Collections.singletonList(
+                new RunTimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+            .setRunTimeConfigNodeProcessors(Collections.singletonList(
+                new RunTimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer()))))
+            .addRunTimeConfigNodeProcessor(
+                new RunTimeStringSubstitutionConfigNodeProcessor(Collections.singletonList(new EnvironmentVariablesTransformer())))
             .addPathMapper(new StandardPathMapper())
             .addPathMappers(List.of(new DotNotationPathMapper()))
             .setPathMappers(List.of(new StandardPathMapper()))
@@ -135,6 +147,7 @@ class GestaltBuilderTest {
             .addResultProcessors(List.of(new TestResultProcessor(true)))
             .setResultProcessor(List.of(new TestResultProcessor(true)))
             .setResultsProcessorService(new ResultsProcessorManager(new ArrayList<>()))
+            .setConfigNodeProcessorService(new ConfigNodeProcessorManager(List.of(), List.of(), new PathLexer()))
             .setConfigSourceFactoryService(new ConfigNodeFactoryManager(List.of()))
             .setConfigSourceFactories(List.of(new FileConfigNodeFactory()))
             .addConfigSourceFactory(new ClassPathConfigNodeFactory())
@@ -505,6 +518,39 @@ class GestaltBuilderTest {
     }
 
     @Test
+    public void buildDifferentAnnotationTags() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "test2");
+        configs2.put("db.password", "password&(secret)");
+        configs2.put("admin[0]", "John2");
+        configs2.put("admin[1]", "Steve2");
+
+        List<ConfigSourcePackage> sources = new ArrayList<>();
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs).build());
+        sources.add(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSources(sources)
+            .setAnnotationOpeningToken("&(")
+            .setAnnotationClosingToken(")")
+            .build();
+
+        gestalt.loadConfigs();
+
+        var result = gestalt.getConfigResult("db.password", TypeCapture.of(String.class), Tags.of());
+        Assertions.assertEquals("password", result.results());
+        Assertions.assertEquals(1, result.getMetadata().size());
+        Assertions.assertEquals(true, result.getMetadata().containsKey(IsSecretMetadata.SECRET));
+    }
+
+    @Test
     public void buildDefaultTags() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.name", "test");
@@ -826,6 +872,35 @@ class GestaltBuilderTest {
     }
 
     @Test
+    public void manuallyAddedRunTimePostProcessorConfig() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin[0]", "John");
+        configs.put("admin[1]", "Steve");
+
+        var processor1 = new TestRunTimeConfigNodeProcessor();
+        var processor2 = new TestRunTimeConfigNodeProcessor();
+        var processor3 = new TestRunTimeConfigNodeProcessor();
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addDefaultPostProcessors()
+            .addRunTimeConfigNodeProcessor(processor1)
+            .addRunTimeConfigNodeProcessors(List.of(processor2, processor3))
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals(1, processor1.configCount);
+        Assertions.assertEquals(1, processor2.configCount);
+        Assertions.assertEquals(1, processor3.configCount);
+    }
+
+    @Test
     public void manuallyAddedPathMapperConfig() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
@@ -1066,6 +1141,21 @@ class GestaltBuilderTest {
     }
 
     private static class TestConfigNodeProcessor implements ConfigNodeProcessor {
+
+        public int configCount = 0;
+
+        @Override
+        public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
+            return GResultOf.result(currentNode);
+        }
+
+        @Override
+        public void applyConfig(ConfigNodeProcessorConfig config) {
+            configCount++;
+        }
+    }
+
+    private static class TestRunTimeConfigNodeProcessor implements RunTimeConfigNodeProcessor {
 
         public int configCount = 0;
 

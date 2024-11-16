@@ -839,7 +839,7 @@ Supported substitution sources:
 |             |                      | objectName         | The specific config file to include.                                                                                                                                                                                                                                                            |
 
 # String Substitution
-Gestalt supports string substitutions at load time on configuration properties to dynamically modify configurations.
+Gestalt supports string substitutions using `${}` at load time on configuration properties to dynamically modify configurations.
 
 For example if we have a properties file with a Database connection you don't want to save your usernames and passwords in the properties files. Instead, you want to inject the username and passwords as Environment Variables.
 
@@ -853,6 +853,14 @@ You can use multiple string replacements within a single string to build a confi
 ```properties
 db.uri=jdbc:mysql://${DB_HOST}:${DB_PORT}/${environment}
 ```
+
+### Load time vs run time
+Load time `${}` substitutions are evaluated when we load the configurations and build the config tree. This is done once on `gestalt.load()` then all results are cached in the config tree and returned. 
+Run time `#{}` substitutions are evaluated at runtime when you call `gestalt.getConfig(...);`, the results are not cached and each time you call `gestalt.getConfig(...);` you will re-evaluate the value.
+
+It is recommended to use Load time `${}` substitutions in the vast majority of cases as it is more performant. The main use case for run time `#{}` substitutions is for values you expect to change from one run to the next, such as wanting a different random number each time you call `gestalt.getConfig(...);`.
+
+Aside from evaluated time, the syntax and use of both `${}` and `#{}` are otherwise identical, you can mix and match them as needed. 
 
 ### Specifying the Transformer
 You can specify the substitution in the format ${transform:key} or ${key}. If you provide a transform name it will only check that one transform. Otherwise, it will check all the Transformer annotated with a `@ConfigPriority` in descending order and will return the first matching value.

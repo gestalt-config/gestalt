@@ -90,8 +90,12 @@ public final class StringSubstitutionProcessor {
 
 
     public GResultOf<ConfigNode> process(String path, ConfigNode currentNode) {
-        var valueOptional = currentNode.getValue();
-        if (transformers.isEmpty() || !(currentNode instanceof LeafNode) || valueOptional.isEmpty()) {
+        if (transformers.isEmpty() || !(currentNode instanceof LeafNode)) {
+            return GResultOf.result(currentNode);
+        }
+
+        var valueOptional = ((LeafNode)currentNode).getValueInternal();
+        if (valueOptional.isEmpty()) {
             return GResultOf.result(currentNode);
         }
 
@@ -101,7 +105,7 @@ public final class StringSubstitutionProcessor {
         if (substitutionNodes.hasResults()) {
             var results = buildSubstitutedStringList(path, currentNode, substitutionNodes.results(), 0);
 
-            return results.mapWithError(it -> new LeafNode(it, currentNode.getMetadata()));
+            return results.mapWithError(it -> ((LeafNode) currentNode).duplicate(it));
 
         } else {
             return GResultOf.errors(substitutionNodes.getErrors());

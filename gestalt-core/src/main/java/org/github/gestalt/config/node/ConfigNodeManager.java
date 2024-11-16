@@ -41,7 +41,8 @@ public final class ConfigNodeManager implements ConfigNodeService {
     private final ConfigNodeProcessorService configNodeProcessorService;
 
     public ConfigNodeManager() {
-        this(new EqualTagsWithDefaultTagResolutionStrategy(), new ConfigNodeProcessorManager(List.of(), new PathLexer()), new PathLexer());
+        this(new EqualTagsWithDefaultTagResolutionStrategy(),
+            new ConfigNodeProcessorManager(List.of(), List.of(), new PathLexer()), new PathLexer());
     }
 
     /**

@@ -20,8 +20,8 @@ import org.mockito.Mockito;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SystemConfigNodeFactoryTest {
 
     private SystemConfigNodeFactory factory;
