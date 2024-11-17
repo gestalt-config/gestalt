@@ -21,8 +21,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -40,8 +40,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -59,8 +59,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -82,8 +82,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -102,8 +102,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -121,8 +121,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -140,8 +140,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -160,8 +160,8 @@ public class GestaltSubstitutionTest {
 
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
-            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
-            .build();
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
 
         gestalt.loadConfigs();
 
@@ -186,10 +186,58 @@ public class GestaltSubstitutionTest {
 
         boolean different = false;
         int passes = 10;
-        while(!different && passes-- > 0) {
+        while (!different && passes-- > 0) {
             String message2 = gestalt.getConfig("message", TypeCapture.of(String.class));
 
             different = !message2.equals(message1);
         }
+    }
+
+    @Test
+    public void testRedistributions() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        // we want 10% of traffic to be true
+        customMap.put("color", "#{dist100:10:red,30:green,70:blue,75:pink,yellow}");
+
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+                .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+                .build();
+
+        gestalt.loadConfigs();
+
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+        int yellow = 0;
+        int pink = 0;
+        int passes = 1000;
+        while (passes-- > 0) {
+            String color = gestalt.getConfig("color", TypeCapture.of(String.class));
+
+            if ("red".equals(color)) {
+                red++;
+            } else if ("green".equals(color)) {
+                green++;
+            } else if ("blue".equals(color)) {
+                blue++;
+            } else if ("pink".equals(color)) {
+                pink++;
+            } else if ("yellow".equals(color)) {
+                yellow++;
+            }
+        }
+        red = red / 10;
+        green = green / 10;
+        blue = blue / 10;
+        yellow = yellow / 10;
+        pink = pink / 10;
+
+        Assertions.assertTrue(red > 5 && red < 15);
+        Assertions.assertTrue(green > 15 && green < 25);
+        Assertions.assertTrue(blue > 35 && blue < 45);
+        Assertions.assertTrue(pink > 3 && pink < 7);
+        Assertions.assertTrue(yellow > 20 && yellow < 30);
     }
 }
