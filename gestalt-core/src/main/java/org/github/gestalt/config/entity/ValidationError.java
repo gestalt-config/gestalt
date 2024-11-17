@@ -1576,6 +1576,48 @@ public abstract class ValidationError {
     }
 
     /**
+     * No value determined
+     */
+    public static class Dist100NoValueDetermined extends ValidationError {
+        private final String path;
+        private final String value;
+        private final int random;
+
+        public Dist100NoValueDetermined(String path, String value, int random) {
+            super(ValidationLevel.ERROR);
+            this.path = path;
+            this.value = value;
+            this.random = random;
+        }
+
+        @Override
+        public String description() {
+            return "Unable to determine a value for Dist100 with : " + value + ", on path: " + path +
+                " and random value " + random + ", provide a default by having a value with no number ie 10:red,50:blue,green " +
+                "here green is the default";
+        }
+    }
+
+    /**
+     * Multiple defaults found, only the first one will be used
+     */
+    public static class Dist100DuplicateDefaults extends ValidationError {
+        private final String path;
+        private final String value;
+
+        public Dist100DuplicateDefaults(String path, String value) {
+            super(ValidationLevel.WARN);
+            this.path = path;
+            this.value = value;
+        }
+
+        @Override
+        public String description() {
+            return "Multiple default values found in Dist100 with : " + value + ", on path: " + path;
+        }
+    }
+
+    /**
      * Invalid Base 64 decode string.
      */
     public static class InvalidBase64DecodeString extends ValidationError {

@@ -1,6 +1,7 @@
 org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer
 org.github.gestalt.config.processor.config.transform.Base64EncoderTransformer
 org.github.gestalt.config.processor.config.transform.ClasspathTransformer
+org.github.gestalt.config.processor.config.transform.Distribution100Transformer
 org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformer
 org.github.gestalt.config.processor.config.transform.EnvironmentVariablesTransformerOld
 org.github.gestalt.config.processor.config.transform.FileTransformer

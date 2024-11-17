@@ -15,12 +15,12 @@ cdi = "4.0.1"
 weld = "4.0.3.Final"
 weldCore = "5.1.3.Final"
 #encoding/decoding
-jackson = "2.18.0"
+jackson = "2.18.1"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.29.0"
-gcpLibraries = "26.49.0"
-azure = "1.2.28"
+awsBom = "2.29.15"
+gcpLibraries = "26.50.0"
+azure = "1.2.29"
 # vault
 vault = "6.2.0"
 # Git support
@@ -28,7 +28,7 @@ vault = "6.2.0"
 jgit = "6.10.0.202406032230-r"
 eddsa = "0.3.0"
 # metrics
-micrometer = "1.13.6"
+micrometer = "1.14.1"
 # validation
 hibernateValidator = "8.0.1.Final"
 expressly = "5.0.0"
@@ -58,7 +58,7 @@ gestalt = "0.33.1"
 gradleVersions = "0.51.0"
 gitVersions = "3.1.0"
 gradleVersionsUpdate = "0.8.5"
-com-fasterxml-jackson-datatype = "2.18.0"
+com-fasterxml-jackson-datatype = "2.18.1"
 jakartaAnnotations = "3.0.0"
 
 [libraries]
@@ -134,7 +134,7 @@ gradle-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", v
 gradle-ben-manes-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleVersions" }
 gradle-versions-update = { module = "nl.littlerobots.vcu:plugin", version.ref = "gradleVersionsUpdate" }
 gradle-error-prone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
-gradle-publish = { module = "com.vanniktech:gradle-maven-publish-plugin",  version.ref = "gradlePublish"}
+gradle-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradlePublish" }
 # Gestalt for integration tests
 gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
 gestalt-azure = { module = "com.github.gestalt-config:gestalt-azure", version.ref = "gestalt" }

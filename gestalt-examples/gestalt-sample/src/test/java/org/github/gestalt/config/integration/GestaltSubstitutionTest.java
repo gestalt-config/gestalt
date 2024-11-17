@@ -170,4 +170,27 @@ public class GestaltSubstitutionTest {
 
         Assertions.assertEquals("hello world it is sunny today", message);
     }
+
+    @Test
+    public void testDist100RunTimeSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("message", "#{dist100:50:red,blue}");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        String message1 = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+        boolean different = false;
+        int passes = 10;
+        while(!different && passes-- > 0) {
+            String message2 = gestalt.getConfig("message", TypeCapture.of(String.class));
+
+            different = !message2.equals(message1);
+        }
+    }
 }
