@@ -8,7 +8,7 @@ include(
 // testing utility projects
 include(
     "code-coverage-report", "gestalt-benchmark", "gestalt-examples:gestalt-sample",
-    "gestalt-examples:gestalt-sample-module", "gestalt-examples:gestalt-sample-java-latest", "gestalt-test")
+    "gestalt-examples:gestalt-sample-module", "gestalt-examples:gestalt-sample-java-records", "gestalt-test")
 
 pluginManagement {
     repositories {

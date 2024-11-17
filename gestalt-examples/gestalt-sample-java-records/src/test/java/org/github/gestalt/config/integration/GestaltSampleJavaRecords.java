@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.logging.LogManager;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GestaltSampleJavaLatest {
+public class GestaltSampleJavaRecords {
 
     @BeforeAll
     public static void beforeAll() {
-        try (InputStream is = GestaltSampleJavaLatest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+        try (InputStream is = GestaltSampleJavaRecords.class.getClassLoader().getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(is);
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,7 +40,7 @@ public class GestaltSampleJavaLatest {
         configs.put("db.hosts[2].password", "9012");
         configs.put("db.idleTimeout", "123");
 
-        URL devFileURL = GestaltSampleJavaLatest.class.getClassLoader().getResource("dev.properties");
+        URL devFileURL = GestaltSampleJavaRecords.class.getClassLoader().getResource("dev.properties");
         File devFile = new File(devFileURL.getFile());
 
 
