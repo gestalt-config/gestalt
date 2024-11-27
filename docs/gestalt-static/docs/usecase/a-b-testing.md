@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-## A/B Testing
+# A/B Testing
 
 Create an A/B that gives a different value for a feature flag or other value each time we retrieve the value, and overrides per group for testing or segmentation.
 
