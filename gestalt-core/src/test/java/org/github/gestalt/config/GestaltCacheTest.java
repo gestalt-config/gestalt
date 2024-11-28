@@ -75,7 +75,7 @@ class GestaltCacheTest {
         Assertions.assertEquals(100, port6.results());
         Assertions.assertEquals(100, port7.get().results());
 
-        Mockito.verify(mockGestalt, Mockito.times(1)).getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
+        Mockito.verify(mockGestalt, Mockito.times(2)).getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of());
     }
 
     @Test

@@ -26,7 +26,8 @@ import java.util.*;
 @SuppressWarnings("OverloadMethodsDeclarationOrder")
 public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
-    private final Map<Triple<String, TypeCapture<?>, Tags>, GResultOf<Object>> cache = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Triple<String, TypeCapture<?>, Tags>, GResultOf<Object>> cacheResultsOf = Collections.synchronizedMap(new HashMap<>());
     private final Tags defaultTags;
     private final ObservationService observationService;
     private final GestaltConfig gestaltConfig;
@@ -66,7 +67,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        return getConfigInternal(path, typeCapture, null).results();
+        return getConfigInternal(path, typeCapture, null);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(tags);
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        return getConfigInternal(path, typeCapture, tags).results();
+        return getConfigInternal(path, typeCapture, tags);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfigInternal(path, klass, null).results();
+        return getConfigInternal(path, klass, null);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigInternal(path, klass, tags).results();
+        return getConfigInternal(path, klass, tags);
     }
 
     @Override
@@ -102,22 +103,39 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigInternal(path, klass, tags);
+        return getConfigInternalResult(path, klass, tags);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> GResultOf<T> getConfigInternal(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
+    private <T> T getConfigInternal(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
 
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
-        if (cache.get(key) != null && cache.get(key).hasResults()) {
+        if (cache.get(key) != null) {
             if (gestaltConfig.isObservationsEnabled() && observationService != null) {
                 observationService.recordObservation("cache.hit", 1, Tags.of());
             }
-            return (GResultOf<T>) cache.get(key);
+            return (T) cache.get(key);
         } else {
             GResultOf<T> result = delegate.getConfigResult(path, klass, resolvedTags);
             updateCache(path, key, result);
+            return result  != null ? result.results(): null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> GResultOf<T> getConfigInternalResult(String path, TypeCapture<T> klass, Tags tags) throws GestaltException {
+
+        Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
+        Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
+        if (cacheResultsOf.get(key) != null && cacheResultsOf.get(key).hasResults()) {
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
+            }
+            return (GResultOf<T>) cacheResultsOf.get(key);
+        } else {
+            GResultOf<T> result = delegate.getConfigResult(path, klass, resolvedTags);
+            updateCacheResults(path, key, result);
             return result;
         }
     }
@@ -125,7 +143,14 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     @SuppressWarnings("unchecked")
     private <T> void updateCache(String path, Triple<String, TypeCapture<?>, Tags> key, GResultOf<T> result) {
         if (shouldCacheValue(path, result != null ? result.getMetadata() : Map.of())) {
-            cache.put(key, (GResultOf<Object>) result);
+            cache.put(key, result != null ? result.results() : null);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void updateCacheResults(String path, Triple<String, TypeCapture<?>, Tags> key, GResultOf<T> result) {
+        if (shouldCacheValue(path, result != null ? result.getMetadata() : Map.of())) {
+            cacheResultsOf.put(key, (GResultOf<Object>) result);
         }
     }
 
@@ -135,7 +160,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        return getConfigInternal(path, defaultVal, typeCapture, null).results();
+        return getConfigInternal(path, defaultVal, typeCapture, null);
     }
 
     @Override
@@ -145,7 +170,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(tags);
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        return getConfigInternal(path, defaultVal, typeCapture, tags).results();
+        return getConfigInternal(path, defaultVal, typeCapture, tags);
     }
 
     @Override
@@ -154,7 +179,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigInternal(path, defaultVal, klass, tags);
+        return getConfigInternalResult(path, defaultVal, klass, tags);
     }
 
 
@@ -164,7 +189,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfigInternal(path, defaultVal, klass, null).results();
+        return getConfigInternal(path, defaultVal, klass, null);
     }
 
     @Override
@@ -173,15 +198,44 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigInternal(path, defaultVal, klass, tags).results();
+        return getConfigInternal(path, defaultVal, klass, tags);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> GResultOf<T> getConfigInternal(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+    private <T> T getConfigInternal(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
         if (cache.containsKey(key)) {
-            GResultOf<T> result = (GResultOf<T>) cache.get(key);
+            T result = (T) cache.get(key);
+            if (result == null) {
+                result = defaultVal;
+            }
+
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
+            }
+
+            return result;
+
+        } else {
+            Optional<GResultOf<T>> result = delegate.getConfigOptionalResult(path, klass, resolvedTags);
+
+            updateCache(path, key, result.orElse(null));
+
+            if (result.isPresent() && result.get().hasResults()) {
+                return result.get().results();
+            } else {
+                return defaultVal;
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> GResultOf<T> getConfigInternalResult(String path, T defaultVal, TypeCapture<T> klass, Tags tags) {
+        Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
+        Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
+        if (cacheResultsOf.containsKey(key)) {
+            GResultOf<T> result = (GResultOf<T>) cacheResultsOf.get(key);
             if (result == null || !result.hasResults()) {
                 result = GResultOf.result(defaultVal, true);
             }
@@ -195,7 +249,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         } else {
             Optional<GResultOf<T>> result = delegate.getConfigOptionalResult(path, klass, resolvedTags);
 
-            updateCache(path, key, result.orElse(null));
+            updateCacheResults(path, key, result.orElse(null));
 
             if (result.isPresent() && result.get().hasResults()) {
                 return result.get();
@@ -211,7 +265,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        return getConfigOptionalInternal(path, typeCapture, null).map(GResultOf::results);
+        return getConfigOptionalInternal(path, typeCapture, null);
     }
 
     @Override
@@ -221,7 +275,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(tags);
 
         TypeCapture<T> typeCapture = TypeCapture.of(klass);
-        return getConfigOptionalInternal(path, typeCapture, tags).map(GResultOf::results);
+        return getConfigOptionalInternal(path, typeCapture, tags);
     }
 
     @Override
@@ -229,7 +283,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);
 
-        return getConfigOptionalInternal(path, klass, null).map(GResultOf::results);
+        return getConfigOptionalInternal(path, klass, null);
     }
 
     @Override
@@ -238,7 +292,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigOptionalInternal(path, klass, tags).map(GResultOf::results);
+        return getConfigOptionalInternal(path, klass, tags);
     }
 
     @Override
@@ -247,11 +301,11 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         Objects.requireNonNull(klass);
         Objects.requireNonNull(tags);
 
-        return getConfigOptionalInternal(path, klass, tags);
+        return getConfigOptionalInternalResult(path, klass, tags);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<GResultOf<T>> getConfigOptionalInternal(String path, TypeCapture<T> klass, Tags tags) {
+    public <T> Optional<T> getConfigOptionalInternal(String path, TypeCapture<T> klass, Tags tags) {
 
         Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
         Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
@@ -260,12 +314,31 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
                 observationService.recordObservation("cache.hit", 1, Tags.of());
             }
 
-            GResultOf<T> result = (GResultOf<T>) cache.get(key);
+            T result = (T) cache.get(key);
             return Optional.ofNullable(result);
         } else {
             Optional<GResultOf<T>> resultOptional = delegate.getConfigOptionalResult(path, klass, resolvedTags);
             GResultOf<T> result = resultOptional.orElse(null);
             updateCache(path, key, result);
+            return Optional.ofNullable(result != null ? result.results() : null);
+        }
+    }
+
+    public <T> Optional<GResultOf<T>> getConfigOptionalInternalResult(String path, TypeCapture<T> klass, Tags tags) {
+
+        Tags resolvedTags = tagMergingStrategy.mergeTags(tags, defaultTags);
+        Triple<String, TypeCapture<?>, Tags> key = new Triple<>(path, klass, resolvedTags);
+        if (cacheResultsOf.containsKey(key)) {
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.recordObservation("cache.hit", 1, Tags.of());
+            }
+
+            GResultOf<T> result = (GResultOf<T>) cacheResultsOf.get(key);
+            return Optional.ofNullable(result);
+        } else {
+            Optional<GResultOf<T>> resultOptional = delegate.getConfigOptionalResult(path, klass, resolvedTags);
+            GResultOf<T> result = resultOptional.orElse(null);
+            updateCacheResults(path, key, result);
             return Optional.ofNullable(result);
         }
     }
@@ -274,9 +347,9 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         boolean notIsSecret = nonCacheableSecrets.stream().noneMatch(it -> it.isSecret(path));
         boolean noCacheMetadata = metadata.containsKey(IsNoCacheMetadata.NO_CACHE) &&
             metadata.get(IsNoCacheMetadata.NO_CACHE).stream()
-            .map(it -> it instanceof IsNoCacheMetadata && ((IsNoCacheMetadata) it).getMetadata())
-            .filter(it -> it)
-            .findFirst().orElse(false);
+                .map(it -> it instanceof IsNoCacheMetadata && ((IsNoCacheMetadata) it).getMetadata())
+                .filter(it -> it)
+                .findFirst().orElse(false);
 
         return notIsSecret && !noCacheMetadata;
     }
