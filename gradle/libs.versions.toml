@@ -1,9 +1,7 @@
 [versions]
 java = "11"
 javaLatest = "21"
-# @pin
-kotlin = "1.9.24"
-# @pin
+kotlin = "2.1.0"
 kotlinDokka = "1.9.20"
 # Kotlin DI
 kodeinDI = "7.22.0"
@@ -15,10 +13,10 @@ cdi = "4.0.1"
 weld = "4.0.3.Final"
 weldCore = "5.1.3.Final"
 #encoding/decoding
-jackson = "2.18.1"
+jackson = "2.18.2"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.29.15"
+awsBom = "2.29.23"
 gcpLibraries = "26.50.0"
 azure = "1.2.29"
 # vault
@@ -41,7 +39,7 @@ mockk = "1.13.13"
 koTestAssertions = "5.9.1"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.20.3"
+testcontainers = "1.20.4"
 # static code analysis
 # @pin last version to support JDK 11
 errorprone = "2.31.0"
@@ -58,7 +56,7 @@ gestalt = "0.33.1"
 gradleVersions = "0.51.0"
 gitVersions = "3.1.0"
 gradleVersionsUpdate = "0.8.5"
-com-fasterxml-jackson-datatype = "2.18.1"
+com-fasterxml-jackson-datatype = "2.18.2"
 jakartaAnnotations = "3.0.0"
 
 [libraries]
