@@ -23,26 +23,27 @@ module org.github.gestalt.core {
     exports org.github.gestalt.config.lexer;
     exports org.github.gestalt.config.loader;
     exports org.github.gestalt.config.metadata;
-    exports org.github.gestalt.config.observations;
     exports org.github.gestalt.config.node;
+    exports org.github.gestalt.config.node.factory;
+    exports org.github.gestalt.config.observations;
     exports org.github.gestalt.config.parser;
     exports org.github.gestalt.config.path.mapper;
+    exports org.github.gestalt.config.processor.config;
+    exports org.github.gestalt.config.processor.config.annotation;
+    exports org.github.gestalt.config.processor.config.include;
+    exports org.github.gestalt.config.processor.config.transform;
+    exports org.github.gestalt.config.processor.config.transform.substitution;
+    exports org.github.gestalt.config.processor.result;
+    exports org.github.gestalt.config.processor.result.validation;
     exports org.github.gestalt.config.reflect;
     exports org.github.gestalt.config.reload;
     exports org.github.gestalt.config.secret.rules;
     exports org.github.gestalt.config.security.encrypted;
     exports org.github.gestalt.config.security.temporary;
     exports org.github.gestalt.config.source;
-    exports org.github.gestalt.config.node.factory;
     exports org.github.gestalt.config.tag;
     exports org.github.gestalt.config.token;
     exports org.github.gestalt.config.utils;
-    exports org.github.gestalt.config.processor.config;
-    exports org.github.gestalt.config.processor.config.include;
-    exports org.github.gestalt.config.processor.config.transform;
-    exports org.github.gestalt.config.processor.config.transform.substitution;
-    exports org.github.gestalt.config.processor.result;
-    exports org.github.gestalt.config.processor.result.validation;
 
     provides org.github.gestalt.config.decoder.Decoder with
         org.github.gestalt.config.decoder.ArrayDecoder,
@@ -96,6 +97,9 @@ module org.github.gestalt.core {
         org.github.gestalt.config.processor.config.include.IncludeConfigNodeProcessor,
         org.github.gestalt.config.processor.config.annotation.AnnotationConfigNodeProcessor,
         org.github.gestalt.config.processor.config.transform.RunTimeMetadataConfigNodeProcessor;
+
+    provides org.github.gestalt.config.processor.config.RunTimeConfigNodeProcessor with
+        org.github.gestalt.config.processor.config.transform.RunTimeStringSubstitutionConfigNodeProcessor;
 
     provides org.github.gestalt.config.processor.config.transform.Transformer with
         org.github.gestalt.config.processor.config.transform.Base64DecoderTransformer,
