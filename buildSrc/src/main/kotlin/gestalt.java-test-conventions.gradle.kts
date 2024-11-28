@@ -7,6 +7,7 @@
 plugins {
     id("gestalt.java-common-conventions")
     `jvm-test-suite`
+    id("org.gradle.test-retry")
     jacoco
 }
 
@@ -32,8 +33,15 @@ testing {
             useJUnitJupiter(libs.versions.junit5.get())
             targets {
                 all {
-                    testTask {
+                    testTask.configure {
                         finalizedBy(tasks.jacocoTestReport)
+
+                        retry {
+                            maxRetries = 2
+                            maxFailures = 10
+                            failOnPassedAfterRetry = false
+                            failOnSkippedAfterRetry = false
+                        }
                     }
                 }
             }

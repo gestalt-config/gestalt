@@ -51,13 +51,14 @@ checkStyle = "10.10.0"
 jmh = "1.37"
 gradleJmh = "0.7.2"
 # @pin gestalt for integration tests.
-gestalt = "0.35.0"
+gestalt = "0.35.1"
 # Gradle utility
 gradleVersions = "0.51.0"
 gitVersions = "3.1.0"
 gradleVersionsUpdate = "0.8.5"
 com-fasterxml-jackson-datatype = "2.18.2"
 jakartaAnnotations = "3.0.0"
+gradleRetry = "1.6.0"
 
 [libraries]
 # Kotlin
@@ -133,6 +134,7 @@ gradle-ben-manes-versions = { module = "com.github.ben-manes:gradle-versions-plu
 gradle-versions-update = { module = "nl.littlerobots.vcu:plugin", version.ref = "gradleVersionsUpdate" }
 gradle-error-prone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
 gradle-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradlePublish" }
+gradle-retry = { module = "org.gradle:test-retry-gradle-plugin", version.ref = "gradleRetry" }
 # Gestalt for integration tests
 gestalt-aws = { module = "com.github.gestalt-config:gestalt-aws", version.ref = "gestalt" }
 gestalt-azure = { module = "com.github.gestalt-config:gestalt-azure", version.ref = "gestalt" }

@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.gradle.git.versions)
     implementation(libs.gradle.error.prone)
     implementation(libs.gradle.publish)
+    implementation(libs.gradle.retry)
 
     implementation(libs.gradle.kotlin)
     implementation(libs.gradle.dokka)
