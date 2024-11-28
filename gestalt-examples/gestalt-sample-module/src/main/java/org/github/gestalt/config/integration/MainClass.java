@@ -26,13 +26,17 @@ public class MainClass {
         configTest.integrationTestPostProcessorSystem();
         configTest.integrationTestPostProcessorNode();
         configTest.integrationTestCamelCase();
-        configTest.testEscapedSubstitution();
         configTest.testObservations();
         configTest.testValidationOk();
         configTest.testValidationError();
         configTest.temporaryNode();
         configTest.encryptedPassword();
         configTest.encryptedPasswordAndTemporaryNode();
+        configTest.testImportSubPath();
+        configTest.testImportNested();
+        configTest.testImportNode();
+        configTest.testImportNodeClasspath();
+        configTest.testImportFile();
 
         if( Boolean.parseBoolean(System.getenv("LOCAL_TEST"))) {
             configTest.integrationTestGoogleCloud();
@@ -48,6 +52,16 @@ public class MainClass {
         kotlinTests.integrationTest();
         kotlinTests.integrationTestEnvVars();
         kotlinTests.integrationTestWithTypeOf();
+
+        GestaltSubstitutionTest gestaltSubstitutionTest = new GestaltSubstitutionTest();
+        gestaltSubstitutionTest.testEscapedSubstitution();
+        gestaltSubstitutionTest.testEscapedRunTimeSubstitution();
+        gestaltSubstitutionTest.testNestedSubstitution();
+        gestaltSubstitutionTest.testNestedRunTimeSubstitution();
+        gestaltSubstitutionTest.testSubstitution();
+        gestaltSubstitutionTest.testRunTimeSubstitution();
+        gestaltSubstitutionTest.testMixedNestedSubstitution();
+        gestaltSubstitutionTest.testDist100RunTimeSubstitution();
 
         System.out.println("Completed validations");
     }
