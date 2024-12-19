@@ -27,7 +27,7 @@ class VaultSecretTransformerTest {
     private static final String VAULT_TOKEN = "my-root-token";
 
     @Container
-    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.17.0").withVaultToken(VAULT_TOKEN);
+    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.18.0").withVaultToken(VAULT_TOKEN);
 
     private static Vault vault;
 
