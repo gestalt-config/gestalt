@@ -20,7 +20,7 @@ hocon = "1.4.3"
 # Cloud
 awsBom = "2.29.45"
 gcpLibraries = "26.52.0"
-azure = "1.2.30"
+azure = "1.2.29"
 # vault
 vault = "6.2.0"
 # Git support
