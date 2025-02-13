@@ -18,7 +18,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
  *  You need to run manually https://github.com/ben-manes/gradle-versions-plugin/issues/284
  *  ./gradlew -p buildSrc dependencyUpdates
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 plugins {
     id("com.github.ben-manes.versions")

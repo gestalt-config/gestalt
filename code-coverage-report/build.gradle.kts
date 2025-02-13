@@ -1,6 +1,6 @@
 // to run ./gradlew testCodeCoverageReport
 // XML and HTML reports can now be found under code-coverage-report/build/reports/jacoco/testCodeCoverageReport.
-// @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+// @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
 plugins {
     base
     id("jacoco-report-aggregation")

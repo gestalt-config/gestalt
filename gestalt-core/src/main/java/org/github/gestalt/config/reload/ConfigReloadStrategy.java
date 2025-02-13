@@ -12,7 +12,7 @@ import java.util.List;
  * Holds all the config reload listeners and the source we want to watch for.
  * On reload it will call the listeners with the sources.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public abstract class ConfigReloadStrategy {    ///NOPMD
 

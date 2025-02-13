@@ -9,7 +9,7 @@ import org.github.gestalt.config.secret.rules.SecretConcealer;
 /**
  * Holds the configuration that is provided to the config node processors.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ConfigNodeProcessorConfig {
     private final GestaltConfig config;

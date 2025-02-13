@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Factory for creating a finding a config node from a set of parameters.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class ConfigNodeImportFactory implements ConfigNodeFactory {
 

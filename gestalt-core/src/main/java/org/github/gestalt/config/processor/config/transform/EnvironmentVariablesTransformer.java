@@ -9,7 +9,7 @@ import org.github.gestalt.config.utils.SystemWrapper;
  * Allows you to inject Environment Variables into leaf values that match ${env:key},
  * where the key is used to lookup into the Environment Variables.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(100)
 public final class EnvironmentVariablesTransformer implements Transformer {

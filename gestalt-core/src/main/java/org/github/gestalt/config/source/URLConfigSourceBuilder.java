@@ -8,7 +8,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
  *
  * <p>Create a URLConfigSource to load a config from a URL.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class URLConfigSourceBuilder extends SourceBuilder<URLConfigSourceBuilder, URLConfigSource> {
 

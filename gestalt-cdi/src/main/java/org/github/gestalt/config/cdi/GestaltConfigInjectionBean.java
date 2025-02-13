@@ -40,7 +40,7 @@ import java.util.Set;
  * Based on <a href="https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi">...</a>.
  *
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class GestaltConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
 

@@ -7,7 +7,7 @@ import org.github.gestalt.config.google.config.GoogleModuleConfig;
  * Builder for creating Google specific configuration.
  * You can either specify the project ID or it will get it from the default.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class GoogleModuleConfigBuilder {
     private String projectId;

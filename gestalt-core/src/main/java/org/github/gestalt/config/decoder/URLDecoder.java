@@ -12,7 +12,7 @@ import java.net.URL;
 /**
  * Decode a URL.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class URLDecoder extends LeafDecoder<URL> {
 

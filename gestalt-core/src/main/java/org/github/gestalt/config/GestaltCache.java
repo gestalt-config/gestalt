@@ -21,7 +21,7 @@ import java.util.*;
  * A cache layer that stores configurations by path and type.
  * Expects to be registered as a CoreReloadListener and will clear the configs
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @SuppressWarnings("OverloadMethodsDeclarationOrder")
 public class GestaltCache implements Gestalt, CoreReloadListener {

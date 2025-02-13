@@ -9,7 +9,7 @@ import jakarta.validation.Validator;
  * or you can provide a Vault client yourself.
  *
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class HibernateModuleBuilder {
 

@@ -28,7 +28,7 @@ import static com.fasterxml.jackson.databind.node.JsonNodeType.MISSING;
 /**
  * Loads from a yaml files from multiple sources, such as a file.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class YamlLoader implements ConfigLoader {
 

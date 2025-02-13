@@ -6,7 +6,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 /**
  * Builder to build a YamlModuleConfig.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class YamlModuleConfigBuilder {
     private ObjectMapper objectMapper;

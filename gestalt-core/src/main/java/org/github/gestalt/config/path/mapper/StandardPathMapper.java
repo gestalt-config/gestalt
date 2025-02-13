@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Standard Path mapper looks for an exact match.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(1000)
 public final class StandardPathMapper implements PathMapper {

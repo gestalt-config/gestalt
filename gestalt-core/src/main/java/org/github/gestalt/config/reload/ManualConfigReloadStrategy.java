@@ -6,7 +6,7 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
 /**
  * Reloads a source when called.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ManualConfigReloadStrategy extends ConfigReloadStrategy {
 

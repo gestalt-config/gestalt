@@ -64,7 +64,7 @@ import static java.lang.System.Logger.Level.WARNING;
  *
  * <p>The builder can be used to customize and replace any of the functionality of Gestalt.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class GestaltBuilder {
     private static final System.Logger logger = System.getLogger(GestaltBuilder.class.getName());

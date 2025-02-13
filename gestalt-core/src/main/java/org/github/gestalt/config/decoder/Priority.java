@@ -3,7 +3,7 @@ package org.github.gestalt.config.decoder;
 /**
  * Ordered priority of the decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public enum Priority {
     /**

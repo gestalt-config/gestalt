@@ -5,7 +5,7 @@ import org.github.gestalt.config.tag.Tags;
 /**
  * Merges the tags provided with the request and the default tags, then returns the results.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface TagMergingStrategy {
 

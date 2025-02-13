@@ -14,7 +14,7 @@ import org.github.gestalt.config.utils.GResultOf;
 /**
  * Allows you to substitute an Azure secret using ${azureSecret:secretName}.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class AzureSecretTransformer implements Transformer {
 

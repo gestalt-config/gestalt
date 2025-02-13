@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Micrometer implementation of the ObservationRecorder. Allows you to submit metrics to your meterRegistry.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MicrometerObservationRecorder implements ObservationRecorder {
     private static final System.Logger logger = System.getLogger(MicrometerObservationRecorder.class.getName());

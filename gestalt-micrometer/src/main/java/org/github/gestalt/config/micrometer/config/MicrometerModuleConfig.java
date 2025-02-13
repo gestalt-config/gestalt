@@ -7,7 +7,7 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
  * Micrometer specific configuration.
  * This module requires a meter registry
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MicrometerModuleConfig implements GestaltModuleConfig {
 

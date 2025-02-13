@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Factory to build Config Node from a set of parameters.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ConfigNodeFactory {
 

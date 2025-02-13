@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Service that takes in the Config Source Parameters, extracts the source type, finds the factory for the source and builds it.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class ConfigNodeFactoryManager implements ConfigNodeFactoryService {
 

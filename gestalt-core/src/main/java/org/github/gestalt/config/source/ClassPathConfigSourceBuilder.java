@@ -8,7 +8,7 @@ import org.github.gestalt.config.exceptions.GestaltException;
  *
  * <p>Load a config source from a classpath resource using the getResourceAsStream method.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ClassPathConfigSourceBuilder extends SourceBuilder<ClassPathConfigSourceBuilder, ClassPathConfigSource> {
 

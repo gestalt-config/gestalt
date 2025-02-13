@@ -7,7 +7,7 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
 /**
  * Module config for Hibernate. Provides a jakarta Validator to validate objects.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class HibernateModuleConfig  implements GestaltModuleConfig {
 

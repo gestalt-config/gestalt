@@ -7,7 +7,7 @@ import org.github.gestalt.config.lexer.SentenceLexer;
 /**
  * Gestalt module config for the Toml Module.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class TomlModuleConfig implements GestaltModuleConfig {
 

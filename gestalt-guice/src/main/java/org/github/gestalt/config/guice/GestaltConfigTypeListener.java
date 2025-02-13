@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 /**
  * Configures a type listener for the annotation @InjectConfig.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class GestaltConfigTypeListener implements TypeListener {
 

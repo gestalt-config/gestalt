@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * leaf node that holds a value.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class LeafNode extends AbstractConfigNode {
     private final String value;

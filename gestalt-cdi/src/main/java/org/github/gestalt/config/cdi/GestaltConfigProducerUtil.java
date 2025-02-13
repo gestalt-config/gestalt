@@ -25,7 +25,7 @@ import java.util.Optional;
  * <p>Based on <a href="https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi">...</a>
  *
  * @author <a href="https://github.com/guhilling">Gunnar Hilling</a>
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024. (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025. (c) 2024.
  */
 @SuppressWarnings({"StringSplitter", "TypeParameterUnusedInFormals"})
 public final class GestaltConfigProducerUtil {

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * Supports loading nodes in order so you can load a node under an existing node to use as defaults, or over a node to use as overrides.
  * You can inject a node at the root, or at any path within the nodes.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(500)
 public class IncludeConfigNodeProcessor implements ConfigNodeProcessor {

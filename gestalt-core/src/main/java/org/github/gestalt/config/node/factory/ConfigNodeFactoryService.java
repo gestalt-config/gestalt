@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Service that takes in the Config Node Parameters, extracts the node type, finds the factory for the node and builds it.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ConfigNodeFactoryService {
 

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Holds all the ObservationRecorders and when there is an observation it will ensure all ObservationRecorders are notified.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ObservationService {
     /**

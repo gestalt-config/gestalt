@@ -26,7 +26,7 @@ import java.util.UUID;
  *
  * <p>A format for the data in the string must also be provided.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class InputStreamConfigSource implements ConfigSource {
     private final InputStream config;

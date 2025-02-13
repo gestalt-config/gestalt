@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Once the leaf value has been read the accessCount times, it will release the decorated node by setting it to null.
  * Eventually the decorated node should be garbage collected. but while waiting for GC it may still be found in memory.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class TemporaryLeafNode extends LeafNode {
     private final AtomicInteger accessCount;

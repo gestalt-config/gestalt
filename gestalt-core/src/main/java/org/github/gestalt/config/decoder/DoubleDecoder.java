@@ -10,7 +10,7 @@ import org.github.gestalt.config.utils.StringUtils;
 /**
  * Decode a double.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class DoubleDecoder extends LeafDecoder<Double> {
 

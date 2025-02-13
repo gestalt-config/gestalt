@@ -8,7 +8,7 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
  * Vault specific configuration.
  * Provides a Vault client to the Vault transformer.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class VaultModuleConfig implements GestaltModuleConfig {
 

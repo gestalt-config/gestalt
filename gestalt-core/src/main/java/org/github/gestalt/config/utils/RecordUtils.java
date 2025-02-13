@@ -17,7 +17,7 @@ import static java.lang.invoke.MethodType.methodType;
  *
  * <p>Utility methods for record serialization, using MethodHandles.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @SuppressWarnings("LocalVariableName")
 public final class RecordUtils {

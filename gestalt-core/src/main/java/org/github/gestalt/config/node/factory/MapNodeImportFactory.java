@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * <p>The source must match the name of the source in your import statement.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class MapNodeImportFactory implements ConfigNodeFactory {
 

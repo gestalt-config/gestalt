@@ -12,7 +12,7 @@ import java.util.OptionalInt;
 /**
  * Decodes an OptionalInt type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class OptionalIntDecoder implements Decoder<OptionalInt> {
 

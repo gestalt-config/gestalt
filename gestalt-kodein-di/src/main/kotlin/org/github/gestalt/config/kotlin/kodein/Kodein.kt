@@ -9,7 +9,7 @@ import kotlin.reflect.typeOf
 /**
  * Extension function for Kodein to allow us to inject configuration using the method gestalt
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 inline fun <reified T : Any> DirectDIAware.gestalt(
     path: String,

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Loads from a yaml files from multiple sources, such as a file.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class TomlLoader implements ConfigLoader {
 

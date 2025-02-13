@@ -15,7 +15,7 @@ import static java.lang.System.Logger.Level.TRACE;
 /**
  * Decode a Set type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class SetDecoder extends CollectionDecoder<Set<?>> {
     private static final System.Logger logger = System.getLogger(SetDecoder.class.getName());

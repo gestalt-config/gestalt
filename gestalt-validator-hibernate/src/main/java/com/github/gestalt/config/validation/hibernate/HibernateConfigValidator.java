@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Implementation of the Gestalt validator for Hibernate. Used to validate configurations.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class HibernateConfigValidator implements ConfigValidator {
 

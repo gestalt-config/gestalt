@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * Loads a file from Azure Blob Storage.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class BlobConfigSource implements ConfigSource {
 

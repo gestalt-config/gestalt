@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Interface to system to conceal secret. For a node the path and value are passed in, and it returns either the value or a masked value.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface SecretConcealer {
 

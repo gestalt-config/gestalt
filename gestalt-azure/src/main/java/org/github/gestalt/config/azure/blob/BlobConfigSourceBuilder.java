@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * <p>Create a BlobConfigSource to load a config from S3.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class BlobConfigSourceBuilder extends SourceBuilder<BlobConfigSourceBuilder, BlobConfigSource> {
 

@@ -20,7 +20,7 @@ import static org.github.gestalt.config.utils.PathUtil.*;
  * Decode a Map. Assumes that the key is a simple class that can be decoded from a single string. ie a Boolean, String, Int.
  * The value can be any type we can decode.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MapDecoder implements Decoder<Map<?, ?>> {
 

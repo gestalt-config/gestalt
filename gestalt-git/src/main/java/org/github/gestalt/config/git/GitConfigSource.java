@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 /**
  * Loads a file from git.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class GitConfigSource implements ConfigSource {
 

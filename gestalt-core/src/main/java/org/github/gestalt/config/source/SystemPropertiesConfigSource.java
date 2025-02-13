@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Convert the System properties into a config source.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class SystemPropertiesConfigSource implements ConfigSource {
 

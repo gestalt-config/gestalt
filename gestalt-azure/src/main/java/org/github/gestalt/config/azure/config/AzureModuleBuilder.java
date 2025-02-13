@@ -11,7 +11,7 @@ import org.github.gestalt.config.exceptions.GestaltConfigurationException;
  * You can either specify the keyVaultUri and Gestalt will use defaults to build the SecretsManagerClient
  * or you can provide a SecretsManagerClient yourself.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class AzureModuleBuilder {
     private String keyVaultUri;

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Allows users to override how we select the roots to find nodes to merge based on the tags.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ConfigNodeTagResolutionStrategy {
 

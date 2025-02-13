@@ -9,7 +9,7 @@ To implement your own Config Node Processor you need to inherit from ConfigNodeP
 /**
  * Interface for the Config Node Processing. This will be run against every node in the tree.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ConfigNodeProcessor {
 

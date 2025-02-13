@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 /**
  * Allows you to load the contents of a file on the classpath into a string substitution.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ClasspathTransformer implements Transformer {
 

@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 /**
  * Array config node that holds a list of configs.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ArrayNode extends AbstractConfigNode {
 

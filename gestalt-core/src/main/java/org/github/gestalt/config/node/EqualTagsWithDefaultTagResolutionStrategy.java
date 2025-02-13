@@ -11,7 +11,7 @@ import java.util.List;
  * Will Search two config node roots, the one that is an equal match to the tags and the root with no tags.
  * Then return the config node roots to be searched. Only return the roots if they exist.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class EqualTagsWithDefaultTagResolutionStrategy implements ConfigNodeTagResolutionStrategy {
 

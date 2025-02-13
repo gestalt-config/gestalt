@@ -11,7 +11,7 @@ import java.util.List;
  * Manages all result processors. Gestalt calls the manager who then forwards the calls to all registered result processors
  * in order of priority. It passes the processed results of one into the result processor of the next.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ResultsProcessorService {
 

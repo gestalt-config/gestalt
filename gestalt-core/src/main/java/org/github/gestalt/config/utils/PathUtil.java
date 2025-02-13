@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Utility class for paths.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class PathUtil {
     private PathUtil() {

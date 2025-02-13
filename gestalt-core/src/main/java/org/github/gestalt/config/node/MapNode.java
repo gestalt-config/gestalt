@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Map node holds a map of config nodes we can get by key.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MapNode extends AbstractConfigNode {
 

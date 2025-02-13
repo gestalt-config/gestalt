@@ -15,7 +15,7 @@ import java.util.Objects;
  * Where the name of the file is the path for the configuration and
  * the value in the file is the value of the configuration.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class KubernetesSecretConfigSourceBuilder
     extends SourceBuilder<KubernetesSecretConfigSourceBuilder, KubernetesSecretConfigSource> {

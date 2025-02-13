@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * <p>Load a config source from a local file.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class FileConfigSourceBuilder extends SourceBuilder<FileConfigSourceBuilder, FileConfigSource> {
 

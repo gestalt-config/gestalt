@@ -22,7 +22,7 @@ import java.util.Objects;
  * It will then return the first value found.
  * So in the above example you can also use "hello ${USER_NAME} you are level ${USER_LEVEL}!" and it will find the values in the Env Vars.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(200)
 public final class LoadtimeStringSubstitutionConfigNodeProcessor implements ConfigNodeProcessor {

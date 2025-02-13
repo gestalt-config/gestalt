@@ -14,7 +14,7 @@ import org.github.gestalt.config.utils.GResultOf
 /**
  * Kotlin Int Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 class IntegerDecoder : LeafDecoder<Int>() {
     override fun name(): String {

@@ -5,7 +5,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 /*
  * Apply the plugin to publish to maven central
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 
 plugins {

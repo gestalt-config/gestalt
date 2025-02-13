@@ -16,7 +16,7 @@ import static java.lang.System.Logger.Level.TRACE;
 /**
  * Decode a list type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ListDecoder extends CollectionDecoder<List<?>> {
     private static final System.Logger logger = System.getLogger(ListDecoder.class.getName());

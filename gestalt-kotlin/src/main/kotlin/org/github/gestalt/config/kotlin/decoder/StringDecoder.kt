@@ -12,7 +12,7 @@ import org.github.gestalt.config.utils.GResultOf
 /**
  * Kotlin String Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 class StringDecoder : LeafDecoder<String>() {
     override fun name(): String {

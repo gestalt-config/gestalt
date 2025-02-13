@@ -7,7 +7,7 @@ import org.github.gestalt.config.parser.ConfigParser;
 /**
  * Gestalt module config for the Environment Variable Module.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class EnvironmentVarsLoaderModuleConfig implements GestaltModuleConfig {
 

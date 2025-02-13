@@ -15,7 +15,7 @@ import java.util.Set;
  * It may be a while till the secret is GC'ed and during that time it will still be retained in memory.
  * These values will not be cached in the Gestalt Cache and should not be cached by the caller
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class TemporarySecretModuleBuilder {
     private List<Pair<SecretChecker, Integer>> secretCounts = new ArrayList<>();

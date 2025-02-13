@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 /**
  * Allows you to URL decode a string.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class URLDecoderTransformer implements Transformer {
     @Override

@@ -1,7 +1,7 @@
 /*
  * Apply the plugin to setup kotlin code test plugins.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 
 plugins {

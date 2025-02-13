@@ -7,7 +7,7 @@ import java.util.Properties;
  * Wrapper for getting the System Environments.
  * Used so we can Mock the results.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class SystemWrapper {
 

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Manages the list of ConfigNodeProcessor and applies them to a specific node.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ConfigNodeProcessorService {
     /**

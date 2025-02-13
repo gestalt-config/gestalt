@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * Base class for all source builders.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public abstract class SourceBuilder<SELF extends SourceBuilder<SELF, T>, T extends ConfigSource> { //NOPMD
     protected final List<ConfigReloadStrategy> configReloadStrategies = new ArrayList<>();

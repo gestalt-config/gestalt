@@ -27,7 +27,7 @@ import static java.lang.System.Logger.Level.WARNING;
  * Will construct the class even if there are missing values, the values will be null or the default. Then it will return errors.
  * Decodes member classes and lists as well.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ObjectDecoder implements Decoder<Object> {
     private static final System.Logger logger = System.getLogger(ObjectDecoder.class.getName());

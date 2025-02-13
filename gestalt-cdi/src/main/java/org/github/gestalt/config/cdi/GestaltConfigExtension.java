@@ -36,7 +36,7 @@ import static org.github.gestalt.config.cdi.GestaltConfigProducer.isClassHandled
  * <p>Based on <a href="https://github.com/smallrye/smallrye-config/tree/3.1.1/cdi">...</a>
  *
  * @author <a href="http://jmesnil.net/">Jeff Mesnil</a> (c) 2017 Red Hat inc.
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class GestaltConfigExtension implements Extension {
     private final Set<InjectionPoint> configPropertyInjectionPoints = new HashSet<>();

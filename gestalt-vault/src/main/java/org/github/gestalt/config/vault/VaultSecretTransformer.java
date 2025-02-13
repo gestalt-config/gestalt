@@ -12,7 +12,7 @@ import org.github.gestalt.config.vault.errors.VaultValidationErrors;
 /**
  * Allows you to substitute a vault secret using ${vault:secretPath:secretKey}.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class VaultSecretTransformer implements Transformer {
 

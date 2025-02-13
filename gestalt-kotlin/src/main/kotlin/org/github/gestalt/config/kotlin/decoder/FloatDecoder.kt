@@ -14,7 +14,7 @@ import org.github.gestalt.config.utils.GResultOf
 /**
  * Kotlin Float Decoder.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 class FloatDecoder : LeafDecoder<Float>() {
     override fun name(): String {

@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Holds a config node and the UUID related to the source.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ConfigNodeContainer {
     private final ConfigNode configNode;

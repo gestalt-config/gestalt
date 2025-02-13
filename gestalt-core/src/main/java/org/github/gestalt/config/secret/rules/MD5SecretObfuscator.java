@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Specifies how to obscure a secret by turning it into a MD5 hash.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class MD5SecretObfuscator implements SecretObfuscator {
 

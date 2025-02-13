@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Holds all the ObservationMarker from all observation recorders.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ObservationMarker {
     private final Map<String, ObservationRecord> observationRecords;

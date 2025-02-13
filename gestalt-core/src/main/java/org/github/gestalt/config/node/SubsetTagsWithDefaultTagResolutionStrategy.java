@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Will Search for any roots that are a subset of the tags provided with a fallback of the default root.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class SubsetTagsWithDefaultTagResolutionStrategy implements ConfigNodeTagResolutionStrategy {
 

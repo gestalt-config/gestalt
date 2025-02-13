@@ -9,7 +9,7 @@ import org.github.gestalt.config.utils.GResultOf;
 /**
  * Decodes a generic Config Container type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ConfigDecoder implements Decoder<ConfigContainer<?>> {
 

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Processor that scans nodes to find annotations in the format @{myAnnotation} then adds the annotations as metadata to the config node.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(100)
 public class AnnotationConfigNodeProcessor implements ConfigNodeProcessor {

@@ -8,7 +8,7 @@ import org.github.gestalt.config.node.ConfigNodeService;
 /**
  * Holds configuration applied to all ConfigNodeFactory.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class ConfigNodeFactoryConfig {
     private final ConfigLoaderService configLoaderService;

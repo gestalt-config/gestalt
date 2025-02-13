@@ -30,7 +30,7 @@ import java.util.*;
  * Gestalt expects a standard java bean where the member value would be carModel then the method would be String getCarModel()
  * If the interface has a default method and is missing a config, it will return the default value.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ProxyDecoder implements Decoder<Object> {
 

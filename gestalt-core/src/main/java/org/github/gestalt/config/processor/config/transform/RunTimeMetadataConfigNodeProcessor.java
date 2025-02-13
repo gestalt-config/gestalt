@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Processor that scans nodes to find any run time tokens and marks those nodes with IsRunTimeStringSubstitutionMetadata.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(100)
 public final class RunTimeMetadataConfigNodeProcessor implements ConfigNodeProcessor {

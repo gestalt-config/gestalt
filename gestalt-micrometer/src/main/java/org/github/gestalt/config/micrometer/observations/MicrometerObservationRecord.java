@@ -7,7 +7,7 @@ import org.github.gestalt.config.observations.ObservationRecord;
 /**
  * Micrometer container for the MetricsRecord. It will hold details for any timer related metrics that have a start and a stop state.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MicrometerObservationRecord implements ObservationRecord {
 

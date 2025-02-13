@@ -6,7 +6,7 @@ import org.github.gestalt.config.utils.GResultOf;
 /**
  * Interface for the Base Config Node Processing. This will be run against every node in the tree after the tree has been compiled.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface BaseConfigNodeProcessor {
 

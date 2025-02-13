@@ -11,7 +11,7 @@ import static java.lang.System.Logger.Level.WARNING;
 /**
  * ConfigLoaderRegistry.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ConfigLoaderRegistry implements ConfigLoaderService {
 

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Splits the sentence by camel case and converts it to dot notation. So each capitalized word is a new token.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(500)
 public final class DotNotationPathMapper implements PathMapper {

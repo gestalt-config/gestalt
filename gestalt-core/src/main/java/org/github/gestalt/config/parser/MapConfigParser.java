@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 /**
  * Takes in a tokenized config and returns a config node tree.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MapConfigParser implements ConfigParser {
     private static final System.Logger logger = System.getLogger(MapConfigParser.class.getName());

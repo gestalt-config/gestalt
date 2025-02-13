@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 /**
  * Decode a Path.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class PathDecoder extends LeafDecoder<Path> {
 

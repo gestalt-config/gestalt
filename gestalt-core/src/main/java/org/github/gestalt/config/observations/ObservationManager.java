@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Holds all the ObservationManager from all observations recorders.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ObservationManager implements ObservationService {
 

@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Loads Environment Variables from EnvironmentConfigSource.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class EnvironmentVarsLoader implements ConfigLoader {
 

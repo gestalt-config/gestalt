@@ -14,7 +14,7 @@ Alternatively, you can implement the interface and register it with the gestalt 
 /**
  * Interface for validating objects.
  *
- *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ *  @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public interface ConfigValidator {
 

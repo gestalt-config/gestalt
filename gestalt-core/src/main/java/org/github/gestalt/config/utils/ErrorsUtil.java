@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Utility to build an error message from a list of validations.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class ErrorsUtil {
     private ErrorsUtil() {

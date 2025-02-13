@@ -3,7 +3,7 @@ import net.ltgt.gradle.errorprone.errorprone
 /**
  * Apply to all modules to include multiple code quality plugins to your module.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 plugins {
     id("net.ltgt.errorprone")

@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * <p>Load a config source from a File then converts it to a config node
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class EnvVarsConfigNodeFactory implements ConfigNodeFactory {
 

@@ -12,7 +12,7 @@ import java.time.format.DateTimeParseException;
 /**
  * Decode an Instant.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class InstantDecoder extends LeafDecoder<Instant> {
 

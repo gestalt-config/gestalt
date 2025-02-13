@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Store all core reload listeners and functionality to call the on reload.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class CoreReloadListenersContainer {
 

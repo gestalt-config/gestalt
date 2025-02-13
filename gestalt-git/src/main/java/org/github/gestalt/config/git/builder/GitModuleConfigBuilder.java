@@ -8,7 +8,7 @@ import org.github.gestalt.config.git.config.GitModuleConfig;
  * Builder for creating Git specific configuration.
  * You can either specify the CredentialsProvider or SshSessionFactory.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class GitModuleConfigBuilder {
     private CredentialsProvider credentials;

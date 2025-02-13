@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * Transformer that when provided an expression in the format int, int(10) or int(10, 10) will replace the value with a random value.
  * For most numeric types it uses Random and the parameters are the origin and bound. For Bytes the parameter is how many bytes to generate.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class RandomTransformer implements Transformer {
 

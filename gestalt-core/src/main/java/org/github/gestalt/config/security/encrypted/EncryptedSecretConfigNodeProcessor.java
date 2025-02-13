@@ -22,7 +22,7 @@ import java.util.Set;
  * Checks if the node is a leaf and a temporary secret. if it is, replaces the leaf node with a TemporaryLeafNode that can only be accessed
  * a limited number of times. After the limited number of times, the value is released to be GC'ed.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 @ConfigPriority(400)
 public class EncryptedSecretConfigNodeProcessor implements ConfigNodeProcessor {

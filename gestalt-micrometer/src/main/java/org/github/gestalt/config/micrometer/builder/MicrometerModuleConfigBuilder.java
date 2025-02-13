@@ -9,7 +9,7 @@ import org.github.gestalt.config.micrometer.config.MicrometerModuleConfig;
  * Module config for micrometer. If you wish to customize micrometer you need to register the results of this builder with
  * the {@link org.github.gestalt.config.builder.GestaltBuilder#addModuleConfig(GestaltModuleConfig)}.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class MicrometerModuleConfigBuilder {
 

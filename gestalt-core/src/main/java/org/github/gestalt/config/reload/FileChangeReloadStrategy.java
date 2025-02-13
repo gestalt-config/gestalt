@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
  *
  * <p>Creates a thread in the background to watch for file changes.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class FileChangeReloadStrategy extends ConfigReloadStrategy {
     private static final System.Logger logger = System.getLogger(FileChangeReloadStrategy.class.getName());

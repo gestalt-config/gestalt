@@ -11,7 +11,7 @@ import org.github.gestalt.config.source.ConfigSourcePackage;
  *
  * <p>Create a GCSConfigSource to load a config from a GCS Storage.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class GCSConfigSourceBuilder extends SourceBuilder<GCSConfigSourceBuilder, GCSConfigSource> {
 

@@ -6,7 +6,7 @@ import org.github.gestalt.config.entity.ValidationLevel;
 /**
  * Validation errors for Azure Module.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class AzureValidationErrors {
 

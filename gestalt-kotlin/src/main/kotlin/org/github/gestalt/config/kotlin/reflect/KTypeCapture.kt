@@ -11,7 +11,7 @@ import kotlin.reflect.typeOf
 /**
  * Kotlin specific TypeCapture
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 class KTypeCapture<T> private constructor(val kType: KType) : TypeCapture<Any>(kType.javaType) {
 

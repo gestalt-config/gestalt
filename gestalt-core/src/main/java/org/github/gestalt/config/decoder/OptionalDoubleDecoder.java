@@ -12,7 +12,7 @@ import java.util.OptionalDouble;
 /**
  * Decodes an OptionalDouble type.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class OptionalDoubleDecoder implements Decoder<OptionalDouble> {
 

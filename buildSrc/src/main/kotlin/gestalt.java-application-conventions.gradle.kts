@@ -1,7 +1,7 @@
 /*
  * Apply to create a module that can be run as a CLI application in Java.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 
 plugins {

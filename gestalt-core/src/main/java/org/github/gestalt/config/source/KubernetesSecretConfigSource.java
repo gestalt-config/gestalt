@@ -21,7 +21,7 @@ import java.util.UUID;
  * Where the name of the file is the path for the configuration and
  * the value in the file is the value of the configuration.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class KubernetesSecretConfigSource implements ConfigSource {
     public static final String K8_SECRET_CONFIG = "k8Secret";

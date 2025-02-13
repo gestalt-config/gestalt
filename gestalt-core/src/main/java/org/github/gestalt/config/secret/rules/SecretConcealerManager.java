@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Contains all the rules on how to conceal a secret, then apply them to a value.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public class SecretConcealerManager implements SecretConcealer {
     private final SecretObfuscator obfuscator;

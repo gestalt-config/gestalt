@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Apply the supplied transforms as we convert it.
  * Then write that as an input stream for the next stage in the parsing.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2024.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 public final class EnvironmentConfigSource implements ConfigSource {
 
