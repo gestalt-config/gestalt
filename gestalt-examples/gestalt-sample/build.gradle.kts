@@ -30,7 +30,6 @@ testing {
                 }
             }
 
-            testType.set(TestSuiteType.UNIT_TEST)
             dependencies {
                 implementation(project(":gestalt-aws"))
                 implementation(project(":gestalt-azure"))
