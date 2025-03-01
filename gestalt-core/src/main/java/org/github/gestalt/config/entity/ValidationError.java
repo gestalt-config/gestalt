@@ -1225,7 +1225,7 @@ public abstract class ValidationError {
         private final String value;
 
         public UnclosedSubstitutionTransform(String path, String value) {
-            super(ValidationLevel.ERROR);
+            super(ValidationLevel.DEBUG);
             this.path = path;
             this.value = value;
         }
@@ -1576,7 +1576,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * No value determined
+     * No value determined.
      */
     public static class Dist100NoValueDetermined extends ValidationError {
         private final String path;
@@ -1599,7 +1599,7 @@ public abstract class ValidationError {
     }
 
     /**
-     * Multiple defaults found, only the first one will be used
+     * Multiple defaults found, only the first one will be used.
      */
     public static class Dist100DuplicateDefaults extends ValidationError {
         private final String path;

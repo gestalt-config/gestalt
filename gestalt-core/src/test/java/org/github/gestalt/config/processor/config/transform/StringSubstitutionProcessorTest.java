@@ -301,7 +301,12 @@ class StringSubstitutionProcessorTest {
         LeafNode node = new LeafNode("\\${map:weather}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
-        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasErrors());
+        Assertions.assertEquals(1, validateNode.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, validateNode.getErrors().get(0).level());
+        Assertions.assertEquals("Unexpected closing token: } found in string: \\${map:weather}, at location: 14 on path: location",
+            validateNode.getErrors().get(0).description());
+
         Assertions.assertTrue(validateNode.hasResults());
         Assertions.assertTrue(validateNode.results().getValue().isPresent());
         Assertions.assertEquals("${map:weather}", validateNode.results().getValue().get());
@@ -327,7 +332,12 @@ class StringSubstitutionProcessorTest {
         LeafNode node = new LeafNode("hello ${place} it is \\${map:weather} today");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
-        Assertions.assertFalse(validateNode.hasErrors());
+        Assertions.assertTrue(validateNode.hasErrors());
+        Assertions.assertEquals(1, validateNode.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, validateNode.getErrors().get(0).level());
+        Assertions.assertEquals("Unexpected closing token: } found in string: hello ${place} it is \\${map:weather} today, " +
+            "at location: 35 on path: location", validateNode.getErrors().get(0).description());
+
         Assertions.assertTrue(validateNode.hasResults());
         Assertions.assertTrue(validateNode.results().getValue().isPresent());
         Assertions.assertEquals("hello Earth it is ${map:weather} today", validateNode.results().getValue().get());
@@ -487,7 +497,7 @@ class StringSubstitutionProcessorTest {
 
         StringSubstitutionProcessor transformerPostProcessor =
             new StringSubstitutionProcessor(Collections.singletonList(transformer));
-        LeafNode node = new LeafNode("${my.path.${your.path.${this.path}}");
+        LeafNode node = new LeafNode("${my.path.${your.path.${this.path}}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());
@@ -508,7 +518,7 @@ class StringSubstitutionProcessorTest {
 
         StringSubstitutionProcessor transformerPostProcessor =
             new StringSubstitutionProcessor(Collections.singletonList(transformer));
-        LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here}}}");
+        LeafNode node = new LeafNode("${my.path.${your.path.${this.path.${here}}}}");
         GResultOf<ConfigNode> validateNode = transformerPostProcessor.process("location", node);
 
         Assertions.assertFalse(validateNode.hasErrors());

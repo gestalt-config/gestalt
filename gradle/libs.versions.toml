@@ -18,8 +18,8 @@ weldCore = "5.1.3.Final"
 jackson = "2.18.2"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.30.11"
-gcpLibraries = "26.53.0"
+awsBom = "2.30.25"
+gcpLibraries = "26.54.0"
 azure = "1.2.31"
 # vault
 vault = "6.2.0"
@@ -28,7 +28,7 @@ vault = "6.2.0"
 jgit = "6.10.0.202406032230-r"
 eddsa = "0.3.0"
 # metrics
-micrometer = "1.14.3"
+micrometer = "1.14.4"
 # validation
 hibernateValidator = "8.0.2.Final"
 expressly = "5.0.0"
@@ -41,7 +41,7 @@ mockk = "1.13.16"
 koTestAssertions = "5.9.1"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "1.20.4"
+testcontainers = "1.20.5"
 # static code analysis
 # @pin last version to support JDK 11
 errorprone = "2.31.0"
