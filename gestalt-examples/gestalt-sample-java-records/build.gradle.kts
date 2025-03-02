@@ -20,7 +20,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
-            testType.set(TestSuiteType.UNIT_TEST)
+
             dependencies {
                 implementation(project(":gestalt-core"))
                 implementation(project(":gestalt-hocon"))

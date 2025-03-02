@@ -201,7 +201,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: hello ${name} welcome } to ${location}., " +
-            "at location: 22 on path: db.host", result.getErrors().get(0).description());
+            "at location: 22 on path: db.host, this error can have false positives", result.getErrors().get(0).description());
 
         Assertions.assertEquals(5, result.results().size());
 
@@ -229,7 +229,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: }hello ${name} welcome to ${location}., " +
-            "at location: 0 on path: db.host", result.getErrors().get(0).description());
+            "at location: 0 on path: db.host, this error can have false positives", result.getErrors().get(0).description());
 
         Assertions.assertEquals(5, result.results().size());
 
@@ -257,7 +257,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: hello ${name} welcome to ${location}.}, " +
-            "at location: 37 on path: db.host", result.getErrors().get(0).description());
+            "at location: 37 on path: db.host, this error can have false positives", result.getErrors().get(0).description());
 
         Assertions.assertEquals(5, result.results().size());
 
@@ -276,18 +276,37 @@ public class SubstitutionTreeBuilderTest {
     }
 
     @Test
-    public void unClosingTokenAtEnding() {
+    public void unClosedTokenSimple() {
+        SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
+
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "abc${def");
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
+        Assertions.assertEquals("Reached the end of a string abc${def with an unclosed " +
+            "substitution on path: db.host", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(3, result.results().size());
+
+        Assertions.assertEquals("abc", ((SubstitutionNode.TextNode) result.results().get(0)).getText());
+        Assertions.assertEquals("${", ((SubstitutionNode.TextNode) result.results().get(1)).getText());
+        Assertions.assertEquals("def", ((SubstitutionNode.TextNode) result.results().get(2)).getText());
+    }
+
+    @Test
+    public void unClosedTokenAtEnding() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
         GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name} welcome to ${location");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Reached the end of a string hello ${name} welcome to ${location with an unclosed " +
             "substitution on path: db.host", result.getErrors().get(0).description());
 
-        Assertions.assertEquals(4, result.results().size());
+        Assertions.assertEquals(5, result.results().size());
 
         Assertions.assertEquals("hello ", ((SubstitutionNode.TextNode) result.results().get(0)).getText());
         Assertions.assertEquals(1, ((SubstitutionNode.TransformNode) result.results().get(1)).getSubNodes().size());
@@ -296,6 +315,53 @@ public class SubstitutionTreeBuilderTest {
 
         Assertions.assertEquals(" welcome to ", ((SubstitutionNode.TextNode) result.results().get(2)).getText());
 
+        Assertions.assertEquals("${", ((SubstitutionNode.TextNode) result.results().get(3)).getText());
+        Assertions.assertEquals("location", ((SubstitutionNode.TextNode) result.results().get(4)).getText());
+    }
+
+    @Test
+    public void unClosedTokenAtBeginning() {
+        SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
+
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location");
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
+        Assertions.assertEquals("Reached the end of a string hello ${name welcome to ${location with an unclosed substitution " +
+            "on path: db.host", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(1).level());
+        Assertions.assertEquals("Reached the end of a string hello ${name welcome to ${location with an unclosed substitution " +
+            "on path: db.host", result.getErrors().get(1).description());
+
+        Assertions.assertEquals(5, result.results().size());
+
+        Assertions.assertEquals("hello ", ((SubstitutionNode.TextNode) result.results().get(0)).getText());
+        Assertions.assertEquals("${", ((SubstitutionNode.TextNode) result.results().get(1)).getText());
+        Assertions.assertEquals("name welcome to ", ((SubstitutionNode.TextNode) result.results().get(2)).getText());
+        Assertions.assertEquals("${", ((SubstitutionNode.TextNode) result.results().get(3)).getText());
+        Assertions.assertEquals("location", ((SubstitutionNode.TextNode) result.results().get(4)).getText());
+    }
+
+    @Test
+    public void unClosedTokenAtBeginning2() {
+        SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
+
+        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location}");
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(1, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
+        Assertions.assertEquals("Reached the end of a string hello ${name welcome to ${location} with an unclosed substitution " +
+            "on path: db.host", result.getErrors().get(0).description());
+
+        Assertions.assertEquals(4, result.results().size());
+
+        Assertions.assertEquals("hello ", ((SubstitutionNode.TextNode) result.results().get(0)).getText());
+        Assertions.assertEquals("${", ((SubstitutionNode.TextNode) result.results().get(1)).getText());
+        Assertions.assertEquals("name welcome to ", ((SubstitutionNode.TextNode) result.results().get(2)).getText());
+
         Assertions.assertEquals(1, ((SubstitutionNode.TransformNode) result.results().get(3)).getSubNodes().size());
         Assertions.assertEquals("location",
             ((SubstitutionNode.TextNode) ((SubstitutionNode.TransformNode) result.results().get(3)).getSubNodes().get(0)).getText());
@@ -303,50 +369,26 @@ public class SubstitutionTreeBuilderTest {
     }
 
     @Test
-    public void unClosingTokenAtBeginning() {
-        SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
-
-        GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location");
-        Assertions.assertTrue(result.hasResults());
-        Assertions.assertTrue(result.hasErrors());
-        Assertions.assertEquals(2, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Reached the end of a string hello ${name welcome to ${location with an unclosed substitution " +
-            "on path: db.host", result.getErrors().get(0).description());
-
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(1).level());
-        Assertions.assertEquals("Reached the end of a string hello ${name welcome to ${location with an unclosed substitution " +
-            "on path: db.host", result.getErrors().get(1).description());
-
-        Assertions.assertEquals(2, result.results().size());
-    }
-
-    @Test
-    public void unClosingTokenAtBeginning2() {
+    public void nestedUnclosedTokenAtBeginning2() {
         SubstitutionTreeBuilder builder = new SubstitutionTreeBuilder("${", "}");
 
         GResultOf<List<SubstitutionNode>> result = builder.build("db.host", "hello ${name welcome to ${location}");
         Assertions.assertTrue(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Reached the end of a string hello ${name welcome to ${location} with an unclosed substitution " +
             "on path: db.host", result.getErrors().get(0).description());
 
-        Assertions.assertEquals(2, result.results().size());
+        Assertions.assertEquals(4, result.results().size());
 
         Assertions.assertEquals("hello ", ((SubstitutionNode.TextNode) result.results().get(0)).getText());
-        Assertions.assertEquals(2, ((SubstitutionNode.TransformNode) result.results().get(1)).getSubNodes().size());
-        Assertions.assertEquals("name welcome to ",
-            ((SubstitutionNode.TextNode) ((SubstitutionNode.TransformNode)
-                result.results().get(1)).getSubNodes().get(0)).getText());
+        Assertions.assertEquals("${", ((SubstitutionNode.TextNode) result.results().get(1)).getText());
+        Assertions.assertEquals("name welcome to ", ((SubstitutionNode.TextNode) result.results().get(2)).getText());
 
-        Assertions.assertEquals(1,
-            ((SubstitutionNode.TransformNode) ((SubstitutionNode.TransformNode) result.results().get(1)).getSubNodes().get(1))
-                .getSubNodes().size());
+        Assertions.assertEquals(1, ((SubstitutionNode.TransformNode) result.results().get(3)).getSubNodes().size());
         Assertions.assertEquals("location",
-            ((SubstitutionNode.TextNode) ((SubstitutionNode.TransformNode) ((SubstitutionNode.TransformNode)
-                result.results().get(1)).getSubNodes().get(1)).getSubNodes().get(0)).getText());
+            ((SubstitutionNode.TextNode) ((SubstitutionNode.TransformNode) result.results().get(3)).getSubNodes().get(0)).getText());
 
     }
 

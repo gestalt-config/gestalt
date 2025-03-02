@@ -105,7 +105,12 @@ public final class StringSubstitutionProcessor {
         if (substitutionNodes.hasResults()) {
             var results = buildSubstitutedStringList(path, currentNode, substitutionNodes.results(), 0);
 
-            return results.mapWithError(it -> ((LeafNode) currentNode).duplicate(it));
+            // Add in any errors or warnings from the substitution tree building so we can bubble them up.
+            List<ValidationError> errors = new ArrayList<>(substitutionNodes.getErrors());
+            errors.addAll(results.getErrors());
+            var combinedResultsWithError = GResultOf.resultOf(results.results(), errors);
+
+            return combinedResultsWithError.mapWithError(it -> ((LeafNode) currentNode).duplicate(it));
 
         } else {
             return GResultOf.errors(substitutionNodes.getErrors());

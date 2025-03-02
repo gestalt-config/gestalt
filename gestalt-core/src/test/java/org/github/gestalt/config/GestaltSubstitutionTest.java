@@ -1,13 +1,18 @@
 package org.github.gestalt.config;
 
 import org.github.gestalt.config.builder.GestaltBuilder;
+import org.github.gestalt.config.entity.ValidationError;
+import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
+import org.github.gestalt.config.tag.Tags;
+import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GestaltSubstitutionTest {
@@ -70,6 +75,91 @@ public class GestaltSubstitutionTest {
 
         Assertions.assertNotEquals(random1, random2);
         Assertions.assertNotEquals(random1, random3);
+    }
+
+    @Test
+    public void testPartialSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "abc${def");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        List<ValidationError> errors =  ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, errors.get(0).level());
+        Assertions.assertEquals("Reached the end of a string abc${def with an unclosed substitution on path: message",
+            errors.get(0).description());
+
+        GResultOf<String> message = gestalt.getConfigResult("message", TypeCapture.of(String.class), Tags.of());
+
+        Assertions.assertEquals("abc${def", message.results());
+        Assertions.assertEquals(0, message.getErrors().size());
+    }
+
+    @Test
+    public void testPartialNestedSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "abc${def ${node:place}");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        List<ValidationError> errors =  ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, errors.get(0).level());
+        Assertions.assertEquals("Reached the end of a string abc${def ${node:place} with an unclosed substitution on path: message",
+            errors.get(0).description());
+
+        GResultOf<String> message = gestalt.getConfigResult("message", TypeCapture.of(String.class), Tags.of());
+
+        Assertions.assertEquals("abc${def world", message.results());
+        Assertions.assertEquals(0, message.getErrors().size());
+    }
+
+    @Test
+    public void testPartialNestedRuntimeSubstitution() throws GestaltException {
+        Map<String, String> customMap = new HashMap<>();
+        customMap.put("place", "world");
+        customMap.put("weather", "sunny");
+        customMap.put("message", "abc#{def #{node:place}");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(customMap).build())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        List<ValidationError> errors =  ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, errors.get(0).level());
+        Assertions.assertEquals("Unexpected closing token: } found in string: abc#{def #{node:place}, " +
+                "at location: 21 on path: message, this error can have false positives",
+            errors.get(0).description());
+
+        GResultOf<String> message = gestalt.getConfigResult("message", TypeCapture.of(String.class), Tags.of());
+
+        Assertions.assertEquals("abc#{def world", message.results());
+        Assertions.assertEquals(1, message.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.DEBUG, message.getErrors().get(0).level());
+        Assertions.assertEquals("Reached the end of a string abc#{def #{node:place} with an unclosed substitution on path: message",
+            message.getErrors().get(0).description());
     }
 
     @Test

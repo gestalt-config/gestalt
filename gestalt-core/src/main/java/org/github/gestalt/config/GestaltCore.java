@@ -254,6 +254,8 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             logger.log(DEBUG, errorMsg);
         }
 
+        loadErrors.addAll(results.getErrors());
+
         results.throwIfNoResults(() -> new GestaltException("no results found post processing the config nodes"));
     }
 
@@ -502,12 +504,10 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
 
         if (!node.hasErrors() || node.hasErrors(ValidationLevel.MISSING_VALUE)) {
 
+            List<ValidationError> errors = new ArrayList<>();
             // apply any run time config node processors to the found node.
             GResultOf<ConfigNode> processedResult = configNodeProcessorService.runTimeProcessConfigNodes(path, node.results());
-
-            if (processedResult.hasErrors() && !processedResult.getErrorsNotLevel(ValidationLevel.MISSING_VALUE).isEmpty()) {
-                return GResultOf.errors(processedResult.getErrors());
-            }
+            errors.addAll(processedResult.getErrors());
 
             ConfigNode processedNode = processedResult.results();
 
@@ -530,7 +530,6 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
             // return the errors from the call to navigate to node.
             // So we don't get too many "duplicate" errors
             // Otherwise if we have a result return both sets of errors.
-            List<ValidationError> errors = new ArrayList<>();
             if (!decodedResults.hasResults() && node.hasErrors(ValidationLevel.MISSING_VALUE)) {
                 errors.addAll(node.getErrors());
             } else {

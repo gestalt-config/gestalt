@@ -119,7 +119,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         } else {
             GResultOf<T> result = delegate.getConfigResult(path, klass, resolvedTags);
             updateCache(path, key, result);
-            return result  != null ? result.results(): null;
+            return result  != null ? result.results() : null;
         }
     }
 

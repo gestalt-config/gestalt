@@ -9,8 +9,6 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.ErrorsUtil;
 import org.github.gestalt.config.utils.GResultOf;
 
-import java.util.List;
-
 import static java.lang.System.Logger.Level.DEBUG;
 import static org.github.gestalt.config.utils.ErrorsUtil.checkErrorsShouldFail;
 
@@ -50,7 +48,7 @@ public class ErrorResultProcessor implements ResultProcessor {
         }
 
         // We have either logged or thrown exceptions for the errors, so strip them from the results.
-        return GResultOf.resultOf(results.results(), List.of(), results.isDefault(), results.getMetadata());
+        return GResultOf.resultOf(results.results(), results.getErrors(), results.isDefault(), results.getMetadata());
     }
 
 }

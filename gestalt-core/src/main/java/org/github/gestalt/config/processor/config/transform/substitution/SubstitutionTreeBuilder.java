@@ -2,7 +2,6 @@ package org.github.gestalt.config.processor.config.transform.substitution;
 
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.utils.GResultOf;
-import org.github.gestalt.config.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,24 @@ public final class SubstitutionTreeBuilder {
     private final Pattern patternReplaceOpen;
     private final Pattern patternReplaceClose;
 
+    private final static class SubNodeBuildResult {
+        private final List<SubstitutionNode> nodes;
+        private final int position;
+
+        public SubNodeBuildResult(List<SubstitutionNode> nodes, int position) {
+            this.nodes = nodes;
+            this.position = position;
+        }
+
+        public List<SubstitutionNode> getNodes() {
+            return nodes;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+    }
+
     public SubstitutionTreeBuilder(String openingToken, String closingToken) {
         this.openingToken = openingToken;
         this.closingToken = closingToken;
@@ -44,15 +61,15 @@ public final class SubstitutionTreeBuilder {
         List<SubstitutionNode> nodes;
         var results = buildInternal(path, value, 0, 0);
 
-        if (results.hasResults() && results.results().getFirst() instanceof SubstitutionNode.TransformNode) {
-            nodes = ((SubstitutionNode.TransformNode) results.results().getFirst()).getSubNodes();
+        if (results.hasResults() && !results.results().getNodes().isEmpty()) {
+            nodes = results.results().getNodes();
         } else {
             nodes = new ArrayList<>();
         }
         return GResultOf.resultOf(nodes, results.getErrors());
     }
 
-    public GResultOf<Pair<SubstitutionNode, Integer>> buildInternal(String path, String value, int index, int depth) {
+    private GResultOf<SubNodeBuildResult> buildInternal(String path, String value, int index, int depth) {
         List<ValidationError> errors = new ArrayList<>();
         List<SubstitutionNode> nodes = new ArrayList<>();
 
@@ -73,16 +90,16 @@ public final class SubstitutionTreeBuilder {
                 // lets skip ahead the size of the opening token.
                 i += openingTokenLength;
 
-                GResultOf<Pair<SubstitutionNode, Integer>> nestedNodes = buildInternal(path, value, i, depth + 1);
+                GResultOf<SubNodeBuildResult> nestedNodes = buildInternal(path, value, i, depth + 1);
 
                 errors.addAll(nestedNodes.getErrors());
                 if (nestedNodes.hasResults()) {
-                    nodes.add(nestedNodes.results().getFirst());
+                    nodes.addAll(nestedNodes.results().getNodes());
                 }
 
                 // forward the counter by the length of the closing token -1 (since the next loop will increment by 1)
-                i = nestedNodes.results().getSecond() - 1;
-                lastNodeEnd = nestedNodes.results().getSecond();
+                i = nestedNodes.results().getPosition() - 1;
+                lastNodeEnd = nestedNodes.results().getPosition();
             } else if (firstClosingToken == codePointAt &&
                 (i == 0 || value.codePointAt(i - 1) != ESCAPE_CHAR) &&
                 value.startsWith(closingToken, i)) {
@@ -98,24 +115,28 @@ public final class SubstitutionTreeBuilder {
 
                     i += closingTokenLength;
 
-                    return GResultOf.resultOf(new Pair<>(new SubstitutionNode.TransformNode(nodes), i), errors);
+                    return GResultOf.resultOf(new SubNodeBuildResult(List.of(new SubstitutionNode.TransformNode(nodes)), i), errors);
                 }
             }
         }
 
         if (depth != 0) {
             errors.add(new ValidationError.UnclosedSubstitutionTransform(path, value));
+
+            // if this is an unclosed substitution add the opening token at the beginning of this node list.
+            nodes.add(0, new SubstitutionNode.TextNode(openingToken));
         }
 
         // if there is some text from the end of the last node add a new text node.
         // of if this is an empty string. (to ensure, we have at least one text node)
+
         if (lastNodeEnd != length || length == 0) {
             String text = getEscapedText(value, lastNodeEnd, length);
             // if there is some text from the end of the last node add a new text node.
             nodes.add(new SubstitutionNode.TextNode(text));
         }
 
-        return GResultOf.resultOf(new Pair<>(new SubstitutionNode.TransformNode(nodes), length), errors);
+        return GResultOf.resultOf(new SubNodeBuildResult(nodes, length), errors);
     }
 
     private String getEscapedText(String value, int lastNodeEnd, int i) {
