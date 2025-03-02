@@ -1213,7 +1213,7 @@ public abstract class ValidationError {
         @Override
         public String description() {
             return "Unexpected closing token: " + closingToken + " found in string: " + value +
-                ", at location: " + location + " on path: " + path;
+                ", at location: " + location + " on path: " + path + ", this error can have false positives";
         }
     }
 

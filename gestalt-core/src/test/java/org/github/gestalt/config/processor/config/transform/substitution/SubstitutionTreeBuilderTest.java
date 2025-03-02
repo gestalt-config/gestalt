@@ -201,7 +201,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: hello ${name} welcome } to ${location}., " +
-            "at location: 22 on path: db.host", result.getErrors().get(0).description());
+            "at location: 22 on path: db.host, this error can have false positives", result.getErrors().get(0).description());
 
         Assertions.assertEquals(5, result.results().size());
 
@@ -229,7 +229,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: }hello ${name} welcome to ${location}., " +
-            "at location: 0 on path: db.host", result.getErrors().get(0).description());
+            "at location: 0 on path: db.host, this error can have false positives", result.getErrors().get(0).description());
 
         Assertions.assertEquals(5, result.results().size());
 
@@ -257,7 +257,7 @@ public class SubstitutionTreeBuilderTest {
         Assertions.assertEquals(1, result.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, result.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: hello ${name} welcome to ${location}.}, " +
-            "at location: 37 on path: db.host", result.getErrors().get(0).description());
+            "at location: 37 on path: db.host, this error can have false positives", result.getErrors().get(0).description());
 
         Assertions.assertEquals(5, result.results().size());
 

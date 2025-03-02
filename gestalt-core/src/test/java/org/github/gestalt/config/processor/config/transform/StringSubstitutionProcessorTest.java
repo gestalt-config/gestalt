@@ -304,7 +304,8 @@ class StringSubstitutionProcessorTest {
         Assertions.assertTrue(validateNode.hasErrors());
         Assertions.assertEquals(1, validateNode.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, validateNode.getErrors().get(0).level());
-        Assertions.assertEquals("Unexpected closing token: } found in string: \\${map:weather}, at location: 14 on path: location",
+        Assertions.assertEquals("Unexpected closing token: } found in string: \\${map:weather}, at location: 14 on path: location, " +
+                "this error can have false positives",
             validateNode.getErrors().get(0).description());
 
         Assertions.assertTrue(validateNode.hasResults());
@@ -336,7 +337,7 @@ class StringSubstitutionProcessorTest {
         Assertions.assertEquals(1, validateNode.getErrors().size());
         Assertions.assertEquals(ValidationLevel.DEBUG, validateNode.getErrors().get(0).level());
         Assertions.assertEquals("Unexpected closing token: } found in string: hello ${place} it is \\${map:weather} today, " +
-            "at location: 35 on path: location", validateNode.getErrors().get(0).description());
+            "at location: 35 on path: location, this error can have false positives", validateNode.getErrors().get(0).description());
 
         Assertions.assertTrue(validateNode.hasResults());
         Assertions.assertTrue(validateNode.results().getValue().isPresent());
