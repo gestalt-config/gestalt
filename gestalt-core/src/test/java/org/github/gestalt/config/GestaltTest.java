@@ -2140,6 +2140,30 @@ class GestaltTest {
         Assertions.assertEquals(111222333, gestalt.getConfig("subservice.booking.token", Integer.class));
     }
 
+    @Test
+    public void testMapWrongNode() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatWarningsAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        var exception = Assertions.assertThrows(GestaltException.class,  () -> gestalt.getConfig("empty", new TypeCapture<Map<String, String>>() {
+        }));
+
+        Assertions.assertEquals("Failed getting config path: empty, for class: " +
+            "java.util.Map<java.lang.String, java.lang.String>\n" +
+            " - level: MISSING_VALUE, message: Unable to find node matching path: empty, " +
+            "for class: ObjectToken, during navigating to next node", exception.getMessage());
+    }
+
 
     public static class TestConfigNodeProcessor implements ConfigNodeProcessor {
         private final String add;
