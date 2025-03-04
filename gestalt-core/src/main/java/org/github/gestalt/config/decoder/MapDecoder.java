@@ -57,7 +57,7 @@ public final class MapDecoder implements Decoder<Map<?, ?>> {
 
     @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
-        return Map.class.isAssignableFrom(type.getRawType()) && type.hasParameter() &&
+        return Map.class.isAssignableFrom(type.getRawType()) && type.hasParameter() && node != null &&
             (node.getNodeType() == NodeType.MAP || node.getNodeType() == NodeType.LEAF);
     }
 

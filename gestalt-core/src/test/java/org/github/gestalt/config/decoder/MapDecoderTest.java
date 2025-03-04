@@ -73,6 +73,9 @@ class MapDecoderTest {
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), TypeCapture.of(Date.class)));
         Assertions.assertFalse(decoder.canDecode("", Tags.of(), new LeafNode(""), new TypeCapture<List<Long>>() {
         }));
+
+        Assertions.assertFalse(decoder.canDecode("", Tags.of(), null, new TypeCapture<List<Long>>() {
+        }));
     }
 
     @Test
