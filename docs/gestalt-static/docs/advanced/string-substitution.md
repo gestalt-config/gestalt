@@ -22,7 +22,7 @@ db.uri=jdbc:mysql://${DB_HOST}:${DB_PORT}/${environment}
 Load time `${}` substitutions are evaluated when we load the configurations and build the config tree. This is done once on `gestalt.load()` then all results are cached in the config tree and returned.
 Run time `#{}` substitutions are evaluated at runtime when you call `gestalt.getConfig(...);`, the results are not cached and each time you call `gestalt.getConfig(...);` you will re-evaluate the value.
 
-It is recommended to use Load time `${}` substitutions in the vast majority of cases as it is more performant. The main use case for run time `#{}` substitutions is for values you expect to change from one run to the next, such as wanting a different random number each time you call `gestalt.getConfig(...);`.
+It is recommended to use Load time `${}` substitutions in the vast majority of cases as it is more performant. The main use case for run time `#{}` substitutions is for values you expect to change from one call to the next, such as wanting a different random number each time you call `gestalt.getConfig(...);`.
 
 Aside from evaluated time, the syntax and use of both `${}` and `#{}` are otherwise identical, you can mix and match them as needed.
 
