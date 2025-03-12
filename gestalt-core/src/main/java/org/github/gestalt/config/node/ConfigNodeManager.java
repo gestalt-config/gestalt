@@ -112,15 +112,30 @@ public final class ConfigNodeManager implements ConfigNodeService {
                 errors.addAll(results.getErrors());
                 if (results.hasResults()) {
                     boolean tryUpgradeSuccess = false;
-                    while (!tryUpgradeSuccess) {
-                        long ws = lock.tryConvertToWriteLock(stamp);
+                    long ws = 0;
+                    try {
+                        while (!tryUpgradeSuccess) {
+                            ws = lock.tryConvertToWriteLock(stamp);
+                            if (ws != 0L) {
+                                stamp = ws;
+                                tryUpgradeSuccess = true;
+                                roots.put(tags, results.results());
+                            } else {
+                                lock.unlockRead(stamp);
+                                stamp = lock.writeLock();
+                            }
+                        }
+                    } finally {
                         if (ws != 0L) {
-                            stamp = ws;
-                            tryUpgradeSuccess = true;
-                            roots.put(tags, results.results());
-                        } else {
-                            lock.unlockRead(stamp);
-                            stamp = lock.writeLock();
+                            // downgrade lock to a read lock
+                            long readStamp = lock.tryConvertToReadLock(stamp);
+                            if (readStamp != 0L) {
+                                stamp = readStamp; // Successfully downgraded
+                            } else {
+                                // If conversion failed, release write lock and acquire read lock
+                                lock.unlockWrite(stamp);
+                                stamp = lock.readLock();
+                            }
                         }
                     }
                 } else {
