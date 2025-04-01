@@ -1666,7 +1666,7 @@ However, we override with an Env Var of: `HTTP_POOL_MAXTOTAL=200`
   Gestalt gestalt = builder
       .addSource(ClassPathConfigSourceBuilder.builder().setResource("default.properties").build())
       .addSource(ClassPathConfigSourceBuilder.builder().setResource("dev.properties").build())
-      .addSource(EnvironmentConfigSource.builder().build())
+      .addSource(EnvironmentConfigSourceBuilder.builder().build())
       .build();
 
   // Load the configurations, this will throw exceptions if there are any errors.
