@@ -1,11 +1,11 @@
 [versions]
 java = "11"
 javaLatest = "21"
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 kotlinDokka = "2.0.0"
 # Kotlin DI
 kodeinDI = "7.25.0"
-koinDI = "4.0.2"
+koinDI = "4.0.4"
 # Java DI
 guice = "7.0.0"
 # @pin 4.1.0 requires java 17
@@ -18,8 +18,8 @@ weldCore = "5.1.3.Final"
 jackson = "2.18.3"
 hocon = "1.4.3"
 # Cloud
-awsBom = "2.30.38"
-gcpLibraries = "26.56.0"
+awsBom = "2.31.15"
+gcpLibraries = "26.59.0"
 azure = "1.2.32"
 # vault
 vault = "6.2.0"
@@ -33,8 +33,8 @@ micrometer = "1.14.5"
 hibernateValidator = "8.0.2.Final"
 expressly = "5.0.0"
 # testing
-junit5 = "5.11.4"
-junitTestkit = "1.11.4"
+junit5 = "5.12.1"
+junitTestkit = "1.12.1"
 assertJ = "3.27.3"
 mockito = "5.2.0"
 mockk = "1.13.17"
@@ -56,8 +56,8 @@ gradleJmh = "0.7.3"
 gestalt = "0.35.4"
 # Gradle utility
 gradleVersions = "0.52.0"
-gitVersions = "3.1.0"
-gradleVersionsUpdate = "0.8.5"
+gitVersions = "3.2.0"
+gradleVersionsUpdate = "1.0.0"
 com-fasterxml-jackson-datatype = "2.18.3"
 jakartaAnnotations = "3.0.0"
 gradleRetry = "1.6.2"
