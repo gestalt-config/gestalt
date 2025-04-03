@@ -54,9 +54,5 @@ versionCatalogUpdate {
   keep {
     // keep versions without any library or plugin reference
     keepUnusedVersions.set(true)
-    // keep all libraries that aren't used in the project
-    keepUnusedLibraries.set(true)
-    // keep all plugins that aren't used in the project
-    keepUnusedPlugins.set(true)
   }
 }
