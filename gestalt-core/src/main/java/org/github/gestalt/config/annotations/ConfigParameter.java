@@ -8,14 +8,14 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotate a field or a method to optional modify the path or optionally add a default.
+ * Annotate a Parameters or a method to optional modify the path or optionally add a default.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
-@Target(value = {FIELD, METHOD})
+@Target(value = {PARAMETER})
 @Inherited
 @Retention(value = RUNTIME)
-public @interface Config {
+public @interface ConfigParameter {
     String path() default "";
 
     String defaultVal() default "";

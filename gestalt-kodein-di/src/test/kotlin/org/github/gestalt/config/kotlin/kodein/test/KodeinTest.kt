@@ -39,7 +39,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun `test Kodein DI Doesnt Exist`() {
+    fun testKodeinDIDoesntExist() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -53,7 +53,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun `test Kodein DI Default`() {
+    fun testKodeinDIDefault() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -68,7 +68,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun `test Kodein DI Default Exists`() {
+    fun testKodeinDIDefaultExists() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -83,7 +83,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun `test Kodein DI By`() {
+    fun testKodeinDIBy() {
 
         val kodein = DI {
             bindInstance { gestalt!! }
@@ -97,7 +97,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun `test Kodein DI With Tag`() {
+    fun testKodeinDIWithTag() {
 
         val kodein = DI {
             bindInstance(tag = "gestalt") { gestalt!! }
@@ -111,7 +111,7 @@ internal class KodeinTest {
     }
 
     @Test
-    fun `test Kodein DI With Wrong Tag`() {
+    fun testKodeinDIWithWrongTag() {
 
         val kodein = DI {
             bindInstance(tag = "gestalt") { gestalt!! }
