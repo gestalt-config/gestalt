@@ -19,7 +19,8 @@ public class DBInfoConstructorAnnotationDefault {
         this.password = password;
     }
 
-    public DBInfoConstructorAnnotationDefault(@ConfigParameter(path = "address") int port, @ConfigParameter(path = "secret") String secret) {
+    public DBInfoConstructorAnnotationDefault(@ConfigParameter(path = "address") int port,
+                                              @ConfigParameter(path = "secret") String secret) {
         this.port = port;
         this.uri = "unknown";
         this.password = secret;

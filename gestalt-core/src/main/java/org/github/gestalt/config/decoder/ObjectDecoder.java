@@ -91,7 +91,6 @@ public final class ObjectDecoder implements Decoder<Object> {
         DecoderService decoderSrv = decoderContext.getDecoderService();
 
         try {
-
             // Try and get the object by the constructor first
             Optional<Object> constructorObject = getByConstructor(path, tags, node, decoderContext, klass, decoderSrv);
             if (constructorObject.isPresent()) return GResultOf.result(constructorObject.get());
@@ -217,7 +216,10 @@ public final class ObjectDecoder implements Decoder<Object> {
     }
 
     // try and build the object using a constructor.
-    private Optional<Object> getByConstructor(String path, Tags tags, ConfigNode node, DecoderContext decoderContext, Class<?> klass, DecoderService decoderSrv) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    private Optional<Object> getByConstructor(String path, Tags tags, ConfigNode node,
+                                              DecoderContext decoderContext, Class<?> klass, DecoderService decoderSrv)
+        throws InvocationTargetException, InstantiationException, IllegalAccessException {
+
         Constructor<?>[] constructors = klass.getDeclaredConstructors();
         List<Constructor<?>> sortedConstructors = Arrays.stream(constructors)
             .sorted((p1, p2) -> p2.getParameterCount() - p1.getParameterCount())
