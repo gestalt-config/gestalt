@@ -288,4 +288,36 @@ class ObjectDecoderConstructorTest {
         Assertions.assertEquals(null, results.getPassword());
         Assertions.assertEquals(null, results.getUri());
     }
+
+    @Test
+    void decodeWrongType() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("port", new LeafNode("one hundred"));
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Object> result = decoder.decode("db.host", Tags.of(), new MapNode(configs),
+                TypeCapture.of(DBInfoConstructor.class),
+                new DecoderContext(decoderService, null, null, new PathLexer()));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
+        Assertions.assertEquals("Unable to parse a number on Path: db.host.port, from node: " +
+                        "LeafNode{value='one hundred'} attempting to decode Integer",
+                result.getErrors().get(0).description());
+
+        Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(1).level());
+        Assertions.assertEquals("Unable to find node matching path: db.host.port, " +
+                        "for class: DBInfoConstructor, during object decoding",
+                result.getErrors().get(1).description());
+
+        DBInfoConstructor results = (DBInfoConstructor) result.results();
+        Assertions.assertEquals(0, results.getPort());
+        Assertions.assertEquals("pass", results.getPassword());
+        Assertions.assertEquals("mysql.com", results.getUri());
+    }
 }
