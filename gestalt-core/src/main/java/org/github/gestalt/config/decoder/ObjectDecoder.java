@@ -17,6 +17,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.lang.System.Logger.Level.INFO;
 import static java.lang.System.Logger.Level.WARNING;
@@ -33,6 +35,8 @@ public final class ObjectDecoder implements Decoder<Object> {
     private static final System.Logger logger = System.getLogger(ObjectDecoder.class.getName());
 
     private final Set<Class<?>> ignoreTypes;
+
+    private final Pattern argPattern = Pattern.compile("^arg\\d$");
 
     /**
      * constructor for the ObjectDecoder.
@@ -86,6 +90,11 @@ public final class ObjectDecoder implements Decoder<Object> {
         DecoderService decoderSrv = decoderContext.getDecoderService();
 
         try {
+
+            // Try and get the object by the constructor first
+            Optional<Object> constructorObject = getByConstructor(path, tags, node, decoderContext, klass, decoderSrv);
+            if (constructorObject.isPresent()) return GResultOf.result(constructorObject.get());
+
             Constructor<?> constructor = klass.getDeclaredConstructor();
             if (Modifier.isPrivate(constructor.getModifiers())) {
                 return GResultOf.errors(new ValidationError.ConstructorNotPublic(path, klass.getName()));
@@ -206,6 +215,65 @@ public final class ObjectDecoder implements Decoder<Object> {
         }
     }
 
+    // try and build the object using a constructor.
+    private Optional<Object> getByConstructor(String path, Tags tags, ConfigNode node, DecoderContext decoderContext, Class<?> klass, DecoderService decoderSrv) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        Constructor<?>[] constructors = klass.getDeclaredConstructors();
+        List<Constructor<?>> sortedConstructors = Arrays.stream(constructors)
+            .sorted((p1, p2) -> p2.getParameterCount() - p1.getParameterCount())
+            .collect(Collectors.toList());
+
+        for (Constructor<?> constructor : sortedConstructors) {
+            if (Modifier.isPrivate(constructor.getModifiers())) {
+                continue;
+            }
+            Parameter[] constParams = constructor.getParameters();
+            Object[] parameters = new Object[constParams.length];
+
+            // for now ignore the default constructor.
+            if (constParams.length == 0) {
+                continue;
+            }
+
+            boolean suitable = true;
+            for (int i = 0; i < constParams.length; i++) {
+                String paramName = getParameterName(constParams[i]);
+
+                String nextPath = PathUtil.pathForKey(decoderContext.getDefaultLexer(), path, paramName);
+                GResultOf<ConfigNode> configNode = decoderSrv.getNextNode(nextPath, paramName, node);
+                ConfigNode paramNode;
+                if (configNode.hasResults()) {
+                    paramNode = configNode.results();
+                } else {
+                    // if we have not found a node for the parameter try and see if it has a @Config default
+                    Optional<String> defaultValue = getParameterDefault(constParams[i]);
+                    if (defaultValue.isPresent() && !defaultValue.get().isEmpty()) {
+                        // if we have a default value in the annotation attempt to decode it as a leaf of the field type.
+                       paramNode = new LeafNode(defaultValue.get());
+                    } else {
+                        suitable = false;
+                        break;
+                    }
+                }
+
+                GResultOf<?> decodeResult = decoderSrv.decodeNode(nextPath, tags, paramNode,
+                    TypeCapture.of(constParams[i].getType()), decoderContext);
+
+                if (decodeResult.hasResults()) {
+                    parameters[i] = decodeResult.results();
+                } else {
+                    suitable = false;
+                    break;
+                }
+            }
+
+            if (suitable) {
+                constructor.setAccessible(true);
+                return Optional.of(constructor.newInstance(parameters));
+            }
+        }
+        return Optional.empty();
+    }
+
     private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
         return Arrays.stream(fieldAnnotations)
             .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.getDefault()).contains("nullable"));
@@ -281,6 +349,42 @@ public final class ObjectDecoder implements Decoder<Object> {
             }
         }
         return value;
+    }
+
+    /**
+     * Gets the name of the parameter as either the @Config path or if compiled with -parameters the parameters name.
+     *
+     * @param parameter parameter we are trying to find a name for.
+     * @return parameter name or "" if none
+     */
+    private String getParameterName(Parameter parameter) {
+        // if we have an annotation, use that for the path instead of the name.
+        Optional<Config> configAnnotation = Optional.ofNullable(parameter.getAnnotation(Config.class));
+        if (configAnnotation.isPresent() &&
+            configAnnotation.get().path() != null &&
+            !configAnnotation.get().path().isEmpty()
+        ) {
+            return configAnnotation.get().path();
+        }
+
+        if (!argPattern.matcher(parameter.getName()).find()) {
+            return parameter.getName();
+        }
+
+        return "";
+    }
+
+    private Optional<String> getParameterDefault(Parameter parameter) {
+        // if we have an annotation, use that for the path instead of the name.
+        Optional<Config> configAnnotation = Optional.ofNullable(parameter.getAnnotation(Config.class));
+        if (configAnnotation.isPresent() &&
+            configAnnotation.get().defaultVal() != null &&
+            !configAnnotation.get().defaultVal().isEmpty()
+        ) {
+            return Optional.of(configAnnotation.get().defaultVal());
+        }
+
+        return Optional.empty();
     }
 
 

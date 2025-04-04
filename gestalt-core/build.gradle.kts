@@ -5,3 +5,7 @@ plugins {
     id("gestalt.java-publish-conventions")
 }
 
+val patchArgs = listOf("-parameters")
+tasks.compileTestJava {
+    options.compilerArgs.addAll(patchArgs)
+}

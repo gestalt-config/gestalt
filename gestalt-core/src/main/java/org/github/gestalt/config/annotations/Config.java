@@ -4,8 +4,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -13,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
-@Target(value = {FIELD, METHOD})
+@Target(value = {FIELD, METHOD, PARAMETER})
 @Inherited
 @Retention(value = RUNTIME)
 public @interface Config {
