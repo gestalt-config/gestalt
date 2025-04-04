@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/gestalt-config/gestalt/branch/main/graph/badge.svg)](https://codecov.io/gh/gestalt-config/gestalt)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gestalt-config_gestalt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gestalt-config_gestalt)
 
-Visit the official documentation: https://gestalt-config.github.io/gestalt/
+### **Visit the official documentation: https://gestalt-config.github.io/gestalt/**
 
 All documentation is being migrated to the official documentation site. 
 
