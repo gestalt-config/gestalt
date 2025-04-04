@@ -1,6 +1,6 @@
 package org.github.gestalt.config.test.classes;
 
-import org.github.gestalt.config.annotations.Config;
+import org.github.gestalt.config.annotations.ConfigParameter;
 
 public class DBInfoConstructorAnnotation {
     private int port;
@@ -11,15 +11,15 @@ public class DBInfoConstructorAnnotation {
 
     }
 
-    public DBInfoConstructorAnnotation(@Config(path = "address") int port,
-                                              @Config(path = "hostname") String uri,
-                                              @Config(path = "secret") String password) {
+    public DBInfoConstructorAnnotation(@ConfigParameter(path = "address") int port,
+                                              @ConfigParameter(path = "hostname") String uri,
+                                              @ConfigParameter(path = "secret") String password) {
         this.port = port;
         this.uri = uri;
         this.password = password;
     }
 
-    public DBInfoConstructorAnnotation(@Config(path = "address") int port, @Config(path = "hostname") String uri) {
+    public DBInfoConstructorAnnotation(@ConfigParameter(path = "address") int port, @ConfigParameter(path = "hostname") String uri) {
         this.port = port;
         this.uri = uri;
         this.password = "unknown";

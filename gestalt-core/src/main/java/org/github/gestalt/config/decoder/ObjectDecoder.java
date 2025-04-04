@@ -1,6 +1,7 @@
 package org.github.gestalt.config.decoder;
 
 import org.github.gestalt.config.annotations.Config;
+import org.github.gestalt.config.annotations.ConfigParameter;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationError.OptionalMissingValueDecoding;
 import org.github.gestalt.config.entity.ValidationLevel;
@@ -359,7 +360,7 @@ public final class ObjectDecoder implements Decoder<Object> {
      */
     private String getParameterName(Parameter parameter) {
         // if we have an annotation, use that for the path instead of the name.
-        Optional<Config> configAnnotation = Optional.ofNullable(parameter.getAnnotation(Config.class));
+        Optional<ConfigParameter> configAnnotation = Optional.ofNullable(parameter.getAnnotation(ConfigParameter.class));
         if (configAnnotation.isPresent() &&
             configAnnotation.get().path() != null &&
             !configAnnotation.get().path().isEmpty()
@@ -376,7 +377,7 @@ public final class ObjectDecoder implements Decoder<Object> {
 
     private Optional<String> getParameterDefault(Parameter parameter) {
         // if we have an annotation, use that for the path instead of the name.
-        Optional<Config> configAnnotation = Optional.ofNullable(parameter.getAnnotation(Config.class));
+        Optional<ConfigParameter> configAnnotation = Optional.ofNullable(parameter.getAnnotation(ConfigParameter.class));
         if (configAnnotation.isPresent() &&
             configAnnotation.get().defaultVal() != null &&
             !configAnnotation.get().defaultVal().isEmpty()
