@@ -26,3 +26,4 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+include("gestalt-bug")
