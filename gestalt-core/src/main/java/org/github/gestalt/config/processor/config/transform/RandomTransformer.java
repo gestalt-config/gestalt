@@ -63,7 +63,7 @@ public final class RandomTransformer implements Transformer {
             String p2 = matcher.group("p2");
 
             try {
-                switch (transformName.toLowerCase(Locale.getDefault())) {
+                switch (transformName.toLowerCase(Locale.ROOT)) {
                     case "byte": {
                         Integer parameter1 = p1 == null || p1.isEmpty() ? null : Integer.parseInt(p1);
                         Integer parameter2 = p2 == null || p2.isEmpty() ? null : Integer.parseInt(p2);

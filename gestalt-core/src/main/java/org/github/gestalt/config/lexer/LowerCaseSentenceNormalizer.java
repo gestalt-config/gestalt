@@ -5,6 +5,6 @@ import java.util.Locale;
 public class LowerCaseSentenceNormalizer implements SentenceNormalizer {
     @Override
     public String normalizeSentence(String sentence) {
-        return sentence.toLowerCase(Locale.getDefault());
+        return sentence.toLowerCase(Locale.ROOT);
     }
 }

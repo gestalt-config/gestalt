@@ -279,7 +279,7 @@ public final class ObjectDecoder implements Decoder<Object> {
 
     private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
         return Arrays.stream(fieldAnnotations)
-            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.getDefault()).contains("nullable"));
+            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.ROOT).contains("nullable"));
     }
 
     private boolean fieldHasInitializedValue(Object obj, Field field, Class<?> klass) throws IllegalAccessException {
@@ -423,7 +423,7 @@ public final class ObjectDecoder implements Decoder<Object> {
 
     private Optional<Method> getMethod(Class<?> klass, String methodName) {
         return Arrays.stream(klass.getMethods())
-            .filter(it -> it.getName().equalsIgnoreCase(methodName))
+            .filter(it -> it.getName().toLowerCase(Locale.ROOT).equals(methodName.toLowerCase(Locale.ROOT)))
             .findFirst();
     }
 

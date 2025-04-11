@@ -126,6 +126,6 @@ public final class RecordDecoder implements Decoder<Object> {
 
     private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
         return Arrays.stream(fieldAnnotations)
-            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.getDefault()).contains("nullable"));
+            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.ROOT).contains("nullable"));
     }
 }

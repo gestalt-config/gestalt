@@ -31,7 +31,7 @@ public final class KebabCasePathMapper implements PathMapper {
 
         String[] camelCaseWords = regex.split(sentence);
         String kebebCase = Arrays.stream(camelCaseWords)
-            .map(it -> it.toLowerCase(Locale.getDefault()))
+            .map(it -> it.toLowerCase(Locale.ROOT))
             .collect(Collectors.joining("-"));
 
         GResultOf<List<Token>> lexedGResultOf = lexer.scan(kebebCase);
