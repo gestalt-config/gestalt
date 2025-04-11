@@ -64,6 +64,7 @@ public final class StringConstructorDecoder implements Decoder<Object> {
 
         try {
             Constructor<?> stringConstructor = klass.getConstructor(String.class);
+
             return GResultOf.result(stringConstructor.newInstance(valueOptional.get()));
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             return GResultOf.errors(new ValidationError.StringConstructorNotFound(path, type));

@@ -51,9 +51,7 @@ public final class ProxyDecoder implements Decoder<Object> {
 
         // since the first characters are likely upper case, lowercase only the first character.
         // The method is getCar and we remove get, we have Car.
-        char[] nameArray = name.toCharArray();
-        nameArray[0] = Character.toLowerCase(nameArray[0]);
-        return new String(nameArray);
+        return name.substring(0, 1).toLowerCase(Locale.ROOT) + name.substring(1);
     }
 
     @Override

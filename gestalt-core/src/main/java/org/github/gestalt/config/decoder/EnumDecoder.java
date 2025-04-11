@@ -8,6 +8,7 @@ import org.github.gestalt.config.utils.GResultOf;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 /**
  * Decode an Enum.
@@ -42,7 +43,7 @@ public final class EnumDecoder<T extends Enum<T>> extends LeafDecoder<T> {
             Object[] enumConstants = klass.getEnumConstants();
             for (Object enumConst : enumConstants) {
                 Object enumName = m.invoke(enumConst);
-                if (enumName instanceof String && value.equalsIgnoreCase((String) enumName)) {
+                if (enumName instanceof String && value.toLowerCase(Locale.ROOT).equals(((String) enumName).toLowerCase(Locale.ROOT))) {
                     return GResultOf.result((T) enumConst);
                 }
             }
