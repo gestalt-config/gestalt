@@ -97,7 +97,7 @@ public final class PathLexer extends SentenceLexer {
 
     public PathLexer(String normalizedDelimiter, String delimiter, String pathPatternRegex, SentenceNormalizer sentenceNormalizer,
                      String normalizedArrayOpenTag, String normalizedArrayCloseTag, String normalizedMapTag) {
-        this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE);
+        this.pathPattern = Pattern.compile(pathPatternRegex, Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CHARACTER_CLASS);
         this.normalizedDelimiter = normalizedDelimiter;
         this.delimiter = delimiter;
         if (delimiter.length() == 1) {
