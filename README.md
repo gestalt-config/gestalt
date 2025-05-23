@@ -191,6 +191,20 @@ You can add several ConfigSources to the builder and Gestalt, and they will be l
 In the above example we first load a file defaults, then load a file devFile and overwrite any defaults, then overwrite any values from the Environment Variables.
 The priority will be Env Vars > devFile > defaults.
 
+## Adding Config Sources After Loading
+Typically, you add config sources as part of the builder, then call the `loadConfigs` to build the config tree. However, if you need to dynamically add a config source after initialization you can use the `addConfigSourcePackage` method. This will load and merge the new config source into the config tree. It will then call the core reload listener and reset all caches.  
+
+```java
+  Gestalt gestalt = builder
+    .addSource(FileConfigSourceBuilder.builder().setFile(defaults).build())
+    .build();
+
+  gestalt.loadConfigs();
+  gestalt.addConfigSourcePackage(FileConfigSourceBuilder.builder().setFile(devFile).build());
+
+  gestalt.addConfigSourcePackage(EnvironmentConfigSourceBuilder.builder().setPrefix("MY_APP_CONFIG").build());
+```
+
 # Config Tree
 The config files are loaded and merged into a config tree. While loading into the config tree all node names and paths are converted to lower case and for environment variables we convert screaming snake case into dot notation. However, we do not convert other cases such as camel case into dot notation. So if your configs use a mix of dot notation and camel case, the nodes will not be merged. You can configure this conversion by providing your own `Sentence Lexer` in the `GestaltBuilder`. The config tree has a structure (sort of like json) where the root has one or more nodes or leafs. A node can have one or more nodes or leafs. A leaf can have a value but no further nodes or leafs. As we traverse the tree each node or leaf has a name and in combination it is called a path. A path can not have two leafs or both a node and a leaf at the same place. If this is detected Gestalt will throw an exception on loading with details on the path.    
 
@@ -1707,7 +1721,7 @@ var myOptionalValue = configContainer.getOptional();
 
 Then, when there is a reload, the ConfigContainer or proxy decoder will get and cache the new configuration. Ensuring you always have the most recent value.  
 
-The following example shows a simple use case for ConfigContainer. 
+The following example shows a simple use case for ConfigContainer where the config source is reloaded. 
 ```java
 Map<String, String> configs = new HashMap<>();
 configs.put("some.value", "value1");
@@ -1735,6 +1749,36 @@ configs.put("some.value", "value2");
 manualReload.reload();
 
 // The config container is automatically updated. 
+Assertions.assertEquals("value2", configContainer.orElseThrow());
+```
+
+Another example of dynamic configuration using the `addConfigSourcePackage` method to update the existing values.
+
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("some.value", "value1");
+
+Map<String, String> configs2 = new HashMap<>();
+configs2.put("some.value", "value2");
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+    .addSource(MapConfigSourceBuilder.builder()
+        .setCustomConfig(configs)
+        .build())
+    .build();
+
+gestalt.loadConfigs();
+
+var configContainer = gestalt.getConfig("some.value", new TypeCapture<ConfigContainer<String>>() {});
+
+Assertions.assertEquals("value1", configContainer.orElseThrow());
+
+gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs2)
+    .build());
+
+// The config container is automatically updated.
 Assertions.assertEquals("value2", configContainer.orElseThrow());
 ```
 

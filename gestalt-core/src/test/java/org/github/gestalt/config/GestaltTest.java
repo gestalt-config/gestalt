@@ -481,6 +481,197 @@ class GestaltTest {
     }
 
     @Test
+    public void testMerge3SourcesAdd2() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin.user[0]", "John");
+        configs.put("admin.user[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "New Name");
+        configs2.put("db.password", "123abc");
+        configs2.put("redis.url", "redis.io");
+        configs2.put("admin.user[1]", "Matt");
+        configs2.put("admin.user[2]", "Paul");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.name", "New Name");
+        configs3.put("db.timeout", "5000");
+        configs3.put("admin.user[0]", "Scott");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class).isEmpty());
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("redis.url", String.class).isEmpty());
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin.user[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin.user[1]", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("admin.user[2]", String.class).isEmpty());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", String.class).isEmpty());
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).isEmpty());
+
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+
+        Assertions.assertEquals("New Name", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("123abc", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.url", String.class));
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin.user[0]", String.class));
+        Assertions.assertEquals("Matt", gestalt.getConfig("admin.user[1]", String.class));
+        Assertions.assertEquals("Paul", gestalt.getConfig("admin.user[2]", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", String.class).isEmpty());
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).isEmpty());
+
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs3).build());
+
+        Assertions.assertEquals("New Name", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("123abc", gestalt.getConfig("db.password", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertEquals("redis.io", gestalt.getConfig("redis.url", String.class));
+
+        Assertions.assertEquals("Scott", gestalt.getConfig("admin.user[0]", String.class));
+        Assertions.assertEquals("Matt", gestalt.getConfig("admin.user[1]", String.class));
+        Assertions.assertEquals("Paul", gestalt.getConfig("admin.user[2]", String.class));
+        Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", String.class));
+
+        Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", TypeCapture.of(String.class)));
+    }
+
+    @Test
+    public void testMerge2SourcesTagsAdd1() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.name", "players");
+        configs2.put("db.password", "123abc");
+        configs2.put("db.url", "mysql.io");
+
+        Map<String, String> configs3 = new HashMap<>();
+        configs3.put("db.name", "users");
+        configs3.put("db.timeout", "5000");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+        gestalt.addConfigSourcePackage(
+            MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.of("toy", "ball")).build());
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs3).build());
+
+        Assertions.assertEquals("users", gestalt.getConfigOptional("db.name", String.class).get());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class).isEmpty());
+        Assertions.assertEquals("3306", gestalt.getConfigOptional("db.port", String.class).get());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.url", String.class).isEmpty());
+        Assertions.assertEquals("5000", gestalt.getConfigOptional("db.timeout", String.class).get());
+        Assertions.assertEquals("5000", gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).get());
+
+        Assertions.assertEquals("players", gestalt.getConfig("db.name", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("123abc", gestalt.getConfig("db.password", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("mysql.io", gestalt.getConfig("db.url", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", String.class, Tags.of("toy", "ball")));
+        Assertions.assertEquals("5000", gestalt.getConfig("db.timeout", TypeCapture.of(String.class), Tags.of("toy", "ball")));
+
+        Assertions.assertEquals("users", gestalt.getConfigOptional("db.name", String.class, Tags.of("toy", "car")).get());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class, Tags.of("toy", "car")).isEmpty());
+    }
+
+    @Test
+    public void testAddSourceError() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+        configs.put("admin.user[0]", "John");
+        configs.put("admin.user[1]", "Steve");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("admin.user[a]", "Matt");
+        configs2.put("admin.user[2]", "Paul");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class).isEmpty());
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("redis.url", String.class).isEmpty());
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin.user[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin.user[1]", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("admin.user[2]", String.class).isEmpty());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", String.class).isEmpty());
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).isEmpty());
+
+        var error = Assertions.assertThrows(GestaltException.class, () -> gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()));
+        Assertions.assertEquals("Failed to load configs from source: mapConfig\n" +
+            " - level: ERROR, message: Unable to tokenize element user[a] for path: admin.user[a]", error.getMessage());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("db.password", String.class).isEmpty());
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("redis.url", String.class).isEmpty());
+
+        Assertions.assertEquals("John", gestalt.getConfig("admin.user[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin.user[1]", String.class));
+        Assertions.assertTrue(gestalt.getConfigOptional("admin.user[2]", String.class).isEmpty());
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", String.class).isEmpty());
+
+        Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).isEmpty());
+    }
+
+    @Test
+    public void testAddSourcePostProcessor() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.name", "test");
+        configs.put("db.port", "3306");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("admin[0]", "${db.name}");
+        configs2.put("admin[1]", "Steve");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .useCacheDecorator(false)
+            .build();
+
+        gestalt.loadConfigs();
+        Assertions.assertInstanceOf(GestaltCore.class, gestalt);
+        List<ValidationError> errors = ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build());
+        errors = ((GestaltCore) gestalt).getLoadErrors();
+        Assertions.assertEquals(0, errors.size());
+
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
+
+        Assertions.assertEquals("test", gestalt.getConfig("admin[0]", String.class));
+        Assertions.assertEquals("Steve", gestalt.getConfig("admin[1]", String.class));
+    }
+
+    @Test
     public void testPostProcessor() throws GestaltException {
 
         Map<String, String> configs = new HashMap<>();
@@ -502,7 +693,6 @@ class GestaltTest {
 
         Assertions.assertEquals("test aaa", gestalt.getConfig("db.name", String.class));
         Assertions.assertEquals("3306 aaa", gestalt.getConfig("db.port", String.class));
-
 
         Assertions.assertEquals("John aaa", gestalt.getConfig("admin[0]", String.class));
         Assertions.assertEquals("Steve aaa", gestalt.getConfig("admin[1]", String.class));
@@ -2155,7 +2345,7 @@ class GestaltTest {
 
         gestalt.loadConfigs();
 
-        var exception = Assertions.assertThrows(GestaltException.class,  () -> gestalt.getConfig("empty", new TypeCapture<Map<String, String>>() {
+        var exception = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("empty", new TypeCapture<Map<String, String>>() {
         }));
 
         Assertions.assertEquals("Failed getting config path: empty, for class: " +

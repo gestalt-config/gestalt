@@ -11,6 +11,7 @@ import org.github.gestalt.config.observations.ObservationService;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
 import org.github.gestalt.config.secret.rules.SecretChecker;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.Triple;
@@ -59,6 +60,11 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
     public void loadConfigs() throws GestaltException {
         delegate.loadConfigs();
         cache.clear();
+    }
+
+    @Override
+    public void addConfigSourcePackage(ConfigSourcePackage sourcePackage) throws GestaltException {
+        delegate.addConfigSourcePackage(sourcePackage);
     }
 
     @Override
