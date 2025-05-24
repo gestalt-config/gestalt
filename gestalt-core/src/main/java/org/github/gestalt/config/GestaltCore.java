@@ -162,24 +162,73 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         }
 
         for (ConfigSourcePackage sourcePackage : sourcePackages) {
-            ConfigSource source = sourcePackage.getConfigSource();
-            ConfigLoader configLoader = configLoaderService.getLoader(source.format());
-
-            GResultOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(sourcePackage);
-
-            validateLoadResultsForErrors(newNode, source);
-            if (newNode.hasResults()) {
-                for (ConfigNodeContainer node : newNode.results()) {
-                    GResultOf<ConfigNode> mergedNode = configNodeService.addNode(node);
-                    validateLoadResultsForErrors(mergedNode, source);
-                    loadErrors.addAll(mergedNode.getErrors());
-                }
-            } else {
-                logger.log(WARNING, "Failed to load node: {0} did not have any results", source.name());
-            }
+            addConfigSourcePackageInternal(sourcePackage);
         }
 
         postProcessConfigs();
+    }
+
+    /**
+     * Adds a ConfigSourcePackage to Gestalt, will load and merge the ConfigSourcePackage into Gestalt.
+     * This does not raise any reload events, use with caution.
+     *
+     * @param sourcePackage the ConfigSourcePackage to add to Gestalt
+     * @throws GestaltException any exceptions while loading the new ConfigSourcePackage
+     */
+    private void addConfigSourcePackageInternal(ConfigSourcePackage sourcePackage) throws GestaltException {
+        if (sourcePackage == null) {
+            throw new GestaltException("No ConfigSourcePackage provided, unable to load config");
+        }
+
+        ConfigSource source = sourcePackage.getConfigSource();
+        ConfigLoader configLoader = configLoaderService.getLoader(source.format());
+
+        GResultOf<List<ConfigNodeContainer>> newNode = configLoader.loadSource(sourcePackage);
+
+        validateLoadResultsForErrors(newNode, source);
+        if (newNode.hasResults()) {
+            for (ConfigNodeContainer node : newNode.results()) {
+                GResultOf<ConfigNode> mergedNode = configNodeService.addNode(node);
+                validateLoadResultsForErrors(mergedNode, source);
+                loadErrors.addAll(mergedNode.getErrors());
+            }
+        } else {
+            logger.log(WARNING, "Failed to load node: {0} did not have any results", source.name());
+        }
+    }
+
+    /**
+     * Adds a ConfigSourcePackage to Gestalt, will load and merge the ConfigSourcePackage into Gestalt.
+     * This does not raise any reload events, use with caution.
+     *
+     * @param sourcePackage the ConfigSourcePackage to add to Gestalt
+     * @throws GestaltException any exceptions while loading the new ConfigSourcePackage
+     */
+    public void addConfigSourcePackage(ConfigSourcePackage sourcePackage) throws GestaltException {
+        if (sourcePackage == null) {
+            throw new GestaltException("No ConfigSourcePackage provided, unable to load config");
+        }
+
+        ObservationMarker reloadMarker = null;
+        try {
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                reloadMarker = observationService.startObservation("addSource",
+                    Tags.of(Tags.of("source", sourcePackage.getConfigSource().name()), sourcePackage.getTags()));
+            }
+
+            addConfigSourcePackageInternal(sourcePackage);
+
+            postProcessConfigs();
+            coreReloadListenersContainer.reload();
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.finalizeObservation(reloadMarker, Tags.of());
+            }
+        } catch (Exception ex) {
+            if (gestaltConfig.isObservationsEnabled() && observationService != null) {
+                observationService.finalizeObservation(reloadMarker, Tags.of("exception", ex.getClass().getCanonicalName()));
+            }
+            throw ex;
+        }
     }
 
     /**

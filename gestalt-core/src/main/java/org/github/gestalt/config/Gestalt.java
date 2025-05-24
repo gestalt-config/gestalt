@@ -5,6 +5,7 @@ import org.github.gestalt.config.decoder.DecoderService;
 import org.github.gestalt.config.exceptions.GestaltException;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.CoreReloadListener;
+import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
 
@@ -26,6 +27,16 @@ public interface Gestalt {
      * @throws GestaltException any errors
      */
     void loadConfigs() throws GestaltException;
+
+    /**
+     * Adds a ConfigSourcePackage to Gestalt, will load and merge the ConfigSourcePackage into Gestalt.
+     * This will trigger a core reload notification and reset all caches.
+     * Can be used to modify the contents of Gestalt after it has been initialized load.
+     *
+     * @param sourcePackage the ConfigSourcePackage to add to Gestalt
+     * @throws GestaltException any exceptions while loading the new ConfigSourcePackage
+     */
+    void addConfigSourcePackage(ConfigSourcePackage sourcePackage) throws GestaltException;
 
     /**
      * Get a config for a path and a given class.

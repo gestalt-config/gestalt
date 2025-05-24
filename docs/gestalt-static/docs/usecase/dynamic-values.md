@@ -18,7 +18,7 @@ var myOptionalValue = configContainer.getOptional();
 
 Then, when there is a reload, the ConfigContainer or proxy decoder will get and cache the new configuration. Ensuring you always have the most recent value.
 
-The following example shows a simple use case for ConfigContainer.
+The following example shows a simple use case for ConfigContainer where the config source is reloaded.
 ```java
 Map<String, String> configs = new HashMap<>();
 configs.put("some.value", "value1");
@@ -46,5 +46,35 @@ configs.put("some.value", "value2");
 manualReload.reload();
 
 // The config container is automatically updated. 
+Assertions.assertEquals("value2", configContainer.orElseThrow());
+```
+
+Another example of dynamic configuration using the `addConfigSourcePackage` method to update the existing values. 
+
+```java
+Map<String, String> configs = new HashMap<>();
+configs.put("some.value", "value1");
+
+Map<String, String> configs2 = new HashMap<>();
+configs2.put("some.value", "value2");
+
+GestaltBuilder builder = new GestaltBuilder();
+Gestalt gestalt = builder
+    .addSource(MapConfigSourceBuilder.builder()
+        .setCustomConfig(configs)
+        .build())
+    .build();
+
+gestalt.loadConfigs();
+
+var configContainer = gestalt.getConfig("some.value", new TypeCapture<ConfigContainer<String>>() {});
+
+Assertions.assertEquals("value1", configContainer.orElseThrow());
+
+gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder()
+    .setCustomConfig(configs2)
+    .build());
+
+// The config container is automatically updated.
 Assertions.assertEquals("value2", configContainer.orElseThrow());
 ```

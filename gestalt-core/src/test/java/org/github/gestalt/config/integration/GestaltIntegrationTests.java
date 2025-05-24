@@ -327,6 +327,66 @@ public class GestaltIntegrationTests {
     }
 
     @Test
+    public void integrationTestAddSource() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("some.value", "value1");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("some.value", "value2");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        var value = gestalt.getConfig("some.value", String.class);
+
+        Assertions.assertEquals("value1", value);
+
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder()
+            .setCustomConfig(configs2)
+            .build());
+
+        value = gestalt.getConfig("some.value", String.class);
+
+        // The value has changed
+        Assertions.assertEquals("value2", value);
+    }
+
+    @Test
+    public void integrationTestAddSourceWithConfigContainer() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("some.value", "value1");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("some.value", "value2");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder()
+                .setCustomConfig(configs)
+                .build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        var configContainer = gestalt.getConfig("some.value", new TypeCapture<ConfigContainer<String>>() {});
+
+        Assertions.assertEquals("value1", configContainer.orElseThrow());
+
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder()
+            .setCustomConfig(configs2)
+            .build());
+
+        // The config container is automatically updated.
+        Assertions.assertEquals("value2", configContainer.orElseThrow());
+    }
+
+    @Test
     public void integrationTestEmpty() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
