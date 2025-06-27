@@ -36,7 +36,7 @@ hibernateValidator = "8.0.2.Final"
 expressly = "5.0.0"
 # testing
 junit5 = "5.11.4"
-junitTestkit = "1.13.1"
+junitTestkit = "1.13.2"
 assertJ = "3.27.3"
 mockito = "5.2.0"
 mockk = "1.14.2"
