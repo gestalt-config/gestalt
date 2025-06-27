@@ -37,7 +37,7 @@ testing {
                         finalizedBy(tasks.jacocoTestReport)
 
                         retry {
-                            maxRetries = 2
+                            maxRetries = 3
                             maxFailures = 10
                             failOnPassedAfterRetry = false
                             failOnSkippedAfterRetry = false

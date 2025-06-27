@@ -1,6 +1,5 @@
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.SonatypeHost
 
 /*
  * Apply the plugin to publish to maven central
@@ -85,7 +84,7 @@ mavenPublishing {
     // or when publishing to https://s01.oss.sonatype.org
     //publishToMavenCentral(SonatypeHost.S01)
     // or when publishing to https://central.sonatype.com/
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
+    publishToMavenCentral(automaticRelease = false)
 
     coordinates(artifactGroup, artifactName, artifactVersion)
 
