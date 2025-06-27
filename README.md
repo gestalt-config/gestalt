@@ -733,6 +733,7 @@ Using the extension functions you don't need to specify the type if the return t
 ```
 | Gestalt Version  | Kotlin Version |
 |------------------|----------------|
+| 0.36.0 +         | 2.2            |
 | 0.35.0 +         | 2.1            |
 | 0.25.0 +         | 1.9            |
 | 0.17.0 +         | 1.8            |
