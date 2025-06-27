@@ -5,10 +5,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.github.gestalt.config.exceptions.GestaltException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -37,7 +34,7 @@ class BlobConfigSourceDockerTest {
     private BlobClient blobClient;
     private BlobContainerClient container;
 
-    @BeforeEach
+    @BeforeAll
     void setUp() throws FileNotFoundException {
         azureStorage.start();
 
