@@ -39,7 +39,7 @@ junit5 = "5.13.2"
 junitTestkit = "1.13.2"
 assertJ = "3.27.3"
 mockito = "5.2.0"
-mockk = "1.14.2"
+mockk = "1.14.4"
 koTestAssertions = "5.9.1"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
