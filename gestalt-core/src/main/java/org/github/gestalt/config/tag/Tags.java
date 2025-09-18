@@ -123,7 +123,7 @@ public final class Tags {
      * @return tags with the profile
      */
     public static Tags profile(String value) {
-        return Tags.of(Tag.of("profile", value));
+        return of(Tag.of("profile", value));
     }
 
     /**
@@ -136,7 +136,7 @@ public final class Tags {
         if (value.length == 1) {
             return profile(value[0]);
         } else {
-            return Tags.of(
+            return of(
                 Arrays.stream(value)
                     .map(it -> Tag.of("profile", it))
                     .collect(Collectors.toList())
@@ -151,7 +151,7 @@ public final class Tags {
      * @return tags with the environment
      */
     public static Tags environment(String value) {
-        return Tags.of(Tag.of("environment", value));
+        return of(Tag.of("environment", value));
     }
 
     /**
@@ -164,7 +164,7 @@ public final class Tags {
         if (value.length == 1) {
             return environment(value[0]);
         } else {
-            return Tags.of(
+            return of(
                 Arrays.stream(value)
                     .map(it -> Tag.of("environment", it))
                     .collect(Collectors.toList())

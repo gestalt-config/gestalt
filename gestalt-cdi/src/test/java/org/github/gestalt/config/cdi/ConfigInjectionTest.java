@@ -256,7 +256,7 @@ class ConfigInjectionTest {
             return myPropProfile;
         }
 
-        public Boolean getMyPropProfileEnabled() {
+        public Boolean getMyPropProfileEnabled() { // NOPMD
             return myPropProfileEnabled;
         }
 
@@ -324,11 +324,11 @@ class ConfigInjectionTest {
             return supplierMyProvider;
         }
 
-        public Boolean getDefaultVal() {
+        public Boolean getDefaultVal() { // NOPMD
             return defaultVal;
         }
 
-        public Boolean getMyPropProfileEnabledWithDefault() {
+        public Boolean getMyPropProfileEnabledWithDefault() { // NOPMD
             return myPropProfileEnabledWithDefault;
         }
 

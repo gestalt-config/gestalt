@@ -294,7 +294,7 @@ public final class ProxyDecoder implements Decoder<Object> {
     }
 
 
-    static class ProxyCacheInvocationHandler extends ProxyPassThroughInvocationHandler
+    static final class ProxyCacheInvocationHandler extends ProxyPassThroughInvocationHandler
         implements InvocationHandler, CoreReloadListener {
 
         private static final System.Logger logger = System.getLogger(ProxyCacheInvocationHandler.class.getName());

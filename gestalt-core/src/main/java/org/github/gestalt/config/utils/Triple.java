@@ -77,7 +77,7 @@ public final class Triple<A, B, C> {
         if (!Objects.equals(first, triple.first)) {
             return false;
         }
-        if (!Objects.equals(second, triple.second)) {
+        if (!Objects.equals(second, triple.second)) {  // NOPMD
             return false;
         }
         return Objects.equals(third, triple.third);

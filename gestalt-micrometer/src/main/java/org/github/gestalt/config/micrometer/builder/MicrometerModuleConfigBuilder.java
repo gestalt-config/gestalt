@@ -60,7 +60,7 @@ public final class MicrometerModuleConfigBuilder {
      *
      * @return if we should be including the path as a micrometer tag.
      */
-    public Boolean getIncludePath() {
+    public Boolean getIncludePath() {  // NOPMD
         return includePath;
     }
 
@@ -82,7 +82,7 @@ public final class MicrometerModuleConfigBuilder {
      *
      * @return if we should be including the class as a micrometer tag.
      */
-    public Boolean getIncludeClass() {
+    public Boolean getIncludeClass() { // NOPMD
         return includeClass;
     }
 
@@ -104,7 +104,7 @@ public final class MicrometerModuleConfigBuilder {
      *
      * @return if we should be including if the configuration was optional
      */
-    public Boolean getIncludeOptional() {
+    public Boolean getIncludeOptional() { // NOPMD
         return includeOptional;
     }
 
@@ -125,7 +125,7 @@ public final class MicrometerModuleConfigBuilder {
      *
      * @return if we should be including any tags provided when getting a config as a micrometer tag.
      */
-    public Boolean getIncludeTags() {
+    public Boolean getIncludeTags() { // NOPMD
         return includeTags;
     }
 

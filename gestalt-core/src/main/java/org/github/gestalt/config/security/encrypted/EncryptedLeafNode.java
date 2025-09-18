@@ -48,6 +48,7 @@ public class EncryptedLeafNode extends LeafNode {
      * @param value new value for leaf
      * @return new non-encrypted leaf.
      */
+    @Override
     public LeafNode duplicate(String value) {
         try {
             var secretKey = EncryptionUtils.generateKey(128);
@@ -71,7 +72,7 @@ public class EncryptedLeafNode extends LeafNode {
         try {
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             byte[] initVector = Arrays.copyOfRange(ciphertext, 0, GCM_IV_LENGTH);
-            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * Byte.SIZE, initVector);
             cipher.init(Cipher.DECRYPT_MODE, skey, spec);
             byte[] plaintext = cipher.doFinal(ciphertext, GCM_IV_LENGTH, ciphertext.length - GCM_IV_LENGTH);
             return new String(plaintext, Charset.defaultCharset());
@@ -96,6 +97,7 @@ public class EncryptedLeafNode extends LeafNode {
      *
      * @return the value for the node decrypted.
      */
+    @Override
     public Optional<String> getValueInternal() {
         return getValue();
     }

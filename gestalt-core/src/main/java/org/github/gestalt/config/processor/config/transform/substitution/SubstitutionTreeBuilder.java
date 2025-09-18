@@ -26,7 +26,7 @@ public final class SubstitutionTreeBuilder {
     private final Pattern patternReplaceOpen;
     private final Pattern patternReplaceClose;
 
-    private final static class SubNodeBuildResult {
+    private static final class SubNodeBuildResult {
         private final List<SubstitutionNode> nodes;
         private final int position;
 

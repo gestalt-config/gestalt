@@ -46,6 +46,10 @@ public final class ObjectDecoder implements Decoder<Object> {
         ignoreTypes = getIgnoreTypes();
     }
 
+    private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
+        return Arrays.stream(fieldAnnotations)
+            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.ROOT).contains("nullable"));
+    }
 
     private String getMethodName(Field field) {
         String methodName;
@@ -93,7 +97,9 @@ public final class ObjectDecoder implements Decoder<Object> {
         try {
             // Try and get the object by the constructor first
             Optional<Object> constructorObject = getByConstructor(path, tags, node, decoderContext, klass, decoderSrv);
-            if (constructorObject.isPresent()) return GResultOf.result(constructorObject.get());
+            if (constructorObject.isPresent()) {
+                return GResultOf.result(constructorObject.get());
+            }
 
             Constructor<?> constructor = klass.getDeclaredConstructor();
             if (Modifier.isPrivate(constructor.getModifiers())) {
@@ -251,7 +257,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                     Optional<String> defaultValue = getParameterDefault(constParams[i]);
                     if (defaultValue.isPresent() && !defaultValue.get().isEmpty()) {
                         // if we have a default value in the annotation attempt to decode it as a leaf of the field type.
-                       paramNode = new LeafNode(defaultValue.get());
+                        paramNode = new LeafNode(defaultValue.get());
                     } else {
                         suitable = false;
                         break;
@@ -275,11 +281,6 @@ public final class ObjectDecoder implements Decoder<Object> {
             }
         }
         return Optional.empty();
-    }
-
-    private static boolean isNullableAnnotation(Annotation[] fieldAnnotations) {
-        return Arrays.stream(fieldAnnotations)
-            .anyMatch(it -> it.annotationType().getName().toLowerCase(Locale.ROOT).contains("nullable"));
     }
 
     private boolean fieldHasInitializedValue(Object obj, Field field, Class<?> klass) throws IllegalAccessException {

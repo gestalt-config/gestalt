@@ -227,10 +227,10 @@ public final class GResultOf<T> {
      */
     public <U> GResultOf<U> mapWithError(Function<T, U> resultFunction) {
         if (!hasResults()) {
-            return GResultOf.errors(errors);
+            return errors(errors);
         }
 
-        return GResultOf.resultOf(resultFunction.apply(results), errors, isDefault, metadata);
+        return resultOf(resultFunction.apply(results), errors, isDefault, metadata);
     }
 
     /**
@@ -245,13 +245,13 @@ public final class GResultOf<T> {
     public <U> GResultOf<U> mapWithError(Function<T, U> resultFunction, ValidationError missingError) {
         if (!hasResults()) {
             if (hasErrors()) {
-                return GResultOf.errors(errors);
+                return errors(errors);
             } else {
-                return GResultOf.errors(missingError);
+                return errors(missingError);
             }
         }
 
-        return GResultOf.resultOf(resultFunction.apply(results), errors, isDefault, metadata);
+        return resultOf(resultFunction.apply(results), errors, isDefault, metadata);
     }
 
     /**

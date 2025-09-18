@@ -51,7 +51,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true).build();
 
         gestalt.loadConfigs();
 
@@ -75,7 +79,10 @@ public class GestaltObservationsTest {
         configs2.put("db.port", "456");
         configs2.put("db.uri", "my.postgresql.com");
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -98,7 +105,12 @@ public class GestaltObservationsTest {
         var metricRecordersArray = new ArrayList<ObservationRecorder>();
         metricRecordersArray.add(null);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsEnabled(true).addObservationsRecorders(metricRecordersArray).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsEnabled(true)
+            .addObservationsRecorders(metricRecordersArray)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -120,7 +132,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -167,16 +183,23 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfo.class));
 
-        Assertions.assertEquals("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" + " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, during object decoding", ex.getMessage());
+        Assertions.assertEquals("Failed getting config path: db, for class: org.github.gestalt.config.test.classes.DBInfo\n" +
+            " - level: MISSING_VALUE, message: Unable to find node matching path: db.uri, for class: DBInfo, during object decoding",
+            ex.getMessage());
         Assertions.assertEquals("db", metricsRecorder.metrics.get("db").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db").data);
-        Assertions.assertEquals(Tags.of("exception", "org.github.gestalt.config.exceptions.GestaltException"), metricsRecorder.metrics.get("db").tags);
+        Assertions.assertEquals(Tags.of("exception", "org.github.gestalt.config.exceptions.GestaltException"),
+            metricsRecorder.metrics.get("db").tags);
 
         Assertions.assertEquals(1.0D, metricsRecorder.metrics.get("get.config.missing").data);
         Assertions.assertEquals(Tags.of("optional", "false"), metricsRecorder.metrics.get("get.config.missing").tags);
@@ -191,7 +214,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -214,7 +241,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -237,7 +268,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -266,16 +301,24 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
-        var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db.password", Integer.class, Tags.environment("dev")));
+        var ex = Assertions.assertThrows(GestaltException.class,
+            () -> gestalt.getConfig("db.password", Integer.class, Tags.environment("dev")));
 
-        Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Integer\n" + " - level: ERROR, message: Unable to parse a number on Path: db.password, from node: LeafNode{value='test2'} " + "attempting to decode Integer", ex.getMessage());
+        Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Integer\n" +
+            " - level: ERROR, message: Unable to parse a number on Path: db.password, from node: LeafNode{value='test2'} " +
+            "attempting to decode Integer", ex.getMessage());
         Assertions.assertEquals("db.password", metricsRecorder.metrics.get("db.password").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db.password").data);
-        Assertions.assertEquals(Tags.of("environment", "dev", "exception", "org.github.gestalt.config.exceptions.GestaltException"), metricsRecorder.metrics.get("db.password").tags);
+        Assertions.assertEquals(Tags.of("environment", "dev", "exception", "org.github.gestalt.config.exceptions.GestaltException"),
+            metricsRecorder.metrics.get("db.password").tags);
 
         Assertions.assertEquals(1, metricsRecorder.metrics.get("get.config.error").data);
         Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("get.config.error").tags);
@@ -296,7 +339,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -325,17 +372,29 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).setValidationEnabled(true).addValidator(new TestValidationProcessor(false)).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(
+                MapConfigSourceBuilder.builder().setCustomConfig(configs).build()
+            )
+            .addSource(
+                MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()
+            ).setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .setValidationEnabled(true)
+            .addValidator(new TestValidationProcessor(false))
+            .build();
 
         gestalt.loadConfigs();
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("db", DBInfo.class, Tags.environment("dev")));
 
 
-        Assertions.assertEquals("Validation failed for config path: db, and class: " + "org.github.gestalt.config.test.classes.DBInfo\n" + " - level: ERROR, message: something broke", ex.getMessage());
+        Assertions.assertEquals("Validation failed for config path: db, and class: " +
+            "org.github.gestalt.config.test.classes.DBInfo\n" +
+            " - level: ERROR, message: something broke", ex.getMessage());
         Assertions.assertEquals("db", metricsRecorder.metrics.get("db").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db").data);
-        Assertions.assertEquals(Tags.of("environment", "dev", "exception", "org.github.gestalt.config.exceptions.GestaltException"), metricsRecorder.metrics.get("db").tags);
+        Assertions.assertEquals(Tags.of("environment", "dev", "exception", "org.github.gestalt.config.exceptions.GestaltException"),
+            metricsRecorder.metrics.get("db").tags);
 
         Assertions.assertEquals(1.0, metricsRecorder.metrics.get("get.config.validation.error").data);
         Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("get.config.validation.error").tags);
@@ -356,7 +415,17 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).addResultProcessor(new TestResultProcessor(false)).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(
+                MapConfigSourceBuilder.builder().setCustomConfig(configs).build()
+            )
+            .addSource(
+                MapConfigSourceBuilder.builder()
+                    .setCustomConfig(configs2)
+                    .setTags(Tags.environment("dev")).build()
+            )
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .addResultProcessor(new TestResultProcessor(false)).build();
 
         gestalt.loadConfigs();
 
@@ -378,7 +447,14 @@ public class GestaltObservationsTest {
         var metricsRecorder = new TestObservationRecorder(0);
         var reload = new ManualConfigReloadStrategy();
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).addConfigReloadStrategy(reload).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(
+                MapConfigSourceBuilder.builder()
+                    .setCustomConfig(configs)
+                    .addConfigReloadStrategy(reload)
+                    .build()
+            ).setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -405,7 +481,13 @@ public class GestaltObservationsTest {
         var metricsRecorder = new TestObservationRecorder(0);
         var reload = new ManualConfigReloadStrategy();
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).addConfigReloadStrategy(reload).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(
+                MapConfigSourceBuilder.builder()
+                    .setCustomConfig(configs)
+                    .addConfigReloadStrategy(reload)
+                    .build()
+            ).setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true).build();
 
         gestalt.loadConfigs();
 
@@ -418,10 +500,12 @@ public class GestaltObservationsTest {
 
         var ex = Assertions.assertThrows(GestaltException.class, () -> reload.reload());
 
-        Assertions.assertEquals("Failed to load configs from source: mapConfig\n" + " - level: ERROR, message: Unable to tokenize element admin[3a] for path: admin[3a]", ex.getMessage());
+        Assertions.assertEquals("Failed to load configs from source: mapConfig\n" +
+            " - level: ERROR, message: Unable to tokenize element admin[3a] for path: admin[3a]", ex.getMessage());
         Assertions.assertEquals("reload", metricsRecorder.metrics.get("reload").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("reload").data);
-        Assertions.assertEquals(Tags.of("source", "mapConfig", "exception", "org.github.gestalt.config.exceptions.GestaltConfigurationException"), metricsRecorder.metrics.get("reload").tags);
+        Assertions.assertEquals(Tags.of("source", "mapConfig", "exception",
+            "org.github.gestalt.config.exceptions.GestaltConfigurationException"), metricsRecorder.metrics.get("reload").tags);
     }
 
     @Test
@@ -439,11 +523,17 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
-        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build());
+        gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder()
+            .setCustomConfig(configs2)
+            .setTags(Tags.environment("dev"))
+            .build());
 
         Assertions.assertNotNull(metricsRecorder.metrics.get("addSource").data);
         Assertions.assertEquals(Tags.of("source", "mapConfig", "environment", "dev"), metricsRecorder.metrics.get("addSource").tags);
@@ -462,7 +552,11 @@ public class GestaltObservationsTest {
 
         var metricsRecorder = new TestObservationRecorder(0);
 
-        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build()).setObservationsRecorders(List.of(metricsRecorder)).setObservationsEnabled(true).build();
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setObservationsRecorders(List.of(metricsRecorder))
+            .setObservationsEnabled(true)
+            .build();
 
         gestalt.loadConfigs();
 
@@ -478,7 +572,7 @@ public class GestaltObservationsTest {
 
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("addSource").data);
         Assertions.assertEquals(Tags.of("source", "mapConfig", "environment", "dev",
-            "exception", "org.github.gestalt.config.exceptions.GestaltConfigurationException"),
+                "exception", "org.github.gestalt.config.exceptions.GestaltConfigurationException"),
             metricsRecorder.metrics.get("addSource").tags);
 
     }

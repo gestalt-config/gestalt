@@ -550,11 +550,11 @@ class ProxyDecoderTest {
         Assertions.assertEquals(ValidationLevel.MISSING_VALUE, result.getErrors().get(0).level());
 
         assertThat(result.getErrors())
-            .anyMatch(item -> item.description().equals("Unable to find node matching path: db.host.isEnabled, " +
-                "for class: DBPoolInterfaceWrapper, during proxy decoding") &&
+            .anyMatch(item -> item.description().equals("Unable to find node matching path: db.host.isEnabled, " + // NOPMD
+                "for class: DBPoolInterfaceWrapper, during proxy decoding") && // NOPMD
                 item.level() == ValidationLevel.MISSING_VALUE)
-            .anyMatch(item -> item.description().equals("Unable to find node matching path: db.host.isEnabled, " +
-                "for class: DBPoolInterfaceWrapper, during proxy decoding") &&
+            .anyMatch(item -> item.description().equals("Unable to find node matching path: db.host.isEnabled, " + // NOPMD
+                "for class: DBPoolInterfaceWrapper, during proxy decoding") &&  // NOPMD
                 item.level() == ValidationLevel.MISSING_VALUE);
 
         DBPoolInterfaceWrapper results = (DBPoolInterfaceWrapper) result.results();

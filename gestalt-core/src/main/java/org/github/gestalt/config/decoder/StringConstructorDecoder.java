@@ -33,7 +33,7 @@ public final class StringConstructorDecoder implements Decoder<Object> {
         Class<?> klass = type.getRawType();
         Constructor<?>[] stringConstructor = klass.getConstructors();
 
-        if (!(node instanceof LeafNode)) {
+        if (!(node instanceof LeafNode)) { // NOPMD
             return false;
         }
 

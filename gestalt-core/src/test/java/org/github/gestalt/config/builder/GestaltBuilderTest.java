@@ -1085,7 +1085,7 @@ class GestaltBuilderTest {
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
     }
 
-    private static class TestDecoder implements Decoder {
+    private static final class TestDecoder implements Decoder {
 
         public int configCount = 0;
 
@@ -1115,7 +1115,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class TestConfigLoader implements ConfigLoader {
+    private static final class TestConfigLoader implements ConfigLoader {
 
         public int configCount = 0;
 
@@ -1140,7 +1140,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class TestConfigNodeProcessor implements ConfigNodeProcessor {
+    private static final class TestConfigNodeProcessor implements ConfigNodeProcessor {
 
         public int configCount = 0;
 
@@ -1155,7 +1155,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class TestRunTimeConfigNodeProcessor implements RunTimeConfigNodeProcessor {
+    private static final class TestRunTimeConfigNodeProcessor implements RunTimeConfigNodeProcessor {
 
         public int configCount = 0;
 
@@ -1170,7 +1170,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class TestPathMapper implements PathMapper {
+    private static final class TestPathMapper implements PathMapper {
         public int configCount = 0;
 
         @Override
@@ -1184,7 +1184,7 @@ class GestaltBuilderTest {
         }
     }
 
-    private static class CoreReloadListener implements org.github.gestalt.config.reload.CoreReloadListener {
+    private static final class CoreReloadListener implements org.github.gestalt.config.reload.CoreReloadListener {
 
         @Override
         public void reload() {

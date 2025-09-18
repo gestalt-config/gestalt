@@ -38,7 +38,7 @@ public final class Tag {
      * @return tags with the profile
      */
     public static Tag profile(String value) {
-        return Tag.of("profile", value);
+        return of("profile", value);
     }
 
     /**
@@ -48,7 +48,7 @@ public final class Tag {
      * @return tags with the environment
      */
     public static Tag environment(String value) {
-        return Tag.of("environment", value);
+        return of("environment", value);
     }
 
     /**

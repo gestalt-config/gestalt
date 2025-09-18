@@ -1107,7 +1107,7 @@ public class GestaltBuilder {
      *
      * @return treatMissingValuesAsErrors the settings for treating missing object values as errors.
      */
-    public Boolean getTreatMissingValuesAsErrors() {
+    public Boolean getTreatMissingValuesAsErrors() { // NOPMD
         return treatMissingValuesAsErrors;
     }
 
@@ -1135,7 +1135,7 @@ public class GestaltBuilder {
      *
      * @return treatMissingDiscretionaryValuesAsErrors the settings for treating missing discretionary values as errors.
      */
-    public Boolean getTreatMissingDiscretionaryValuesAsErrors() {
+    public Boolean getTreatMissingDiscretionaryValuesAsErrors() {  // NOPMD
         return treatMissingDiscretionaryValuesAsErrors;
     }
 

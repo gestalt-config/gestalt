@@ -373,7 +373,7 @@ public class GestaltConfig {
      *
      * @return trim the white space before and after an annotation.
      */
-    public Boolean getAnnotationTrimWhiteSpace() {
+    public Boolean getAnnotationTrimWhiteSpace() {  // NOPMD
         return annotationTrimWhiteSpace;
     }
 

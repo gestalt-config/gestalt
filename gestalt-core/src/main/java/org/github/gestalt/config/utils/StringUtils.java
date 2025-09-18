@@ -113,7 +113,7 @@ public final class StringUtils {
         if (str == null || prefix == null) {
             return str == null && prefix == null;
         }
-        if (prefix.length() > str.length()) {
+        if (prefix.length() > str.length()) { // NOPMD
             return false;
         }
         return str.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());

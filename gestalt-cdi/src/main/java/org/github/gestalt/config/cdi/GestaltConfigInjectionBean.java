@@ -173,7 +173,7 @@ public final class GestaltConfigInjectionBean<T> implements Bean<T>, Passivation
         return "ConfigInjectionBean_" + clazz;
     }
 
-    private static class InjectConfigLiteral extends AnnotationLiteral<InjectConfig> implements InjectConfig {
+    private static final class InjectConfigLiteral extends AnnotationLiteral<InjectConfig> implements InjectConfig {
 
         @Override
         public String path() {

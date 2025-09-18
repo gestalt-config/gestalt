@@ -18,7 +18,7 @@ class GestaltConfigTest {
         Assertions.assertEquals("myConfig", test.myConfig());
     }
 
-    private static class MyModule implements GestaltModuleConfig {
+    private static final class MyModule implements GestaltModuleConfig {
 
         @Override
         public String name() {

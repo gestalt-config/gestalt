@@ -28,7 +28,9 @@ import java.util.*;
 public class GestaltCache implements Gestalt, CoreReloadListener {
     private final Gestalt delegate;
     private final Map<Triple<String, TypeCapture<?>, Tags>, Object> cache = Collections.synchronizedMap(new HashMap<>());
-    private final Map<Triple<String, TypeCapture<?>, Tags>, GResultOf<Object>> cacheResultsOf = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Triple<String, TypeCapture<?>, Tags>, GResultOf<Object>> cacheResultsOf =
+        Collections.synchronizedMap(new HashMap<>());
+
     private final Tags defaultTags;
     private final ObservationService observationService;
     private final GestaltConfig gestaltConfig;
@@ -125,7 +127,7 @@ public class GestaltCache implements Gestalt, CoreReloadListener {
         } else {
             GResultOf<T> result = delegate.getConfigResult(path, klass, resolvedTags);
             updateCache(path, key, result);
-            return result  != null ? result.results() : null;
+            return result != null ? result.results() : null;
         }
     }
 
