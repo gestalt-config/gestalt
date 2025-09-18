@@ -24,7 +24,7 @@ azure = "1.2.38"
 # vault
 vault = "6.2.0"
 # Git support
-# @pin breaking changes.
+# @pin breaking changes last version to support jdk 11
 jgit = "6.10.0.202406032230-r"
 eddsa = "0.3.0"
 # metrics
