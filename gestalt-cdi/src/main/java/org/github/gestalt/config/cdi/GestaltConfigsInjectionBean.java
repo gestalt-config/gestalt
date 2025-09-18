@@ -95,7 +95,7 @@ public final class GestaltConfigsInjectionBean<T> implements Bean<T> {
 
 
     @SuppressWarnings("UnusedNestedClass")
-    private static class InjectConfigsLiteral extends AnnotationLiteral<InjectConfigs> implements InjectConfigs {
+    private static final class InjectConfigsLiteral extends AnnotationLiteral<InjectConfigs> implements InjectConfigs {
 
         @Override
         public String prefix() {

@@ -51,18 +51,18 @@ class CollectionUtilsTest {
     }
 
     @ConfigPriority(1)
-    private static class Test1 {
+    private static final class Test1 {
     }
 
     @ConfigPriority(2)
-    private static class Test2 {
+    private static final class Test2 {
     }
 
     @ConfigPriority(10)
-    private static class Test10 {
+    private static final class Test10 {
     }
 
     @ConfigPriority(150)
-    private static class Test150 {
+    private static final class Test150 {
     }
 }

@@ -184,7 +184,7 @@ class FileChangeReloadStrategyTest {
         Assertions.assertTrue(ex.getMessage().startsWith("Unable to add a File Change reload strategy to a non file source"));
     }
 
-    private static class ConfigListener implements ConfigReloadListener {
+    private static final class ConfigListener implements ConfigReloadListener {
 
         public int count = 0;
 

@@ -38,6 +38,7 @@ class BlobConfigSourceBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("UnusedLocalVariable")
     void buildBlobConfigSourceBuildClient() throws GestaltException {
         BlobConfigSourceBuilder builder = BlobConfigSourceBuilder.builder()
             //.setBlobClient(blobClient)
@@ -45,7 +46,7 @@ class BlobConfigSourceBuilderTest {
             .setEndpoint("vault.com")
             .setContainerName("testContainer");
 
-        try (MockedConstruction<BlobClientBuilder> blobBuilder = Mockito.mockConstruction(BlobClientBuilder.class,
+        try (MockedConstruction<BlobClientBuilder> blobBuilder = Mockito.mockConstruction(BlobClientBuilder.class, // NOPMD
             (mock, context) -> {
                 when(mock.endpoint(any())).thenReturn(mock);
                 when(mock.blobName(any())).thenReturn(mock);
@@ -60,6 +61,7 @@ class BlobConfigSourceBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("UnusedLocalVariable")
     void buildBlobConfigSourceBuildClientWithCredentials() throws GestaltException {
         final StorageSharedKeyCredential tokenCredential = Mockito.mock();
 
@@ -70,7 +72,7 @@ class BlobConfigSourceBuilderTest {
             .setContainerName("testContainer")
             .setCredential(tokenCredential);
 
-        try (MockedConstruction<BlobClientBuilder> blobBuilder = Mockito.mockConstruction(BlobClientBuilder.class,
+        try (MockedConstruction<BlobClientBuilder> blobBuilder = Mockito.mockConstruction(BlobClientBuilder.class, // NOPMD
             (mock, context) -> {
                 when(mock.endpoint(any())).thenReturn(mock);
                 when(mock.blobName(any())).thenReturn(mock);

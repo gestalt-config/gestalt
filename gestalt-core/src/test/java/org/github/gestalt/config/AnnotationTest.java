@@ -29,14 +29,14 @@ public class AnnotationTest {
         Assertions.assertEquals("", annotation.defaultVal());
     }
 
-    private static class TestClass {
+    private static final class TestClass {
         @Config(path = "value", defaultVal = "10")
-        public int myVal = 100;
+        public int myVal = 100; // NOPMD
 
         @Config(defaultVal = "20")
-        public int myVal2 = 200;
+        public int myVal2 = 200; // NOPMD
 
         @Config(path = "value3")
-        public int myVal3 = 300;
+        public int myVal3 = 300;   // NOPMD
     }
 }

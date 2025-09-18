@@ -416,7 +416,7 @@ class DecoderRegistryTest {
         }
     }
 
-    private static class LongDecoderCustomHigh extends LeafDecoder<Long> {
+    private static final class LongDecoderCustomHigh extends LeafDecoder<Long> {
 
         @Override
         public Priority priority() {
@@ -440,7 +440,7 @@ class DecoderRegistryTest {
         }
     }
 
-    private static class LongDecoderCustomVH extends LeafDecoder<Long> {
+    private static final class LongDecoderCustomVH extends LeafDecoder<Long> {
 
         @Override
         public Priority priority() {

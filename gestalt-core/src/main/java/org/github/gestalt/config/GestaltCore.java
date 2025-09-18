@@ -204,6 +204,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
      * @param sourcePackage the ConfigSourcePackage to add to Gestalt
      * @throws GestaltException any exceptions while loading the new ConfigSourcePackage
      */
+    @Override
     public void addConfigSourcePackage(ConfigSourcePackage sourcePackage) throws GestaltException {
         if (sourcePackage == null) {
             throw new GestaltException("No ConfigSourcePackage provided, unable to load config");
@@ -481,6 +482,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         return getConfigOptionalCommon(path, klass, tags).map(GResultOf::results);
     }
 
+    @Override
     public <T> Optional<GResultOf<T>> getConfigOptionalResult(String path, TypeCapture<T> klass, Tags tags) {
         Objects.requireNonNull(path);
         Objects.requireNonNull(klass);

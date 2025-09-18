@@ -94,7 +94,7 @@ public final class StringSubstitutionProcessor {
             return GResultOf.result(currentNode);
         }
 
-        var valueOptional = ((LeafNode)currentNode).getValueInternal();
+        var valueOptional = ((LeafNode) currentNode).getValueInternal();
         if (valueOptional.isEmpty()) {
             return GResultOf.result(currentNode);
         }

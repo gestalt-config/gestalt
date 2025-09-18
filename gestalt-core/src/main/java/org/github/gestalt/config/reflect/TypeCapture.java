@@ -106,7 +106,7 @@ public class TypeCapture<T> {
     public TypeCapture<?> getFirstParameterType() {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
-            return TypeCapture.of(parameterized.getActualTypeArguments()[0]);
+            return of(parameterized.getActualTypeArguments()[0]);
         } else {
             return null;
         }
@@ -121,7 +121,7 @@ public class TypeCapture<T> {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterized = (ParameterizedType) type;
             if (parameterized.getActualTypeArguments().length > 1) {
-                return TypeCapture.of(parameterized.getActualTypeArguments()[1]);
+                return of(parameterized.getActualTypeArguments()[1]);
             }
         }
 

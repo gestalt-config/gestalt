@@ -35,13 +35,13 @@ public final class PathUtil {
                 }
                 pathBuilder.append(((ObjectToken) token).getName());
             } else if (token instanceof ArrayToken) {
-                pathBuilder.append(lexer.getNormalizedArrayOpenTag());
-                pathBuilder.append(((ArrayToken) token).getIndex());
-                pathBuilder.append(lexer.getNormalizedArrayCloseTag());
+                pathBuilder.append(lexer.getNormalizedArrayOpenTag())
+                    .append(((ArrayToken) token).getIndex())
+                    .append(lexer.getNormalizedArrayCloseTag());
             } else if (token instanceof TagToken) {
-                pathBuilder.append(((TagToken) token).getTag());
-                pathBuilder.append(lexer.getNormalizedMapTag());
-                pathBuilder.append(((TagToken) token).getValue());
+                pathBuilder.append(((TagToken) token).getTag())
+                    .append(lexer.getNormalizedMapTag())
+                    .append(((TagToken) token).getValue());
             }
         });
 

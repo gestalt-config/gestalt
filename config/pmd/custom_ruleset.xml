@@ -29,9 +29,7 @@ under the License.
     <rule ref="category/java/bestpractices.xml/AccessorMethodGeneration"/>
     <rule ref="category/java/bestpractices.xml/AvoidReassigningParameters"/>
     <rule ref="category/java/bestpractices.xml/ConstantsInInterface"/>
-    <rule ref="category/java/bestpractices.xml/DefaultLabelNotLastInSwitchStmt"/>
     <rule ref="category/java/bestpractices.xml/LiteralsFirstInComparisons"/>
-    <rule ref="category/java/bestpractices.xml/SwitchStmtsShouldHaveDefault"/>
     <rule ref="category/java/bestpractices.xml/UseCollectionIsEmpty"/>
     <rule ref="category/java/bestpractices.xml/SystemPrintln"/>
 
@@ -117,7 +115,6 @@ under the License.
 
     <rule ref="category/java/performance.xml/BigIntegerInstantiation"/>
     <rule ref="category/java/performance.xml/OptimizableToArrayCall"/>
-    <rule ref="category/java/performance.xml/TooFewBranchesForASwitchStatement"/>
     <rule ref="category/java/performance.xml/AddEmptyString"/>
     <rule ref="category/java/performance.xml/AvoidArrayLoops"/>
     <rule ref="category/java/performance.xml/UseArrayListInsteadOfVector"/>

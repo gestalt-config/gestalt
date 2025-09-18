@@ -558,18 +558,6 @@ class GestaltTest {
         configs.put("admin.user[0]", "John");
         configs.put("admin.user[1]", "Steve");
 
-        Map<String, String> configs2 = new HashMap<>();
-        configs2.put("db.name", "New Name");
-        configs2.put("db.password", "123abc");
-        configs2.put("redis.url", "redis.io");
-        configs2.put("admin.user[1]", "Matt");
-        configs2.put("admin.user[2]", "Paul");
-
-        Map<String, String> configs3 = new HashMap<>();
-        configs3.put("db.name", "New Name");
-        configs3.put("db.timeout", "5000");
-        configs3.put("admin.user[0]", "Scott");
-
         Gestalt gestalt = new GestaltBuilder()
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
             .build();
@@ -680,7 +668,9 @@ class GestaltTest {
 
         Assertions.assertTrue(gestalt.getConfigOptional("db.timeout", TypeCapture.of(String.class)).isEmpty());
 
-        var error = Assertions.assertThrows(GestaltException.class, () -> gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build()));
+        var error = Assertions.assertThrows(
+            GestaltException.class, () -> gestalt.addConfigSourcePackage(MapConfigSourceBuilder.builder().setCustomConfig(configs2).build())
+        );
         Assertions.assertEquals("Failed to load configs from source: mapConfig\n" +
             " - level: ERROR, message: Unable to tokenize element user[a] for path: admin.user[a]", error.getMessage());
 
@@ -2403,8 +2393,9 @@ class GestaltTest {
 
         gestalt.loadConfigs();
 
-        var exception = Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("empty", new TypeCapture<Map<String, String>>() {
-        }));
+        var exception =
+            Assertions.assertThrows(GestaltException.class, () -> gestalt.getConfig("empty", new TypeCapture<Map<String, String>>() {
+            }));
 
         Assertions.assertEquals("Failed getting config path: empty, for class: " +
             "java.util.Map<java.lang.String, java.lang.String>\n" +

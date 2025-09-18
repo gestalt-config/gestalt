@@ -144,7 +144,7 @@ class TimedConfigReloadStrategyTest {
         Thread.sleep(10);
     }
 
-    private static class ConfigListener implements ConfigReloadListener {
+    private static final class ConfigListener implements ConfigReloadListener {
 
         public int count = 0;
 
@@ -154,7 +154,7 @@ class TimedConfigReloadStrategyTest {
         }
     }
 
-    private static class ExceptionConfigListener implements ConfigReloadListener {
+    private static final class ExceptionConfigListener implements ConfigReloadListener {
 
         @Override
         public void reload(ConfigSourcePackage source) throws GestaltException {

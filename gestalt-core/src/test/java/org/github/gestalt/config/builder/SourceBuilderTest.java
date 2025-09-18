@@ -206,7 +206,7 @@ public class SourceBuilderTest {
         assertNotNull(result);
     }
 
-    private static class TestSourceBuilder extends SourceBuilder<TestSourceBuilder, StringConfigSource> {
+    private static final class TestSourceBuilder extends SourceBuilder<TestSourceBuilder, StringConfigSource> {
 
         String text;
 

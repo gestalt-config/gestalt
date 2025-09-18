@@ -38,8 +38,9 @@ class AzureSecretTransformerTest {
     }
 
     @Test
+    @SuppressWarnings("UnusedLocalVariable")
     void process() throws GestaltConfigurationException {
-        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class,
+        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class, // NOPMD
             (mock, context) -> {
                 when(mock.buildClient()).thenReturn(secretClient);
                 when(mock.vaultUrl(any())).thenReturn(mock);
@@ -47,7 +48,7 @@ class AzureSecretTransformerTest {
             })) {
 
             try (
-                MockedConstruction<DefaultAzureCredentialBuilder> defaultAzureCredentialBuilder =
+                MockedConstruction<DefaultAzureCredentialBuilder> defaultAzureCredentialBuilder = // NOPMD
                     Mockito.mockConstruction(DefaultAzureCredentialBuilder.class,
                         (mock, context) -> when(mock.build()).thenReturn(tokenCredential))) {
 
@@ -96,8 +97,9 @@ class AzureSecretTransformerTest {
     }
 
     @Test
+    @SuppressWarnings("UnusedLocalVariable")
     void processWithCredentials() throws GestaltConfigurationException {
-        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class,
+        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class, // NOPMD
             (mock, context) -> {
                 when(mock.buildClient()).thenReturn(secretClient);
                 when(mock.vaultUrl(any())).thenReturn(mock);
@@ -129,8 +131,9 @@ class AzureSecretTransformerTest {
     }
 
     @Test
+    @SuppressWarnings("UnusedLocalVariable")
     void processWithOutCredentials() throws GestaltConfigurationException {
-        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class,
+        try (MockedConstruction<SecretClientBuilder> secretClientBuilder = Mockito.mockConstruction(SecretClientBuilder.class, // NOPMD
             (mock, context) -> {
                 when(mock.buildClient()).thenReturn(secretClient);
                 when(mock.vaultUrl(any())).thenReturn(mock);
