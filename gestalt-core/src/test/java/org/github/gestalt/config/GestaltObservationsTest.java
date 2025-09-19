@@ -6,6 +6,7 @@ import org.github.gestalt.config.observations.ObservationRecorder;
 import org.github.gestalt.config.observations.TestObservationRecorder;
 import org.github.gestalt.config.processor.TestResultProcessor;
 import org.github.gestalt.config.processor.TestValidationProcessor;
+import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.reload.ManualConfigReloadStrategy;
 import org.github.gestalt.config.source.MapConfigSourceBuilder;
 import org.github.gestalt.config.tag.Tags;
@@ -171,6 +172,19 @@ public class GestaltObservationsTest {
         Assertions.assertEquals(Tags.environment("dev"), metricsRecorder.metrics.get("db.password").tags);
 
         Assertions.assertEquals(3, metricsRecorder.metrics.get("cache.hit").data);
+        Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("cache.hit").tags);
+
+        Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", TypeCapture.of(String.class),
+            Tags.environment("dev")).results());
+
+        Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", TypeCapture.of(String.class),
+            Tags.environment("dev")).results());
+
+        Assertions.assertEquals("db.password", metricsRecorder.metrics.get("db.password").path);
+        Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db.password").data);
+        Assertions.assertEquals(Tags.environment("dev"), metricsRecorder.metrics.get("db.password").tags);
+
+        Assertions.assertEquals(4, metricsRecorder.metrics.get("cache.hit").data);
         Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("cache.hit").tags);
     }
 
