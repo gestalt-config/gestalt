@@ -210,6 +210,40 @@ internal class KTypeCaptureTest {
         assertFalse(type.isAssignableFrom(Array<Int>::class))
     }
 
+    @Test
+    fun getSecondParameterTypeTest() {
+        val type = kTypeCaptureOf<Map<String, Int>>()
+        assertTrue(type.hasParameter())
+        assertNotNull(type.secondParameterType)
+        assertEquals(Int::class.java, type.secondParameterType!!.rawType)
+    }
+
+    @Test
+    fun getSecondParameterTypeTestNoType() {
+        val type = kTypeCaptureOf<String>()
+        assertFalse(type.hasParameter())
+        assertNull(type.secondParameterType)
+    }
+
+    @Test
+    fun getParameterTypesTest() {
+        val type = kTypeCaptureOf<Map<String, Int>>()
+        assertTrue(type.hasParameter())
+        val params = type.parameterTypes
+        assertNotNull(params)
+        assertEquals(2, params!!.size)
+        assertEquals(String::class.java, params[0]?.rawType)
+        assertEquals(Int::class.java, params[1]?.rawType)
+    }
+
+    @Test
+    fun getParameterTypesTestNoType() {
+        val type = kTypeCaptureOf<String>()
+        assertFalse(type.hasParameter())
+        assertNull(type.parameterTypes)
+    }
+
+
     class Holder<T> {
         var value: T? = null
     }

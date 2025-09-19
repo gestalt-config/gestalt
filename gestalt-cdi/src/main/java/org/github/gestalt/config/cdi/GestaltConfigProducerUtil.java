@@ -31,7 +31,6 @@ import java.util.Optional;
 public final class GestaltConfigProducerUtil {
 
     private GestaltConfigProducerUtil() {
-        throw new UnsupportedOperationException();
     }
 
     /**
