@@ -2,6 +2,7 @@ package org.github.gestalt.config.kotlin.integration
 
 import org.github.gestalt.config.builder.GestaltBuilder
 import org.github.gestalt.config.exceptions.GestaltException
+import org.github.gestalt.config.kotlin.entity.DataClassHasNoConstructor
 import org.github.gestalt.config.kotlin.getConfig
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.source.EnvironmentConfigSourceBuilder
@@ -42,6 +43,10 @@ class KotlinGestaltIntegrationTests {
         Assertions.assertEquals(60000.0, pool.keepAliveTimeoutMs)
         Assertions.assertEquals(25, pool.idleTimeoutSec)
         Assertions.assertEquals(33.0f, pool.defaultWait)
+
+        val dataClassHasNoConstructor = DataClassHasNoConstructor("test", "test")
+        Assertions.assertEquals("Data Class has no constructor: test, on path: test", dataClassHasNoConstructor.description())
+
         var startTime = System.nanoTime()
         gestalt.getConfig("db", DataBase::class.java)
         val timeTaken = System.nanoTime() - startTime
