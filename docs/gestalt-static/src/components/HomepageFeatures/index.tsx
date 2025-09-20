@@ -81,7 +81,7 @@ export default function HomepageFeatures(): JSX.Element {
           <li><b>Zero Dependencies</b>: The core library has zero external dependencies; add features and dependencies as needed.</li>
           <li><b>Java 11 Minimum</b>: Requires a minimum of Java 11 for compatibility with modern Java versions.</li>
           <li><b>Java Modules</b>: Supports Java 9 modules with proper exports.</li>
-          <li><b>Well Tested</b>: Our codebase boasts an impressive > 91% code coverage, validated by over 1850 meaningful tests.</li>
+          <li><b>Well Tested</b>: Our codebase boasts an impressive > 92% code coverage, validated by over 2000+ meaningful tests.</li>
         </ul>
         </div>
       </div>
