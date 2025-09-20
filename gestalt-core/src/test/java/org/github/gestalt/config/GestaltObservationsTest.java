@@ -180,11 +180,17 @@ public class GestaltObservationsTest {
         Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", TypeCapture.of(String.class),
             Tags.environment("dev")).results());
 
+        Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", "test", TypeCapture.of(String.class),
+            Tags.environment("dev")).results());
+
+        Assertions.assertEquals("test2", gestalt.getConfigOptionalResult("db.password", TypeCapture.of(String.class),
+            Tags.environment("dev")).get().results());
+
         Assertions.assertEquals("db.password", metricsRecorder.metrics.get("db.password").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db.password").data);
         Assertions.assertEquals(Tags.environment("dev"), metricsRecorder.metrics.get("db.password").tags);
 
-        Assertions.assertEquals(4, metricsRecorder.metrics.get("cache.hit").data);
+        Assertions.assertEquals(6, metricsRecorder.metrics.get("cache.hit").data);
         Assertions.assertEquals(Tags.of(), metricsRecorder.metrics.get("cache.hit").tags);
     }
 
@@ -589,5 +595,63 @@ public class GestaltObservationsTest {
                 "exception", "org.github.gestalt.config.exceptions.GestaltConfigurationException"),
             metricsRecorder.metrics.get("addSource").tags);
 
+    }
+
+    @Test
+    public void testMetricsGetCacheRecorderNull() throws GestaltException {
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("db.password", "test");
+        configs.put("db.port", "123");
+        configs.put("db.uri", "my.sql.com");
+
+        Map<String, String> configs2 = new HashMap<>();
+        configs2.put("db.password", "test2");
+        configs2.put("db.port", "456");
+        configs2.put("db.uri", "my.postgresql.com");
+
+        var metricsRecorder = new TestObservationRecorder(0);
+
+        Gestalt gestalt = new GestaltBuilder().addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs2).setTags(Tags.environment("dev")).build())
+            .setObservationsEnabled(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
+
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("db.password"));
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("db.password"));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
+
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("db.password"));
+
+        Assertions.assertEquals("test2", gestalt.getConfigOptional("db.password", String.class, Tags.environment("dev")).get());
+
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("db.password"));
+
+        Assertions.assertEquals("test2", gestalt.getConfig("db.password", "abc", String.class, Tags.environment("dev")));
+
+        Assertions.assertFalse( metricsRecorder.metrics.containsKey("db.password"));
+
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
+
+        Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", TypeCapture.of(String.class),
+            Tags.environment("dev")).results());
+
+        Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", TypeCapture.of(String.class),
+            Tags.environment("dev")).results());
+
+        Assertions.assertEquals("test2", gestalt.getConfigResult("db.password", "test", TypeCapture.of(String.class),
+            Tags.environment("dev")).results());
+
+        Assertions.assertEquals("test2", gestalt.getConfigOptionalResult("db.password", TypeCapture.of(String.class),
+            Tags.environment("dev")).get().results());
+
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("db.password"));
+
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
     }
 }

@@ -91,6 +91,7 @@ class GestaltTest {
         Assertions.assertNotNull(gestalt.getDecoderService());
 
         Assertions.assertEquals("test", gestalt.getConfig("db.name", String.class));
+        Assertions.assertEquals("test", gestalt.getConfig("db.name", "admin", TypeCapture.of(String.class), Tags.of()));
         Assertions.assertEquals("3306", gestalt.getConfig("db.port", String.class));
         Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfig("db.port", Integer.class));
         Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfig("db.port", Long.class));
@@ -127,6 +128,12 @@ class GestaltTest {
         }).get());
         Assertions.assertFalse(gestalt.getConfig("does.not.exist", new TypeCapture<Optional<String>>() {
         }).isPresent());
+
+        Assertions.assertEquals("test", gestalt.getConfigResult("db.name", TypeCapture.of(String.class), Tags.of()).results());
+        Assertions.assertEquals("test", gestalt.getConfigResult("db.name", "admin", TypeCapture.of(String.class), Tags.of()).results());
+        Assertions.assertEquals("3306", gestalt.getConfigResult("db.port", TypeCapture.of(String.class), Tags.of()).results());
+        Assertions.assertEquals(Integer.valueOf(3306), gestalt.getConfigResult("db.port", TypeCapture.of(Integer.class), Tags.of()).results());
+        Assertions.assertEquals(Long.valueOf(3306), gestalt.getConfigResult("db.port", TypeCapture.of(Long.class), Tags.of()).results());
     }
 
     @Test
