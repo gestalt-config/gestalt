@@ -17,9 +17,6 @@ HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 If you compiled with '-parameters' flag Gestalt can use the constructor parameter names to map configuration values to constructor parameters. This allows you to create immutable objects that only have final fields and no setters.
 Alternatively you can use the `@ConfigParameter` annotation to specify the parameter name to use for mapping configuration values to constructor parameters.
 
-```java
-
-
 ## `treatMissingValuesAsErrors`
 
 Treat missing field values in an object, proxy, record, or data object as errors. This will cause the API to either throw errors or return an empty optional.
