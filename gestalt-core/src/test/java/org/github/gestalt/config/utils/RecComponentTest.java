@@ -1,6 +1,5 @@
 package org.github.gestalt.config.utils;
 
-
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;

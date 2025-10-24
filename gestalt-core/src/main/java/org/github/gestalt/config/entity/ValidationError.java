@@ -2059,5 +2059,24 @@ public abstract class ValidationError {
             return "Unknown annotation: " + annotation + " for path: " + path;
         }
     }
+
+    /**
+     * Failed to extract annotation using regex.
+     */
+    public static class NoPermittedClassesInSealedClass extends ValidationError {
+        private final String className;
+        private final String path;
+
+        public NoPermittedClassesInSealedClass(String path, String className) {
+            super(ValidationLevel.WARN);
+            this.className = className;
+            this.path = path;
+        }
+
+        @Override
+        public String description() {
+            return "No permitted classes in sealed class: " + className + " for path: " + path;
+        }
+    }
 }
 

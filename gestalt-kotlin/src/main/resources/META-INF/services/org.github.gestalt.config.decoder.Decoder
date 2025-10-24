@@ -5,6 +5,7 @@ org.github.gestalt.config.kotlin.decoder.DataClassDecoder
 org.github.gestalt.config.kotlin.decoder.DoubleDecoder
 org.github.gestalt.config.kotlin.decoder.FloatDecoder
 org.github.gestalt.config.kotlin.decoder.IntegerDecoder
+org.github.gestalt.config.kotlin.decoder.KSealedDecoder
 org.github.gestalt.config.kotlin.decoder.LongDecoder
 org.github.gestalt.config.kotlin.decoder.ShortDecoder
 org.github.gestalt.config.kotlin.decoder.StringDecoder
