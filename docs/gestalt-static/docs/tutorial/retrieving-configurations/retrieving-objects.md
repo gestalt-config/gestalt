@@ -12,14 +12,22 @@ There are two configuration options that allow you to control when errors are th
 HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
 ```
 
-### `treatMissingValuesAsErrors`
+## Constructing Objects using Constructors Parameter Names
+
+If you compiled with '-parameters' flag Gestalt can use the constructor parameter names to map configuration values to constructor parameters. This allows you to create immutable objects that only have final fields and no setters.
+Alternatively you can use the `@ConfigParameter` annotation to specify the parameter name to use for mapping configuration values to constructor parameters.
+
+```java
+
+
+## `treatMissingValuesAsErrors`
 
 Treat missing field values in an object, proxy, record, or data object as errors. This will cause the API to either throw errors or return an empty optional.
 
 - If this is `true`, any time a value that is not discretionary is missing, it will fail and throw an exception.
 - If this is `false`, a missing value will be returned as `null` or the default initialization. `Null` for objects and `0` for primitives.
 
-### `treatMissingDiscretionaryValuesAsErrors`
+## `treatMissingDiscretionaryValuesAsErrors`
 
 Treat missing discretionary values (optional, fields with defaults, fields with default annotations) in an object, proxy, record, or data object as errors.
 
@@ -27,14 +35,14 @@ Treat missing discretionary values (optional, fields with defaults, fields with 
 - If this is `true`, if a field is missing and would have had a default, it will fail and throw an exception.
 
 
-### `@Nullable` annotations
+## `@Nullable` annotations
 
 If a field or method is annotated with a `@Nullable` annotation, it will treat a missing value as a discretionary value. So as long as `treatMissingDiscretionaryValuesAsErrors` is not enabled, `@Nullable` fields will allow null values without throwing errors.
 
 There are multiple `@Nullable` annotations and for this to work the annotations must use `@Retention(RetentionPolicy.RUNTIME)` so the annotation is available at runtime for Gestalt.
 One good library to use is `jakarta.annotation:jakarta.annotation-api` that has a `@Nullable` with `@Retention(RetentionPolicy.RUNTIME)`.
 
-#### Examples of required and discretionary fields.
+### Examples of required and discretionary fields.
 
 Here are some examples of required and discretionary fields and which setting can control if they are treated as errors or allowed.
 
