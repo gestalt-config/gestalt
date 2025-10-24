@@ -30,3 +30,6 @@ inline fun <reified T> Gestalt.getConfig(path: String, tags: Tags = Tags.of()): 
  */
 inline fun <reified T> Gestalt.getConfig(path: String, default: T, tags: Tags = Tags.of()): T =
     this.getConfig(path, default, KTypeCapture.of<T>(typeOf<T>()), tags) as T
+
+inline fun <reified T> Gestalt.getConfigResult(path: String, tags: Tags = Tags.of()) =
+    this.getConfigResult(path, KTypeCapture.of<T>(typeOf<T>()), tags)

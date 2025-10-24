@@ -74,6 +74,7 @@ module org.github.gestalt.core {
         org.github.gestalt.config.decoder.PatternDecoder,
         org.github.gestalt.config.decoder.ProxyDecoder,
         org.github.gestalt.config.decoder.RecordDecoder,
+        org.github.gestalt.config.decoder.SealedDecoder,
         org.github.gestalt.config.decoder.SetDecoder,
         org.github.gestalt.config.decoder.ShortDecoder,
         org.github.gestalt.config.decoder.StringDecoder,

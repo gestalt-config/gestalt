@@ -35,3 +35,12 @@ class DataClassCanNotBeConstructed(private val path: String, private val classNa
         return "Data Class: $className, can not be constructed on path: $path"
     }
 }
+
+/**
+ * Data class can not be built
+ */
+class SealedClassCanNotBeConstructed(private val path: String, private val className: String) : ValidationError(ValidationLevel.ERROR) {
+    override fun description(): String {
+        return "Sealed Class: $className, can not be constructed on path: $path"
+    }
+}

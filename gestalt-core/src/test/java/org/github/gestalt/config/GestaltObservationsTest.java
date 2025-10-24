@@ -634,7 +634,7 @@ public class GestaltObservationsTest {
 
         Assertions.assertEquals("test2", gestalt.getConfig("db.password", "abc", String.class, Tags.environment("dev")));
 
-        Assertions.assertFalse( metricsRecorder.metrics.containsKey("db.password"));
+        Assertions.assertFalse(metricsRecorder.metrics.containsKey("db.password"));
 
         Assertions.assertFalse(metricsRecorder.metrics.containsKey("cache.hit"));
 

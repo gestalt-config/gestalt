@@ -1,6 +1,7 @@
 plugins {
     id("gestalt.java-library-conventions")
     id("gestalt.java-test-conventions")
+    id("gestalt.kotlin-common-conventions")
 }
 
 java {
