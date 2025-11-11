@@ -1450,6 +1450,64 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("c", gestalt.getConfig("c", String.class));
     }
 
+    @Test
+    public void testTreatMissingValuesAsErrorEmptyPath() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("password", "test");
+        //configs.put("uri", "somedatabase");
+        configs.put("port", "3306");
+
+        ConfigLoaderRegistry configLoaderRegistry = new ConfigLoaderRegistry();
+        configLoaderRegistry.addLoader(new MapConfigLoader());
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        DBInfo dbInfo = gestalt.getConfig("", DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfo.getPassword());
+        Assertions.assertNull(dbInfo.getUri());
+        Assertions.assertEquals(3306, dbInfo.getPort());
+
+        DBInfo dbInfoDef = gestalt.getConfig("", new DBInfo(), DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfoDef.getPassword());
+        Assertions.assertNull(dbInfoDef.getUri());
+        Assertions.assertEquals(3306, dbInfoDef.getPort());
+
+        Optional<DBInfo> dbInfoOpt = gestalt.getConfigOptional("", DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfoOpt.get().getPassword());
+        Assertions.assertNull(dbInfoOpt.get().getUri());
+        Assertions.assertEquals(3306, dbInfoOpt.get().getPort());
+    }
+
+    @Test
+    public void testGettingEmptyPathWithNullField() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("password", "test");
+        configs.put("uri", "somedatabase");
+        // configs.put("port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        DBInfo dbInfo = gestalt.getConfig("", DBInfo.class);
+        Assertions.assertEquals("test", dbInfo.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfo.getUri());
+        Assertions.assertEquals(0, dbInfo.getPort()); // 0 is the default value for int
+    }
+
 
     public enum Role {
         LEVEL0, LEVEL1
