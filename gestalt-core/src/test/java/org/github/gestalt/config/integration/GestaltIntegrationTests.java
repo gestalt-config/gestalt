@@ -114,6 +114,18 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("test", dbInfo.getPassword());
         Assertions.assertEquals("somedatabase", dbInfo.getUri());
         Assertions.assertEquals(3306, dbInfo.getPort());
+
+        DBInfo dbInfoDef = gestalt.getConfig("", new DBInfo(), DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfoDef.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfoDef.getUri());
+        Assertions.assertEquals(3306, dbInfoDef.getPort());
+
+        Optional<DBInfo> dbInfoOpt = gestalt.getConfigOptional("", DBInfo.class);
+
+        Assertions.assertEquals("test", dbInfoOpt.get().getPassword());
+        Assertions.assertEquals("somedatabase", dbInfoOpt.get().getUri());
+        Assertions.assertEquals(3306, dbInfoOpt.get().getPort());
     }
 
     //to run this test it must be run as an administrator.
