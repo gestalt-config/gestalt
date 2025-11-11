@@ -1499,7 +1499,7 @@ public class GestaltIntegrationTests {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .setTreatMissingValuesAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
