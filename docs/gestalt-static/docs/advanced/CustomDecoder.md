@@ -14,9 +14,13 @@ The method `String name();` allows you to set the name of the decoder. This is u
 the method `default void applyConfig(GestaltConfig config)` is optional and allows you to get the gestalt configuration when the decoder is registered. 
 
 The method `boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type)` is used to determine if the decoder can handle the given type. This is called before the `decode(...)` method. If this method returns true, then the `decode(...)` method will be called.
+
 This method provides the path of the value being decoded, the tags for the current request, the current node being decoded, and the type of object being decoded.
+
 the tags are the `tags` for the current request, which can be used to determine if the decoder should be used based on the tags.
+
 The node is a `ConfigNode` is the specific node we are trying to decode, so you can for example ensure that if you are decoding a single value that the node is a LeafNode.
+
 The type is a `TypeCapture` that contains the raw type and any generic type information. You can use this to ensure that you are decoding the correct type.
 
 Here is an example of a `canDecode` method that only decodes instances of `MyClass` when the node is a `LeafNode`.
