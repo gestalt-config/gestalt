@@ -343,24 +343,24 @@ Here are some examples of required and discretionary fields and which setting ca
 
 ```java
 public class DBInfo {
-  // discretionary value controlled by treatMissingValuesAsErrors
+  // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
   private Optional<Integer> port;                   // default value Optional.empty()
   private String uri = "my.sql.db";                 // default value "my.sql.db"
   private  @Config(defaultVal = "100") Integer connections; // default value 100
 
-  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  // required value controlled by treatMissingValuesAsErrors
   private String password;                         // default value null
 }
 
 public interface DBInfoInterface {
   Optional<Integer> getPort();                      // default value Optional.empty()
   default String getUri() {                         // default value "my.sql.db"
-     return  "my.sql.db";
+    return  "my.sql.db";
   }
   @Config(defaultVal = "100")
   Integer getConnections();                         // default value 100
 
-  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+  // required value controlled by treatMissingValuesAsErrors
   String getPassword();                            // default value null
 }
 
@@ -368,8 +368,8 @@ public record DBInfoRecord(
   // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
   @Config(defaultVal = "100") Integer connections,  // default value 100
   Optional<Integer> port,                           // default value Optional.empty()
-  
-  // required value controlled by treatMissingDiscretionaryValuesAsErrors
+
+  // required value controlled by treatMissingValuesAsErrors
   String uri,                                      // default value null
   String password                                  // default value null
 ) {}
@@ -377,13 +377,13 @@ public record DBInfoRecord(
 
 ```kotlin
 data class DBInfoDataDefault(
-  // discretionary value controlled by treatMissingValuesAsErrors
-    var port: Int?,                                 // default value null
-    var uri: String = "my.sql.db",                  // default value "my.sql.db"
-    @Config(defaultVal = "100")  var connections: Integer, // default value 100
+  // discretionary value controlled by treatMissingDiscretionaryValuesAsErrors
+  var port: Int?,                                 // default value null
+  var uri: String = "my.sql.db",                  // default value "my.sql.db"
+  @Config(defaultVal = "100")  var connections: Integer, // default value 100
 
-    // required value cam not disable treatMissingDiscretionaryValuesAsErrors and allow nulls. 
-    var password: String,                           // required, can not be null.   
+  // required value cam not disable treatMissingValuesAsErrors and allow nulls. 
+  var password: String,                           // required, can not be null.   
 )
 ```
 

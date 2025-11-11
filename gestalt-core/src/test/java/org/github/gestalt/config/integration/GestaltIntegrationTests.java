@@ -22,6 +22,8 @@ import org.github.gestalt.config.node.factory.MapNodeImportFactory;
 import org.github.gestalt.config.tag.Tag;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfo;
+import org.github.gestalt.config.test.classes.DBInfoNoConstructor;
+import org.github.gestalt.config.test.classes.DBInfoOptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -1497,7 +1499,7 @@ public class GestaltIntegrationTests {
         GestaltBuilder builder = new GestaltBuilder();
         Gestalt gestalt = builder
             .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
-            .setTreatMissingValuesAsErrors(false)
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
             .build();
 
         gestalt.loadConfigs();
@@ -1506,6 +1508,47 @@ public class GestaltIntegrationTests {
         Assertions.assertEquals("test", dbInfo.getPassword());
         Assertions.assertEquals("somedatabase", dbInfo.getUri());
         Assertions.assertEquals(0, dbInfo.getPort()); // 0 is the default value for int
+    }
+
+    @Test
+    public void testGettingEmptyPathWithOptionalField() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("password", "test");
+        configs.put("uri", "somedatabase");
+        // configs.put("port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingDiscretionaryValuesAsErrors(false)
+            .build();
+
+        gestalt.loadConfigs();
+
+        DBInfoOptional dbInfo = gestalt.getConfig("", DBInfoOptional.class);
+        Assertions.assertEquals("test", dbInfo.getPassword().orElse(""));
+        Assertions.assertEquals("somedatabase", dbInfo.getUri().orElse(""));
+        Assertions.assertEquals(0, dbInfo.getPort().orElse(0)); // 0 is the default value for int
+    }
+
+    @Test
+    public void testGettingEmptyPathWithDefaultValue() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("password", "test");
+        configs.put("uri", "somedatabase");
+        // configs.put("port", "3306");
+
+        GestaltBuilder builder = new GestaltBuilder();
+        Gestalt gestalt = builder
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        DBInfoNoConstructor dbInfo = gestalt.getConfig("", DBInfoNoConstructor.class);
+        Assertions.assertEquals("test", dbInfo.getPassword());
+        Assertions.assertEquals("somedatabase", dbInfo.getUri());
+        Assertions.assertEquals(100, dbInfo.getPort()); // 0 is the default value for int
     }
 
 
