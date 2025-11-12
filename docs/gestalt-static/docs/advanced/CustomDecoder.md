@@ -38,9 +38,13 @@ You are passed in the path and tags for the current request, the node to be deco
 
 The ConfigNode is the specific node we are trying to decode. It can be of type LeafNode, MapNode, or ArrayNode. You will need to handle the different node types accordingly.
 The Specific node should have the methods needed to get the value to decode. For example, a LeafNode has a `getValue()` method that returns the string value of the node.
+
 For an example of how to use a LeafNode see the reusable base class for leafs: [LeafDecoder](https://github.com/gestalt-config/gestalt/blob/main/gestalt-core/src/main/java/org/github/gestalt/config/decoder/LeafDecoder.java) and the specific implementation for a Integer [IntegerDecoder](https://github.com/gestalt-config/gestalt/blob/main/gestalt-core/src/main/java/org/github/gestalt/config/decoder/IntegerDecoder.java)
+
 For an example of how to use a ListNode see the reusable base class for array type collections: [CollectionDecoder](https://github.com/gestalt-config/gestalt/blob/main/gestalt-core/src/main/java/org/github/gestalt/config/decoder/CollectionDecoder.java) and a specific implementation [ListDecoder](https://github.com/gestalt-config/gestalt/blob/main/gestalt-core/src/main/java/org/github/gestalt/config/decoder/ListDecoder.java)
+
 For an example of how to use a MapNode see the map type collections: [MapDecoder](https://github.com/gestalt-config/gestalt/blob/main/gestalt-core/src/main/java/org/github/gestalt/config/decoder/MapDecoder.java)
+
 
 ## Registering a Custom Decoder
 To register your custom decoder with Gestalt, you can use the `GestaltBuilder` and the `addDecoder` method. If you add your own decoder you need to call `addDefaultDecoders()` as well to ensure the built-in decoders are also registered. Otherwise, gestalt will only use your custom decoder(s).
