@@ -98,7 +98,7 @@ public final class PropertyLoader implements ConfigLoader {
             }
         }
 
-        if (isAcceptsDefault && moduleConfig != null) {
+        if (isAcceptsDefault && moduleConfig != null && moduleConfig.getAcceptsFormats() != null) {
             // set up the formats the loader will accept
             acceptsFormats = moduleConfig.getAcceptsFormats();
         }
