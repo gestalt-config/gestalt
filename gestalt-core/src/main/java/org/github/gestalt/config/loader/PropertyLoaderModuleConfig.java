@@ -4,6 +4,8 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.parser.ConfigParser;
 
+import java.util.List;
+
 /**
  * Gestalt module config for the Property Loader Module.
  *
@@ -13,6 +15,7 @@ public class PropertyLoaderModuleConfig implements GestaltModuleConfig {
 
     private final ConfigParser parser;
     private final SentenceLexer lexer;
+    private final List<String> acceptsFormats;
 
     /**
      * Gestalt module config for the Property Loader Module.
@@ -20,9 +23,10 @@ public class PropertyLoaderModuleConfig implements GestaltModuleConfig {
      * @param parser options for the ConfigParser
      * @param lexer  the lexer to normalize paths.
      */
-    public PropertyLoaderModuleConfig(ConfigParser parser, SentenceLexer lexer) {
+    public PropertyLoaderModuleConfig(ConfigParser parser, SentenceLexer lexer, List<String> acceptsFormats) {
         this.parser = parser;
         this.lexer = lexer;
+        this.acceptsFormats = acceptsFormats;
     }
 
     @Override
@@ -46,5 +50,14 @@ public class PropertyLoaderModuleConfig implements GestaltModuleConfig {
      */
     public SentenceLexer getLexer() {
         return lexer;
+    }
+
+    /**
+     * Get the list of formats that the property loader will accept
+     *
+     * @return the list of formats that the property loader will accept
+     */
+    public List<String> getAcceptsFormats() {
+        return acceptsFormats;
     }
 }

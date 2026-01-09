@@ -29,15 +29,19 @@ import java.util.stream.Collectors;
  */
 public final class PropertyLoader implements ConfigLoader {
 
+    public static List<String> DEFAULT_ACCEPTS = List.of("properties", "props", SystemPropertiesConfigSource.SYSTEM_PROPERTIES);
+
     private ConfigParser parser;
     private SentenceLexer lexer;
     private final boolean isDefault;
+    private List<String> acceptsFormats;
+    private final boolean isAcceptsDefault;
 
     /**
      * Construct a default property loader using the default path lexer for "." separated paths.
      */
     public PropertyLoader() {
-        this(new PathLexer(), new MapConfigParser(), true);
+        this(new PathLexer(), new MapConfigParser(), true, DEFAULT_ACCEPTS, true);
     }
 
     /**
@@ -47,35 +51,56 @@ public final class PropertyLoader implements ConfigLoader {
      * @param parser Parser for the property files
      */
     public PropertyLoader(SentenceLexer lexer, ConfigParser parser) {
-        this(lexer, parser, false);
+        this(lexer, parser, false, DEFAULT_ACCEPTS, true);
     }
 
-    private PropertyLoader(SentenceLexer lexer, ConfigParser parser, boolean isDefault) {
+    /**
+     *
+     * @param lexer          SentenceLexer to create tokens for the path.
+     * @param parser         Parser for the property files
+     * @param acceptsFormats the types of formats the Property Loader accepts.
+     */
+    public PropertyLoader(SentenceLexer lexer, ConfigParser parser, List<String> acceptsFormats) {
+        this(lexer, parser, false, acceptsFormats, false);
+    }
+
+    private PropertyLoader(SentenceLexer lexer, ConfigParser parser, boolean isDefault, List<String> acceptsFormats, boolean isAcceptsDefault) {
         Objects.requireNonNull(lexer, "PropertyLoader SentenceLexer should not be null");
         Objects.requireNonNull(parser, "PropertyLoader ConfigParser should not be null");
+        Objects.requireNonNull(acceptsFormats, "PropertyLoader accepts should not be null");
 
         this.lexer = lexer;
         this.parser = parser;
         this.isDefault = isDefault;
+        this.acceptsFormats = acceptsFormats;
+        this.isAcceptsDefault = isAcceptsDefault;
     }
 
     @Override
     public void applyConfig(GestaltConfig config) {
-        // for the Yaml ConfigLoader we will use the lexer in the following priorities
+        // for the Property ConfigLoader we will use the lexer in the following priorities
         // 1. the constructor
         // 2. the module config
         // 3. the Gestalt Configuration
         var moduleConfig = config.getModuleConfig(PropertyLoaderModuleConfig.class);
-        if (isDefault) {
-            if (moduleConfig != null && moduleConfig.getLexer() != null) {
+        if (isDefault && moduleConfig != null) {
+
+            // set up the lexer
+            if (moduleConfig.getLexer() != null) {
                 lexer = moduleConfig.getLexer();
             } else {
                 lexer = config.getSentenceLexer();
             }
+
+            // set up the parser
+            if (moduleConfig.getConfigParse() != null) {
+                parser = moduleConfig.getConfigParse();
+            }
         }
 
-        if (isDefault && moduleConfig != null && moduleConfig.getConfigParse() != null) {
-            parser = moduleConfig.getConfigParse();
+        if (isAcceptsDefault && moduleConfig != null && moduleConfig.getAcceptsFormats() != null) {
+            // set up the formats the loader will accept
+            acceptsFormats = moduleConfig.getAcceptsFormats();
         }
     }
 
@@ -86,7 +111,7 @@ public final class PropertyLoader implements ConfigLoader {
 
     @Override
     public boolean accepts(String format) {
-        return "properties".equals(format) || "props".equals(format) || SystemPropertiesConfigSource.SYSTEM_PROPERTIES.equals(format);
+        return acceptsFormats.contains(format);
     }
 
     /**

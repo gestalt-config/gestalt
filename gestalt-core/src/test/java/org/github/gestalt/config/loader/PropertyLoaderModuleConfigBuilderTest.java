@@ -6,6 +6,8 @@ import org.github.gestalt.config.parser.MapConfigParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 
 class PropertyLoaderModuleConfigBuilderTest {
 
@@ -15,7 +17,9 @@ class PropertyLoaderModuleConfigBuilderTest {
         var lexer = new PathLexer();
         var builder = PropertyLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
-            .setLexer(lexer);
+            .setLexer(lexer)
+            .setAcceptsFormats(List.of("myFormat"))
+            .addAcceptedFormat("format2");
 
         var moduleConfig = builder.build();
 
@@ -25,5 +29,8 @@ class PropertyLoaderModuleConfigBuilderTest {
         Assertions.assertEquals(configParser, moduleConfig.getConfigParse());
         Assertions.assertEquals(lexer, moduleConfig.getLexer());
         Assertions.assertEquals("propertiesLoader", moduleConfig.name());
+        Assertions.assertEquals(2, moduleConfig.getAcceptsFormats().size());
+        Assertions.assertEquals("myFormat", moduleConfig.getAcceptsFormats().get(0));
+        Assertions.assertEquals("format2", moduleConfig.getAcceptsFormats().get(1));
     }
 }

@@ -41,6 +41,24 @@ class PropertyLoaderTest {
     }
 
     @Test
+    void name() {
+        PropertyLoader propsLoader = new PropertyLoader();
+        Assertions.assertEquals("PropertyLoader", propsLoader.name());
+    }
+
+    @Test
+    void acceptsCustom() {
+        PropertyLoader propsLoader = new PropertyLoader(new PathLexer(), new MapConfigParser(), List.of("myFormat"));
+
+        Assertions.assertTrue(propsLoader.accepts("myFormat"));
+        Assertions.assertFalse(propsLoader.accepts("envVars"));
+        Assertions.assertFalse(propsLoader.accepts("properties"));
+        Assertions.assertFalse(propsLoader.accepts("props"));
+    }
+
+
+
+    @Test
     void loadSourceMockDependenciesAllOk() throws GestaltException {
 
         // setup the mocks
@@ -415,13 +433,74 @@ class PropertyLoaderTest {
 
         var configParser = new MapConfigParser();
         var lexer = new PathLexer(".");
-        var moduleConfig = MapConfigLoaderModuleConfigBuilder.builder()
+        var moduleConfig = PropertyLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
             .setLexer(lexer)
+            .setAcceptsFormats(PropertyLoader.DEFAULT_ACCEPTS)
             .build();
 
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(moduleConfig);
+
+        PropertyLoader loader = new PropertyLoader();
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceNullModuleConfig() throws GestaltException, IOException {
+        InputStreamConfigSource source = getConfigSource();
+
+        var moduleConfig = PropertyLoaderModuleConfigBuilder.builder()
+            .setConfigParser(null)
+            .setLexer(null)
+            .build();
+
+        GestaltConfig config = new GestaltConfig();
+        config.registerModuleConfig(moduleConfig);
+
+        PropertyLoader loader = new PropertyLoader();
+        loader.applyConfig(config);
+
+        GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
+
+        Assertions.assertFalse(resultContainer.hasErrors());
+        Assertions.assertTrue(resultContainer.hasResults());
+        ConfigNode result = resultContainer.results().get(0).getConfigNode();
+
+        Assertions.assertEquals(Tags.of(), resultContainer.results().get(0).getTags());
+        Assertions.assertEquals("Steve", result.getKey("name").get().getValue().get());
+        Assertions.assertEquals("42", result.getKey("age").get().getValue().get());
+        Assertions.assertEquals(3, result.getKey("cars").get().size());
+        Assertions.assertEquals("Ford", result.getKey("cars").get().getIndex(0).get().getKey("name")
+            .get().getValue().get());
+        Assertions.assertEquals("Fiesta, Focus, Mustang", result.getKey("cars").get().getIndex(0).get().getKey("models")
+            .get().getValue().get());
+
+        Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
+    }
+
+    @Test
+    void loadSourceNoModuleConfig() throws GestaltException, IOException {
+        InputStreamConfigSource source = getConfigSource();
+
+        GestaltConfig config = new GestaltConfig();
 
         PropertyLoader loader = new PropertyLoader();
         loader.applyConfig(config);
@@ -450,7 +529,7 @@ class PropertyLoaderTest {
 
         var configParser = new MapConfigParser();
         var lexer = new PathLexer("_"); // bad config, but shouldnt be used.
-        var moduleConfig = MapConfigLoaderModuleConfigBuilder.builder()
+        var moduleConfig = PropertyLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
             .setLexer(lexer)
             .build();
@@ -458,7 +537,7 @@ class PropertyLoaderTest {
         GestaltConfig config = new GestaltConfig();
         config.registerModuleConfig(moduleConfig);
 
-        PropertyLoader loader = new PropertyLoader(new PathLexer(), new MapConfigParser());
+        PropertyLoader loader = new PropertyLoader(new PathLexer(), new MapConfigParser(), PropertyLoader.DEFAULT_ACCEPTS);
         loader.applyConfig(config);
 
         GResultOf<List<ConfigNodeContainer>> resultContainer = loader.loadSource(new ConfigSourcePackage(source, List.of(), Tags.of()));
@@ -514,7 +593,7 @@ class PropertyLoaderTest {
 
         var configParser = new MapConfigParser();
         var lexer = new PathLexer(".");
-        var moduleConfig = MapConfigLoaderModuleConfigBuilder.builder()
+        var moduleConfig = PropertyLoaderModuleConfigBuilder.builder()
             .setConfigParser(configParser)
             //.setLexer(lexer)
             .build();
