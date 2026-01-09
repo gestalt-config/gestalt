@@ -16,10 +16,12 @@ import org.github.gestalt.config.utils.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +33,7 @@ public final class PropertyLoader implements ConfigLoader {
 
     private ConfigParser parser;
     private SentenceLexer lexer;
+    private Set<String> customFileSuffixes;
     private final boolean isDefault;
 
     /**
@@ -57,6 +60,7 @@ public final class PropertyLoader implements ConfigLoader {
         this.lexer = lexer;
         this.parser = parser;
         this.isDefault = isDefault;
+        this.customFileSuffixes = new HashSet<>();
     }
 
     @Override
@@ -77,6 +81,10 @@ public final class PropertyLoader implements ConfigLoader {
         if (isDefault && moduleConfig != null && moduleConfig.getConfigParse() != null) {
             parser = moduleConfig.getConfigParse();
         }
+
+        if (moduleConfig != null && moduleConfig.getCustomFileSuffixes() != null) {
+            customFileSuffixes.addAll(moduleConfig.getCustomFileSuffixes());
+        }
     }
 
     @Override
@@ -86,7 +94,7 @@ public final class PropertyLoader implements ConfigLoader {
 
     @Override
     public boolean accepts(String format) {
-        return "properties".equals(format) || "props".equals(format) || SystemPropertiesConfigSource.SYSTEM_PROPERTIES.equals(format);
+        return "properties".equals(format) || "props".equals(format) || SystemPropertiesConfigSource.SYSTEM_PROPERTIES.equals(format) || customFileSuffixes.contains(format);
     }
 
     /**

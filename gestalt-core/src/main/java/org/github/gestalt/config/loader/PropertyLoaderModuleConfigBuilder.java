@@ -3,6 +3,9 @@ package org.github.gestalt.config.loader;
 import org.github.gestalt.config.lexer.SentenceLexer;
 import org.github.gestalt.config.parser.ConfigParser;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Gestalt module config for the Property Loader Module builder.
  *
@@ -11,6 +14,7 @@ import org.github.gestalt.config.parser.ConfigParser;
 public final class PropertyLoaderModuleConfigBuilder {
     private ConfigParser parser;
     private SentenceLexer lexer;
+    private Set<String> customFileSuffixes = new HashSet<>();
 
     private PropertyLoaderModuleConfigBuilder() {
     }
@@ -42,7 +46,29 @@ public final class PropertyLoaderModuleConfigBuilder {
         return this;
     }
 
+    /**
+     * Add a custom file suffix to accept (e.g. "conf").
+     *
+     * @param suffix the custom file suffix
+     * @return the builder
+     */
+    public PropertyLoaderModuleConfigBuilder addCustomFileSuffix(String suffix) {
+        this.customFileSuffixes.add(suffix);
+        return this;
+    }
+
+    /**
+     * Add multiple custom file suffixes to accept.
+     *
+     * @param suffixes the custom file suffixes
+     * @return the builder
+     */
+    public PropertyLoaderModuleConfigBuilder addCustomFileSuffixes(Set<String> suffixes) {
+        this.customFileSuffixes.addAll(suffixes);
+        return this;
+    }
+
     public PropertyLoaderModuleConfig build() {
-        return new PropertyLoaderModuleConfig(parser, lexer);
+        return new PropertyLoaderModuleConfig(parser, lexer, customFileSuffixes);
     }
 }

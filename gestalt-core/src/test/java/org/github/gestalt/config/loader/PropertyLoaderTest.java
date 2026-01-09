@@ -544,4 +544,75 @@ class PropertyLoaderTest {
 
         Assertions.assertFalse(result.getKey("cars").get().getIndex(3).isPresent());
     }
+
+    @Test
+    void acceptsCustomFileSuffixes() {
+        // Test that custom file suffixes can be configured
+        PropertyLoader propsLoader = new PropertyLoader();
+        
+        // By default, conf is not accepted
+        Assertions.assertFalse(propsLoader.accepts("conf"));
+        
+        // Configure custom suffixes via module config
+        Set<String> customSuffixes = new HashSet<>();
+        customSuffixes.add("conf");
+        customSuffixes.add("config");
+        
+        PropertyLoaderModuleConfig moduleConfig = new PropertyLoaderModuleConfig(
+            new MapConfigParser(), 
+            new PathLexer(), 
+            customSuffixes
+        );
+        
+        GestaltConfig gestaltConfig = Mockito.mock(GestaltConfig.class);
+        Mockito.when(gestaltConfig.getModuleConfig(PropertyLoaderModuleConfig.class)).thenReturn(moduleConfig);
+        
+        // Apply the configuration
+        propsLoader.applyConfig(gestaltConfig);
+        
+        // Now conf and config should be accepted
+        Assertions.assertTrue(propsLoader.accepts("conf"));
+        Assertions.assertTrue(propsLoader.accepts("config"));
+        
+        // But other suffixes should not be accepted
+        Assertions.assertFalse(propsLoader.accepts("yaml"));
+        
+        // The default suffixes should still be accepted
+        Assertions.assertTrue(propsLoader.accepts("properties"));
+        Assertions.assertTrue(propsLoader.accepts("props"));
+    }
+
+    @Test
+    void acceptsCustomFileSuffixesWithBuilder() {
+        // Test that custom file suffixes can be configured using the builder
+        PropertyLoader propsLoader = new PropertyLoader();
+        
+        // By default, conf is not accepted
+        Assertions.assertFalse(propsLoader.accepts("conf"));
+        
+        // Configure custom suffixes via builder
+        PropertyLoaderModuleConfig moduleConfig = PropertyLoaderModuleConfigBuilder.builder()
+            .setConfigParser(new MapConfigParser())
+            .setLexer(new PathLexer())
+            .addCustomFileSuffix("conf")
+            .addCustomFileSuffix("config")
+            .build();
+        
+        GestaltConfig gestaltConfig = Mockito.mock(GestaltConfig.class);
+        Mockito.when(gestaltConfig.getModuleConfig(PropertyLoaderModuleConfig.class)).thenReturn(moduleConfig);
+        
+        // Apply the configuration
+        propsLoader.applyConfig(gestaltConfig);
+        
+        // Now conf and config should be accepted
+        Assertions.assertTrue(propsLoader.accepts("conf"));
+        Assertions.assertTrue(propsLoader.accepts("config"));
+        
+        // But other suffixes should not be accepted
+        Assertions.assertFalse(propsLoader.accepts("yaml"));
+        
+        // The default suffixes should still be accepted
+        Assertions.assertTrue(propsLoader.accepts("properties"));
+        Assertions.assertTrue(propsLoader.accepts("props"));
+    }
 }
