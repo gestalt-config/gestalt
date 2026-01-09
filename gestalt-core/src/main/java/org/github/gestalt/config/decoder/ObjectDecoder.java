@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static java.lang.System.Logger.Level.INFO;
+import static java.lang.System.Logger.Level.TRACE;
 import static java.lang.System.Logger.Level.WARNING;
 
 /**
@@ -117,7 +117,7 @@ public final class ObjectDecoder implements Decoder<Object> {
                 boolean foundValue = false;
 
                 if (Modifier.isStatic(modifiers)) {
-                    logger.log(INFO, "Ignoring static field for class: " + klass.getName() + " field " + fieldName);
+                    logger.log(TRACE, "Ignoring static field for class: " + klass.getName() + " field " + fieldName);
                     continue;
                 }
 
