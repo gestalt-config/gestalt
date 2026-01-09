@@ -41,6 +41,18 @@ class PropertyLoaderTest {
     }
 
     @Test
+    void acceptsCustom() {
+        PropertyLoader propsLoader = new PropertyLoader(new PathLexer(), new MapConfigParser(), List.of("myFormat"));
+
+        Assertions.assertTrue(propsLoader.accepts("myFormat"));
+        Assertions.assertFalse(propsLoader.accepts("envVars"));
+        Assertions.assertFalse(propsLoader.accepts("properties"));
+        Assertions.assertFalse(propsLoader.accepts("props"));
+    }
+
+
+
+    @Test
     void loadSourceMockDependenciesAllOk() throws GestaltException {
 
         // setup the mocks
