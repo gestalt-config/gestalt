@@ -8,7 +8,11 @@ import org.github.gestalt.config.entity.ValidationLevel;
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2026.
  */
-public class DotenvErrors {
+final public class DotenvErrors {
+
+    private DotenvErrors() {
+        // private constructor for utility class
+    }
 
     /**
      * While trying to get a configuration, was unable to find a value.
