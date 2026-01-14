@@ -34,6 +34,7 @@ testing {
                 implementation(project(":gestalt-aws"))
                 implementation(project(":gestalt-azure"))
                 implementation(project(":gestalt-core"))
+                implementation(project(":gestalt-dotenv"))
                 implementation(project(":gestalt-git"))
                 implementation(project(":gestalt-google-cloud"))
                 implementation(project(":gestalt-hocon"))
