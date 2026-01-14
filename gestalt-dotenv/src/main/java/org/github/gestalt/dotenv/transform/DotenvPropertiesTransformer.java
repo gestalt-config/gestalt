@@ -17,7 +17,7 @@ import org.github.gestalt.dotenv.errors.DotenvErrors;
  * </p>
  * Has i higher priority than System Properties transformer to allow overriding of system properties.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2026.
  */
 @ConfigPriority(210)
 public final class DotenvPropertiesTransformer implements Transformer {

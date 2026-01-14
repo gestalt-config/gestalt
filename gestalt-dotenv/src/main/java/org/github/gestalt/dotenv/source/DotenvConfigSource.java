@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Config source to load from a .env file using the dotenv library.
  * It is the responsibility of the user to configure the Dotenv instance setup and load the .env file.
  *
- * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2026.
  */
 public class DotenvConfigSource implements ConfigSource {
 

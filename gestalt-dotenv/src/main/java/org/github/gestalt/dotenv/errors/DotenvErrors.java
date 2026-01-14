@@ -3,6 +3,11 @@ package org.github.gestalt.dotenv.errors;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.entity.ValidationLevel;
 
+/**
+ * Errors for Dotenv Module.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2026.
+ */
 public class DotenvErrors {
 
     /**

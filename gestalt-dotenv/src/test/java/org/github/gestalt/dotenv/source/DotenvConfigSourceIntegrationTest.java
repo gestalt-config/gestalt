@@ -41,8 +41,8 @@ class DotenvConfigSourceIntegrationTest {
         assertTrue(keys.contains("ANOTHER"));
 
         // verify values
-        assertTrue(list.stream().anyMatch(p -> p.getFirst().equals("TEST_KEY") && p.getSecond().equals("hello_world")));
-        assertTrue(list.stream().anyMatch(p -> p.getFirst().equals("ANOTHER") && p.getSecond().equals("42")));
+        assertTrue(list.stream().anyMatch(p -> "TEST_KEY".equals(p.getFirst()) && "hello_world".equals(p.getSecond())));
+        assertTrue(list.stream().anyMatch(p -> "ANOTHER".equals(p.getFirst()) && "42".equals(p.getSecond())));
     }
 }
 

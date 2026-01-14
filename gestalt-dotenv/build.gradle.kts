@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    implementation(libs.dotenv)
+    api(libs.dotenv)
 }
 
 tasks.jar {

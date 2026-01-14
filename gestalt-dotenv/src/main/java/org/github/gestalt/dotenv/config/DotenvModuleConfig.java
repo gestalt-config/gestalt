@@ -5,6 +5,11 @@ import org.github.gestalt.config.entity.GestaltModuleConfig;
 
 import java.util.Objects;
 
+/**
+ * Dotenv Module Config.
+ *
+ * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2026.
+ */
 public class DotenvModuleConfig implements GestaltModuleConfig {
     private final Dotenv dotenv;
 

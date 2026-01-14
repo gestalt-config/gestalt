@@ -2,13 +2,11 @@ package org.github.gestalt.dotenv.source;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvEntry;
-import org.github.gestalt.config.loader.PropertyLoader;
 import org.github.gestalt.config.source.EnvironmentConfigSource;
 import org.github.gestalt.config.utils.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -76,8 +74,8 @@ class DotenvConfigSourceTest {
         assertNotNull(list);
         assertEquals(2, list.size());
         // Ensure both expected pairs are present
-        assertTrue(list.stream().anyMatch(p -> p.getFirst().equals("KEY1") && p.getSecond().equals("VALUE1")));
-        assertTrue(list.stream().anyMatch(p -> p.getFirst().equals("KEY2") && p.getSecond().equals("VALUE2")));
+        assertTrue(list.stream().anyMatch(p -> "KEY1".equals(p.getFirst()) && "VALUE1".equals(p.getSecond())));
+        assertTrue(list.stream().anyMatch(p -> "KEY2".equals(p.getFirst()) && "VALUE2".equals(p.getSecond())));
     }
 
     @Test
