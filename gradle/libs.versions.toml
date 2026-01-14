@@ -27,6 +27,8 @@ vault = "6.2.1"
 # @pin breaking changes last version to support jdk 11
 jgit = "6.10.0.202406032230-r"
 eddsa = "0.3.0"
+# dot env support
+dotenv = "3.2.0"
 # metrics
 micrometer = "1.16.1"
 # validation
@@ -106,6 +108,8 @@ google-secret = { module = "com.google.cloud:google-cloud-secretmanager" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jgit-apache-SSH = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit" }
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
+# dot env support
+dotenv = { module = "io.github.cdimascio:dotenv-java", version.ref = "dotenv" }
 # metrics
 micrometer = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
 # resultProcessors

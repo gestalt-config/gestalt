@@ -11,6 +11,7 @@ import com.azure.storage.common.StorageSharedKeyCredential;
 import com.github.gestalt.config.validation.hibernate.builder.HibernateModuleBuilder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.github.jopenlibs.vault.Vault;
 import io.github.jopenlibs.vault.VaultConfig;
 import io.github.jopenlibs.vault.VaultException;
@@ -59,6 +60,9 @@ import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.SystemWrapper;
 import org.github.gestalt.config.vault.config.VaultBuilder;
 import org.github.gestalt.config.vault.config.VaultModuleConfig;
+import org.github.gestalt.dotenv.config.DotenvModuleConfig;
+import org.github.gestalt.dotenv.source.DotenvConfigSource;
+import org.github.gestalt.dotenv.source.DotenvSourceBuilder;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.testcontainers.containers.GenericContainer;
@@ -2352,6 +2356,36 @@ public class GestaltSample {
         assertEquals("a", gestalt.getConfig("a", String.class));
         assertEquals("b changed", gestalt.getConfig("b", String.class));
         assertEquals("c", gestalt.getConfig("c", String.class));
+    }
+
+    @Test
+    void testDotenvSource() throws GestaltException, IOException {
+        Dotenv dotenv = Dotenv.configure()
+            .directory("src/test/resources")
+            .filename(".env")
+            .load();
+
+        System.setProperty("FOO", "disco");
+
+        Map<String, String> configs = new HashMap<>();
+        configs.put("foo", "fighters");
+        configs.put("title", "singer");
+        configs.put("test1", "${FOO} ${TITLE} ${sys:FOO}");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .addSource(DotenvSourceBuilder.builder().setDotenv(dotenv).setFilter(Dotenv.Filter.DECLARED_IN_ENV_FILE).build())
+            .addModuleConfig(new DotenvModuleConfig(dotenv))
+            .build();
+
+        gestalt.loadConfigs();
+
+        assertEquals("world", gestalt.getConfig("hello", String.class));
+        assertEquals("bar", gestalt.getConfig("foo", String.class));
+        assertEquals("bar singer disco", gestalt.getConfig("test1", String.class));
+        assertEquals(10, gestalt.getConfig("number", Integer.class));
+
+        System.clearProperty("FOO");
     }
 
     public enum Role {

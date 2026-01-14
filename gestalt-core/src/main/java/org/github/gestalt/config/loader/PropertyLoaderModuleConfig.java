@@ -53,7 +53,7 @@ public class PropertyLoaderModuleConfig implements GestaltModuleConfig {
     }
 
     /**
-     * Get the list of formats that the property loader will accept
+     * Get the list of formats that the property loader will accept.
      *
      * @return the list of formats that the property loader will accept
      */

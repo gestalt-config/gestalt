@@ -72,7 +72,8 @@ public final class PropertyLoaderModuleConfigBuilder {
     }
 
     /**
-     * Build the PropertyLoaderModuleConfig
+     * Build the PropertyLoaderModuleConfig.
+     *
      * @return the PropertyLoaderModuleConfig
      */
     public PropertyLoaderModuleConfig build() {

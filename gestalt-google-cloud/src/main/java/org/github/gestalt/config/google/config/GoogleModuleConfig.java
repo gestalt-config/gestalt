@@ -57,6 +57,7 @@ public final class GoogleModuleConfig implements GestaltModuleConfig {
     public boolean hasStorage() {
         return storage != null;
     }
+
     /**
      * Get the storage client.
      *
