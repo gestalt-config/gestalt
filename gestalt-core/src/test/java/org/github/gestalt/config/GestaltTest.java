@@ -2411,6 +2411,26 @@ class GestaltTest {
     }
 
 
+    @Test
+    public void testRootMapStringObjectContainsScalarValues() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "1");
+        configs.put("b.c", "2");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Map<String, Object> root = gestalt.getConfig("", new TypeCapture<>() {});
+        Assertions.assertEquals("1", root.get("a"));
+
+        Map<String, Object> b = gestalt.getConfig("b", new TypeCapture<>() {});
+        Assertions.assertEquals("2", b.get("c"));
+    }
+
+
     public static class TestConfigNodeProcessor implements ConfigNodeProcessor {
         private final String add;
 
