@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -14,6 +15,8 @@ import org.github.gestalt.config.utils.StringUtils;
  */
 public final class IntegerDecoder extends LeafDecoder<Integer> {
 
+    private boolean treatEmptyStringsAsNull = false;
+
     @Override
     public Priority priority() {
         return Priority.MEDIUM;
@@ -25,27 +28,34 @@ public final class IntegerDecoder extends LeafDecoder<Integer> {
     }
 
     @Override
+    public void applyConfig(GestaltConfig config) {
+        this.treatEmptyStringsAsNull = config.isTreatEmptyStringsAsNull();
+    }
+
+    @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return Integer.class.isAssignableFrom(type.getRawType()) || int.class.isAssignableFrom(type.getRawType());
     }
 
     @Override
     protected GResultOf<Integer> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
-        GResultOf<Integer> results;
-
         String value = node.getValue().orElse("");
+
+        // Check if empty string should be treated as null
+        if (value.isEmpty() && treatEmptyStringsAsNull) {
+            return GResultOf.result(null);
+        }
+
         if (StringUtils.isInteger(value)) {
             try {
                 Integer intVal = Integer.parseInt(value);
-                results = GResultOf.result(intVal);
+                return GResultOf.result(intVal);
             } catch (NumberFormatException e) {
-                results = GResultOf.errors(
+                return GResultOf.errors(
                     new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext));
             }
         } else {
-            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
+            return GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
-
-        return results;
     }
 }

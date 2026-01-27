@@ -110,6 +110,7 @@ public class GestaltBuilder {
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatMissingDiscretionaryValuesAsErrors = null;
+    private boolean treatEmptyStringsAsNull = false;
     // If we should enable observations
     private Boolean observationsEnabled = null;
     // If we should enable Validation
@@ -1153,6 +1154,29 @@ public class GestaltBuilder {
     }
 
     /**
+     * Treat empty strings as null during decoding.
+     *
+     * <p>If this is true, empty strings will be treated as null values, allowing defaults to be used.
+     * If this is false, empty strings will be treated as their normal string value.
+     *
+     * @param treatEmptyStringsAsNull treat empty strings as null.
+     * @return GestaltBuilder builder
+     */
+    public GestaltBuilder setTreatEmptyStringsAsNull(boolean treatEmptyStringsAsNull) {
+        this.treatEmptyStringsAsNull = treatEmptyStringsAsNull;
+        return this;
+    }
+
+    /**
+     * Get treat empty strings as null during decoding.
+     *
+     * @return treatEmptyStringsAsNull the settings for treating empty strings as null.
+     */
+    public boolean isTreatEmptyStringsAsNull() {
+        return treatEmptyStringsAsNull;
+    }
+
+    /**
      * Treat null values in classes after decoding as errors.
      *
      * @param treatNullValuesInClassAsErrors treat null values in classes after decoding as errors
@@ -1827,6 +1851,9 @@ public class GestaltBuilder {
 
         newConfig.setTreatMissingDiscretionaryValuesAsErrors(Objects.requireNonNullElseGet(treatMissingDiscretionaryValuesAsErrors,
             () -> gestaltConfig.isTreatMissingDiscretionaryValuesAsErrors()));
+
+        newConfig.setTreatEmptyStringsAsNull(Objects.requireNonNullElseGet(treatEmptyStringsAsNull,
+            () -> gestaltConfig.isTreatEmptyStringsAsNull()));
 
         newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(
             Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,

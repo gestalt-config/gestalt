@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -111,6 +112,21 @@ class DoubleDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
                 "attempting to decode Double",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        DoubleDecoder decoder = new DoubleDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringsAsNull(true);
+        decoder.applyConfig(config);
+
+        GResultOf<Double> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Double.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertNull(result.results());
     }
 }
 

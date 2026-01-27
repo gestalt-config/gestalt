@@ -67,6 +67,9 @@ public class GestaltConfig {
     // if observations should be enabled
     private boolean observationsEnabled = false;
 
+    // Treat empty strings as null
+    private boolean treatEmptyStringsAsNull = false;
+
     // The sentence lexer used for gestalt.
     private SentenceLexer sentenceLexer = new PathLexer();
 
@@ -497,6 +500,24 @@ public class GestaltConfig {
      */
     public void setObservationsEnabled(boolean observationsEnabled) {
         this.observationsEnabled = observationsEnabled;
+    }
+
+    /**
+     * Get if empty strings should be treated as null.
+     *
+     * @return if empty strings should be treated as null
+     */
+    public boolean isTreatEmptyStringsAsNull() {
+        return treatEmptyStringsAsNull;
+    }
+
+    /**
+     * Set if empty strings should be treated as null.
+     *
+     * @param treatEmptyStringsAsNull if empty strings should be treated as null
+     */
+    public void setTreatEmptyStringsAsNull(boolean treatEmptyStringsAsNull) {
+        this.treatEmptyStringsAsNull = treatEmptyStringsAsNull;
     }
 
     /**
