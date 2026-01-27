@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -103,5 +104,20 @@ class IntegerDecoderTest {
         Assertions.assertEquals("Unable to decode a number on path: db.port, from node: " +
                 "LeafNode{value='12345678901234567890123456789012345678901234567890123456789'} attempting to decode Integer",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        IntegerDecoder decoder = new IntegerDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringsAsNull(true);
+        decoder.applyConfig(config);
+
+        GResultOf<Integer> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Integer.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertNull(result.results());
     }
 }

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -15,6 +16,8 @@ import java.nio.charset.Charset;
  */
 public final class ByteDecoder extends LeafDecoder<Byte> {
 
+    private boolean treatEmptyStringsAsNull = false;
+
     @Override
     public Priority priority() {
         return Priority.MEDIUM;
@@ -26,24 +29,31 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
     }
 
     @Override
+    public void applyConfig(GestaltConfig config) {
+        this.treatEmptyStringsAsNull = config.isTreatEmptyStringsAsNull();
+    }
+
+    @Override
     public boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type) {
         return Byte.class.isAssignableFrom(type.getRawType()) || byte.class.isAssignableFrom(type.getRawType());
     }
 
     @Override
     protected GResultOf<Byte> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
-        GResultOf<Byte> results;
-
         String value = node.getValue().orElse("");
-        if (value.length() == 1) {
-            results = GResultOf.result(value.getBytes(Charset.defaultCharset())[0]);
-        } else if (value.length() > 1) {
-            results = GResultOf.resultOf(value.getBytes(Charset.defaultCharset())[0],
-                new ValidationError.DecodingByteTooLong(path, node, decoderContext));
-        } else {
-            results = GResultOf.errors(new ValidationError.DecodingEmptyByte(path, node, decoderContext));
+
+        // Check if empty string should be treated as null
+        if (value.isEmpty() && treatEmptyStringsAsNull) {
+            return GResultOf.result(null);
         }
 
-        return results;
+        if (value.length() == 1) {
+            return GResultOf.result(value.getBytes(Charset.defaultCharset())[0]);
+        } else if (value.length() > 1) {
+            return GResultOf.resultOf(value.getBytes(Charset.defaultCharset())[0],
+                new ValidationError.DecodingByteTooLong(path, node, decoderContext));
+        } else {
+            return GResultOf.errors(new ValidationError.DecodingEmptyByte(path, node, decoderContext));
+        }
     }
 }

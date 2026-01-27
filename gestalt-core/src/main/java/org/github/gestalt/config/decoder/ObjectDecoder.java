@@ -86,11 +86,26 @@ public final class ObjectDecoder implements Decoder<Object> {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public GResultOf<Object> decode(String path, Tags tags, ConfigNode node, TypeCapture<?> type, DecoderContext decoderContext) {
+        // If the node is a LeafNode, return its raw value directly.
+        // This allows decoding into Map<String, Object> or other generic/object-based types
+        // where values may legitimately be primitive or scalar nodes rather than nested maps.
+        // Without this, Object-typed values would incorrectly require a MapNode and fail decoding.
+        if (node instanceof LeafNode) {
+            return GResultOf.resultOf(node.getValue().isPresent() ? node.getValue().get() : null, Collections.emptyList());
+        }
+
         if (!(node instanceof MapNode)) {
             List<TypeCapture<?>> genericInterfaces = type.getParameterTypes();
             return GResultOf.errors(new ValidationError.DecodingExpectedMapNodeType(path, genericInterfaces, node));
         }
         Class<?> klass = type.getRawType();
+
+        // Special case: when decoding to Object type with a MapNode, recursively decode as Map<String, Object>
+        // This handles cases like Map<String, Object> where nested map nodes should become maps, not empty Object instances
+        if (klass == Object.class) {
+            return (GResultOf<Object>) (GResultOf<?>) decoderContext.getDecoderService()
+                .decodeNode(path, tags, node, new TypeCapture<Map<String, Object>>() {}, decoderContext);
+        }
 
         DecoderService decoderSrv = decoderContext.getDecoderService();
 

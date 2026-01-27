@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
@@ -16,6 +17,8 @@ import java.util.List;
  */
 public final class CharDecoder extends LeafDecoder<Character> {
 
+    private boolean treatEmptyStringsAsNull = false;
+
     @Override
     public Priority priority() {
         return Priority.MEDIUM;
@@ -24,6 +27,11 @@ public final class CharDecoder extends LeafDecoder<Character> {
     @Override
     public String name() {
         return "Character";
+    }
+
+    @Override
+    public void applyConfig(GestaltConfig config) {
+        this.treatEmptyStringsAsNull = config.isTreatEmptyStringsAsNull();
     }
 
     @Override
@@ -37,6 +45,12 @@ public final class CharDecoder extends LeafDecoder<Character> {
         List<ValidationError> error = new ArrayList<>();
 
         String value = node.getValue().orElse("");
+
+        // Check if empty string should be treated as null
+        if (value.isEmpty() && treatEmptyStringsAsNull) {
+            return GResultOf.result(null);
+        }
+
         if (!value.isEmpty()) {
             results = value.charAt(0);
         }
@@ -44,7 +58,6 @@ public final class CharDecoder extends LeafDecoder<Character> {
         if (value.length() != 1) {
             error.add(new ValidationError.DecodingCharWrongSize(path, node, decoderContext));
         }
-
 
         return GResultOf.resultOf(results, error);
     }
