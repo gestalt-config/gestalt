@@ -2511,4 +2511,48 @@ class GestaltTest {
             return GResultOf.errors(new ValidationError.ArrayInvalidIndex(1, "should not happen"));
         }
     }
+
+    public static class DefaultsPreservedConfig {
+        public boolean boolvalue = false;
+        public int intvalue;
+        public Nested nested = new Nested();
+
+        public static class Nested {
+            public int d = 7;
+        }
+    }
+
+    @Test
+    public void testEmptyOrBlankValuesDoNotOverrideDefaults() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("boolvalue", "");   // Empty value should not override default false
+        configs.put("intvalue", "42");  // Normal value, overrides default
+        configs.put("nested.d", "");    // Empty value should not override default 7
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatEmptyStringsAsNull(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        // Raw Map view
+        Map<String, Object> root = gestalt.getConfig("", new TypeCapture<Map<String, Object>>() {});
+        Assertions.assertEquals("", root.get("boolvalue"));
+        Assertions.assertEquals("42", root.get("intvalue"));
+
+        Map<String, Object> nested = (Map<String, Object>) root.get("nested");
+        Assertions.assertNotNull(nested);
+        Assertions.assertEquals("", nested.get("d"));
+
+        // Typed config view
+        DefaultsPreservedConfig config = gestalt.getConfig("", DefaultsPreservedConfig.class);
+        Assertions.assertAll(
+            () -> Assertions.assertFalse(config.boolvalue),  // Default value preserved
+            () -> Assertions.assertEquals(42, config.intvalue),
+            () -> Assertions.assertEquals(7, config.nested.d) // Default value preserved
+        );
+    }
+
 }

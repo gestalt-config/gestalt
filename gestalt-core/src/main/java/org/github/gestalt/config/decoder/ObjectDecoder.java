@@ -100,6 +100,13 @@ public final class ObjectDecoder implements Decoder<Object> {
         }
         Class<?> klass = type.getRawType();
 
+        // Special case: when decoding to Object type with a MapNode, recursively decode as Map<String, Object>
+        // This handles cases like Map<String, Object> where nested map nodes should become maps, not empty Object instances
+        if (klass == Object.class) {
+            return (GResultOf<Object>) (GResultOf<?>) decoderContext.getDecoderService()
+                .decodeNode(path, tags, node, new TypeCapture<Map<String, Object>>() {}, decoderContext);
+        }
+
         DecoderService decoderSrv = decoderContext.getDecoderService();
 
         try {
