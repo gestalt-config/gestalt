@@ -67,6 +67,9 @@ public class GestaltConfig {
     // if observations should be enabled
     private boolean observationsEnabled = false;
 
+    // Treat empty strings as absent
+    private boolean treatEmptyStringAsAbsent = false;
+
     // The sentence lexer used for gestalt.
     private SentenceLexer sentenceLexer = new PathLexer();
 
@@ -497,6 +500,46 @@ public class GestaltConfig {
      */
     public void setObservationsEnabled(boolean observationsEnabled) {
         this.observationsEnabled = observationsEnabled;
+    }
+
+    /**
+     * Returns whether empty string values should be treated as "absent" when binding
+     * configuration to POJOs, <strong>only if the configuration key exists</strong>.
+     *
+     * <p>When this flag is {@code true} and the configuration contains a key whose value
+     * is an empty string:
+     * <ul>
+     *   <li>For primitive and regular object fields, empty strings will <strong>not override</strong>
+     *       the default field value.</li>
+     *   <li>For {@link java.util.Optional} fields, empty strings will be converted to {@link java.util.Optional#empty()}.</li>
+     *   <li>For {@link java.util.Map} or {@link java.util.List} fields, empty strings will result in
+     *       an empty collection or cleared map.</li>
+     * </ul>
+     *
+     * <p>If the key is <strong>absent</strong> in the configuration, the field retains
+     * its default value, and no conversion or error is performed.
+     *
+     * <p>Note: empty strings in raw {@link java.util.Map} or other untyped views are
+     * <strong>not affected</strong> and will retain the original empty string value.
+     *
+     * @return {@code true} if empty strings should be treated as absent during POJO binding when the key exists; {@code false} otherwise
+     */
+    public boolean isTreatEmptyStringAsAbsent() {
+        return treatEmptyStringAsAbsent;
+    }
+
+    /**
+     * Sets whether empty string values should be treated as "absent" when binding
+     * configuration to POJOs, <strong>only if the configuration key exists</strong>.
+     *
+     * <p>See {@link #isTreatEmptyStringAsAbsent()} for detailed behavior depending on
+     * field type.
+     *
+     * @param treatEmptyStringAsAbsent {@code true} to treat empty strings as absent in POJO binding
+     *                                 when the key exists; {@code false} to treat them as literal empty strings
+     */
+    public void setTreatEmptyStringAsAbsent(boolean treatEmptyStringAsAbsent) {
+        this.treatEmptyStringAsAbsent = treatEmptyStringAsAbsent;
     }
 
     /**

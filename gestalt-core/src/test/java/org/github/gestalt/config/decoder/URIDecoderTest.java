@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -30,7 +31,7 @@ class URIDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
-        decoderService = new DecoderRegistry(Collections.singletonList(new UUIDDecoder()), configNodeService, lexer,
+        decoderService = new DecoderRegistry(Collections.singletonList(new URIDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -92,5 +93,20 @@ class URIDecoderTest {
         Assertions.assertEquals("Unable to decode a URI on path: db.port, from node: LeafNode{value='http://www.google.com[]'}, " +
                 "with reason: Illegal character in hostname at index 21: http://www.google.com[]",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        URIDecoder decoder = new URIDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<URI> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(URI.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
+        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertNull(result.results());
     }
 }

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -111,5 +112,19 @@ class StringAndLeafDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Expected a leaf on path: db.user, received node type: map, attempting to decode String",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        StringDecoder decoder = new StringDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<String> result = decoder.decode("db.user", Tags.of(), new LeafNode(""),
+            TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
+        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertNull(result.results());
     }
 }

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -103,5 +104,20 @@ class ByteDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Expected a Byte on path: db.port, decoding node: LeafNode{value=''} received an empty node",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        ByteDecoder decoder = new ByteDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
+        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertNull(result.results());
     }
 }

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -101,5 +102,20 @@ class CharDecoderTest {
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals("Expected a char on path: db.port, decoding node: LeafNode{value=''} received the wrong size",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        CharDecoder decoder = new CharDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<Character> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Character.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
+        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertNull(result.results());
     }
 }

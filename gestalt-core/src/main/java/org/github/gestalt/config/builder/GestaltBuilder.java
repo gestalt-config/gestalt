@@ -110,6 +110,7 @@ public class GestaltBuilder {
     private Boolean treatMissingArrayIndexAsError = null;
     private Boolean treatMissingValuesAsErrors = null;
     private Boolean treatMissingDiscretionaryValuesAsErrors = null;
+    private boolean treatEmptyStringAsAbsent = false;
     // If we should enable observations
     private Boolean observationsEnabled = null;
     // If we should enable Validation
@@ -1153,6 +1154,48 @@ public class GestaltBuilder {
     }
 
     /**
+     * Returns whether empty string values should be treated as "absent" when binding
+     * configuration to POJOs, <strong>only if the configuration key exists</strong>.
+     *
+     * <p>When this flag is {@code true} and the configuration contains a key whose value
+     * is an empty string:
+     * <ul>
+     *   <li>For primitive and regular object fields, empty strings will <strong>not override</strong>
+     *       the default field value.</li>
+     *   <li>For {@link java.util.Optional} fields, empty strings will be converted to {@link java.util.Optional#empty()}.</li>
+     *   <li>For {@link java.util.Map} or {@link java.util.List} fields, empty strings will result in
+     *       an empty collection or cleared map.</li>
+     * </ul>
+     *
+     * <p>If the key is <strong>absent</strong> in the configuration, the field retains
+     * its default value, and no conversion or error is performed.
+     *
+     * <p>Note: empty strings in raw {@link java.util.Map} or other untyped views are
+     * <strong>not affected</strong> and will retain the original empty string value.
+     *
+     * @return GestaltBuilder the builder
+     */
+    public boolean isTreatEmptyStringAsAbsent() {
+        return treatEmptyStringAsAbsent;
+    }
+
+    /**
+     * Sets whether empty string values should be treated as "absent" when binding
+     * configuration to POJOs, <strong>only if the configuration key exists</strong>.
+     *
+     * <p>See {@link #isTreatEmptyStringAsAbsent()} for detailed behavior depending on
+     * field type.
+     *
+     * @param treatEmptyStringAsAbsent {@code true} to treat empty strings as absent in POJO binding
+     *                                 when the key exists; {@code false} to treat them as literal empty strings
+     * @return GestaltBuilder the builder
+     */
+    public GestaltBuilder setTreatEmptyStringAsAbsent(boolean treatEmptyStringAsAbsent) {
+        this.treatEmptyStringAsAbsent = treatEmptyStringAsAbsent;
+        return this;
+    }
+
+    /**
      * Treat null values in classes after decoding as errors.
      *
      * @param treatNullValuesInClassAsErrors treat null values in classes after decoding as errors
@@ -1827,6 +1870,9 @@ public class GestaltBuilder {
 
         newConfig.setTreatMissingDiscretionaryValuesAsErrors(Objects.requireNonNullElseGet(treatMissingDiscretionaryValuesAsErrors,
             () -> gestaltConfig.isTreatMissingDiscretionaryValuesAsErrors()));
+
+        newConfig.setTreatEmptyStringAsAbsent(Objects.requireNonNullElseGet(treatEmptyStringAsAbsent,
+            () -> gestaltConfig.isTreatEmptyStringAsAbsent()));
 
         newConfig.setLogLevelForMissingValuesWhenDefaultOrOptional(
             Objects.requireNonNullElseGet(logLevelForMissingValuesWhenDefaultOrOptional,

@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -103,5 +104,20 @@ class LongDecoderTest {
         Assertions.assertEquals("Unable to decode a number on path: db.port, from node: " +
                 "LeafNode{value='12345678901234567890123456789012345678901234567890123456'} attempting to decode Long",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        LongDecoder decoder = new LongDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<Long> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Long.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
+        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertNull(result.results());
     }
 }

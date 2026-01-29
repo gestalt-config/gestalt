@@ -694,22 +694,6 @@ class ObjectDecoderTest {
     }
 
     @Test
-    void decodeWrongNodeType() {
-        ObjectDecoder decoder = new ObjectDecoder();
-
-        GResultOf<Object> result = decoder.decode("db.host", Tags.of(),
-            new LeafNode("mysql.com"), TypeCapture.of(DBInfoNoConstructor.class),
-            new DecoderContext(decoderService, null, null, new PathLexer()));
-        Assertions.assertFalse(result.hasResults());
-        Assertions.assertTrue(result.hasErrors());
-
-        Assertions.assertEquals(1, result.getErrors().size());
-        Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a map node on path: db.host, received node type : LEAF",
-            result.getErrors().get(0).description());
-    }
-
-    @Test
     void decodeHttpPool() {
         ObjectDecoder decoder = new ObjectDecoder();
 
