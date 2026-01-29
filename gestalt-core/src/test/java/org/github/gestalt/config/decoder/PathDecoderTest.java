@@ -112,8 +112,8 @@ class PathDecoderTest {
         GestaltConfig config = new GestaltConfig();
         config.setTreatEmptyStringAsAbsent(true);
 
-        GResultOf<java.nio.file.Path> result = decoder.decode("db.path", Tags.of(), new LeafNode(""),
-            TypeCapture.of(java.nio.file.Path.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+        GResultOf<Path> result = decoder.decode("db.path", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Path.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
 
         Assertions.assertFalse(result.hasResults());
         Assertions.assertEquals(0, result.getErrors().size());
