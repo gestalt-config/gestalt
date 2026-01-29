@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
     group = "com.github.gestalt-config"
-    version = "0.37.0"
+    version = "0.37.1"
 }
 
 
