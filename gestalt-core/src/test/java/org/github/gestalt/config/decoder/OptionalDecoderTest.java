@@ -10,6 +10,7 @@ import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.test.classes.DBInfoOptional;
 import org.github.gestalt.config.test.classes.DBInfoOptional1;
+import org.github.gestalt.config.test.classes.DBInfoOptionalWithDefault;
 import org.github.gestalt.config.utils.GResultOf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -194,5 +195,52 @@ class OptionalDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='12s4'} " +
                 "attempting to decode Integer",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void decodeObjectOptionalWithDefault() {
+        OptionalDecoder decoder = new OptionalDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<Optional<?>> result = decoder.decode(
+            "db",
+            Tags.of(),
+            new MapNode(configs),
+            new TypeCapture<Optional<DBInfoOptionalWithDefault>>() {},
+            new DecoderContext(decoderService, null, null, new PathLexer())
+        );
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(
+            ValidationLevel.MISSING_OPTIONAL_VALUE,
+            result.getErrors().get(0).level()
+        );
+
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoOptionalWithDefault",
+            result.getErrors().get(0).description());
+
+        Assertions.assertEquals(
+            ValidationLevel.MISSING_OPTIONAL_VALUE,
+            result.getErrors().get(1).level()
+        );
+
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.timeoutSeconds, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoOptionalWithDefault",
+            result.getErrors().get(1).description());
+
+        Optional<DBInfoOptionalWithDefault> decoded = (Optional<DBInfoOptionalWithDefault>) result.results();
+
+        Assertions.assertFalse(decoded.get().getPort().isPresent());
+        Assertions.assertEquals("pass", decoded.get().getPassword().get());
+        Assertions.assertEquals("mysql.com", decoded.get().getUri().get());
+
+        // ❌ Expected default value, but actual value is Optional.empty()
+        Assertions.assertEquals(30, decoded.get().getTimeoutSeconds().get());
     }
 }

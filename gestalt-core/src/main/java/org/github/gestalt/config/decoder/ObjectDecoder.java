@@ -165,20 +165,6 @@ public final class ObjectDecoder implements Decoder<Object> {
                             setField(obj, field, klass, defaultGResultOf.results());
                             errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), decoderContext));
                         }
-                    } else {
-                        // even though we have default value in the annotation lets try to decode the field,
-                        // as it may be an optional that can support null values.
-                        GResultOf<?> decodedResults = decoderSrv
-                            .decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
-
-                        // if the decoder supported nullable types (such as optional) set the field to the value.
-                        if (decodedResults.hasResults()) {
-                            //only add the errors if we actually found a result, otherwise we dont care.
-                            errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
-                            errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
-                            foundValue = true;
-                            setField(obj, field, klass, decodedResults.results());
-                        }
                     }
                 }
 
@@ -189,24 +175,39 @@ public final class ObjectDecoder implements Decoder<Object> {
                     if (initialized) {
                         errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
                     } else {
-                        // first check the field to see if it is annotated with nullable.
-                        var fieldAnnotations = field.getAnnotations();
-                        boolean isNullable = isNullableAnnotation(fieldAnnotations);
 
-                        if (!isNullable) {
-                            // if the field isnt annotated with nullable, check if the get method is annotated with nullable.
-                            String methodName = getMethodName(field);
-                            var method = getMethod(klass, methodName).or(() -> getMethod(klass, fieldName));
-                            if (method.isPresent()) {
-                                var methodAnnotations = method.get().getAnnotations();
-                                isNullable = isNullableAnnotation(methodAnnotations);
-                            }
-                        }
+                        // even though we have default value in the annotation lets try to decode the field,
+                        // as it may be an optional that can support null values.
+                        GResultOf<?> decodedResults = decoderSrv
+                            .decodeNode(nextPath, tags, configNode.results(), fieldType, decoderContext);
 
-                        if (!isNullable) {
-                            errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "object decoding"));
-                        } else {
+                        // if the decoder supported nullable types (such as optional) set the field to the value.
+                        if (decodedResults.hasResults()) {
+                            //only add the errors if we actually found a result, otherwise we dont care.
+                            errors.addAll(decodedResults.getErrorsNotLevel(ValidationLevel.MISSING_OPTIONAL_VALUE));
                             errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
+                            setField(obj, field, klass, decodedResults.results());
+                        } else {
+
+                            // first check the field to see if it is annotated with nullable.
+                            var fieldAnnotations = field.getAnnotations();
+                            boolean isNullable = isNullableAnnotation(fieldAnnotations);
+
+                            if (!isNullable) {
+                                // if the field isnt annotated with nullable, check if the get method is annotated with nullable.
+                                String methodName = getMethodName(field);
+                                var method = getMethod(klass, methodName).or(() -> getMethod(klass, fieldName));
+                                if (method.isPresent()) {
+                                    var methodAnnotations = method.get().getAnnotations();
+                                    isNullable = isNullableAnnotation(methodAnnotations);
+                                }
+                            }
+
+                            if (!isNullable) {
+                                errors.add(new ValidationError.NoResultsFoundForNode(nextPath, klass.getSimpleName(), "object decoding"));
+                            } else {
+                                errors.add(new OptionalMissingValueDecoding(nextPath, node, name(), klass.getSimpleName(), decoderContext));
+                            }
                         }
                     }
                 }
