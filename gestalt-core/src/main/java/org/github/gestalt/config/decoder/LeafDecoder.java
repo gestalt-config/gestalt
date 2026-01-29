@@ -35,7 +35,8 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
                 // This allows POJO fields to retain their default values when the configuration contains an empty string
                 // where an empty string would otherwise override the default value.
                 // Without this, fields would always be set to empty string values instead of keeping their defaults.
-                if (node.getValue().map(String::isEmpty).orElse(false) && decoderContext.getGestaltConfig() != null
+                if (((LeafNode) node).getValueInternal().map(String::isEmpty).orElse(false)
+                    && decoderContext.getGestaltConfig() != null
                     && decoderContext.getGestaltConfig().isTreatEmptyStringAsAbsent()) {
                     results = GResultOf.resultOf(null, Collections.emptyList());
                 } else {

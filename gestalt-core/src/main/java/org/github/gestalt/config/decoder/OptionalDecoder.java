@@ -46,15 +46,6 @@ public final class OptionalDecoder implements Decoder<Optional<?>> {
                 return GResultOf.resultOf(Optional.ofNullable(optionalValue.results()), errors);
             }
         } else {
-            // When the node is null and treatEmptyStringAsAbsent is enabled, return error to signal missing value.
-            // This allows Optional fields to retain their default values when the configuration key is missing
-            // where returning Optional.empty() would override the default Optional value.
-            // Without this, Optional fields would always be set to Optional.empty() instead of keeping their defaults.
-            if (decoderContext.getGestaltConfig() != null
-                && decoderContext.getGestaltConfig().isTreatEmptyStringAsAbsent()) {
-                return GResultOf.errors(
-                    new ValidationError.OptionalMissingValueDecoding(path, name(), decoderContext));
-            }
             return GResultOf.resultOf(Optional.empty(),
                 new ValidationError.OptionalMissingValueDecoding(path, name(), decoderContext));
         }
