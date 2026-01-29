@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
 import org.github.gestalt.config.lexer.SentenceLexer;
@@ -101,5 +102,19 @@ class EnumDecoderTest {
         Assertions.assertEquals("Exception on Path: db.port, decoding enum: java.lang.String " +
                 "could not be created with value pink exception was: java.lang.String.name()",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        EnumDecoder decoder = new EnumDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<Colours> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Colours.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertEquals(0, result.getErrors().size());
+        Assertions.assertNull(result.results());
     }
 }

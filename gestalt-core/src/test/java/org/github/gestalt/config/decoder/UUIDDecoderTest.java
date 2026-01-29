@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -90,5 +91,19 @@ class UUIDDecoderTest {
         Assertions.assertEquals("Unable to decode a UUID on path: db.port, from node: LeafNode{value='asdfasdfsdf'}, with reason: " +
                 "Invalid UUID string: asdfasdfsdf",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        UUIDDecoder decoder = new UUIDDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<UUID> result = decoder.decode("db.id", Tags.of(), new LeafNode(""),
+            TypeCapture.of(UUID.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertEquals(0, result.getErrors().size());
+        Assertions.assertNull(result.results());
     }
 }

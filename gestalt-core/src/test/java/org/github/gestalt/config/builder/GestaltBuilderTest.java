@@ -63,6 +63,8 @@ import java.util.*;
 import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 class GestaltBuilderTest {
@@ -323,6 +325,16 @@ class GestaltBuilderTest {
                     " - level: MISSING_VALUE, message: Unable to find node matching path: admin[1], for class: ArrayToken, " +
                     "during navigating to next node");
         }
+    }
+
+    @Test
+    public void testTreatEmptyStringsAsAbsent() {
+        GestaltBuilder builder = new GestaltBuilder();
+        // Default is false
+        assertFalse(builder.isTreatEmptyStringAsAbsent());
+
+        builder.setTreatEmptyStringAsAbsent(true);
+        assertTrue(builder.isTreatEmptyStringAsAbsent());
     }
 
     @Test

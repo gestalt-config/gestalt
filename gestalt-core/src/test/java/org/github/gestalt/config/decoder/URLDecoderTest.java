@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
@@ -32,7 +32,7 @@ class URLDecoderTest {
     void setup() throws GestaltConfigurationException {
         configNodeService = Mockito.mock(ConfigNodeService.class);
         lexer = Mockito.mock(SentenceLexer.class);
-        decoderService = new DecoderRegistry(Collections.singletonList(new UUIDDecoder()), configNodeService, lexer,
+        decoderService = new DecoderRegistry(Collections.singletonList(new URLDecoder()), configNodeService, lexer,
             List.of(new StandardPathMapper()));
     }
 
@@ -72,7 +72,7 @@ class URLDecoderTest {
 
         String url = "http://www.google.com";
         GResultOf<URL> result = decoder.decode("db.port", Tags.of(), new LeafNode(url),
-            TypeCapture.of(URI.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+            TypeCapture.of(URL.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
         Assertions.assertEquals(url, result.results().toString());
@@ -83,9 +83,9 @@ class URLDecoderTest {
     void decodeInvalidNode() {
         URLDecoder decoder = new URLDecoder();
 
-        String uri = "8080:www.google.com";
-        GResultOf<URL> result = decoder.decode("db.port", Tags.of(), new LeafNode(uri),
-            TypeCapture.of(URI.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+        String url = "8080:www.google.com";
+        GResultOf<URL> result = decoder.decode("db.port", Tags.of(), new LeafNode(url),
+            TypeCapture.of(URL.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
@@ -94,5 +94,19 @@ class URLDecoderTest {
         Assertions.assertEquals("Unable to decode a URL on path: db.port, from node: LeafNode{value='8080:www.google.com'}, " +
                 "with reason: no protocol: 8080:www.google.com",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        URLDecoder decoder = new URLDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<URL> result = decoder.decode("db.url", Tags.of(), new LeafNode(""),
+            TypeCapture.of(URL.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertEquals(0, result.getErrors().size());
+        Assertions.assertNull(result.results());
     }
 }

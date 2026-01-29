@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import java.util.Collections;
 import org.github.gestalt.config.entity.ValidationError;
 import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.node.LeafNode;
@@ -30,7 +31,17 @@ public abstract class LeafDecoder<T> implements Decoder<T> {
         GResultOf<T> results;
         if (node instanceof LeafNode) {
             if (node.hasValue()) {
-                results = leafDecode(path, node, type, decoderContext);
+                // When the value is an empty string and treatEmptyStringAsAbsent is enabled, return null to preserve field defaults.
+                // This allows POJO fields to retain their default values when the configuration contains an empty string
+                // where an empty string would otherwise override the default value.
+                // Without this, fields would always be set to empty string values instead of keeping their defaults.
+                if (((LeafNode) node).getValueInternal().map(String::isEmpty).orElse(false)
+                    && decoderContext.getGestaltConfig() != null
+                    && decoderContext.getGestaltConfig().isTreatEmptyStringAsAbsent()) {
+                    results = GResultOf.resultOf(null, Collections.emptyList());
+                } else {
+                    results = leafDecode(path, node, type, decoderContext);
+                }
             } else {
                 results = GResultOf.errors(new ValidationError.DecodingLeafMissingValue(path, name()));
             }

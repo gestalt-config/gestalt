@@ -113,7 +113,7 @@ public class GestaltCore implements Gestalt, ConfigReloadListener {
         this.observationService = observationService;
         this.resultsProcessorService = resultsProcessorService;
         this.defaultTags = defaultTags;
-        this.decoderContext = new DecoderContext(decoderService, this, secretConcealer, sentenceLexer);
+        this.decoderContext = new DecoderContext(decoderService, this, secretConcealer, sentenceLexer, gestaltConfig);
         this.tagMergingStrategy = tagMergingStrategy;
     }
 

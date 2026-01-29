@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -113,5 +114,19 @@ class PatternDecoderTest {
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
         Assertions.assertEquals("Expected a leaf on path: db.user, received node type: null, attempting to decode Pattern",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        PatternDecoder decoder = new PatternDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<Pattern> result = decoder.decode("db.pattern", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Pattern.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertEquals(0, result.getErrors().size());
+        Assertions.assertNull(result.results());
     }
 }

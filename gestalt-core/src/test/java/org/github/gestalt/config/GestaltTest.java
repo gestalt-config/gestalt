@@ -2411,6 +2411,26 @@ class GestaltTest {
     }
 
 
+    @Test
+    public void testRootMapStringObjectContainsScalarValues() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("a", "1");
+        configs.put("b.c", "2");
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .build();
+
+        gestalt.loadConfigs();
+
+        Map<String, Object> root = gestalt.getConfig("", new TypeCapture<>() {});
+        Assertions.assertEquals("1", root.get("a"));
+
+        Map<String, Object> b = gestalt.getConfig("b", new TypeCapture<>() {});
+        Assertions.assertEquals("2", b.get("c"));
+    }
+
+
     public static class TestConfigNodeProcessor implements ConfigNodeProcessor {
         private final String add;
 
@@ -2490,5 +2510,70 @@ class GestaltTest {
         protected GResultOf<String> leafDecode(String path, ConfigNode node, DecoderContext decoderContext) {
             return GResultOf.errors(new ValidationError.ArrayInvalidIndex(1, "should not happen"));
         }
+    }
+
+    public static class DefaultsPreservedConfig {
+        public boolean boolValue = false;
+        public int intValue;
+        public Nested nested = new Nested();
+        public Optional<Integer> optionalIntValue1 = Optional.of(10);
+        public Optional<Integer> optionalIntValue2 = Optional.of(20);
+        public Map<String, String> mapValue = Map.of("key", "value");
+        public List<String> listValue = List.of("default");
+
+        public static class Nested {
+            public int d = 7;
+        }
+    }
+
+    @Test
+    public void testEmptyStringBindingBehavior() throws GestaltException {
+        Map<String, String> configs = new HashMap<>();
+        configs.put("boolValue", "");           // Empty string → should not override primitive default
+        configs.put("intValue", "42");          // Normal value → overrides default
+        configs.put("nested.d", "");            // Empty string → should not override nested default
+        configs.put("mapValue", "");            // Empty string → should clear Map
+        configs.put("listValue", "");           // Empty string → should clear List
+        configs.put("optionalIntValue2", "");   // Empty string → Optional.empty()
+
+        Gestalt gestalt = new GestaltBuilder()
+            .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+            .setTreatMissingValuesAsErrors(false)
+            .setTreatEmptyStringAsAbsent(true)
+            .build();
+
+        gestalt.loadConfigs();
+
+        // ---------- Raw Map view ----------
+        Map<String, Object> root = gestalt.getConfig("", new TypeCapture<Map<String, Object>>() {});
+        Assertions.assertAll("Raw Map view preserves empty strings",
+            () -> Assertions.assertEquals("", root.get("boolvalue")),
+            () -> Assertions.assertEquals("42", root.get("intvalue")),
+            () -> {
+                Map<String, Object> nestedMap = (Map<String, Object>) root.get("nested");
+                Assertions.assertNotNull(nestedMap);
+                Assertions.assertEquals("", nestedMap.get("d"));
+            }
+        );
+
+        // ---------- Typed POJO view ----------
+        DefaultsPreservedConfig config = gestalt.getConfig("", DefaultsPreservedConfig.class);
+
+        Assertions.assertAll("Typed POJO binding behavior for empty strings",
+            // Primitive / Object → defaults preserved
+            () -> Assertions.assertFalse(config.boolValue),
+            () -> Assertions.assertEquals(42, config.intValue),
+            () -> Assertions.assertEquals(7, config.nested.d),
+
+            // Optional → empty string becomes Optional.empty()
+            () -> Assertions.assertEquals(Optional.of(10), config.optionalIntValue1),
+            () -> Assertions.assertEquals(Optional.empty(), config.optionalIntValue2),
+
+            // Map → empty string clears map
+            () -> Assertions.assertNull(config.mapValue.get("key")),
+
+            // List → empty string clears list
+            () -> Assertions.assertTrue(config.listValue.isEmpty())
+        );
     }
 }

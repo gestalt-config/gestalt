@@ -1,5 +1,6 @@
 package org.github.gestalt.config.decoder;
 
+import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationLevel;
 import org.github.gestalt.config.exceptions.GestaltConfigurationException;
 import org.github.gestalt.config.lexer.PathLexer;
@@ -98,5 +99,19 @@ class FloatDecoderTest {
         Assertions.assertEquals("Unable to parse a number on Path: db.timeout, from node: LeafNode{value='12s4'} " +
                 "attempting to decode Float",
             result.getErrors().get(0).description());
+    }
+
+    @Test
+    void emptyStringWithConfigEnabled() {
+        FloatDecoder decoder = new FloatDecoder();
+        GestaltConfig config = new GestaltConfig();
+        config.setTreatEmptyStringAsAbsent(true);
+
+        GResultOf<Float> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Float.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+
+        Assertions.assertFalse(result.hasResults());
+        Assertions.assertEquals(0, result.getErrors().size());
+        Assertions.assertNull(result.results());
     }
 }
