@@ -126,8 +126,8 @@ class FileDecoderTest {
         GestaltConfig config = new GestaltConfig();
         config.setTreatEmptyStringAsAbsent(true);
 
-        GResultOf<java.io.File> result = decoder.decode("db.file", Tags.of(), new LeafNode(""),
-            TypeCapture.of(java.io.File.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+        GResultOf<File> result = decoder.decode("db.file", Tags.of(), new LeafNode(""),
+            TypeCapture.of(File.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
 
         Assertions.assertFalse(result.hasResults());
         Assertions.assertEquals(0, result.getErrors().size());
