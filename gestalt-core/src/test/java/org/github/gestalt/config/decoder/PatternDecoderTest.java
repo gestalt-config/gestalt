@@ -126,8 +126,7 @@ class PatternDecoderTest {
             TypeCapture.of(java.util.regex.Pattern.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
 
         Assertions.assertFalse(result.hasResults());
-        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
-        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertEquals(0, result.getErrors().size());
         Assertions.assertNull(result.results());
     }
 }

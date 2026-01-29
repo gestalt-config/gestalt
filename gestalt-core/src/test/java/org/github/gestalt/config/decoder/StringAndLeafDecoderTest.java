@@ -123,8 +123,7 @@ class StringAndLeafDecoderTest {
         GResultOf<String> result = decoder.decode("db.user", Tags.of(), new LeafNode(""),
             TypeCapture.of(String.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
 
-        // Filter out MISSING_OPTIONAL_VALUE level errors - these are informational, not real errors
-        Assertions.assertTrue(result.getErrorsNotLevel(org.github.gestalt.config.entity.ValidationLevel.MISSING_OPTIONAL_VALUE).isEmpty());
+        Assertions.assertEquals(0, result.getErrors().size());
         Assertions.assertNull(result.results());
     }
 }
