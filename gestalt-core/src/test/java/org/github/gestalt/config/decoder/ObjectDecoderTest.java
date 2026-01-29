@@ -17,10 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.LogManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1227,6 +1224,54 @@ class ObjectDecoderTest {
         Assertions.assertEquals(Character.MIN_VALUE, results.myChar);
         Assertions.assertEquals("", results.myString);
         Assertions.assertEquals(false, results.myBoolean);
+    }
+
+
+    @Test
+    void decodeObjectOptionalWithDefault() {
+        ObjectDecoder decoder = new ObjectDecoder();
+
+        Map<String, ConfigNode> configs = new HashMap<>();
+        configs.put("uri", new LeafNode("mysql.com"));
+        configs.put("password", new LeafNode("pass"));
+
+        GResultOf<?> result = decoder.decode(
+            "db",
+            Tags.of(),
+            new MapNode(configs),
+            new TypeCapture<DBInfoOptionalWithDefault>() {},
+            new DecoderContext(decoderService, null, null, new PathLexer())
+        );
+
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertTrue(result.hasErrors());
+        Assertions.assertEquals(2, result.getErrors().size());
+        Assertions.assertEquals(
+            ValidationLevel.MISSING_OPTIONAL_VALUE,
+            result.getErrors().get(0).level()
+        );
+
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.port, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoOptionalWithDefault",
+            result.getErrors().get(0).description());
+
+        Assertions.assertEquals(
+            ValidationLevel.MISSING_OPTIONAL_VALUE,
+            result.getErrors().get(1).level()
+        );
+
+        Assertions.assertEquals("Missing Optional Value while decoding Object on path: db.timeoutSeconds, with node: " +
+                "MapNode{password=LeafNode{value='pass'}, uri=LeafNode{value='mysql.com'}}, with class: DBInfoOptionalWithDefault",
+            result.getErrors().get(1).description());
+
+        DBInfoOptionalWithDefault decoded = (DBInfoOptionalWithDefault) result.results();
+
+        Assertions.assertFalse(decoded.getPort().isPresent());
+        Assertions.assertEquals("pass", decoded.getPassword().get());
+        Assertions.assertEquals("mysql.com", decoded.getUri().get());
+
+        // ❌ Expected default value, but actual value is Optional.empty()
+        Assertions.assertEquals(30, decoded.getTimeoutSeconds().get());
     }
 
 }
