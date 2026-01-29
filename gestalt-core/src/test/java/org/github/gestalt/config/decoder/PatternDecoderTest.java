@@ -122,8 +122,8 @@ class PatternDecoderTest {
         GestaltConfig config = new GestaltConfig();
         config.setTreatEmptyStringAsAbsent(true);
 
-        GResultOf<java.util.regex.Pattern> result = decoder.decode("db.pattern", Tags.of(), new LeafNode(""),
-            TypeCapture.of(java.util.regex.Pattern.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
+        GResultOf<Pattern> result = decoder.decode("db.pattern", Tags.of(), new LeafNode(""),
+            TypeCapture.of(Pattern.class), new DecoderContext(decoderService, null, null, new PathLexer(), config));
 
         Assertions.assertFalse(result.hasResults());
         Assertions.assertEquals(0, result.getErrors().size());
