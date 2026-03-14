@@ -66,4 +66,4 @@ public interface Transformer {
 
 To register your own default Transformer, add it to a file in `META-INF\services\org.github.gestalt.config.processor.config.transform.Transformer` and add the full path to your Transformer.
 
-the annotation `@ConfigPriority(100)`, specifies the descending priority order to check your transformer when a substitution has been made without specifying the source `${key}`
+The annotation `@ConfigPriority(100)`, specifies the descending priority order to check your transformer when a substitution has been made without specifying the source `${key}`

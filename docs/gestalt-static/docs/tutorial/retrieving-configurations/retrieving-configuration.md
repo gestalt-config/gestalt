@@ -15,7 +15,7 @@ If you want to use a different path style you can provide your own [custom lexer
   // load a whole class, this works best with pojo's
   HttpPool pool = gestalt.getConfig("http.pool", HttpPool.class);
   // or get a specific config value from a class
-  short maxTotal  gestalt.getConfig("HTTP.pool.maxTotal", Short.class);
+  short maxTotal = gestalt.getConfig("HTTP.pool.maxTotal", Short.class);
   // get with a default if you want a fallback from code
   long maxConnectionsPerRoute = gestalt.getConfig("http.Pool.maxPerRoute", 24, Long.class);
 
