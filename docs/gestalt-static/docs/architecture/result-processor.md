@@ -37,7 +37,7 @@ public interface ResultProcessor {
    * @param isOptional if the result is optional (an Optional or has a default.
    * @param defaultVal value to return in the event of failure.
    * @param klass the type of object.
-   * @param tags any tags used to retrieve te object
+   * @param tags any tags used to retrieve the object
    * @return The validation results with either errors or a successful  obj.
    * @param <T> Class of the object.
    * @throws GestaltException for any exceptions while processing the results, such as if there are errors in the result.

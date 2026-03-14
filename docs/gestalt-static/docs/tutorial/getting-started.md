@@ -8,7 +8,7 @@ sidebar_position: 1
 
 Gestalt is a powerful Java configuration library that merges multiple sources of configuration data into a type-safe and structured format. It supports configuration files, environment variables, in-memory maps, and more.
 
-### 1. Add the Bintray repository:
+### 1. Add the Maven Central repository:
 
 Versions 0.1.0 through version 0.11.0 require Java 8. Versions 0.12.0 plus require Java 11.
 

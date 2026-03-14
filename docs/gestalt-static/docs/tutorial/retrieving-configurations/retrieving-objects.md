@@ -1,4 +1,4 @@
-**---
+---
 sidebar_position: 2
 ---
 
@@ -84,7 +84,7 @@ data class DBInfoDataDefault(
     var uri: String = "my.sql.db",                  // default value "my.sql.db"
     @Config(defaultVal = "100")  var connections: Integer, // default value 100
 
-    // required value cam not disable treatMissingValuesAsErrors and allow nulls. 
-    var password: String,                           // required, can not be null.   
+    // required value cannot disable treatMissingValuesAsErrors and allow nulls. 
+    var password: String,                           // required, cannot be null.   
 )
 ```**

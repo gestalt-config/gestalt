@@ -32,7 +32,7 @@ public interface ConfigValidator {
      * @param obj object to validate.
      * @param path path the object was located at
      * @param klass the type of object.
-     * @param tags any tags used to retrieve te object
+     * @param tags any tags used to retrieve the object
      * @return The validation results with either errors or a successful  obj.
      * @param <T> Class of the object.
      */

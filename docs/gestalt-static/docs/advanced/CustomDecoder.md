@@ -11,7 +11,7 @@ The method `Priority priority();` allows you to set the priority of the decoder.
 
 The method `String name();` allows you to set the name of the decoder. This is useful for logging and debugging purposes.
 
-the method `default void applyConfig(GestaltConfig config)` is optional and allows you to get the gestalt configuration when the decoder is registered. 
+The method `default void applyConfig(GestaltConfig config)` is optional and allows you to get the gestalt configuration when the decoder is registered.
 
 The method `boolean canDecode(String path, Tags tags, ConfigNode node, TypeCapture<?> type)` is used to determine if the decoder can handle the given type. This is called before the `decode(...)` method. If this method returns true, then the `decode(...)` method will be called.
 
