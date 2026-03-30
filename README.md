@@ -1547,6 +1547,70 @@ The following observations are exposed
 | cache.hit          | Incremented for each request served from the cache. A cache miss would be recorded in the observations config.get | Counter  |                                                                                                               |
 
 
+## JFR (Java Flight Recorder) Observability
+
+Gestalt provides a Java Flight Recorder (JFR) implementation for recording configuration access events for monitoring and profiling.
+
+To import the JFR implementation add `gestalt-jfr` to your build files.
+
+In Maven:
+```xml
+<dependency>
+  <groupId>com.github.gestalt-config</groupId>
+  <artifactId>gestalt-jfr</artifactId>
+  <version>${version}</version>
+</dependency>
+```
+Or in Gradle:
+```kotlin
+implementation("com.github.gestalt-config:gestalt-jfr:${version}")
+```
+
+Then when building gestalt, you need to register the module config `JfrModuleConfig` using the `JfrModuleConfigBuilder`.
+
+```java
+Gestalt gestalt = new GestaltBuilder()
+    .addSource(MapConfigSourceBuilder.builder().setCustomConfig(configs).build())
+    .setObservationsEnabled(true)
+    .addModuleConfig(JfrModuleConfigBuilder.builder()
+        .setIncludePath(false)
+        .setIncludeClass(false)
+        .setIncludeOptional(false)
+        .setIncludeTags(false)
+        .setEventLabel("Gestalt Config Access")
+        .build())
+    .build();
+
+gestalt.loadConfigs();
+```
+
+There are several options to configure the JFR module.
+
+| Option       | Description                                                                                                                           | Default                    |
+|--------------|---------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| includePath  | When getting a config include the path in the JFR event. This can be a high cardinality field so is not recommended.                  | false                      |
+| includeClass | When getting a config include the class in the JFR event. This can be a high cardinality field so is not recommended.                 | false                      |
+| includeOptional | When getting a config include if the configuration is optional or default as a true or false in the JFR event.                     | false                      |
+| includeTags  | When getting a config include the tags in the request in the JFR event.                                                               | false                      |
+| eventLabel   | Provide a custom label for the JFR events.                                                                                            | Gestalt Config Access      |
+
+The JFR module records the following information for each configuration access:
+- Duration (time taken to retrieve the configuration)
+- Success or failure status
+- Error messages (if retrieval failed)
+- Optional metadata (path, class, tags) if enabled
+
+To view the recorded JFR events, use JDK Mission Control (JMC) or the `jfr` command-line tool:
+
+```bash
+# Start application with JFR enabled
+java -XX:StartFlightRecording=disk=true,duration=60s,filename=recording.jfr MyApp
+
+# View events with jfr tool
+jfr dump --events "Gestalt/*" recording.jfr
+```
+
+
 ## Hibernate Validator
 Gestalt allows a validator to hook into and validate calls to get a configuration object.  Gestalt includes a [Hibernate Bean Validator](https://hibernate.org/validator/) implementation. 
 

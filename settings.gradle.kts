@@ -1,7 +1,7 @@
 rootProject.name = "gestalt"
 include(
     "gestalt-aws", "gestalt-azure", "gestalt-cdi", "gestalt-core", "gestalt-dotenv", "gestalt-hocon", "gestalt-json",
-    "gestalt-git", "gestalt-google-cloud", "gestalt-guice", "gestalt-kotlin", "gestalt-micrometer", "gestalt-kodein-di",
+    "gestalt-git", "gestalt-google-cloud", "gestalt-guice", "gestalt-jfr", "gestalt-kotlin", "gestalt-micrometer", "gestalt-kodein-di",
     "gestalt-koin-di", "gestalt-toml", "gestalt-validator-hibernate", "gestalt-vault", "gestalt-yaml"
 )
 
