@@ -1,11 +1,11 @@
 [versions]
 java = "11"
-javaLatest = "24"
-kotlin = "2.2.21"
-kotlinDokka = "2.1.0"
+javaLatest = "25"
+kotlin = "2.3.20"
+kotlinDokka = "2.2.0"
 # Kotlin DI
-kodeinDI = "7.30.0"
-koinDI = "4.1.1"
+kodeinDI = "7.31.0"
+koinDI = "4.2.0"
 # Java DI
 guice = "7.0.0"
 # @pin 4.1.0 requires java 17
@@ -15,11 +15,11 @@ weld = "4.0.5.Final"
 # @pin
 weldCore = "5.1.6.Final"
 #encoding/decoding
-jackson = "2.20.1"
-hocon = "1.4.5"
+jackson = "2.21.2"
+hocon = "1.4.6"
 # Cloud
-awsBom = "2.41.4"
-gcpLibraries = "26.73.0"
+awsBom = "2.42.23"
+gcpLibraries = "26.79.0"
 azure = "1.3.3"
 # vault
 vault = "6.2.1"
@@ -30,7 +30,7 @@ eddsa = "0.3.0"
 # dot env support
 dotenv = "3.2.0"
 # metrics
-micrometer = "1.16.1"
+micrometer = "1.16.4"
 # validation
 # @pin last version to support jdk 11
 hibernateValidator = "8.0.3.Final"
@@ -41,17 +41,18 @@ expressly = "5.0.0"
 junit5 = "5.14.0"
 # @pin last version to support jdk 11
 junitTestkit = "1.14.0"
-assertJ = "3.27.6"
+assertJ = "3.27.7"
 mockito = "5.2.0"
-mockk = "1.14.7"
-koTestAssertions = "6.0.7"
+mockk = "1.14.9"
+koTestAssertions = "6.1.9"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "2.0.3"
+testcontainers = "2.0.4"
 # static code analysis
 # @pin last version to support JDK 11
 errorprone = "2.31.0"
-gradleErrorProne = "4.3.0"
+gradleErrorProne = "5.1.0"
+# @pin last version to support JDK 11
 gradlePublish = "0.35.0"
 detekt = "1.23.8"
 checkStyle = "10.10.0"
@@ -62,8 +63,8 @@ gradleJmh = "0.7.3"
 gestalt = "0.36.2"
 # Gradle utility
 gradleVersions = "0.53.0"
-gitVersions = "4.2.0"
-gradleVersionsUpdate = "1.0.1"
+gitVersions = "5.0.0"
+gradleVersionsUpdate = "1.1.0"
 jakartaAnnotations = "3.0.0"
 gradleRetry = "1.6.4"
 
