@@ -1,5 +1,6 @@
 [versions]
 java = "11"
+
 javaLatest = "25"
 kotlin = "2.3.20"
 kotlinDokka = "2.2.0"
@@ -16,6 +17,10 @@ weld = "4.0.5.Final"
 weldCore = "5.1.6.Final"
 #encoding/decoding
 jackson = "2.21.2"
+# Add explicit jackson3 version so consumers may opt-in to Jackson 3 artifacts.
+# Pick a sensible default here; users can override this version in their own settings if
+# they want a different micro/patch release.
+jackson3 = "3.0.0"
 hocon = "1.4.6"
 # Cloud
 awsBom = "2.42.23"
@@ -85,11 +90,17 @@ weld-core = { module = "org.jboss.weld:weld-core-impl", version.ref = "weldCore"
 # Encoding/decoding
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
-jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-java8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+
+# Jackson 3 aliases: same artifact coordinates but different version ref so users can opt-in
+# to Jackson 3 by using the *3 suffixed library aliases or the jackson3 bundle below.
+jackson3-core = { module = "tools.jackson.core:jackson-core", version.ref = "jackson3" }
+jackson3-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson3" }
+jackson3-toml = { module = "tools.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson3" }
+jackson3-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson3" }
 hocon = { module = "com.typesafe:config", version.ref = "hocon" }
 # vault
 vault = { module = "io.github.jopenlibs:vault-java-driver", version.ref = "vault" }
@@ -165,12 +176,17 @@ gestalt-vault = { module = "com.github.gestalt-config:gestalt-vault", version.re
 gestalt-yaml = { module = "com.github.gestalt-config:gestalt-yaml", version.ref = "gestalt" }
 
 [bundles]
-jackson = [
+# Keep a "jackson" bundle pointing at the Jackson 2 aliases for backwards compatibility.
+jackson2 = [
     "jackson-core",
     "jackson-databind",
-    "jackson-dataformat-yaml",
     "jackson-java8",
     "jackson-jsr310",
+]
+
+jackson3 = [
+    "jackson3-core",
+    "jackson3-databind",
 ]
 
 [plugins]

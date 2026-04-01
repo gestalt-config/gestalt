@@ -1,8 +1,8 @@
-package org.github.gestalt.config.toml;
+package org.github.gestalt.config.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.toml.TomlFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -17,6 +17,7 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,36 +25,37 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Loads from a yaml files from multiple sources, such as a file.
+ * Loads from a json files from multiple sources, such as a file.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
-public final class TomlLoader implements ConfigLoader {
+public final class JsonLoader implements ConfigLoader {
 
     private final boolean isDefault;
     private ObjectMapper objectMapper;
     private SentenceLexer lexer;
 
     /**
-     * Default constructor for YamlLoader that creates a new ObjectMapper with a YAMLFactory registered to it.
+     * Default constructor for JsonLoader that creates a new ObjectMapper.
      */
-    public TomlLoader() {
-        this(new ObjectMapper(new TomlFactory()).findAndRegisterModules(), new PathLexer(), true);
+    public JsonLoader() {
+        this(JsonMapper.builder().build(), new PathLexer(), true);
     }
 
     /**
-     * Constructor for YamlLoader that accepts a ObjectMapper.
+     * Constructor for JsonLoader that accepts a ObjectMapper.
      *
-     * @param objectMapper for loading yaml config, it should have a YAMLFactory registered to it.
+     * @param objectMapper for loading json config
      * @param lexer        the lexer to normalize paths.
      */
-    public TomlLoader(ObjectMapper objectMapper, SentenceLexer lexer) {
+    public JsonLoader(ObjectMapper objectMapper, SentenceLexer lexer) {
         this(objectMapper, lexer, false);
     }
 
-    private TomlLoader(ObjectMapper objectMapper, SentenceLexer lexer, boolean isDefault) {
-        Objects.requireNonNull(lexer, "TomlLoader SentenceLexer should not be null");
-        Objects.requireNonNull(objectMapper, "TomlLoader ObjectMapper should not be null");
+
+    private JsonLoader(ObjectMapper objectMapper, SentenceLexer lexer, boolean isDefault) {
+        Objects.requireNonNull(lexer, "JsonLoader SentenceLexer should not be null");
+        Objects.requireNonNull(objectMapper, "JsonLoader ObjectMapper should not be null");
 
         this.objectMapper = objectMapper;
         this.lexer = lexer;
@@ -63,11 +65,11 @@ public final class TomlLoader implements ConfigLoader {
 
     @Override
     public void applyConfig(GestaltConfig config) {
-        // for the Toml ConfigLoader we will use the lexer in the following priorities
+        // for the Json ConfigLoader we will use the lexer in the following priorities
         // 1. the constructor
         // 2. the module config
         // 3. the Gestalt Configuration
-        var moduleConfig = config.getModuleConfig(TomlModuleConfig.class);
+        var moduleConfig = config.getModuleConfig(JsonModuleConfig.class);
         if (isDefault) {
             if (moduleConfig != null && moduleConfig.getLexer() != null) {
                 lexer = moduleConfig.getLexer();
@@ -83,12 +85,12 @@ public final class TomlLoader implements ConfigLoader {
 
     @Override
     public String name() {
-        return "tomlLoader";
+        return "JsonLoader";
     }
 
     @Override
     public boolean accepts(String format) {
-        return "toml".equals(format);
+        return "json".equals(format);
     }
 
     /**
@@ -114,7 +116,7 @@ public final class TomlLoader implements ConfigLoader {
                 GResultOf<ConfigNode> node = buildConfigTree("", jsonNode);
 
                 return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source, sourcePackage.getTags())));
-            } catch (IOException | NullPointerException e) {
+            } catch (IOException | NullPointerException | JacksonException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
         } else {
@@ -135,7 +137,7 @@ public final class TomlLoader implements ConfigLoader {
             case BINARY:
             case BOOLEAN:
             case NUMBER:
-                return GResultOf.result(new LeafNode(jsonNode.asText()));
+                return GResultOf.result(new LeafNode(jsonNode.asString()));
 
             case MISSING:
             case NULL:

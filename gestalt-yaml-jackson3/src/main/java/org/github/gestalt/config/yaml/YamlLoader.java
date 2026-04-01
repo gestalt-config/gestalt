@@ -1,8 +1,7 @@
-package org.github.gestalt.config.toml;
+package org.github.gestalt.config.yaml;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.toml.TomlFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -17,18 +16,22 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tools.jackson.databind.node.JsonNodeType.MISSING;
+
 /**
  * Loads from a yaml files from multiple sources, such as a file.
  *
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
-public final class TomlLoader implements ConfigLoader {
+public final class YamlLoader implements ConfigLoader {
 
     private final boolean isDefault;
     private ObjectMapper objectMapper;
@@ -37,8 +40,8 @@ public final class TomlLoader implements ConfigLoader {
     /**
      * Default constructor for YamlLoader that creates a new ObjectMapper with a YAMLFactory registered to it.
      */
-    public TomlLoader() {
-        this(new ObjectMapper(new TomlFactory()).findAndRegisterModules(), new PathLexer(), true);
+    public YamlLoader() {
+        this(YAMLMapper.builder().build(), new PathLexer(), true);
     }
 
     /**
@@ -47,27 +50,26 @@ public final class TomlLoader implements ConfigLoader {
      * @param objectMapper for loading yaml config, it should have a YAMLFactory registered to it.
      * @param lexer        the lexer to normalize paths.
      */
-    public TomlLoader(ObjectMapper objectMapper, SentenceLexer lexer) {
+    public YamlLoader(ObjectMapper objectMapper, SentenceLexer lexer) {
         this(objectMapper, lexer, false);
     }
 
-    private TomlLoader(ObjectMapper objectMapper, SentenceLexer lexer, boolean isDefault) {
-        Objects.requireNonNull(lexer, "TomlLoader SentenceLexer should not be null");
-        Objects.requireNonNull(objectMapper, "TomlLoader ObjectMapper should not be null");
+    public YamlLoader(ObjectMapper objectMapper, SentenceLexer lexer, boolean isDefault) {
+        Objects.requireNonNull(lexer, "YamlLoader SentenceLexer should not be null");
+        Objects.requireNonNull(objectMapper, "YamlLoader ObjectMapper should not be null");
 
         this.objectMapper = objectMapper;
         this.lexer = lexer;
         this.isDefault = isDefault;
     }
 
-
     @Override
     public void applyConfig(GestaltConfig config) {
-        // for the Toml ConfigLoader we will use the lexer in the following priorities
+        // for the Yaml ConfigLoader we will use the lexer in the following priorities
         // 1. the constructor
         // 2. the module config
         // 3. the Gestalt Configuration
-        var moduleConfig = config.getModuleConfig(TomlModuleConfig.class);
+        var moduleConfig = config.getModuleConfig(YamlModuleConfig.class);
         if (isDefault) {
             if (moduleConfig != null && moduleConfig.getLexer() != null) {
                 lexer = moduleConfig.getLexer();
@@ -81,14 +83,15 @@ public final class TomlLoader implements ConfigLoader {
         }
     }
 
+
     @Override
     public String name() {
-        return "tomlLoader";
+        return "YamlLoader";
     }
 
     @Override
     public boolean accepts(String format) {
-        return "toml".equals(format);
+        return "yml".equals(format) || "yaml".equals(format);
     }
 
     /**
@@ -111,10 +114,13 @@ public final class TomlLoader implements ConfigLoader {
                     throw new GestaltException("Exception loading source: " + source.name() + " no yaml found");
                 }
 
-                GResultOf<ConfigNode> node = buildConfigTree("", jsonNode);
+                if (jsonNode.getNodeType() == MISSING) {
+                    return GResultOf.result(List.of(new ConfigNodeContainer(new MapNode(Map.of()), source, sourcePackage.getTags())));
+                }
 
+                GResultOf<ConfigNode> node = buildConfigTree("", jsonNode);
                 return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source, sourcePackage.getTags())));
-            } catch (IOException | NullPointerException e) {
+            } catch (IOException | NullPointerException | JacksonException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
         } else {
