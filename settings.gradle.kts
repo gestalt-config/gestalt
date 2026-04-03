@@ -12,6 +12,7 @@ include(
 // testing utility projects
 include(
     "code-coverage-report", "gestalt-benchmark", "gestalt-examples:gestalt-sample",
+    "gestalt-examples:gestalt-sample-jackson3",
     "gestalt-examples:gestalt-sample-module", "gestalt-examples:gestalt-sample-java-records", "gestalt-test"
 )
 
