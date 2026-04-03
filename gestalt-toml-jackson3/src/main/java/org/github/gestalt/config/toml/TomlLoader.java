@@ -1,8 +1,8 @@
 package org.github.gestalt.config.toml;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.toml.TomlFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.github.gestalt.config.entity.ConfigNodeContainer;
 import org.github.gestalt.config.entity.GestaltConfig;
 import org.github.gestalt.config.entity.ValidationError;
@@ -17,6 +17,7 @@ import org.github.gestalt.config.node.MapNode;
 import org.github.gestalt.config.source.ConfigSourcePackage;
 import org.github.gestalt.config.utils.GResultOf;
 import org.github.gestalt.config.utils.PathUtil;
+import tools.jackson.dataformat.toml.TomlMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +39,7 @@ public final class TomlLoader implements ConfigLoader {
      * Default constructor for YamlLoader that creates a new ObjectMapper with a YAMLFactory registered to it.
      */
     public TomlLoader() {
-        this(new ObjectMapper(new TomlFactory()).findAndRegisterModules(), new PathLexer(), true);
+        this(TomlMapper.builder().build(), new PathLexer(), true);
     }
 
     /**
@@ -114,7 +115,7 @@ public final class TomlLoader implements ConfigLoader {
                 GResultOf<ConfigNode> node = buildConfigTree("", jsonNode);
 
                 return node.mapWithError(result -> List.of(new ConfigNodeContainer(result, source, sourcePackage.getTags())));
-            } catch (IOException | NullPointerException e) {
+            } catch (IOException | NullPointerException | JacksonException e) {
                 throw new GestaltException("Exception loading source: " + source.name(), e);
             }
         } else {

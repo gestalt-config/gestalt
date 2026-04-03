@@ -1,8 +1,12 @@
 rootProject.name = "gestalt"
 include(
-    "gestalt-aws", "gestalt-azure", "gestalt-cdi", "gestalt-core", "gestalt-dotenv", "gestalt-hocon", "gestalt-json",
-    "gestalt-git", "gestalt-google-cloud", "gestalt-guice", "gestalt-kotlin", "gestalt-micrometer", "gestalt-kodein-di",
-    "gestalt-koin-di", "gestalt-toml", "gestalt-validator-hibernate", "gestalt-vault", "gestalt-yaml"
+    "gestalt-aws", "gestalt-azure", "gestalt-cdi",
+    "gestalt-core", "gestalt-dotenv", "gestalt-hocon",
+    "gestalt-json", "gestalt-json-jackson3",
+    "gestalt-git", "gestalt-google-cloud", "gestalt-guice",
+    "gestalt-kotlin", "gestalt-micrometer", "gestalt-kodein-di",
+    "gestalt-koin-di", "gestalt-toml", "gestalt-toml-jackson3", "gestalt-validator-hibernate",
+    "gestalt-vault", "gestalt-yaml", "gestalt-yaml-jackson3"
 )
 
 // testing utility projects
@@ -27,5 +31,3 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
-include("gestalt-dotenv")

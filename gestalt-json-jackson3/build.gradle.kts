@@ -5,10 +5,14 @@ plugins {
     id("gestalt.java-publish-conventions")
 }
 
-dependencies {
-    implementation(project(":gestalt-core"))
-    api(libs.bundles.jackson2)
-    api(libs.jackson.toml)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of("17"))
+    }
 }
 
+dependencies {
+    implementation(project(":gestalt-core"))
+    api(libs.bundles.jackson3)
+}
 
