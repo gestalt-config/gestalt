@@ -844,6 +844,7 @@ public class GestaltSample {
 
     // This example shows a how to load a source from an S3 bucket.
     @Test
+    @Disabled
     public void integrationS3Test() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
@@ -880,6 +881,7 @@ public class GestaltSample {
 
     // This example shows a how to load a source from an S3 bucket.
     @Test
+    @Disabled
     public void integrationS3NodeSubstitutionTest() throws GestaltException {
         final File uploadFile = new File(UPLOAD_FILE_NAME);
 

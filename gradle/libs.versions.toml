@@ -1,12 +1,11 @@
 [versions]
 java = "11"
-
 javaLatest = "25"
-kotlin = "2.3.20"
+kotlin = "2.4.0"
 kotlinDokka = "2.2.0"
 # Kotlin DI
-kodeinDI = "7.31.0"
-koinDI = "4.2.0"
+kodeinDI = "7.32.0"
+koinDI = "4.2.2"
 # Java DI
 guice = "7.0.0"
 # @pin 4.1.0 requires java 17
@@ -16,18 +15,18 @@ weld = "4.0.5.Final"
 # @pin
 weldCore = "5.1.6.Final"
 #encoding/decoding
-jackson = "2.21.2"
+jackson = "2.22.0"
 # Add explicit jackson3 version so consumers may opt-in to Jackson 3 artifacts.
 # Pick a sensible default here; users can override this version in their own settings if
 # they want a different micro/patch release.
-jackson3 = "3.0.0"
-hocon = "1.4.6"
+jackson3 = "3.2.0"
+hocon = "1.4.9"
 # Cloud
-awsBom = "2.42.23"
-gcpLibraries = "26.79.0"
+awsBom = "2.46.17"
+gcpLibraries = "26.84.0"
 azure = "1.3.3"
 # vault
-vault = "6.2.1"
+vault = "6.2.2"
 # Git support
 # @pin breaking changes last version to support jdk 11
 jgit = "6.10.0.202406032230-r"
@@ -35,7 +34,7 @@ eddsa = "0.3.0"
 # dot env support
 dotenv = "3.2.0"
 # metrics
-micrometer = "1.16.4"
+micrometer = "1.17.0"
 # validation
 # @pin last version to support jdk 11
 hibernateValidator = "8.0.3.Final"
@@ -48,11 +47,11 @@ junit5 = "5.14.0"
 junitTestkit = "1.14.0"
 assertJ = "3.27.7"
 mockito = "5.2.0"
-mockk = "1.14.9"
-koTestAssertions = "6.1.9"
+mockk = "1.14.11"
+koTestAssertions = "6.2.1"
 # @pin last version to support jdk 11
 awsMock = "2.17.0"
-testcontainers = "2.0.4"
+testcontainers = "2.0.5"
 # static code analysis
 # @pin last version to support JDK 11
 errorprone = "2.31.0"
@@ -67,11 +66,11 @@ gradleJmh = "0.7.3"
 # @pin gestalt for integration tests.
 gestalt = "0.36.2"
 # Gradle utility
-gradleVersions = "0.53.0"
+gradleVersions = "0.54.0"
 gitVersions = "5.0.0"
 gradleVersionsUpdate = "1.1.0"
 jakartaAnnotations = "3.0.0"
-gradleRetry = "1.6.4"
+gradleRetry = "1.6.5"
 
 [libraries]
 # Kotlin
@@ -94,7 +93,6 @@ jackson-java8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
-
 # Jackson 3 aliases: same artifact coordinates but different version ref so users can opt-in
 # to Jackson 3 by using the *3 suffixed library aliases or the jackson3 bundle below.
 jackson3-core = { module = "tools.jackson.core:jackson-core", version.ref = "jackson3" }
@@ -183,7 +181,6 @@ jackson2 = [
     "jackson-java8",
     "jackson-jsr310",
 ]
-
 jackson3 = [
     "jackson3-core",
     "jackson3-databind",
