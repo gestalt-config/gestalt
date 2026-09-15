@@ -177,8 +177,7 @@ public final class JsonLoader implements ConfigLoader {
         List<ValidationError> errors = new ArrayList<>();
         Map<String, ConfigNode> mapNode = new HashMap<>();
 
-        for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> entry = it.next();
+        for (Map.Entry<String, JsonNode> entry : jsonNode.properties()) {
             List<String> tokenList = tokenizer(entry.getKey());
             tokenList = tokenList.stream().map(this::normalizeSentence).collect(Collectors.toList());
             String currentPath = PathUtil.pathForKey(lexer, path, tokenList);

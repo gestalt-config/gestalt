@@ -27,7 +27,7 @@ class VaultSecretTransformerTest {
     private static final String VAULT_TOKEN = "my-root-token";
 
     @Container
-    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.18.0").withVaultToken(VAULT_TOKEN);
+    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:2.1").withVaultToken(VAULT_TOKEN);
 
     private static Vault vault;
 
@@ -235,8 +235,7 @@ class VaultSecretTransformerTest {
         Assertions.assertEquals(1, results.getErrors().size());
         Assertions.assertEquals(ValidationLevel.ERROR, results.getErrors().get(0).level());
         Assertions.assertEquals("Exception thrown while loading Vault secret: vault:secret/hello&value, " +
-            "on path: test in transformer: vault, with message: io.github.jopenlibs.vault.rest.RestException: " +
-            "java.lang.IllegalArgumentException: port out of range:34234324",
+                "on path: test in transformer: vault, with message: java.lang.IllegalArgumentException: port out of range:34234324",
             results.getErrors().get(0).description());
 
     }

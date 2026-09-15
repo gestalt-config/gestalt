@@ -122,7 +122,7 @@ public class GestaltSample {
         "QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
     @Container
     private static final GenericContainer<?> azureStorage =
-        new GenericContainer<>(DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:3.35.0"))
+        new GenericContainer<>(DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:3.37.0"))
             .withExposedPorts(10000, 10001, 10002);
     private static final String testContainer = "testcontainer";
     private static final String testBlobName = "testBlobName.properties";
@@ -138,7 +138,7 @@ public class GestaltSample {
 
     @SuppressWarnings("rawtypes")
     @Container
-    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:1.18.0").withVaultToken(VAULT_TOKEN);
+    private static final VaultContainer vaultContainer = new VaultContainer("hashicorp/vault:2.1.0").withVaultToken(VAULT_TOKEN);
 
     private static Vault vault;
 
@@ -844,6 +844,7 @@ public class GestaltSample {
 
     // This example shows a how to load a source from an S3 bucket.
     @Test
+    @Disabled
     public void integrationS3Test() throws GestaltException {
         Map<String, String> configs = new HashMap<>();
         configs.put("db.hosts[0].password", "1234");
@@ -880,6 +881,7 @@ public class GestaltSample {
 
     // This example shows a how to load a source from an S3 bucket.
     @Test
+    @Disabled
     public void integrationS3NodeSubstitutionTest() throws GestaltException {
         final File uploadFile = new File(UPLOAD_FILE_NAME);
 

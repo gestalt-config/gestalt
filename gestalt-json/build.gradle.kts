@@ -7,6 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":gestalt-core"))
-    api(libs.bundles.jackson)
+    api(libs.bundles.jackson2)
 }
 
