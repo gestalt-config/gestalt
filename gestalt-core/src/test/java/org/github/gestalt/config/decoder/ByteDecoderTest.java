@@ -67,6 +67,23 @@ class ByteDecoderTest {
     void decodeNumericByte() {
         ByteDecoder decoder = new ByteDecoder();
 
+        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("5"),
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals(Byte.valueOf((byte) 5), result.results());
+
+        result = decoder.decode("db.port", Tags.of(), new LeafNode("-5"),
+            TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+        Assertions.assertTrue(result.hasResults());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals(Byte.valueOf((byte) -5), result.results());
+    }
+
+    @Test
+    void decodeNumericByteAsString() {
+        ByteDecoder decoder = new ByteDecoder();
+
         for (String value : List.of("5", "12", "-5", "127", "-128")) {
             GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(value),
                 TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
