@@ -36,7 +36,7 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
         String value = node.getValue().orElse("");
         if (StringUtils.isInteger(value)) {
             try {
-                Byte byteValue = Byte.parseByte(value);
+                Byte byteValue = Byte.valueOf(value);
                 results = GResultOf.result(byteValue);
             } catch (NumberFormatException e) {
                 results = GResultOf.errors(
