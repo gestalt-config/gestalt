@@ -8,8 +8,8 @@ import org.github.gestalt.config.kotlin.reflect.KTypeCapture
 import org.github.gestalt.config.node.ConfigNode
 import org.github.gestalt.config.reflect.TypeCapture
 import org.github.gestalt.config.tag.Tags
+import org.github.gestalt.config.utils.StringUtils
 import org.github.gestalt.config.utils.GResultOf
-import java.nio.charset.Charset
 
 /**
  * Kotlin Byte Decoder.
@@ -40,24 +40,14 @@ class ByteDecoder : LeafDecoder<Byte>() {
     ): GResultOf<Byte> {
         val results: GResultOf<Byte>
         val value = node.value.orElse("")
-        results = if (value.length == 1) {
-            GResultOf.result(value.toByteArray(Charset.defaultCharset())[0])
-        } else if (value.length > 1){
-            GResultOf.resultOf(value.toByteArray(Charset.defaultCharset())[0],
-                ValidationError.DecodingByteTooLong(
-                    path,
-                    node,
-                    decoderContext
-                )
-            )
+        results = if (StringUtils.isInteger(value)) {
+            try {
+                GResultOf.result(value.toByte())
+            } catch (e: NumberFormatException) {
+                GResultOf.errors(ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext))
+            }
         } else {
-            GResultOf.errors(
-                ValidationError.DecodingEmptyByte(
-                    path,
-                    node,
-                    decoderContext
-                )
-            )
+            GResultOf.errors(ValidationError.DecodingNumberParsing(path, node, name()))
         }
         return results
     }

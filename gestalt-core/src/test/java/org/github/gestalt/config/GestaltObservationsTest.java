@@ -367,7 +367,7 @@ public class GestaltObservationsTest {
 
         gestalt.loadConfigs();
 
-        Assertions.assertEquals((byte) 't', gestalt.getConfig("db.password", Byte.class, Tags.environment("dev")));
+        Assertions.assertEquals('t', gestalt.getConfig("db.password", Character.class, Tags.environment("dev")));
 
         Assertions.assertEquals("db.password", metricsRecorder.metrics.get("db.password").path);
         Assertions.assertEquals(10.0D, metricsRecorder.metrics.get("db.password").data);

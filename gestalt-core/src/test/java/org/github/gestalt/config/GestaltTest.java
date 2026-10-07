@@ -2123,6 +2123,8 @@ class GestaltTest {
 
         Assertions.assertEquals("test", gestalt.getConfig("db.password", String.class));
         Assertions.assertEquals(123, gestalt.getConfig("db.port", Integer.class));
+        Assertions.assertEquals(Byte.valueOf((byte) 123), gestalt.getConfig("db.port", Byte.class));
+        Assertions.assertEquals(Byte.valueOf((byte) 123), gestalt.getConfig("db.port", byte.class));
         Assertions.assertEquals("my.sql.com", gestalt.getConfig("db.uri", String.class));
 
         Assertions.assertEquals("test2", gestalt.getConfig("db.password", String.class, Tags.environment("dev")));
@@ -2180,7 +2182,7 @@ class GestaltTest {
 
         gestalt.loadConfigs();
 
-        Assertions.assertEquals((byte) 't', gestalt.getConfig("db.password", Byte.class, Tags.environment("dev")));
+        Assertions.assertEquals('t', gestalt.getConfig("db.password", Character.class, Tags.environment("dev")));
     }
 
     @Test
@@ -2205,10 +2207,10 @@ class GestaltTest {
         gestalt.loadConfigs();
 
         var ex = Assertions.assertThrows(GestaltException.class,
-            () -> gestalt.getConfig("db.password", Byte.class, Tags.environment("dev")));
+            () -> gestalt.getConfig("db.password", Character.class, Tags.environment("dev")));
 
-        Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Byte\n" +
-                " - level: WARN, message: Expected a Byte on path: db.password, decoding node: " +
+        Assertions.assertEquals("Failed getting config path: db.password, for class: java.lang.Character\n" +
+                " - level: WARN, message: Expected a char on path: db.password, decoding node: " +
                 "LeafNode{value='*****'} received the wrong size",
             ex.getMessage());
     }

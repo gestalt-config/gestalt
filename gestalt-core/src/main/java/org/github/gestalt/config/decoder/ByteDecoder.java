@@ -5,8 +5,7 @@ import org.github.gestalt.config.node.ConfigNode;
 import org.github.gestalt.config.reflect.TypeCapture;
 import org.github.gestalt.config.tag.Tags;
 import org.github.gestalt.config.utils.GResultOf;
-
-import java.nio.charset.Charset;
+import org.github.gestalt.config.utils.StringUtils;
 
 /**
  * Decode Byte.
@@ -35,13 +34,16 @@ public final class ByteDecoder extends LeafDecoder<Byte> {
         GResultOf<Byte> results;
 
         String value = node.getValue().orElse("");
-        if (value.length() == 1) {
-            results = GResultOf.result(value.getBytes(Charset.defaultCharset())[0]);
-        } else if (value.length() > 1) {
-            results = GResultOf.resultOf(value.getBytes(Charset.defaultCharset())[0],
-                new ValidationError.DecodingByteTooLong(path, node, decoderContext));
+        if (StringUtils.isInteger(value)) {
+            try {
+                Byte byteValue = Byte.parseByte(value);
+                results = GResultOf.result(byteValue);
+            } catch (NumberFormatException e) {
+                results = GResultOf.errors(
+                    new ValidationError.DecodingNumberFormatException(path, node, name(), decoderContext));
+            }
         } else {
-            results = GResultOf.errors(new ValidationError.DecodingEmptyByte(path, node, decoderContext));
+            results = GResultOf.errors(new ValidationError.DecodingNumberParsing(path, node, name()));
         }
 
         return results;
