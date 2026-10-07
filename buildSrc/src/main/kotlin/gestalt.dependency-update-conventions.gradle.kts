@@ -21,7 +21,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
  * @author <a href="mailto:colin.redmond@outlook.com"> Colin Redmond </a> (c) 2025.
  */
 plugins {
-    id("com.github.ben-manes.versions")
+    id("io.github.ben-manes.versions")
     id("nl.littlerobots.version-catalog-update")
 }
 

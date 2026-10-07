@@ -41,7 +41,7 @@ class ConfigInjectionTest {
         configs.put("my.prop.id", "5678901234567890");
         configs.put("my.prop.enabled", "false");
         configs.put("shortId", "23");
-        configs.put("byteId", "A");
+        configs.put("byteId", "5");
         configs.put("charId", "Q");
         configs.put("map.data1", "1,2,3,4,5");
         configs.put("map.data2", "6,7,8,9,0");
@@ -76,7 +76,7 @@ class ConfigInjectionTest {
         assertEquals(false, configBean.isMyPropProfileEnabledBoolean());
         assertEquals(true, configBean.isMyPropProfileEnabledDefault());
         assertEquals((short) 23, configBean.getShortId());
-        assertEquals((byte) 65, configBean.getByteId());
+        assertEquals((byte) 5, configBean.getByteId());
         assertEquals('Q', configBean.getCharId());
         assertEquals('Q', configBean.getCharId2());
         assertEquals(Map.of("user", "steve", "id", "5678901234567890", "enabled", "false"),

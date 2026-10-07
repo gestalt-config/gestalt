@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,44 +64,66 @@ class ByteDecoderTest {
     }
 
     @Test
-    void decodeByte() {
+    void decodeNumericByte() {
         ByteDecoder decoder = new ByteDecoder();
 
-        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
+        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("5"),
             TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
         Assertions.assertFalse(result.hasErrors());
-        Assertions.assertEquals("a".getBytes(Charset.defaultCharset())[0], result.results());
-        Assertions.assertEquals(0, result.getErrors().size());
-    }
+        Assertions.assertEquals(Byte.valueOf((byte) 5), result.results());
 
-    @Test
-    void notAByteTooLong() {
-        ByteDecoder decoder = new ByteDecoder();
-
-        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("aaa"),
+        result = decoder.decode("db.port", Tags.of(), new LeafNode("-5"),
             TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertTrue(result.hasResults());
-        Assertions.assertTrue(result.hasErrors());
-        Assertions.assertEquals((byte) 97, result.results());
-        Assertions.assertNotNull(result.getErrors());
-        Assertions.assertEquals(ValidationLevel.WARN, result.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a Byte on path: db.port, decoding node: LeafNode{value='aaa'} received the wrong size",
-            result.getErrors().get(0).description());
+        Assertions.assertFalse(result.hasErrors());
+        Assertions.assertEquals(Byte.valueOf((byte) -5), result.results());
     }
 
     @Test
-    void notAByteTooShort() {
+    void decodeNumericByteAsString() {
         ByteDecoder decoder = new ByteDecoder();
 
-        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(""),
+        for (String value : List.of("5", "12", "-5", "127", "-128")) {
+            GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(value),
+                TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+            Assertions.assertTrue(result.hasResults(), value);
+            Assertions.assertFalse(result.hasErrors(), value);
+            Assertions.assertEquals(Byte.parseByte(value), result.results(), value);
+        }
+    }
+
+    @Test
+    void byteOutsideRange() {
+        ByteDecoder decoder = new ByteDecoder();
+
+        for (String value : List.of("128", "-129")) {
+            GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode(value),
+                TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
+            Assertions.assertFalse(result.hasResults(), value);
+            Assertions.assertTrue(result.hasErrors(), value);
+            Assertions.assertNull(result.results(), value);
+            Assertions.assertNotNull(result.getErrors(), value);
+            Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level(), value);
+            Assertions.assertEquals("Unable to decode a number on path: db.port, from node: " +
+                    "LeafNode{value='" + value + "'} attempting to decode Byte",
+                result.getErrors().get(0).description(), value);
+        }
+    }
+
+    @Test
+    void nonNumericByte() {
+        ByteDecoder decoder = new ByteDecoder();
+
+        GResultOf<Byte> result = decoder.decode("db.port", Tags.of(), new LeafNode("a"),
             TypeCapture.of(Byte.class), new DecoderContext(decoderService, null, null, new PathLexer()));
         Assertions.assertFalse(result.hasResults());
         Assertions.assertTrue(result.hasErrors());
         Assertions.assertNull(result.results());
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertEquals(ValidationLevel.ERROR, result.getErrors().get(0).level());
-        Assertions.assertEquals("Expected a Byte on path: db.port, decoding node: LeafNode{value=''} received an empty node",
+        Assertions.assertEquals("Unable to parse a number on Path: db.port, from node: LeafNode{value='a'} " +
+                "attempting to decode Byte",
             result.getErrors().get(0).description());
     }
 
