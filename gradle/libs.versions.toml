@@ -15,15 +15,15 @@ weld = "4.0.5.Final"
 # @pin
 weldCore = "5.1.6.Final"
 #encoding/decoding
-jackson = "2.22.2"
+jackson = "2.22.3"
 # Add explicit jackson3 version so consumers may opt-in to Jackson 3 artifacts.
 # Pick a sensible default here; users can override this version in their own settings if
 # they want a different micro/patch release.
-jackson3 = "3.2.2"
+jackson3 = "3.2.3"
 hocon = "1.4.9"
 # Cloud
-awsBom = "2.54.17"
-gcpLibraries = "26.88.1"
+awsBom = "2.55.12"
+gcpLibraries = "26.90.0"
 azure = "1.3.8"
 # vault
 vault = "6.2.3"
@@ -66,7 +66,7 @@ gradleJmh = "0.7.3"
 # @pin gestalt for integration tests.
 gestalt = "0.38.1"
 # Gradle utility
-gradleVersions = "0.62.0"
+gradleVersions = "0.64.0"
 gitVersions = "5.1.0"
 gradleVersionsUpdate = "1.1.1"
 jakartaAnnotations = "3.0.0"
